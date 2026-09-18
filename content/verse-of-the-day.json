@@ -1,7 +1,7 @@
 {
   "pack_id": "mindpal-verse-of-day-v1",
   "title": "MindPal — Verse for the Day",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "modular": true,
   "feature": "verse_of_the_day",
   "consumers": [
@@ -11,7 +11,7 @@
   ],
   "timezone_hint": "Pacific/Fiji",
   "date_key_rule": "YYYY-MM-DD in the user's local calendar (client resolves today)",
-  "disclaimer": "Supportive wellness reading. Not clinical therapy or religious instruction. Scripture quoted accurately from traditional public texts; reflections are original MindPal. Science-of-mind notes are general established ideas, not specific paper claims. AU urgent help: 000 / Lifeline 13 11 14.",
+  "disclaimer": "Supportive wellness reading. Not clinical therapy or religious instruction. Christian/Hebrew Bible quotations use modern public-domain English (World English Bible / WEB) for readable contemporary wording (NKJV-like clarity). NKJV and other modern commercial translations are copyrighted — for study, open your licensed Bible or BibleGateway NKJV. Other lanes use clear modern English renderings. Reflections are original MindPal. AU urgent help: 000 / Lifeline 13 11 14.",
   "schema": {
     "entry": {
       "id": "string",
@@ -36,10 +36,10 @@
     "date": null,
     "lane": "christian",
     "verse": {
-      "text": "This is the day which the Lord hath made; we will rejoice and be glad in it.",
-      "reference": "Psalm 118:24 · KJV",
-      "source_note": "Traditional public-domain scripture (KJV).",
-      "url": "https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV"
+      "text": "This is the day that Yahweh has made. We will rejoice and be glad in it!",
+      "reference": "Psalm 118:24 · WEB",
+      "source_note": "Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.",
+      "url": "https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=NKJV"
     },
     "reflection": "Begin by noticing that this day is already given. Joy here is a choice of attention, not a demand that everything feel easy.",
     "practice": {
@@ -54,10 +54,10 @@
       "date": "2026-09-18",
       "lane": "christian",
       "verse": {
-        "text": "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",
-        "reference": "John 14:27 · KJV",
-        "source_note": "Traditional public-domain scripture (KJV).",
-        "url": "https://www.biblegateway.com/passage/?search=John+14%3A27&version=KJV"
+        "text": "Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful.",
+        "reference": "John 14:27 · WEB",
+        "source_note": "Modern public-domain English (World English Bible). Prefer NKJV for personal study if you use that edition.",
+        "url": "https://www.biblegateway.com/passage/?search=John+14%3A27&version=NKJV"
       },
       "reflection": "Christ’s peace is offered as an inner steadiness, different from circumstances going your way. You can receive calm without pretending hard things are gone.",
       "practice": {
@@ -71,9 +71,9 @@
       "date": "2026-09-19",
       "lane": "buddhist",
       "verse": {
-        "text": "Hatred is never appeased by hatred in this world. By non-hatred alone is hatred appeased. This is a law eternal.",
+        "text": "Hatred is never ended by hatred in this world. By non-hatred alone is hatred ended. This is an eternal law.",
         "reference": "Dhammapada 1:5 (Yamaka Vagga)",
-        "source_note": "Classical Pali Canon teaching; English rendering of a well-attested verse.",
+        "source_note": "Classical Pali Canon teaching (Dhammapada); clear modern English rendering of a well-attested verse.",
         "url": "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.01.budd.html"
       },
       "reflection": "Meeting irritation with more irritation feeds the loop. Softening does not mean approving harm — it means choosing a response that does not multiply heat.",
@@ -88,9 +88,9 @@
       "date": "2026-09-20",
       "lane": "islamic",
       "verse": {
-        "text": "So truly where there is hardship, there is also ease. Truly where there is hardship, there is also ease.",
+        "text": "Truly, with hardship comes ease. Truly, with hardship comes ease.",
         "reference": "Qur’an 94:5–6",
-        "source_note": "Qur’anic verse (Surah Ash-Sharh). Use a translation you trust for study; wording here is a careful English rendering of the paired ease-after-hardship lines.",
+        "source_note": "Qur’an 94:5–6 (Surah Ash-Sharh); clear modern English rendering of the paired ease-after-hardship lines. Use a trusted translation for study.",
         "url": "https://quran.com/94"
       },
       "reflection": "Hardship and ease are spoken as companions, not as a denial of pain. Today’s difficulty does not cancel the possibility of relief beside it.",
@@ -139,10 +139,10 @@
       "date": "2026-09-23",
       "lane": "jewish",
       "verse": {
-        "text": "The Lord is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters.",
-        "reference": "Psalm 23:1–2 · KJV",
-        "source_note": "Traditional public-domain scripture (KJV).",
-        "url": "https://www.biblegateway.com/passage/?search=Psalm+23%3A1-2&version=KJV"
+        "text": "Yahweh is my shepherd; I shall lack nothing. He makes me lie down in green pastures. He leads me beside still waters.",
+        "reference": "Psalm 23:1–2 · WEB",
+        "source_note": "Modern public-domain English (World English Bible) of the Hebrew Bible. For NKJV study text, use a licensed edition.",
+        "url": "https://www.biblegateway.com/passage/?search=Psalm+23%3A1-2&version=NKJV"
       },
       "reflection": "Still waters are an image of guided rest. You can seek a quieter pace without earning it first.",
       "practice": {
@@ -168,5 +168,10 @@
       },
       "audio_url": null
     }
-  ]
+  ],
+  "translation_policy": {
+    "bible_english": "WEB (World English Bible) — modern public-domain English; not KJV",
+    "preferred_study_link": "NKJV on BibleGateway when user wants that edition",
+    "other_lanes": "clear modern English"
+  }
 }
