@@ -250,12 +250,23 @@
       border-top: 1px solid #e4dccf; background: var(--cream); margin: 0;
     }
     #panel-book.reading-mode .privacy { display: none; }
+
+    /* Videos */
+    #panel-videos .video-list { display: flex; flex-direction: column; gap: 1rem; }
+    #panel-videos .video-card {
+      background: #fff; border: 1px solid var(--line); border-radius: 16px; overflow: hidden;
+      box-shadow: 0 8px 24px rgba(40,30,20,.05);
+    }
+    #panel-videos .video-card video { width: 100%; max-height: 70vh; background: #111; display: block; }
+    #panel-videos .video-meta { padding: .85rem 1rem 1rem; }
+    #panel-videos .video-meta h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
+    #panel-videos .video-meta p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
   </style>
 </head>
 <body>
   <header>
     <h1>MindPal</h1>
-    <p>Your MindPal home — Verse, Reading &amp; private Book</p>
+    <p>Your MindPal home — Verse, Reading, Book &amp; Videos</p>
   </header>
 
   <div id="installHint" class="install">
@@ -393,6 +404,14 @@
       <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position &amp; Design prefs in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
     </section>
 
+
+    <section id="panel-videos" class="card hidden" aria-label="MindPal videos">
+      <p class="eyebrow">Videos · Maddy</p>
+      <h2>Watch with Maddy</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin:0 0 1rem">Seated fitness look · coastal. Timed breath matches real counting pace.</p>
+      <div class="video-list" id="videoList">Loading…</div>
+    </section>
+
     <p class="foot">Supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14. Offline shell caches after first open.</p>
   </main>
 
@@ -400,6 +419,7 @@
     <button type="button" class="active" data-tab="verse">Verse</button>
     <button type="button" data-tab="reading">Reading</button>
     <button type="button" data-tab="book">Book</button>
+    <button type="button" data-tab="videos">Videos</button>
   </nav>
 
   <script>
@@ -473,6 +493,8 @@
       document.getElementById('panel-verse').classList.toggle('hidden', name !== 'verse');
       document.getElementById('panel-reading').classList.toggle('hidden', name !== 'reading');
       document.getElementById('panel-book').classList.toggle('hidden', name !== 'book');
+      const pv = document.getElementById('panel-videos');
+      if (pv) pv.classList.toggle('hidden', name !== 'videos');
       document.querySelectorAll('nav.tabs button').forEach((b) => {
         b.classList.toggle('active', b.dataset.tab === name);
       });
@@ -1327,6 +1349,27 @@
     };
     if (deviceTtsAvailable()) {
       try { window.speechSynthesis.getVoices(); } catch (e) {}
+    }
+
+
+    async function loadVideos() {
+      const host = document.getElementById('videoList');
+      if (!host) return;
+      try {
+        const res = await fetch('./content/videos.json?v=' + Date.now());
+        const pack = await res.json();
+        host.innerHTML = '';
+        (pack.videos || []).forEach((v) => {
+          const card = document.createElement('article');
+          card.className = 'video-card';
+          card.innerHTML = '<video controls playsinline preload="metadata" src="' + v.src + '"></video>' +
+            '<div class="video-meta"><h3>' + v.title + '</h3><p>' + (v.description || '') +
+            (v.duration_sec ? ' · ~' + Math.round(v.duration_sec) + 's' : '') + '</p></div>';
+          host.appendChild(card);
+        });
+      } catch (e) {
+        host.textContent = 'Could not load videos.';
+      }
     }
 
     async function boot() {
