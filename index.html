@@ -1357,18 +1357,37 @@
       if (!host) return;
       try {
         const res = await fetch('./content/videos.json?v=' + Date.now());
+        if (!res.ok) throw new Error('videos.json HTTP ' + res.status);
         const pack = await res.json();
         host.innerHTML = '';
+        const base = new URL('./', window.location.href);
         (pack.videos || []).forEach((v) => {
           const card = document.createElement('article');
           card.className = 'video-card';
-          card.innerHTML = '<video controls playsinline preload="metadata" src="' + v.src + '"></video>' +
-            '<div class="video-meta"><h3>' + v.title + '</h3><p>' + (v.description || '') +
-            (v.duration_sec ? ' · ~' + Math.round(v.duration_sec) + 's' : '') + '</p></div>';
+          const src = new URL(v.src, base).href;
+          const vid = document.createElement('video');
+          vid.controls = true;
+          vid.setAttribute('playsinline', '');
+          vid.setAttribute('preload', 'metadata');
+          vid.src = src;
+          vid.onerror = () => {
+            const err = document.createElement('p');
+            err.style.cssText = 'padding:1rem;color:#a33';
+            err.textContent = 'Video failed to load. Try refresh, or open: ' + src;
+            card.insertBefore(err, card.firstChild);
+          };
+          const meta = document.createElement('div');
+          meta.className = 'video-meta';
+          meta.innerHTML = '<h3></h3><p></p>';
+          meta.querySelector('h3').textContent = v.title || 'Video';
+          meta.querySelector('p').textContent = (v.description || '') + (v.duration_sec ? ' · ~' + Math.round(v.duration_sec) + 's' : '');
+          card.appendChild(vid);
+          card.appendChild(meta);
           host.appendChild(card);
         });
+        if (!(pack.videos || []).length) host.textContent = 'No videos in pack yet.';
       } catch (e) {
-        host.textContent = 'Could not load videos.';
+        host.textContent = 'Could not load videos: ' + (e && e.message ? e.message : e);
       }
     }
 

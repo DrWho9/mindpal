@@ -1,4 +1,4 @@
-const CACHE = 'mindpal-v1-7-videos';
+const CACHE = 'mindpal-v1-8-videos-fix';
 const PRECACHE = [
   './',
   './index.html',
@@ -8,10 +8,7 @@ const PRECACHE = [
   './icons/apple-touch-icon.png',
   './content/daily-readings.json',
   './content/verse-of-the-day.json',
-  './content/videos.json',
-  './videos/maddy/welcome.mp4',
-  './videos/maddy/tip.mp4',
-  './videos/maddy/timed-breath.mp4'
+  './content/videos.json'
 ];
 
 self.addEventListener('install', (event) => {
@@ -31,6 +28,12 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  // Never cache large video files — network only
+  if (url.pathname.includes('/videos/') || url.pathname.endsWith('.mp4')) {
+    event.respondWith(fetch(req));
+    return;
+  }
   event.respondWith(
     caches.match(req).then((cached) => {
       const net = fetch(req).then((res) => {

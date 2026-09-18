@@ -1,7 +1,7 @@
 {
   "pack_id": "mindpal-videos-maddy-v1",
   "title": "MindPal Videos",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "modular": true,
   "feature": "videos",
   "videos": [
@@ -11,8 +11,9 @@
       "person": "Maddy",
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 32,
-      "src": "videos/maddy/welcome.mp4",
-      "description": "Soft introduction to MindPal companionship."
+      "src": "./videos/maddy/welcome.mp4",
+      "description": "Soft introduction to MindPal companionship.",
+      "version": "1.0.1"
     },
     {
       "id": "maddy-tip",
@@ -20,8 +21,9 @@
       "person": "Maddy",
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 29,
-      "src": "videos/maddy/tip.mp4",
-      "description": "A calm tip for using daily readings without pressure."
+      "src": "./videos/maddy/tip.mp4",
+      "description": "A calm tip for using daily readings without pressure.",
+      "version": "1.0.1"
     },
     {
       "id": "maddy-timed-breath",
@@ -29,8 +31,9 @@
       "person": "Maddy",
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 101,
-      "src": "videos/maddy/timed-breath.mp4",
-      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count."
+      "src": "./videos/maddy/timed-breath.mp4",
+      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count.",
+      "version": "1.0.1"
     }
   ]
 }
