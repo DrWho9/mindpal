@@ -294,7 +294,8 @@
     #panel-videos .video-meta { padding: .85rem 1rem 1rem; }
     #panel-videos .video-meta h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
     #panel-videos .video-meta p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
-    #panel-reading #readingListen.speaking { background: #d5e6dc; color: var(--accent); }
+    #panel-reading #readingListen.speaking,
+    #panel-verse #verseListen.speaking { background: #d5e6dc; color: var(--accent); }
   </style>
 </head>
 <body>
@@ -319,6 +320,12 @@
         <p id="versePractice" style="margin:.4rem 0 0"></p>
       </div>
       <p class="meta" id="verseMeta"></p>
+      <div class="row">
+        <button class="secondary" id="verseListen" type="button">Listen</button>
+        <button class="secondary" id="verseCopy" type="button">Copy</button>
+        <button class="secondary" id="verseShare" type="button">Share</button>
+      </div>
+      <p class="meta" id="verseShareNote" style="margin-top:.55rem"></p>
     </section>
 
     <section id="panel-reading" class="card hidden" aria-label="Daily reading">
@@ -333,6 +340,7 @@
       <div class="row">
         <button class="secondary" id="readingListen" type="button">Listen</button>
         <button class="secondary" id="readingCopy" type="button">Copy</button>
+        <button class="secondary" id="readingShare" type="button">Share</button>
         <button class="primary" id="anotherReading" type="button">Another random reading</button>
       </div>
       <p class="meta" id="readingShareNote" style="margin-top:.55rem"></p>
@@ -501,6 +509,9 @@
     }
 
     function renderVerse() {
+      stopAllSpeech();
+      const vn = document.getElementById('verseShareNote');
+      if (vn) vn.textContent = '';
       const e = resolveVerse();
       const v = e.verse || {};
       document.getElementById('verseEyebrow').textContent =
@@ -531,7 +542,7 @@
       return src[Math.floor(Math.random() * src.length)];
     }
 
-    let readingSpeechUtter = null;
+    let activeSpeechKind = null; // 'verse' | 'reading'
 
     function readingPlainText(r) {
       if (!r) return '';
@@ -540,56 +551,134 @@
       return parts.filter(Boolean).join('\n\n');
     }
 
-    function stopReadingSpeech() {
+    function versePlainText() {
+      if (!versePack) return '';
+      const e = resolveVerse();
+      const v = e.verse || {};
+      const parts = [];
+      if (v.reference) parts.push(v.reference);
+      if (v.text) parts.push(v.text);
+      if (e.reflection) parts.push(e.reflection);
+      const practice = e.practice && e.practice.text;
+      if (practice) parts.push('1-min practice. ' + practice);
+      return parts.filter(Boolean).join('\n\n');
+    }
+
+    function resetListenButtons() {
+      const rb = document.getElementById('readingListen');
+      const vb = document.getElementById('verseListen');
+      if (rb) { rb.textContent = 'Listen'; rb.classList.remove('speaking'); }
+      if (vb) { vb.textContent = 'Listen'; vb.classList.remove('speaking'); }
+    }
+
+    function stopAllSpeech() {
       try { window.speechSynthesis && speechSynthesis.cancel(); } catch (_) {}
-      readingSpeechUtter = null;
-      const btn = document.getElementById('readingListen');
-      if (btn) { btn.textContent = 'Listen'; btn.classList.remove('speaking'); }
+      activeSpeechKind = null;
+      resetListenButtons();
+    }
+
+    function stopReadingSpeech() { stopAllSpeech(); }
+
+    function playCardSpeech(kind, text, btnId, noteId) {
+      const n = document.getElementById(noteId);
+      if (!text) return;
+      if (!window.speechSynthesis) {
+        if (n) n.textContent = 'Voice not available in this browser.';
+        return;
+      }
+      if (speechSynthesis.speaking && activeSpeechKind === kind) {
+        stopAllSpeech();
+        return;
+      }
+      stopAllSpeech();
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95;
+      activeSpeechKind = kind;
+      const btn = document.getElementById(btnId);
+      if (btn) { btn.textContent = 'Pause'; btn.classList.add('speaking'); }
+      u.onend = u.onerror = () => stopAllSpeech();
+      speechSynthesis.speak(u);
     }
 
     function playReadingSpeech() {
       if (!currentReading) return;
-      if (!window.speechSynthesis) {
-        const n = document.getElementById('readingShareNote');
-        if (n) n.textContent = 'Voice not available in this browser.';
-        return;
-      }
-      if (speechSynthesis.speaking) {
-        stopReadingSpeech();
-        return;
-      }
-      const text = readingPlainText(currentReading);
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.95;
-      readingSpeechUtter = u;
-      const btn = document.getElementById('readingListen');
-      if (btn) { btn.textContent = 'Pause'; btn.classList.add('speaking'); }
-      u.onend = u.onerror = () => stopReadingSpeech();
-      speechSynthesis.speak(u);
+      playCardSpeech('reading', readingPlainText(currentReading), 'readingListen', 'readingShareNote');
     }
 
-    async function copyReadingNote() {
-      const n = document.getElementById('readingShareNote');
-      if (!currentReading) return;
-      const text = readingPlainText(currentReading) + '\n\n— MindPal daily reading';
+    function playVerseSpeech() {
+      playCardSpeech('verse', versePlainText(), 'verseListen', 'verseShareNote');
+    }
+
+    async function copyTextToClipboard(text, noteId, okMsg) {
+      const n = document.getElementById(noteId);
+      if (!text) return;
       try {
         await navigator.clipboard.writeText(text);
-        if (n) n.textContent = 'Copied — ready to paste and share.';
+        if (n) n.textContent = okMsg || 'Copied — ready to paste and share.';
       } catch (_) {
-        // fallback
         const ta = document.createElement('textarea');
         ta.value = text;
         document.body.appendChild(ta);
         ta.select();
         try {
           document.execCommand('copy');
-          if (n) n.textContent = 'Copied — ready to paste and share.';
+          if (n) n.textContent = okMsg || 'Copied — ready to paste and share.';
         } catch (e2) {
           if (n) n.textContent = 'Could not copy. Long-press to select text instead.';
         }
         ta.remove();
       }
-      setTimeout(() => { if (n && n.textContent.startsWith('Copied')) n.textContent = ''; }, 2500);
+      setTimeout(() => {
+        if (n && n.textContent && n.textContent.startsWith('Copied')) n.textContent = '';
+      }, 2500);
+    }
+
+    async function copyReadingNote() {
+      if (!currentReading) return;
+      await copyTextToClipboard(
+        readingPlainText(currentReading) + '\n\n— MindPal daily reading',
+        'readingShareNote'
+      );
+    }
+
+    async function copyVerseNote() {
+      await copyTextToClipboard(
+        versePlainText() + '\n\n— MindPal Verse for the Day',
+        'verseShareNote'
+      );
+    }
+
+    async function shareText(text, title, noteId) {
+      const n = document.getElementById(noteId);
+      if (!text) return;
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: title || 'MindPal', text: text });
+          if (n) n.textContent = 'Shared.';
+          setTimeout(() => { if (n && n.textContent === 'Shared.') n.textContent = ''; }, 2000);
+          return;
+        } catch (err) {
+          if (err && err.name === 'AbortError') return;
+        }
+      }
+      await copyTextToClipboard(text, noteId, 'Share unavailable — copied instead.');
+    }
+
+    async function shareReadingNote() {
+      if (!currentReading) return;
+      await shareText(
+        readingPlainText(currentReading) + '\n\n— MindPal daily reading',
+        currentReading.title || 'MindPal reading',
+        'readingShareNote'
+      );
+    }
+
+    async function shareVerseNote() {
+      await shareText(
+        versePlainText() + '\n\n— MindPal Verse for the Day',
+        'MindPal Verse for the Day',
+        'verseShareNote'
+      );
     }
 
     function renderReading(r) {
@@ -1881,6 +1970,10 @@
     });
     document.getElementById('readingListen').addEventListener('click', () => playReadingSpeech());
     document.getElementById('readingCopy').addEventListener('click', () => copyReadingNote());
+    document.getElementById('readingShare').addEventListener('click', () => shareReadingNote());
+    document.getElementById('verseListen').addEventListener('click', () => playVerseSpeech());
+    document.getElementById('verseCopy').addEventListener('click', () => copyVerseNote());
+    document.getElementById('verseShare').addEventListener('click', () => shareVerseNote());
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
