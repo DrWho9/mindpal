@@ -1,4 +1,4 @@
-const CACHE = 'mindpal-v1-10-reading-share';
+const CACHE = 'mindpal-v1-11-videos-load';
 const PRECACHE = [
   './',
   './index.html',

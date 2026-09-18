@@ -623,6 +623,12 @@
       document.querySelectorAll('nav.tabs button').forEach((b) => {
         b.classList.toggle('active', b.dataset.tab === name);
       });
+      if (name === 'videos') {
+        const host = document.getElementById('videoList');
+        if (host && (!host.querySelector('video') || host.textContent.trim() === 'Loading…')) {
+          loadVideos();
+        }
+      }
       if (name !== 'book' && typeof stopAmbientAudio === 'function') {
         stopAmbientAudio(false); // pause graph; prefs kept — restart when returning if mode on
       } else if (name === 'book' && typeof resumeAmbientIfNeeded === 'function') {
@@ -1860,6 +1866,7 @@
       readingsPack = await rRes.json();
       renderVerse();
       renderReading(pickReading());
+      await loadVideos();
     }
 
     document.querySelectorAll('nav.tabs button').forEach((b) => {
