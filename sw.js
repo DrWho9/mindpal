@@ -1,4 +1,4 @@
-const CACHE = 'mindpal-v1-13-verse-share';
+const CACHE = 'mindpal-v1-14-natural-voice';
 const PRECACHE = [
   './',
   './index.html',

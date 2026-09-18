@@ -590,14 +590,34 @@
         stopAllSpeech();
         return;
       }
-      stopAllSpeech();
-      const u = new SpeechSynthesisUtterance(text);
-      u.rate = 0.95;
-      activeSpeechKind = kind;
-      const btn = document.getElementById(btnId);
-      if (btn) { btn.textContent = 'Pause'; btn.classList.add('speaking'); }
-      u.onend = u.onerror = () => stopAllSpeech();
-      speechSynthesis.speak(u);
+      const start = () => {
+        stopAllSpeech();
+        const u = new SpeechSynthesisUtterance(text);
+        const voice = (typeof applyMindPalVoice === 'function')
+          ? applyMindPalVoice(u)
+          : (u.rate = 0.92, u.pitch = 1.02, u.lang = 'en-AU', null);
+        // Fallback if pickDeviceVoice not yet defined (order): try getVoices inline
+        if (!u.voice) {
+          try {
+            const voices = speechSynthesis.getVoices() || [];
+            const v = voices.find((x) => /google|natural|neural|enhanced|samantha|karen/i.test(x.name))
+              || voices.find((x) => /^en/i.test(x.lang))
+              || voices[0];
+            if (v) { u.voice = v; u.lang = v.lang || 'en-AU'; }
+          } catch (_) {}
+        }
+        activeSpeechKind = kind;
+        const btn = document.getElementById(btnId);
+        if (btn) { btn.textContent = 'Pause'; btn.classList.add('speaking'); }
+        if (n && voice) n.textContent = 'Voice: ' + (voice.name || 'device');
+        u.onend = u.onerror = () => {
+          stopAllSpeech();
+          if (n && n.textContent && n.textContent.startsWith('Voice:')) n.textContent = '';
+        };
+        speechSynthesis.speak(u);
+      };
+      if (typeof ensureVoicesThen === 'function') ensureVoicesThen(start);
+      else start();
     }
 
     function playReadingSpeech() {
@@ -1614,12 +1634,55 @@
     function pickDeviceVoice() {
       try {
         const voices = window.speechSynthesis.getVoices() || [];
-        const prefer = voices.find((v) => /en(-|_)?(AU|GB|US)/i.test(v.lang) && /female|samantha|karen|moira|zira|google UK/i.test(v.name))
-          || voices.find((v) => /^en/i.test(v.lang))
-          || voices[0]
-          || null;
-        return prefer;
+        if (!voices.length) return null;
+        const score = (v) => {
+          const name = (v.name || '') + ' ' + (v.voiceURI || '');
+          const lang = v.lang || '';
+          let s = 0;
+          if (/^en/i.test(lang)) s += 20;
+          if (/en(-|_)AU/i.test(lang)) s += 25; // AU preference
+          else if (/en(-|_)GB/i.test(lang)) s += 12;
+          else if (/en(-|_)US/i.test(lang)) s += 10;
+          // Prefer natural / neural / enhanced over default robotic OS voices
+          if (/natural|neural|enhanced|premium|wavenet|studio|online \(natural\)|google/i.test(name)) s += 50;
+          if (/microsoft.*(aria|jenny|guy|sara|sonia|natasha)/i.test(name)) s += 40;
+          if (/samantha|karen|moira|tessa|fiona|veena|serena|zira|susan|catherine/i.test(name)) s += 30;
+          if (/female|woman/i.test(name)) s += 8;
+          // Penalize known robotic / compact / novelty voices
+          if (/compact|robot|novelty|whisper|bad news|good news|pipes|trinoids|boing|zarvox|ralph|fred|albert|cellos/i.test(name)) s -= 40;
+          if (v.localService === false) s += 15; // often higher quality cloud voices on Chrome
+          if (v.default) s += 2;
+          return s;
+        };
+        return voices.slice().sort((a, b) => score(b) - score(a))[0] || null;
       } catch (e) { return null; }
+    }
+
+    function applyMindPalVoice(utterance) {
+      utterance.rate = 0.92;
+      utterance.pitch = 1.02;
+      utterance.lang = 'en-AU';
+      const voice = pickDeviceVoice();
+      if (voice) {
+        utterance.voice = voice;
+        if (voice.lang) utterance.lang = voice.lang;
+      }
+      return voice;
+    }
+
+    function ensureVoicesThen(fn) {
+      const voices = (window.speechSynthesis && speechSynthesis.getVoices()) || [];
+      if (voices.length) { fn(); return; }
+      let done = false;
+      const run = () => {
+        if (done) return;
+        done = true;
+        try { speechSynthesis.onvoiceschanged = null; } catch (_) {}
+        fn();
+      };
+      try { speechSynthesis.onvoiceschanged = run; } catch (_) {}
+      speechSynthesis.getVoices();
+      setTimeout(run, 600);
     }
 
     function stopBookVoice() {
@@ -1665,11 +1728,7 @@
       if (!c) return;
       stopBookVoice();
       const u = new SpeechSynthesisUtterance(c.text);
-      u.rate = 0.95;
-      u.pitch = 1;
-      u.lang = 'en-AU';
-      const voice = pickDeviceVoice();
-      if (voice) u.voice = voice;
+      applyMindPalVoice(u);
       u.onstart = () => {
         voiceSpeaking = true;
         voicePaused = false;
@@ -1903,7 +1962,12 @@
       }
     };
     if (deviceTtsAvailable()) {
-      try { window.speechSynthesis.getVoices(); } catch (e) {}
+      try {
+        window.speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => {
+          window.speechSynthesis.getVoices();
+        };
+      } catch (e) {}
     }
 
 
