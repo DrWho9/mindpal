@@ -294,6 +294,7 @@
     #panel-videos .video-meta { padding: .85rem 1rem 1rem; }
     #panel-videos .video-meta h3 { margin: 0 0 .35rem; font-size: 1.05rem; }
     #panel-videos .video-meta p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.45; }
+    #panel-reading #readingListen.speaking { background: #d5e6dc; color: var(--accent); }
   </style>
 </head>
 <body>
@@ -330,8 +331,11 @@
       </div>
       <p class="meta" id="readingMeta"></p>
       <div class="row">
+        <button class="secondary" id="readingListen" type="button">Listen</button>
+        <button class="secondary" id="readingCopy" type="button">Copy</button>
         <button class="primary" id="anotherReading" type="button">Another random reading</button>
       </div>
+      <p class="meta" id="readingShareNote" style="margin-top:.55rem"></p>
     </section>
 
     <section id="panel-book" class="card hidden" aria-label="Private interactive book">
@@ -527,8 +531,72 @@
       return src[Math.floor(Math.random() * src.length)];
     }
 
+    let readingSpeechUtter = null;
+
+    function readingPlainText(r) {
+      if (!r) return '';
+      const parts = [r.title || '', String(r.body || '').trim()];
+      if (r.practice) parts.push('Practice. ' + r.practice);
+      return parts.filter(Boolean).join('\n\n');
+    }
+
+    function stopReadingSpeech() {
+      try { window.speechSynthesis && speechSynthesis.cancel(); } catch (_) {}
+      readingSpeechUtter = null;
+      const btn = document.getElementById('readingListen');
+      if (btn) { btn.textContent = 'Listen'; btn.classList.remove('speaking'); }
+    }
+
+    function playReadingSpeech() {
+      if (!currentReading) return;
+      if (!window.speechSynthesis) {
+        const n = document.getElementById('readingShareNote');
+        if (n) n.textContent = 'Voice not available in this browser.';
+        return;
+      }
+      if (speechSynthesis.speaking) {
+        stopReadingSpeech();
+        return;
+      }
+      const text = readingPlainText(currentReading);
+      const u = new SpeechSynthesisUtterance(text);
+      u.rate = 0.95;
+      readingSpeechUtter = u;
+      const btn = document.getElementById('readingListen');
+      if (btn) { btn.textContent = 'Pause'; btn.classList.add('speaking'); }
+      u.onend = u.onerror = () => stopReadingSpeech();
+      speechSynthesis.speak(u);
+    }
+
+    async function copyReadingNote() {
+      const n = document.getElementById('readingShareNote');
+      if (!currentReading) return;
+      const text = readingPlainText(currentReading) + '\n\n— MindPal daily reading';
+      try {
+        await navigator.clipboard.writeText(text);
+        if (n) n.textContent = 'Copied — ready to paste and share.';
+      } catch (_) {
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          if (n) n.textContent = 'Copied — ready to paste and share.';
+        } catch (e2) {
+          if (n) n.textContent = 'Could not copy. Long-press to select text instead.';
+        }
+        ta.remove();
+      }
+      setTimeout(() => { if (n && n.textContent.startsWith('Copied')) n.textContent = ''; }, 2500);
+    }
+
     function renderReading(r) {
+      stopReadingSpeech();
       currentReading = r;
+      const note = document.getElementById('readingShareNote');
+      if (note) note.textContent = '';
       document.getElementById('readingEyebrow').textContent =
         'Daily reading · Day ' + r.day + ' · about ' + (r.minutes || 2) + ' min · ' + readingsPack.readings.length + ' in pack';
       document.getElementById('readingTitle').textContent = r.title;
@@ -1801,6 +1869,8 @@
       renderReading(pickReading(currentReading && currentReading.id));
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+    document.getElementById('readingListen').addEventListener('click', () => playReadingSpeech());
+    document.getElementById('readingCopy').addEventListener('click', () => copyReadingNote());
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
