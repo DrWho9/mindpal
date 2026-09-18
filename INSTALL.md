@@ -12,11 +12,12 @@ This is **MindPal** — not a separate product. Verse for the Day and daily read
 - Upload a PDF **you own** (File picker). Bytes stay on-device (optional IndexedDB); never uploaded to MindPal servers.
 - Parses text with pdf.js (CDN; network needed first time).
 - **Chapters:** uses PDF outline/bookmarks when present; otherwise heading heuristics (Chapter N, title-case lines, numbered sections).
-- **UI:** collapsible chapter rail (collapsed by default) · Kindle-style reading chrome when a book is open (Back, Bookmark, chapter title + in-chapter %, scrubber, bottom Chapters / Search / Notes / Design) · ~half-screen reflowed text chunks (not raw PDF canvas as primary).
+- **UI:** collapsible chapter rail (collapsed by default) · Kindle-style reading chrome when a book is open (Back, Bookmark, chapter title + in-chapter %, scrubber, bottom Chapters / Search / Notes / Design / Ambient) · ~half-screen reflowed text chunks (not raw PDF canvas as primary).
 - **Advance:** tap left/right thirds of the screen, or swipe ← →. End of a chapter continues into the next on the following tap.
 - Last chunk index remembered in localStorage for that filename.
 - **Listen / Pause:** on-device Web Speech (`speechSynthesis`) — works offline when an OS voice is installed. No paid cloud TTS in v1. Hook reserved for later local TTS packs or pre-rendered chapter audio stored with the book in IndexedDB.
 - **Design (Aa):** font (Serif Georgia / Sans system / Soft rounded), text & background colour pickers, theme presets (Paper cream, Sage calm, Night, Sepia, Soft sky). Choices persist in `localStorage` key `mindpal-book-design-v1` and apply live to the reading surface.
+- **Ambient (♪):** Off / Zen / White noise / Alpha waves + volume (0–100). Procedural Web Audio (MindPal-owned; no copyrighted tracks). Prefs in `localStorage` key `mindpal-book-ambient-v1`. Ducks while Listen TTS speaks. Supportive wellness — not a medical device.
 - **Search / Notes:** Search filters the chapter rail; Notes are a per-book localStorage stub.
 
-Offline: service worker caches MindPal shell + Verse/Reading content after first open (cache `mindpal-v1-6-book-design`). pdf.js + a new PDF still need network / file pick.
+Offline: service worker caches MindPal shell + Verse/Reading content after first open (cache `mindpal-v1-9-ambient`). pdf.js + a new PDF still need network / file pick.

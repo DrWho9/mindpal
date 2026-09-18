@@ -251,6 +251,39 @@
     }
     #panel-book.reading-mode .privacy { display: none; }
 
+    /* Ambient sound */
+    #panel-book .ebook-listen-row .ambient-inline {
+      display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: center;
+    }
+    #panel-book #bookAmbientBtn.active,
+    #panel-book #bookAmbientBtnBar.active {
+      background: #d5e6dc; color: var(--accent);
+    }
+    #panel-book .ambient-picks {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+    }
+    #panel-book .ambient-picks button {
+      border-radius: 12px; padding: .55rem .75rem; font-size: .82rem; font-weight: 600;
+      background: var(--book-chip, #efeae3); color: var(--book-ink, var(--ink));
+      border: 2px solid transparent;
+    }
+    #panel-book .ambient-picks button.active {
+      border-color: var(--book-accent, var(--accent)); color: var(--book-accent, var(--accent));
+    }
+    #panel-book .ambient-vol-row {
+      display: flex; align-items: center; gap: .55rem; margin-top: .35rem;
+    }
+    #panel-book .ambient-vol-row input[type="range"] {
+      flex: 1; accent-color: var(--book-accent, var(--accent));
+    }
+    #panel-book .ambient-vol-val {
+      min-width: 2.2rem; font-size: .82rem; font-weight: 600;
+      color: var(--book-muted, #6b645c); text-align: right;
+    }
+    #panel-book .ambient-disclaimer {
+      font-size: .72rem; color: var(--book-muted, #6b645c); margin: .65rem 0 0; line-height: 1.4;
+    }
+
     /* Videos */
     #panel-videos .video-list { display: flex; flex-direction: column; gap: 1rem; }
     #panel-videos .video-card {
@@ -341,6 +374,7 @@
             <span class="chunk-meta" id="bookStatus">No book open yet.</span>
             <button class="secondary" id="bookListen" type="button" disabled title="Read aloud with device voice (works offline if OS voice installed)">Listen</button>
             <button class="secondary" id="bookPauseVoice" type="button" disabled hidden>Pause</button>
+            <button class="secondary" id="bookAmbientBtn" type="button" title="Background ambient sound">Ambient</button>
             <button class="secondary" id="bookNext" type="button" disabled>Next ›</button>
           </div>
           <div class="read-surface" id="readSurface" tabindex="0" role="region" aria-label="Reading surface">
@@ -356,12 +390,14 @@
             <div class="ebook-listen-row">
               <button class="secondary" id="bookListenBar" type="button" disabled>Listen</button>
               <button class="secondary" id="bookPauseVoiceBar" type="button" disabled hidden>Pause</button>
+              <button class="secondary" id="bookAmbientBtnBar" type="button" title="Background ambient sound">Ambient</button>
             </div>
             <nav class="ebook-nav" aria-label="Reader tools">
               <button type="button" id="navChapters" data-tool="chapters"><span class="nav-ico">☰</span>Chapters</button>
               <button type="button" id="navSearch" data-tool="search"><span class="nav-ico">⌕</span>Search</button>
               <button type="button" id="navNotes" data-tool="notes"><span class="nav-ico">✎</span>Notes</button>
               <button type="button" id="navDesign" data-tool="design"><span class="nav-ico">Aa</span>Design</button>
+              <button type="button" id="navAmbient" data-tool="ambient"><span class="nav-ico">♪</span>Ambient</button>
             </nav>
           </div>
           <div class="sheet" id="designSheet" aria-label="Design">
@@ -393,6 +429,27 @@
               </div>
             </div>
           </div>
+          <div class="sheet" id="ambientSheet" aria-label="Ambient">
+            <button type="button" class="secondary sheet-close" data-close-sheet>Done</button>
+            <h3>Ambient</h3>
+            <div class="design-group">
+              <label class="group-label">Background</label>
+              <div class="ambient-picks" id="ambientPicks">
+                <button type="button" data-ambient="off" class="active">Off</button>
+                <button type="button" data-ambient="zen">Zen</button>
+                <button type="button" data-ambient="white">White noise</button>
+                <button type="button" data-ambient="alpha">Alpha waves</button>
+              </div>
+            </div>
+            <div class="design-group">
+              <label class="group-label" for="ambientVolume">Volume</label>
+              <div class="ambient-vol-row">
+                <input type="range" id="ambientVolume" min="0" max="100" value="40" aria-label="Ambient volume" />
+                <span class="ambient-vol-val" id="ambientVolumeVal">40</span>
+              </div>
+            </div>
+            <p class="ambient-disclaimer">Supportive wellness soundscape — not a medical device or clinical treatment.</p>
+          </div>
           <div class="sheet" id="notesSheet" aria-label="Notes">
             <button type="button" class="secondary sheet-close" data-close-sheet>Done</button>
             <h3>Notes</h3>
@@ -401,7 +458,7 @@
           </div>
         </div>
       </div>
-      <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position &amp; Design prefs in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
+      <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position, Design &amp; Ambient prefs in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
     </section>
 
 
@@ -498,6 +555,11 @@
       document.querySelectorAll('nav.tabs button').forEach((b) => {
         b.classList.toggle('active', b.dataset.tab === name);
       });
+      if (name !== 'book' && typeof stopAmbientAudio === 'function') {
+        stopAmbientAudio(false); // pause graph; prefs kept — restart when returning if mode on
+      } else if (name === 'book' && typeof resumeAmbientIfNeeded === 'function') {
+        resumeAmbientIfNeeded();
+      }
     }
 
     /* —— Interactive Book —— */
@@ -586,6 +648,8 @@
       activeSheet = null;
       document.getElementById('designSheet').classList.remove('open');
       document.getElementById('notesSheet').classList.remove('open');
+      const as = document.getElementById('ambientSheet');
+      if (as) as.classList.remove('open');
       document.querySelectorAll('.ebook-nav button').forEach((b) => b.classList.remove('active'));
     }
 
@@ -600,6 +664,12 @@
         loadBookNotesIntoUI();
         document.getElementById('notesSheet').classList.add('open');
         document.getElementById('navNotes').classList.add('active');
+      } else if (name === 'ambient') {
+        activeSheet = 'ambient';
+        syncAmbientUI();
+        document.getElementById('ambientSheet').classList.add('open');
+        const navA = document.getElementById('navAmbient');
+        if (navA) navA.classList.add('active');
       }
     }
 
@@ -1080,6 +1150,295 @@
       if (row && row.buffer) openBookFromBuffer(row.name || 'Saved PDF', row.buffer).catch(function () {});
     });
 
+
+    /* —— Modular ambient (procedural Web Audio — MindPal-owned, no copyrighted tracks) —— */
+    const BOOK_AMBIENT_KEY = 'mindpal-book-ambient-v1';
+    const AMBIENT_MODES = ['off', 'zen', 'white', 'alpha'];
+    let ambientPrefs = { mode: 'off', volume: 40 };
+    let ambientCtx = null;
+    let ambientMaster = null;
+    let ambientDuck = null;
+    let ambientGraphNodes = [];
+    let ambientTimers = [];
+    let ambientActiveMode = null;
+    let ambientDucked = false;
+
+    function loadAmbientPrefs() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(BOOK_AMBIENT_KEY) || 'null');
+        if (raw && typeof raw === 'object') {
+          const mode = AMBIENT_MODES.includes(raw.mode) ? raw.mode : 'off';
+          let vol = Number(raw.volume);
+          if (!Number.isFinite(vol)) vol = 40;
+          vol = Math.max(0, Math.min(100, Math.round(vol)));
+          ambientPrefs = { mode, volume: vol };
+        }
+      } catch (e) {}
+      syncAmbientUI();
+    }
+
+    function saveAmbientPrefs() {
+      try { localStorage.setItem(BOOK_AMBIENT_KEY, JSON.stringify(ambientPrefs)); } catch (e) {}
+    }
+
+    function syncAmbientUI() {
+      const vol = document.getElementById('ambientVolume');
+      const val = document.getElementById('ambientVolumeVal');
+      if (vol) vol.value = String(ambientPrefs.volume);
+      if (val) val.textContent = String(ambientPrefs.volume);
+      document.querySelectorAll('#ambientPicks button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.ambient === ambientPrefs.mode);
+      });
+      const on = ambientPrefs.mode !== 'off';
+      ['bookAmbientBtn', 'bookAmbientBtnBar', 'navAmbient'].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('active', on);
+      });
+    }
+
+    function ensureAmbientCtx() {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      if (!ambientCtx) {
+        ambientCtx = new AC();
+        ambientMaster = ambientCtx.createGain();
+        ambientDuck = ambientCtx.createGain();
+        ambientDuck.gain.value = 1;
+        ambientMaster.connect(ambientDuck);
+        ambientDuck.connect(ambientCtx.destination);
+      }
+      if (ambientCtx.state === 'suspended') {
+        ambientCtx.resume().catch(() => {});
+      }
+      return ambientCtx;
+    }
+
+    function clearAmbientGraph() {
+      ambientTimers.forEach((t) => clearTimeout(t));
+      ambientTimers = [];
+      ambientGraphNodes.forEach((n) => {
+        try { if (n.stop) n.stop(); } catch (e) {}
+        try { n.disconnect(); } catch (e) {}
+      });
+      ambientGraphNodes = [];
+      ambientActiveMode = null;
+    }
+
+    function stopAmbientAudio(resetMode) {
+      clearAmbientGraph();
+      if (ambientMaster && ambientCtx) {
+        try { ambientMaster.gain.cancelScheduledValues(ambientCtx.currentTime); } catch (e) {}
+        try { ambientMaster.gain.value = 0; } catch (e) {}
+      }
+      if (resetMode) {
+        ambientPrefs.mode = 'off';
+        saveAmbientPrefs();
+        syncAmbientUI();
+      }
+    }
+
+    function ambientUserGain() {
+      // Keep procedural ambience gentle; volume slider 0–100 maps to a soft ceiling
+      return (ambientPrefs.volume / 100) * 0.22;
+    }
+
+    function applyAmbientMasterGain(instant) {
+      if (!ambientMaster || !ambientCtx) return;
+      const g = ambientPrefs.mode === 'off' ? 0 : ambientUserGain();
+      const t = ambientCtx.currentTime;
+      try {
+        ambientMaster.gain.cancelScheduledValues(t);
+        if (instant) ambientMaster.gain.value = g;
+        else {
+          ambientMaster.gain.setValueAtTime(ambientMaster.gain.value, t);
+          ambientMaster.gain.linearRampToValueAtTime(g, t + 0.35);
+        }
+      } catch (e) {
+        ambientMaster.gain.value = g;
+      }
+    }
+
+    function setAmbientDuck(on) {
+      if (!ambientDuck || !ambientCtx) return;
+      ambientDucked = !!on;
+      const t = ambientCtx.currentTime;
+      const target = on ? 0.4 : 1; // ~40% while TTS speaks
+      try {
+        ambientDuck.gain.cancelScheduledValues(t);
+        ambientDuck.gain.setValueAtTime(ambientDuck.gain.value, t);
+        ambientDuck.gain.linearRampToValueAtTime(target, t + 0.2);
+      } catch (e) {
+        ambientDuck.gain.value = target;
+      }
+    }
+
+    function makeNoiseBuffer(ctx, seconds) {
+      const len = Math.floor(ctx.sampleRate * seconds);
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return buf;
+    }
+
+    function startWhiteNoise(ctx) {
+      const src = ctx.createBufferSource();
+      src.buffer = makeNoiseBuffer(ctx, 2);
+      src.loop = true;
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 980;
+      filter.Q.value = 0.7;
+      const hp = ctx.createBiquadFilter();
+      hp.type = 'highpass';
+      hp.frequency.value = 120;
+      const g = ctx.createGain();
+      g.gain.value = 0.55;
+      src.connect(hp);
+      hp.connect(filter);
+      filter.connect(g);
+      g.connect(ambientMaster);
+      src.start();
+      ambientGraphNodes.push(src, filter, hp, g);
+    }
+
+    function startAlphaWaves(ctx) {
+      // Soft carrier with ~10 Hz amplitude modulation + gentle binaural-ish dual tones (not clinical)
+      const carrierL = ctx.createOscillator();
+      const carrierR = ctx.createOscillator();
+      carrierL.type = 'sine';
+      carrierR.type = 'sine';
+      carrierL.frequency.value = 196;
+      carrierR.frequency.value = 206; // ~10 Hz difference
+      const merger = ctx.createChannelMerger(2);
+      const gL = ctx.createGain();
+      const gR = ctx.createGain();
+      gL.gain.value = 0.18;
+      gR.gain.value = 0.18;
+      const lfo = ctx.createOscillator();
+      lfo.type = 'sine';
+      lfo.frequency.value = 10;
+      const lfoGain = ctx.createGain();
+      lfoGain.gain.value = 0.12;
+      lfo.connect(lfoGain);
+      lfoGain.connect(gL.gain);
+      lfoGain.connect(gR.gain);
+      carrierL.connect(gL);
+      carrierR.connect(gR);
+      gL.connect(merger, 0, 0);
+      gR.connect(merger, 0, 1);
+      const out = ctx.createGain();
+      out.gain.value = 0.7;
+      merger.connect(out);
+      out.connect(ambientMaster);
+      carrierL.start();
+      carrierR.start();
+      lfo.start();
+      ambientGraphNodes.push(carrierL, carrierR, lfo, gL, gR, lfoGain, merger, out);
+    }
+
+    function startZen(ctx) {
+      // Soft slow sine/pad drones + very quiet sparse tones
+      const drones = [
+        { f: 110, g: 0.09 },
+        { f: 164.81, g: 0.06 },
+        { f: 220, g: 0.05 }
+      ];
+      drones.forEach((d, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = d.f;
+        const g = ctx.createGain();
+        g.gain.value = d.g;
+        // slow breath-like LFO on each drone
+        const lfo = ctx.createOscillator();
+        lfo.type = 'sine';
+        lfo.frequency.value = 0.05 + i * 0.015;
+        const lg = ctx.createGain();
+        lg.gain.value = d.g * 0.35;
+        lfo.connect(lg);
+        lg.connect(g.gain);
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 600;
+        osc.connect(filter);
+        filter.connect(g);
+        g.connect(ambientMaster);
+        osc.start();
+        lfo.start();
+        ambientGraphNodes.push(osc, lfo, g, lg, filter);
+      });
+
+      function scheduleSparse() {
+        if (ambientActiveMode !== 'zen' || !ambientCtx) return;
+        const freqs = [261.63, 329.63, 392, 523.25];
+        const osc = ambientCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.value = freqs[Math.floor(Math.random() * freqs.length)];
+        const g = ambientCtx.createGain();
+        const t0 = ambientCtx.currentTime;
+        g.gain.setValueAtTime(0, t0);
+        g.gain.linearRampToValueAtTime(0.035, t0 + 1.2);
+        g.gain.linearRampToValueAtTime(0, t0 + 4.5);
+        osc.connect(g);
+        g.connect(ambientMaster);
+        osc.start(t0);
+        osc.stop(t0 + 5);
+        ambientGraphNodes.push(osc, g);
+        const delay = 6000 + Math.random() * 9000;
+        ambientTimers.push(setTimeout(scheduleSparse, delay));
+      }
+      ambientTimers.push(setTimeout(scheduleSparse, 2500 + Math.random() * 2000));
+    }
+
+    function startAmbientMode(mode) {
+      const ctx = ensureAmbientCtx();
+      if (!ctx) return;
+      clearAmbientGraph();
+      if (!mode || mode === 'off') {
+        applyAmbientMasterGain(true);
+        ambientActiveMode = null;
+        return;
+      }
+      ambientActiveMode = mode;
+      if (mode === 'white') startWhiteNoise(ctx);
+      else if (mode === 'alpha') startAlphaWaves(ctx);
+      else if (mode === 'zen') startZen(ctx);
+      applyAmbientMasterGain(false);
+      if (voiceSpeaking && !voicePaused) setAmbientDuck(true);
+      else setAmbientDuck(false);
+    }
+
+    function setAmbientMode(mode) {
+      if (!AMBIENT_MODES.includes(mode)) mode = 'off';
+      ambientPrefs.mode = mode;
+      saveAmbientPrefs();
+      syncAmbientUI();
+      if (mode === 'off') stopAmbientAudio(false);
+      else startAmbientMode(mode);
+    }
+
+    function setAmbientVolume(v) {
+      let vol = Math.max(0, Math.min(100, Math.round(Number(v) || 0)));
+      ambientPrefs.volume = vol;
+      saveAmbientPrefs();
+      syncAmbientUI();
+      if (ambientPrefs.mode !== 'off') {
+        if (!ambientActiveMode) startAmbientMode(ambientPrefs.mode);
+        else applyAmbientMasterGain(false);
+      }
+    }
+
+    function resumeAmbientIfNeeded() {
+      if (ambientPrefs.mode && ambientPrefs.mode !== 'off') {
+        startAmbientMode(ambientPrefs.mode);
+      }
+    }
+
+    function openAmbientPanel() {
+      if (activeSheet === 'ambient') closeSheets();
+      else openSheet('ambient');
+    }
+
     /* —— Offline audiobook voice (v1: device Web Speech; hook for local TTS / pre-rendered IDB audio) —— */
     const BOOK_AUDIO_STORE = 'chapterAudio'; // future: pre-rendered packs
     let voiceSpeaking = false;
@@ -1104,6 +1463,7 @@
       try { if (deviceTtsAvailable()) window.speechSynthesis.cancel(); } catch (e) {}
       voiceSpeaking = false;
       voicePaused = false;
+      setAmbientDuck(false);
       const listen = document.getElementById('bookListen');
       const pause = document.getElementById('bookPauseVoice');
       const listenBar = document.getElementById('bookListenBar');
@@ -1150,6 +1510,7 @@
       u.onstart = () => {
         voiceSpeaking = true;
         voicePaused = false;
+        setAmbientDuck(true);
         const listen = document.getElementById('bookListen');
         const pause = document.getElementById('bookPauseVoice');
         const listenBar = document.getElementById('bookListenBar');
@@ -1162,6 +1523,7 @@
       u.onend = () => {
         voiceSpeaking = false;
         voicePaused = false;
+        setAmbientDuck(false);
         const listen = document.getElementById('bookListen');
         const pause = document.getElementById('bookPauseVoice');
         const listenBar = document.getElementById('bookListenBar');
@@ -1208,11 +1570,13 @@
       if (voicePaused) {
         window.speechSynthesis.resume();
         voicePaused = false;
+        setAmbientDuck(true);
         if (pause) pause.textContent = 'Pause';
         if (pauseBar) pauseBar.textContent = 'Pause';
       } else {
         window.speechSynthesis.pause();
         voicePaused = true;
+        setAmbientDuck(false);
         if (pause) pause.textContent = 'Resume';
         if (pauseBar) pauseBar.textContent = 'Resume';
       }
@@ -1326,6 +1690,28 @@
     });
 
     loadBookDesign();
+    loadAmbientPrefs();
+
+    document.getElementById('navAmbient').addEventListener('click', (e) => {
+      e.stopPropagation();
+      openAmbientPanel();
+    });
+    const ambBtn = document.getElementById('bookAmbientBtn');
+    const ambBtnBar = document.getElementById('bookAmbientBtnBar');
+    if (ambBtn) ambBtn.addEventListener('click', (e) => { e.stopPropagation(); openAmbientPanel(); });
+    if (ambBtnBar) ambBtnBar.addEventListener('click', (e) => { e.stopPropagation(); openAmbientPanel(); });
+    document.getElementById('ambientSheet').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('ambientPicks').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-ambient]');
+      if (!btn) return;
+      e.stopPropagation();
+      setAmbientMode(btn.dataset.ambient);
+    });
+    document.getElementById('ambientVolume').addEventListener('input', (e) => {
+      e.stopPropagation();
+      setAmbientVolume(e.target.value);
+    });
+    document.getElementById('ambientVolume').addEventListener('click', (e) => e.stopPropagation());
 
     // Stop voice when changing chunk / clearing / leaving UX
     const _goChunk = goChunk;
@@ -1335,7 +1721,10 @@
     };
     const clearBtn = document.getElementById('bookClear');
     if (clearBtn) {
-      clearBtn.addEventListener('click', () => stopBookVoice());
+      clearBtn.addEventListener('click', () => {
+        stopBookVoice();
+        stopAmbientAudio(false); // stop playback when book cleared; keep prefs
+      });
     }
     // Enable Listen when a book is rendered
     const _renderChunk = renderChunk;
@@ -1345,7 +1734,10 @@
       const listenBar = document.getElementById('bookListenBar');
       if (listen) listen.disabled = !bookState;
       if (listenBar) listenBar.disabled = !bookState;
-      if (!bookState) stopBookVoice();
+      if (!bookState) {
+        stopBookVoice();
+        stopAmbientAudio(false);
+      }
     };
     if (deviceTtsAvailable()) {
       try { window.speechSynthesis.getVoices(); } catch (e) {}
