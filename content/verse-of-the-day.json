@@ -1,0 +1,172 @@
+{
+  "pack_id": "mindpal-verse-of-day-v1",
+  "title": "MindPal — Verse for the Day",
+  "version": "1.0.0",
+  "modular": true,
+  "feature": "verse_of_the_day",
+  "consumers": [
+    "mindpal",
+    "live-face-ai",
+    "denyse"
+  ],
+  "timezone_hint": "Pacific/Fiji",
+  "date_key_rule": "YYYY-MM-DD in the user's local calendar (client resolves today)",
+  "disclaimer": "Supportive wellness reading. Not clinical therapy or religious instruction. Scripture quoted accurately from traditional public texts; reflections are original MindPal. Science-of-mind notes are general established ideas, not specific paper claims. AU urgent help: 000 / Lifeline 13 11 14.",
+  "schema": {
+    "entry": {
+      "id": "string",
+      "date": "YYYY-MM-DD or null for default",
+      "lane": "christian | buddhist | islamic | jewish | stoic | wisdom | science_of_mind",
+      "verse": {
+        "text": "string — the teaching/verse",
+        "reference": "string — accurate citation",
+        "source_note": "string — how to treat the quote",
+        "url": "string|null — optional reputable link"
+      },
+      "reflection": "string|null — short calm MindPal reflection",
+      "practice": {
+        "minutes": 1,
+        "text": "string — optional 1-minute closer"
+      },
+      "audio_url": "string|null"
+    }
+  },
+  "default": {
+    "id": "default",
+    "date": null,
+    "lane": "christian",
+    "verse": {
+      "text": "This is the day which the Lord hath made; we will rejoice and be glad in it.",
+      "reference": "Psalm 118:24 · KJV",
+      "source_note": "Traditional public-domain scripture (KJV).",
+      "url": "https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV"
+    },
+    "reflection": "Begin by noticing that this day is already given. Joy here is a choice of attention, not a demand that everything feel easy.",
+    "practice": {
+      "minutes": 1,
+      "text": "Place a hand on your chest. Breathe out slowly for six counts. Softly say: this day is enough to begin."
+    },
+    "audio_url": null
+  },
+  "entries": [
+    {
+      "id": "votd-2026-09-18",
+      "date": "2026-09-18",
+      "lane": "christian",
+      "verse": {
+        "text": "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",
+        "reference": "John 14:27 · KJV",
+        "source_note": "Traditional public-domain scripture (KJV).",
+        "url": "https://www.biblegateway.com/passage/?search=John+14%3A27&version=KJV"
+      },
+      "reflection": "Christ’s peace is offered as an inner steadiness, different from circumstances going your way. You can receive calm without pretending hard things are gone.",
+      "practice": {
+        "minutes": 1,
+        "text": "Sit quietly for one minute. On each out-breath, release one tense place in your body. Whisper: peace, here."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-19",
+      "date": "2026-09-19",
+      "lane": "buddhist",
+      "verse": {
+        "text": "Hatred is never appeased by hatred in this world. By non-hatred alone is hatred appeased. This is a law eternal.",
+        "reference": "Dhammapada 1:5 (Yamaka Vagga)",
+        "source_note": "Classical Pali Canon teaching; English rendering of a well-attested verse.",
+        "url": "https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.01.budd.html"
+      },
+      "reflection": "Meeting irritation with more irritation feeds the loop. Softening does not mean approving harm — it means choosing a response that does not multiply heat.",
+      "practice": {
+        "minutes": 1,
+        "text": "For one minute, notice any irritation as warmth in the body. Name it ‘heat.’ Breathe out and let the shoulders drop."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-20",
+      "date": "2026-09-20",
+      "lane": "islamic",
+      "verse": {
+        "text": "So truly where there is hardship, there is also ease. Truly where there is hardship, there is also ease.",
+        "reference": "Qur’an 94:5–6",
+        "source_note": "Qur’anic verse (Surah Ash-Sharh). Use a translation you trust for study; wording here is a careful English rendering of the paired ease-after-hardship lines.",
+        "url": "https://quran.com/94"
+      },
+      "reflection": "Hardship and ease are spoken as companions, not as a denial of pain. Today’s difficulty does not cancel the possibility of relief beside it.",
+      "practice": {
+        "minutes": 1,
+        "text": "One minute: breathe in for four, out for six. On the out-breath, silently add: ease is allowed here too."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-21",
+      "date": "2026-09-21",
+      "lane": "stoic",
+      "verse": {
+        "text": "You have power over your mind — not outside events. Realize this, and you will find strength.",
+        "reference": "Marcus Aurelius, Meditations (common English rendering)",
+        "source_note": "Stoic classic; wording follows a widely used modern English sense of the teaching. Not a verse of scripture.",
+        "url": null
+      },
+      "reflection": "Strength here is not control of everything — only ownership of your next inner move: attention, judgment, response.",
+      "practice": {
+        "minutes": 1,
+        "text": "For one minute, pick one worry. Label it ‘outside’ or ‘mine to choose.’ If outside, return to one breath."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-22",
+      "date": "2026-09-22",
+      "lane": "science_of_mind",
+      "verse": {
+        "text": "A longer out-breath helps the body shift toward calm: slower exhalation supports parasympathetic settling and can soften stress arousal.",
+        "reference": "Science-of-mind lane (general established physiology)",
+        "source_note": "General, widely taught breath–nervous-system relationship. Not a citation of a specific paper — do not invent study titles.",
+        "url": null
+      },
+      "reflection": "You do not need perfect meditation. One honest longer out-breath is a portable practice your nervous system can use today.",
+      "practice": {
+        "minutes": 1,
+        "text": "Breathe in gently for four counts. Breathe out for six to eight. Repeat for one minute without forcing."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-23",
+      "date": "2026-09-23",
+      "lane": "jewish",
+      "verse": {
+        "text": "The Lord is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters.",
+        "reference": "Psalm 23:1–2 · KJV",
+        "source_note": "Traditional public-domain scripture (KJV).",
+        "url": "https://www.biblegateway.com/passage/?search=Psalm+23%3A1-2&version=KJV"
+      },
+      "reflection": "Still waters are an image of guided rest. You can seek a quieter pace without earning it first.",
+      "practice": {
+        "minutes": 1,
+        "text": "One minute of quiet. Imagine still water. Let the jaw unclench on each out-breath."
+      },
+      "audio_url": null
+    },
+    {
+      "id": "votd-2026-09-24",
+      "date": "2026-09-24",
+      "lane": "wisdom",
+      "verse": {
+        "text": "Be kind whenever possible. It is always possible.",
+        "reference": "Attributed to the Dalai Lama (widely circulated teaching)",
+        "source_note": "Popular attribution to the 14th Dalai Lama in public talks/writings tradition. Treat as a living wisdom teaching, not scripture.",
+        "url": null
+      },
+      "reflection": "Kindness is not weakness. It is a trainable choice that steadies your own mind while softening how you meet others.",
+      "practice": {
+        "minutes": 1,
+        "text": "For one minute, bring one person to mind. Silently wish them one kind thing. Then include yourself."
+      },
+      "audio_url": null
+    }
+  ]
+}

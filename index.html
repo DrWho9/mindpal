@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2f5d50" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="MindPal" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <title>MindPal</title>
+  <style>
+    :root {
+      --bg: #f6f3ee; --card: #fff; --ink: #1c1a17; --muted: #6b645c;
+      --accent: #2f5d50; --line: #e6dfd4; --soft: #f3f8f5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background: radial-gradient(circle at top, #fffaf3, var(--bg)); color: var(--ink);
+      min-height: 100vh; padding: 16px 16px 88px;
+    }
+    header { max-width: 40rem; margin: 0 auto 12px; }
+    header h1 { margin: 0; font-size: 1.35rem; }
+    header p { margin: 4px 0 0; color: var(--muted); font-size: 0.92rem; }
+    main { max-width: 40rem; margin: 0 auto; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 18px;
+      padding: 1.2rem 1.15rem 1.35rem; box-shadow: 0 10px 30px rgba(40,30,20,.06); margin-bottom: 14px;
+    }
+    .eyebrow { letter-spacing: .08em; text-transform: uppercase; font-size: .72rem; color: var(--muted); margin: 0 0 .45rem; }
+    h2 { font-size: 1.25rem; line-height: 1.25; margin: 0 0 .75rem; }
+    p { line-height: 1.55; margin: 0 0 .85rem; }
+    .practice { background: var(--soft); border: 1px solid #d7e7df; border-radius: 12px; padding: .85rem 1rem; margin: .9rem 0 0; }
+    .practice strong { color: var(--accent); }
+    .meta { color: var(--muted); font-size: .9rem; }
+    .row { display: flex; flex-wrap: wrap; gap: .55rem; margin-top: 1rem; }
+    button {
+      appearance: none; border: 0; border-radius: 999px; padding: .7rem 1.05rem;
+      font: inherit; font-weight: 600; cursor: pointer;
+    }
+    .primary { background: var(--accent); color: #fff; }
+    .secondary { background: #efeae3; color: var(--ink); }
+    nav.tabs {
+      position: fixed; left: 0; right: 0; bottom: 0; display: flex; gap: 0;
+      background: rgba(255,255,255,.94); border-top: 1px solid var(--line);
+      backdrop-filter: blur(8px); padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+    }
+    nav.tabs button {
+      flex: 1; border-radius: 12px; background: transparent; color: var(--muted); font-weight: 600;
+    }
+    nav.tabs button.active { background: var(--soft); color: var(--accent); }
+    .install {
+      display: none; max-width: 40rem; margin: 0 auto 12px; background: #eef6f2;
+      border: 1px solid #cfe3d9; border-radius: 14px; padding: .85rem 1rem; font-size: .92rem;
+    }
+    .install.show { display: block; }
+    .hidden { display: none !important; }
+    .foot { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>MindPal</h1>
+    <p>Calm daily companion — readings & verse</p>
+  </header>
+
+  <div id="installHint" class="install">
+    <strong>Add to Home Screen:</strong>
+    <span id="installSteps">On iPhone: Share → Add to Home Screen. On Android Chrome: menu → Install app / Add to Home screen.</span>
+    <div class="row"><button class="primary" id="installBtn" type="button" hidden>Install MindPal</button></div>
+  </div>
+
+  <main>
+    <section id="panel-verse" class="card" aria-label="Verse for the Day">
+      <p class="eyebrow" id="verseEyebrow">Verse for the Day</p>
+      <h2 id="verseTitle">Loading…</h2>
+      <div id="verseBody"></div>
+      <div class="practice" id="versePracticeWrap" hidden>
+        <strong>1-min practice</strong>
+        <p id="versePractice" style="margin:.4rem 0 0"></p>
+      </div>
+      <p class="meta" id="verseMeta"></p>
+    </section>
+
+    <section id="panel-reading" class="card hidden" aria-label="Daily reading">
+      <p class="eyebrow" id="readingEyebrow">Daily reading</p>
+      <h2 id="readingTitle">Loading…</h2>
+      <div id="readingBody"></div>
+      <div class="practice" id="readingPracticeWrap" hidden>
+        <strong>Practice</strong>
+        <p id="readingPractice" style="margin:.4rem 0 0"></p>
+      </div>
+      <p class="meta" id="readingMeta"></p>
+      <div class="row">
+        <button class="primary" id="anotherReading" type="button">Another random reading</button>
+      </div>
+    </section>
+
+    <p class="foot">Supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14. Offline shell caches after first open.</p>
+  </main>
+
+  <nav class="tabs" aria-label="MindPal sections">
+    <button type="button" class="active" data-tab="verse">Verse</button>
+    <button type="button" data-tab="reading">Reading</button>
+  </nav>
+
+  <script>
+    let versePack = null;
+    let readingsPack = null;
+    let currentReading = null;
+    let deferredPrompt = null;
+
+    function todayKey() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function resolveVerse() {
+      const key = todayKey();
+      const hit = (versePack.entries || []).find((e) => e.date === key);
+      return hit || versePack.default;
+    }
+
+    function renderVerse() {
+      const e = resolveVerse();
+      const v = e.verse || {};
+      document.getElementById('verseEyebrow').textContent =
+        `Verse for the Day · ${e.date || 'default'} · ${(e.lane || '').replace(/_/g, ' ')}`;
+      document.getElementById('verseTitle').textContent = v.reference || 'Today’s verse';
+      const body = document.getElementById('verseBody');
+      body.innerHTML = '';
+      const quote = document.createElement('p');
+      quote.textContent = v.text || '';
+      body.appendChild(quote);
+      if (e.reflection) {
+        const r = document.createElement('p');
+        r.textContent = e.reflection;
+        body.appendChild(r);
+      }
+      const practice = e.practice && e.practice.text;
+      document.getElementById('versePracticeWrap').hidden = !practice;
+      document.getElementById('versePractice').textContent = practice || '';
+      document.getElementById('verseMeta').textContent =
+        `${versePack.title || 'MindPal'} · ${versePack.version || ''} · ${v.source_note || ''}`;
+    }
+
+    function pickReading(excludeId) {
+      const list = (readingsPack && readingsPack.readings) || [];
+      if (!list.length) return null;
+      const pool = excludeId ? list.filter((r) => r.id !== excludeId) : list;
+      const src = pool.length ? pool : list;
+      return src[Math.floor(Math.random() * src.length)];
+    }
+
+    function renderReading(r) {
+      currentReading = r;
+      document.getElementById('readingEyebrow').textContent =
+        `Daily reading · Day ${r.day} · about ${r.minutes || 2} min · ${readingsPack.readings.length} in pack`;
+      document.getElementById('readingTitle').textContent = r.title;
+      const body = document.getElementById('readingBody');
+      body.innerHTML = '';
+      String(r.body || '').split(/\n\n+/).forEach((para) => {
+        if (!para.trim()) return;
+        const p = document.createElement('p');
+        p.textContent = para.trim();
+        body.appendChild(p);
+      });
+      document.getElementById('readingPracticeWrap').hidden = !r.practice;
+      document.getElementById('readingPractice').textContent = r.practice || '';
+      document.getElementById('readingMeta').textContent =
+        `${readingsPack.title || 'MindPal Daily Readings'} · ${readingsPack.version || ''}`;
+    }
+
+    function showTab(name) {
+      document.getElementById('panel-verse').classList.toggle('hidden', name !== 'verse');
+      document.getElementById('panel-reading').classList.toggle('hidden', name !== 'reading');
+      document.querySelectorAll('nav.tabs button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.tab === name);
+      });
+    }
+
+    async function boot() {
+      const [vRes, rRes] = await Promise.all([
+        fetch('./content/verse-of-the-day.json?v=' + Date.now()),
+        fetch('./content/daily-readings.json?v=' + Date.now())
+      ]);
+      versePack = await vRes.json();
+      readingsPack = await rRes.json();
+      renderVerse();
+      renderReading(pickReading());
+    }
+
+    document.querySelectorAll('nav.tabs button').forEach((b) => {
+      b.addEventListener('click', () => showTab(b.dataset.tab));
+    });
+    document.getElementById('anotherReading').addEventListener('click', () => {
+      renderReading(pickReading(currentReading && currentReading.id));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Install prompt (Android Chrome)
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installHint').classList.add('show');
+      const btn = document.getElementById('installBtn');
+      btn.hidden = false;
+      btn.onclick = async () => {
+        deferredPrompt.prompt();
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
+        btn.hidden = true;
+      };
+    });
+    // Always show iOS hint on standalone-capable browsers
+    document.getElementById('installHint').classList.add('show');
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
+    boot().catch((err) => {
+      document.getElementById('verseTitle').textContent = 'Could not load content';
+      document.getElementById('verseBody').innerHTML = `<p class="meta">${err.message || 'Load failed'}</p>`;
+    });
+  </script>
+</body>
+</html>
