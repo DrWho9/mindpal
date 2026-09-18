@@ -467,9 +467,9 @@
 
 
     <section id="panel-videos" class="card hidden" aria-label="MindPal videos">
-      <p class="eyebrow">Videos · Maddy</p>
-      <h2>Watch with Maddy</h2>
-      <p style="color:var(--muted);font-size:.92rem;margin:0 0 1rem">Seated fitness look · coastal. Timed breath matches real counting pace.</p>
+      <p class="eyebrow">Videos · Maddy, Markham &amp; Denyse</p>
+      <h2>Watch with Maddy, Markham &amp; Denyse</h2>
+      <p style="color:var(--muted);font-size:.92rem;margin:0 0 1rem">Companions for welcome, tips, timed breath, and seated calm. Timed breath matches real counting pace.</p>
       <div class="video-list" id="videoList">Loading…</div>
     </section>
 
@@ -1846,7 +1846,10 @@
           meta.className = 'video-meta';
           meta.innerHTML = '<h3></h3><p></p>';
           meta.querySelector('h3').textContent = v.title || 'Video';
-          meta.querySelector('p').textContent = (v.description || '') + (v.duration_sec ? ' · ~' + Math.round(v.duration_sec) + 's' : '');
+          const who = v.person ? (v.person + (v.look ? ' · ' + v.look : '')) : '';
+          const desc = v.description || '';
+          const dur = v.duration_sec ? ' · ~' + Math.round(v.duration_sec) + 's' : '';
+          meta.querySelector('p').textContent = (who ? who + ' — ' : '') + desc + dur;
           card.appendChild(vid);
           card.appendChild(meta);
           host.appendChild(card);

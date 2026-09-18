@@ -1,7 +1,7 @@
 {
-  "pack_id": "mindpal-videos-maddy-v1",
+  "pack_id": "mindpal-videos-maddy-markham-denyse-v1",
   "title": "MindPal Videos",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "modular": true,
   "feature": "videos",
   "videos": [
@@ -34,6 +34,50 @@
       "src": "./videos/maddy/timed-breath.mp4",
       "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count.",
       "version": "1.0.1"
+    },
+    {
+      "id": "markham-welcome",
+      "title": "Calm welcome",
+      "person": "Markham",
+      "look": "Callum SHIRT (MindPal)",
+      "duration_sec": 31,
+      "src": "./videos/markham/welcome.mp4",
+      "description": "Soft introduction to MindPal companionship.",
+      "version": "1.1.0",
+      "heygen_id": "9694bd55c27d55413342a5ecb90bb50d"
+    },
+    {
+      "id": "markham-tip",
+      "title": "Daily reading tip",
+      "person": "Markham",
+      "look": "Callum SHIRT (MindPal)",
+      "duration_sec": 29,
+      "src": "./videos/markham/tip.mp4",
+      "description": "A calm tip for using daily readings without pressure.",
+      "version": "1.1.0",
+      "heygen_id": "b1f7931d8ad81f58ad85298514911b24"
+    },
+    {
+      "id": "markham-timed-breath",
+      "title": "Timed breath coach",
+      "person": "Markham",
+      "look": "Callum SHIRT (MindPal)",
+      "duration_sec": 91,
+      "src": "./videos/markham/timed-breath.mp4",
+      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count.",
+      "version": "1.1.0",
+      "heygen_id": "c290888dc95437372d54d7b5b089927a"
+    },
+    {
+      "id": "denyse-calm-breath",
+      "title": "Calm breath (seated)",
+      "person": "Denyse",
+      "look": "MindPal MEDITATION SEAT \u2014 Denyse",
+      "duration_sec": 392,
+      "src": "./videos/denyse/relaxation.mp4",
+      "description": "Seated calm-breath / relaxation companion with Denyse.",
+      "version": "1.1.0",
+      "heygen_id": "0ceea4b93fc341ec4f5ec2e067bf026c"
     }
   ]
 }
