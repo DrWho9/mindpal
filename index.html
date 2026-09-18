@@ -14,6 +14,7 @@
     :root {
       --bg: #f6f3ee; --card: #fff; --ink: #1c1a17; --muted: #6b645c;
       --accent: #2f5d50; --line: #e6dfd4; --soft: #f3f8f5;
+      --cream: #faf6ef; --sage: #e8f0eb; --sage-deep: #3d6b58;
     }
     * { box-sizing: border-box; }
     body {
@@ -58,17 +59,83 @@
     .install.show { display: block; }
     .hidden { display: none !important; }
     .foot { font-size: .82rem; color: var(--muted); margin-top: 1rem; }
+
+    /* Interactive Book */
+    #panel-book { padding: 0; overflow: hidden; }
+    #panel-book .book-head {
+      padding: 1.1rem 1.15rem .65rem; border-bottom: 1px solid #e2ddd4;
+      background: linear-gradient(180deg, #f3f7f4, var(--cream));
+    }
+    #panel-book .book-head h2 { margin-bottom: .35rem; }
+    #panel-book .book-head > p { margin-bottom: .55rem; font-size: .92rem; color: var(--muted); }
+    #panel-book .book-actions { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
+    #panel-book .detect-note { font-size: .78rem; color: #5a6e63; margin: .45rem 0 0; }
+    #panel-book .book-shell {
+      display: grid; grid-template-columns: 0fr 1fr; min-height: 62vh;
+      transition: grid-template-columns .28s ease;
+    }
+    #panel-book .book-shell.rail-open { grid-template-columns: minmax(10.5rem, 40%) 1fr; }
+    #panel-book .chapter-rail {
+      overflow: hidden; background: var(--sage); border-right: 1px solid #cfdfd5;
+      min-width: 0;
+    }
+    #panel-book .rail-inner { padding: .75rem .65rem 1rem; width: 12.5rem; max-width: 100%; }
+    #panel-book .rail-title {
+      font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--sage-deep); margin: 0 0 .55rem; font-weight: 700;
+    }
+    #panel-book .chapter-list { list-style: none; margin: 0; padding: 0; max-height: 52vh; overflow: auto; }
+    #panel-book .chapter-list button {
+      width: 100%; text-align: left; border-radius: 10px; padding: .55rem .6rem;
+      background: transparent; color: var(--ink); font-weight: 500; font-size: .86rem;
+      line-height: 1.3; margin-bottom: .2rem;
+    }
+    #panel-book .chapter-list button.sub { padding-left: 1rem; font-size: .8rem; color: #5a635c; }
+    #panel-book .chapter-list button:hover,
+    #panel-book .chapter-list button.active { background: #d5e6dc; color: var(--accent); }
+    #panel-book .reader-pane { display: flex; flex-direction: column; min-width: 0;
+      background: radial-gradient(circle at top right, #eef5ef 0%, transparent 42%),
+        linear-gradient(180deg, var(--cream), #f3ebe0);
+    }
+    #panel-book .reader-top {
+      display: flex; align-items: center; gap: .4rem; padding: .55rem .7rem;
+      border-bottom: 1px solid #e4dccf; background: rgba(255,252,246,.8);
+    }
+    #panel-book .reader-top button { padding: .45rem .75rem; font-size: .85rem; }
+    #panel-book .chunk-meta { flex: 1; font-size: .78rem; color: #6b645c; text-align: center; }
+    #panel-book .read-surface {
+      flex: 1; padding: 1.15rem 1.2rem 1.4rem; overflow: auto;
+      cursor: pointer; touch-action: pan-y; -webkit-user-select: none; user-select: none;
+    }
+    #panel-book .chapter-label {
+      display: inline-block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--sage-deep); background: #dceae2; border-radius: 999px; padding: .25rem .65rem;
+      margin-bottom: .85rem; font-weight: 700;
+    }
+    #panel-book .prose {
+      font-family: Georgia, 'Times New Roman', ui-serif, serif;
+      font-size: 1.12rem; line-height: 1.7; color: #2a2621;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    #panel-book .empty-book { padding: 2rem 1rem; text-align: center; color: var(--muted); }
+    #panel-book .read-hint {
+      text-align: center; font-size: .78rem; color: #8a8176; padding: .35rem .75rem .7rem;
+    }
+    #panel-book .privacy {
+      font-size: .78rem; color: var(--muted); padding: .55rem 1.1rem .9rem;
+      border-top: 1px solid #e4dccf; background: var(--cream); margin: 0;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>MindPal</h1>
-    <p>Your MindPal home — Verse for the Day & daily readings</p>
+    <p>Your MindPal home — Verse, Reading &amp; private Book</p>
   </header>
 
   <div id="installHint" class="install">
     <strong>Install MindPal on your phone:</strong>
-    <span id="installSteps"> This is MindPal (not a separate app). iPhone Safari: Share → Add to Home Screen. Android Chrome: menu → Add to Home screen / Install.</span>
+    <span> This is MindPal (not a separate app). iPhone Safari: Share → Add to Home Screen. Android Chrome: menu → Add to Home screen / Install.</span>
     <div class="row"><button class="primary" id="installBtn" type="button" hidden>Add MindPal to Home Screen</button></div>
   </div>
 
@@ -98,12 +165,54 @@
       </div>
     </section>
 
+    <section id="panel-book" class="card hidden" aria-label="Private interactive book">
+      <div class="book-head">
+        <p class="eyebrow">Book · private · interactive</p>
+        <h2>Your book</h2>
+        <p>Upload a PDF you own. Text is reflowed on-device for calm reading — never sent to MindPal servers.</p>
+        <div class="book-actions">
+          <label class="secondary" style="display:inline-flex;align-items:center;padding:.55rem 1rem;border-radius:999px;background:#efeae3;font-weight:600;cursor:pointer">
+            Choose PDF
+            <input id="bookFile" type="file" accept="application/pdf,.pdf" hidden />
+          </label>
+          <button class="secondary" id="railToggle" type="button" disabled>Chapters</button>
+          <button class="secondary" id="bookClear" type="button" disabled>Clear</button>
+        </div>
+        <p class="detect-note" id="bookDetectNote" hidden></p>
+      </div>
+      <div class="book-shell" id="bookShell">
+        <aside class="chapter-rail" id="chapterRail" aria-label="Chapters">
+          <div class="rail-inner">
+            <p class="rail-title">Chapters</p>
+            <ul class="chapter-list" id="chapterList"></ul>
+          </div>
+        </aside>
+        <div class="reader-pane">
+          <div class="reader-top">
+            <button class="secondary" id="bookPrev" type="button" disabled>‹ Prev</button>
+            <span class="chunk-meta" id="bookStatus">No book open yet.</span>
+            <button class="secondary" id="bookNext" type="button" disabled>Next ›</button>
+          </div>
+          <div class="read-surface" id="readSurface" tabindex="0" role="region" aria-label="Reading surface">
+            <div class="empty-book" id="bookEmpty">Choose a private PDF to begin. Tap or swipe to turn text pages.</div>
+            <div id="bookChunk" class="hidden">
+              <div class="chapter-label" id="chunkChapter"></div>
+              <div class="prose" id="chunkProse"></div>
+            </div>
+          </div>
+          <p class="read-hint">Tap left/right · swipe ← → · chapter rail collapsed until opened</p>
+        </div>
+      </div>
+      <p class="privacy">Private uploads only. No scraped libraries. Chunk position in localStorage; optional PDF bytes in IndexedDB on this device only.</p>
+    </section>
+
     <p class="foot">Supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14. Offline shell caches after first open.</p>
   </main>
 
   <nav class="tabs" aria-label="MindPal modules">
     <button type="button" class="active" data-tab="verse">Verse</button>
     <button type="button" data-tab="reading">Reading</button>
+    <button type="button" data-tab="book">Book</button>
   </nav>
 
   <script>
@@ -114,10 +223,7 @@
 
     function todayKey() {
       const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${y}-${m}-${day}`;
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
 
     function resolveVerse() {
@@ -130,8 +236,8 @@
       const e = resolveVerse();
       const v = e.verse || {};
       document.getElementById('verseEyebrow').textContent =
-        `Verse for the Day · ${e.date || 'default'} · ${(e.lane || '').replace(/_/g, ' ')}`;
-      document.getElementById('verseTitle').textContent = v.reference || 'Today’s verse';
+        'Verse for the Day · ' + (e.date || 'default') + ' · ' + (e.lane || '').replace(/_/g, ' ');
+      document.getElementById('verseTitle').textContent = v.reference || "Today's verse";
       const body = document.getElementById('verseBody');
       body.innerHTML = '';
       const quote = document.createElement('p');
@@ -146,7 +252,7 @@
       document.getElementById('versePracticeWrap').hidden = !practice;
       document.getElementById('versePractice').textContent = practice || '';
       document.getElementById('verseMeta').textContent =
-        `${versePack.title || 'MindPal'} · ${versePack.version || ''} · ${v.source_note || ''}`;
+        (versePack.title || 'MindPal') + ' · ' + (versePack.version || '') + ' · ' + (v.source_note || '');
     }
 
     function pickReading(excludeId) {
@@ -160,7 +266,7 @@
     function renderReading(r) {
       currentReading = r;
       document.getElementById('readingEyebrow').textContent =
-        `Daily reading · Day ${r.day} · about ${r.minutes || 2} min · ${readingsPack.readings.length} in pack`;
+        'Daily reading · Day ' + r.day + ' · about ' + (r.minutes || 2) + ' min · ' + readingsPack.readings.length + ' in pack';
       document.getElementById('readingTitle').textContent = r.title;
       const body = document.getElementById('readingBody');
       body.innerHTML = '';
@@ -173,16 +279,431 @@
       document.getElementById('readingPracticeWrap').hidden = !r.practice;
       document.getElementById('readingPractice').textContent = r.practice || '';
       document.getElementById('readingMeta').textContent =
-        `${readingsPack.title || 'MindPal Daily Readings'} · ${readingsPack.version || ''}`;
+        (readingsPack.title || 'MindPal Daily Readings') + ' · ' + (readingsPack.version || '');
     }
 
     function showTab(name) {
       document.getElementById('panel-verse').classList.toggle('hidden', name !== 'verse');
       document.getElementById('panel-reading').classList.toggle('hidden', name !== 'reading');
+      document.getElementById('panel-book').classList.toggle('hidden', name !== 'book');
       document.querySelectorAll('nav.tabs button').forEach((b) => {
         b.classList.toggle('active', b.dataset.tab === name);
       });
     }
+
+    /* —— Interactive Book —— */
+    const BOOK_POS_KEY = 'mindpal-book-pos-v2';
+    const BOOK_IDB = 'mindpal-book-idb';
+    const BOOK_STORE = 'pdfs';
+    const CHUNK_CHARS = 900;
+
+    let bookState = null;
+    let railOpen = false;
+    let touchX = null;
+
+    function bookStatus(msg) {
+      const el = document.getElementById('bookStatus');
+      if (el) el.textContent = msg;
+    }
+
+    function idbOpen() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(BOOK_IDB, 1);
+        req.onupgradeneeded = () => {
+          const db = req.result;
+          if (!db.objectStoreNames.contains(BOOK_STORE)) db.createObjectStore(BOOK_STORE);
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function idbPutPdf(name, buffer) {
+      try {
+        const db = await idbOpen();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(BOOK_STORE, 'readwrite');
+          tx.objectStore(BOOK_STORE).put({ name: name, buffer: buffer, savedAt: Date.now() }, 'current');
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+        db.close();
+      } catch (e) { /* optional */ }
+    }
+
+    async function idbGetPdf() {
+      try {
+        const db = await idbOpen();
+        const row = await new Promise((resolve, reject) => {
+          const tx = db.transaction(BOOK_STORE, 'readonly');
+          const r = tx.objectStore(BOOK_STORE).get('current');
+          r.onsuccess = () => resolve(r.result || null);
+          r.onerror = () => reject(r.error);
+        });
+        db.close();
+        return row;
+      } catch (e) { return null; }
+    }
+
+    async function idbClearPdf() {
+      try {
+        const db = await idbOpen();
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(BOOK_STORE, 'readwrite');
+          tx.objectStore(BOOK_STORE).delete('current');
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error);
+        });
+        db.close();
+      } catch (e) {}
+    }
+
+    function loadPdfjs() {
+      if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+      return new Promise((resolve, reject) => {
+        const s2 = document.createElement('script');
+        s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+        s2.onload = () => {
+          if (!window.pdfjsLib) return reject(new Error('pdf.js failed to load'));
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+            'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+          resolve(window.pdfjsLib);
+        };
+        s2.onerror = () => reject(new Error('Could not load pdf.js (online required first time)'));
+        document.head.appendChild(s2);
+      });
+    }
+
+    function normalizeWhitespace(s) {
+      return String(s || '').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+    }
+
+    function isHeadingLine(line) {
+      const t = line.trim();
+      if (!t || t.length > 80) return false;
+      if (/^chapter\s+\d+/i.test(t)) return true;
+      if (/^(part|section|book)\s+[ivxlcdm\d]+/i.test(t)) return true;
+      if (/^\d{1,2}(\.\d{1,2}){0,3}\s+\S/.test(t) && t.length < 70) return true;
+      if (/^[A-Z0-9][A-Z0-9\s,'’\-]{4,}$/.test(t) && t.length < 60) return true;
+      if (/^[A-Z][A-Za-z0-9'’\-]+(?:\s+[A-Z][A-Za-z0-9'’\-]+){0,8}$/.test(t) && !/[.!?]$/.test(t) && t.length < 55) {
+        return true;
+      }
+      return false;
+    }
+
+    async function extractOutlineChapters(pdf) {
+      try {
+        const outline = await pdf.getOutline();
+        if (!outline || !outline.length) return null;
+        const chapters = [];
+        async function walk(items, depth) {
+          for (let i = 0; i < (items || []).length; i++) {
+            const it = items[i];
+            let pageIndex = 0;
+            try {
+              if (it.dest) {
+                const dest = typeof it.dest === 'string' ? await pdf.getDestination(it.dest) : it.dest;
+                if (Array.isArray(dest) && dest[0]) {
+                  pageIndex = await pdf.getPageIndex(dest[0]);
+                }
+              }
+            } catch (e) {}
+            chapters.push({
+              title: (it.title || 'Section').trim(),
+              pageIndex: pageIndex || 0,
+              depth: depth || 0
+            });
+            if (it.items && it.items.length) await walk(it.items, (depth || 0) + 1);
+          }
+        }
+        await walk(outline, 0);
+        return chapters.length ? chapters : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function extractPagesText(pdf) {
+      const pages = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const tc = await page.getTextContent();
+        let line = '';
+        let lastY = null;
+        const lines = [];
+        for (let j = 0; j < tc.items.length; j++) {
+          const item = tc.items[j];
+          const y = item.transform ? item.transform[5] : 0;
+          if (lastY !== null && Math.abs(y - lastY) > 2.2) {
+            lines.push(line.replace(/\s+$/,''));
+            line = '';
+          }
+          line += item.str + (item.hasEOL ? '\n' : '');
+          lastY = y;
+        }
+        if (line.trim()) lines.push(line.replace(/\s+$/,''));
+        pages.push({ pageIndex: i - 1, text: normalizeWhitespace(lines.join('\n')) });
+      }
+      return pages;
+    }
+
+    function chaptersFromHeadings(pages) {
+      const chapters = [];
+      pages.forEach((p) => {
+        const lines = p.text.split(/\n/);
+        lines.forEach((ln, idx) => {
+          if (isHeadingLine(ln) && (idx < 8 || /^chapter\s+\d+/i.test(ln.trim()))) {
+            const title = ln.trim();
+            if (chapters.length && chapters[chapters.length - 1].pageIndex === p.pageIndex &&
+                chapters[chapters.length - 1].title === title) return;
+            chapters.push({
+              title: title,
+              pageIndex: p.pageIndex,
+              depth: /^chapter\s+\d+/i.test(title) ? 0 : 1
+            });
+          }
+        });
+      });
+      if (chapters.length < 2) {
+        const step = Math.max(1, Math.floor(pages.length / 6));
+        return pages.filter((_, i) => i === 0 || i % step === 0 || i === pages.length - 1)
+          .map((p, i) => ({ title: 'Section ' + (i + 1), pageIndex: p.pageIndex, depth: 0 }));
+      }
+      return chapters;
+    }
+
+    function buildChunks(pages, chapters) {
+      const sorted = chapters.slice().sort((a, b) => a.pageIndex - b.pageIndex || a.depth - b.depth);
+      const chunks = [];
+      pages.forEach((p) => {
+        let ch = sorted[0] || { title: 'Reading', pageIndex: 0, depth: 0 };
+        for (let i = 0; i < sorted.length; i++) {
+          if (sorted[i].pageIndex <= p.pageIndex) ch = sorted[i];
+          else break;
+        }
+        const text = p.text;
+        if (!text) return;
+        const paras = text.split(/\n\n+/).map((x) => x.trim()).filter(Boolean);
+        let buf = '';
+        function flush() {
+          if (!buf.trim()) return;
+          chunks.push({
+            chapterTitle: ch.title,
+            chapterPage: ch.pageIndex,
+            pageIndex: p.pageIndex,
+            text: buf.trim()
+          });
+          buf = '';
+        }
+        paras.forEach((para) => {
+          if ((buf + '\n\n' + para).length > CHUNK_CHARS && buf) flush();
+          buf = buf ? buf + '\n\n' + para : para;
+          while (buf.length > CHUNK_CHARS * 1.6) {
+            let cut = buf.lastIndexOf(' ', CHUNK_CHARS);
+            if (cut < CHUNK_CHARS * 0.5) cut = CHUNK_CHARS;
+            chunks.push({
+              chapterTitle: ch.title,
+              chapterPage: ch.pageIndex,
+              pageIndex: p.pageIndex,
+              text: buf.slice(0, cut).trim()
+            });
+            buf = buf.slice(cut).trim();
+          }
+        });
+        flush();
+      });
+      return chunks.length ? chunks : [{
+        chapterTitle: 'Reading', chapterPage: 0, pageIndex: 0,
+        text: '(No extractable text in this PDF.)'
+      }];
+    }
+
+    function savePos() {
+      if (!bookState) return;
+      try {
+        localStorage.setItem(BOOK_POS_KEY, JSON.stringify({
+          name: bookState.name,
+          chunkIndex: bookState.chunkIndex,
+          detectMethod: bookState.detectMethod
+        }));
+      } catch (e) {}
+    }
+
+    function renderChapterRail() {
+      const ul = document.getElementById('chapterList');
+      ul.innerHTML = '';
+      if (!bookState) return;
+      const seen = {};
+      bookState.chapters.forEach((ch) => {
+        const key = ch.title + '@' + ch.pageIndex;
+        if (seen[key]) return;
+        seen[key] = true;
+        const li = document.createElement('li');
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = ch.title;
+        if (ch.depth > 0) btn.classList.add('sub');
+        btn.addEventListener('click', () => {
+          let idx = bookState.chunks.findIndex((c) => c.chapterPage === ch.pageIndex && c.chapterTitle === ch.title);
+          if (idx < 0) idx = bookState.chunks.findIndex((c) => c.pageIndex >= ch.pageIndex);
+          goChunk(idx >= 0 ? idx : 0);
+          setRail(false);
+        });
+        li.appendChild(btn);
+        ul.appendChild(li);
+      });
+      highlightRail();
+    }
+
+    function highlightRail() {
+      if (!bookState) return;
+      const cur = bookState.chunks[bookState.chunkIndex];
+      document.querySelectorAll('#chapterList button').forEach((btn) => {
+        btn.classList.toggle('active', !!(cur && btn.textContent === cur.chapterTitle));
+      });
+    }
+
+    function renderChunk() {
+      const empty = document.getElementById('bookEmpty');
+      const wrap = document.getElementById('bookChunk');
+      if (!bookState || !bookState.chunks.length) {
+        empty.classList.remove('hidden');
+        wrap.classList.add('hidden');
+        bookStatus('No book open yet.');
+        document.getElementById('bookPrev').disabled = true;
+        document.getElementById('bookNext').disabled = true;
+        document.getElementById('railToggle').disabled = true;
+        document.getElementById('bookClear').disabled = true;
+        return;
+      }
+      empty.classList.add('hidden');
+      wrap.classList.remove('hidden');
+      const c = bookState.chunks[bookState.chunkIndex];
+      document.getElementById('chunkChapter').textContent = c.chapterTitle;
+      document.getElementById('chunkProse').textContent = c.text;
+      bookStatus(bookState.name + ' · ' + (bookState.chunkIndex + 1) + ' / ' + bookState.chunks.length);
+      document.getElementById('bookPrev').disabled = bookState.chunkIndex <= 0;
+      document.getElementById('bookNext').disabled = bookState.chunkIndex >= bookState.chunks.length - 1;
+      document.getElementById('railToggle').disabled = false;
+      document.getElementById('bookClear').disabled = false;
+      highlightRail();
+      savePos();
+      document.getElementById('readSurface').scrollTop = 0;
+    }
+
+    function goChunk(i) {
+      if (!bookState) return;
+      bookState.chunkIndex = Math.max(0, Math.min(bookState.chunks.length - 1, i));
+      renderChunk();
+    }
+
+    function setRail(open) {
+      railOpen = !!open;
+      document.getElementById('bookShell').classList.toggle('rail-open', railOpen);
+      document.getElementById('railToggle').textContent = railOpen ? 'Hide chapters' : 'Chapters';
+    }
+
+    async function openBookFromBuffer(name, buffer) {
+      bookStatus('Parsing ' + name + '…');
+      const pdfjsLib = await loadPdfjs();
+      const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+      const pages = await extractPagesText(pdf);
+      let detectMethod = 'heading-heuristics';
+      let chapters = await extractOutlineChapters(pdf);
+      if (chapters && chapters.length) {
+        detectMethod = 'pdf-outline-bookmarks';
+      } else {
+        chapters = chaptersFromHeadings(pages);
+        detectMethod = chapters.some((c) => /^chapter\s+\d+/i.test(c.title))
+          ? 'heading-heuristics' : 'section-heuristics';
+      }
+      const chunks = buildChunks(pages, chapters);
+      let start = 0;
+      try {
+        const saved = JSON.parse(localStorage.getItem(BOOK_POS_KEY) || 'null');
+        if (saved && saved.name === name && Number.isFinite(saved.chunkIndex)) {
+          start = Math.max(0, Math.min(chunks.length - 1, saved.chunkIndex | 0));
+        }
+      } catch (e) {}
+      bookState = {
+        name: name,
+        chapters: chapters,
+        chunks: chunks,
+        chunkIndex: start,
+        detectMethod: detectMethod
+      };
+      const note = document.getElementById('bookDetectNote');
+      note.hidden = false;
+      note.textContent = 'Chapters via ' + detectMethod.replace(/-/g, ' ') +
+        ' · ' + chapters.length + ' markers · ' + chunks.length + ' reading screens · ' +
+        pdf.numPages + ' PDF pages';
+      renderChapterRail();
+      setRail(false);
+      renderChunk();
+      await idbPutPdf(name, buffer);
+    }
+
+    async function openBookFile(file) {
+      if (!file) return;
+      try {
+        const buf = await file.arrayBuffer();
+        await openBookFromBuffer(file.name, buf);
+      } catch (err) {
+        bookState = null;
+        renderChunk();
+        bookStatus('Open failed: ' + (err.message || err));
+      }
+    }
+
+    document.getElementById('bookFile').addEventListener('change', (e) => {
+      const f = e.target.files && e.target.files[0];
+      if (f) openBookFile(f);
+    });
+    document.getElementById('bookPrev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      goChunk(bookState ? bookState.chunkIndex - 1 : 0);
+    });
+    document.getElementById('bookNext').addEventListener('click', (e) => {
+      e.stopPropagation();
+      goChunk(bookState ? bookState.chunkIndex + 1 : 0);
+    });
+    document.getElementById('railToggle').addEventListener('click', () => setRail(!railOpen));
+    document.getElementById('bookClear').addEventListener('click', async () => {
+      bookState = null;
+      try { localStorage.removeItem(BOOK_POS_KEY); } catch (e) {}
+      await idbClearPdf();
+      document.getElementById('chapterList').innerHTML = '';
+      document.getElementById('bookDetectNote').hidden = true;
+      setRail(false);
+      renderChunk();
+      document.getElementById('bookFile').value = '';
+    });
+
+    const surface = document.getElementById('readSurface');
+    surface.addEventListener('click', (e) => {
+      if (!bookState) return;
+      if (e.target.closest('button')) return;
+      const rect = surface.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if (x < rect.width * 0.28) goChunk(bookState.chunkIndex - 1);
+      else goChunk(bookState.chunkIndex + 1);
+    });
+    surface.addEventListener('touchstart', (e) => {
+      if (!e.changedTouches || !e.changedTouches[0]) return;
+      touchX = e.changedTouches[0].clientX;
+    }, { passive: true });
+    surface.addEventListener('touchend', (e) => {
+      if (touchX === null || !bookState || !e.changedTouches || !e.changedTouches[0]) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) < 40) return;
+      if (dx < 0) goChunk(bookState.chunkIndex + 1);
+      else goChunk(bookState.chunkIndex - 1);
+    }, { passive: true });
+
+    idbGetPdf().then((row) => {
+      if (row && row.buffer) openBookFromBuffer(row.name || 'Saved PDF', row.buffer).catch(function () {});
+    });
 
     async function boot() {
       const [vRes, rRes] = await Promise.all([
@@ -203,7 +724,6 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Install prompt (Android Chrome)
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -217,7 +737,6 @@
         btn.hidden = true;
       };
     });
-    // Always show iOS hint on standalone-capable browsers
     document.getElementById('installHint').classList.add('show');
 
     if ('serviceWorker' in navigator) {
@@ -225,7 +744,7 @@
     }
     boot().catch((err) => {
       document.getElementById('verseTitle').textContent = 'Could not load content';
-      document.getElementById('verseBody').innerHTML = `<p class="meta">${err.message || 'Load failed'}</p>`;
+      document.getElementById('verseBody').innerHTML = '<p class="meta">' + (err.message || 'Load failed') + '</p>';
     });
   </script>
 </body>

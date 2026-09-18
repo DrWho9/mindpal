@@ -6,8 +6,14 @@ This is **MindPal** — not a separate product. Verse for the Day and daily read
 1. Open the MindPal HTTPS URL on your phone.
 2. **iPhone (Safari):** Share → **Add to Home Screen** → Add.
 3. **Android (Chrome):** menu → **Add to Home screen** / Install.
-4. Open the **MindPal** icon — Verse + Reading modules.
+4. Open the **MindPal** icon — Verse, Reading, and **Book** modules.
 
-Offline: service worker caches MindPal shell + content after first open.
+## Book tab (interactive)
+- Upload a PDF **you own** (File picker). Bytes stay on-device (optional IndexedDB); never uploaded to MindPal servers.
+- Parses text with pdf.js (CDN; network needed first time).
+- **Chapters:** uses PDF outline/bookmarks when present; otherwise heading heuristics (Chapter N, title-case lines, numbered sections).
+- **UI:** collapsible chapter rail (collapsed by default) · warm cream / soft sage reading surface · ~half-screen reflowed text chunks (not raw PDF canvas as primary).
+- **Advance:** tap left/right thirds of the screen, or swipe ← →. End of a chapter continues into the next on the following tap.
+- Last chunk index remembered in localStorage for that filename.
 
-PDF book reader stays on the MindPal backlog.
+Offline: service worker caches MindPal shell + Verse/Reading content after first open (cache `mindpal-v1-3-book-interactive`). pdf.js + a new PDF still need network / file pick.
