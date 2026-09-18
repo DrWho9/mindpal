@@ -1,9 +1,0 @@
-MindPal PWA LIVE
-URL: https://drwho9.github.io/mindpal-pwa/
-Repo: https://github.com/DrWho9/mindpal-pwa
-Host: GitHub Pages (durable HTTPS, not CF quick tunnel)
-Features: Verse for the Day + Daily readings (210), offline SW cache
-Install:
-  iPhone Safari: Share → Add to Home Screen
-  Android Chrome: menu → Install app / Add to Home screen
-Verified 2026-09-18: index/manifest/sw/content HTTP 200
