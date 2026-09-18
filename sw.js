@@ -1,4 +1,4 @@
-const CACHE = 'mindpal-pwa-v1';
+const CACHE = 'mindpal-v1-1';
 const PRECACHE = [
   './',
   './index.html',

@@ -1,8 +1,13 @@
-# MindPal PWA — install on phone
+# MindPal (phone)
 
-1. Open the live HTTPS URL on your phone (Safari or Chrome).
+This is **MindPal** — not a separate product. Verse for the Day and daily readings are in-app modules.
+
+## Install MindPal on your phone
+1. Open the MindPal HTTPS URL on your phone.
 2. **iPhone (Safari):** Share → **Add to Home Screen** → Add.
-3. **Android (Chrome):** menu ⋮ → **Install app** or **Add to Home screen**.
-4. Open the MindPal icon — Verse and Reading tabs work offline after first load.
+3. **Android (Chrome):** menu → **Add to Home screen** / Install.
+4. Open the **MindPal** icon — Verse + Reading modules.
 
-Offline: service worker caches app shell + verse + 210 readings JSON.
+Offline: service worker caches MindPal shell + content after first open.
+
+PDF book reader stays on the MindPal backlog.
