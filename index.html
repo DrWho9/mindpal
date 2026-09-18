@@ -70,6 +70,7 @@
     #panel-book .book-head > p { margin-bottom: .55rem; font-size: .92rem; color: var(--muted); }
     #panel-book .book-actions { display: flex; flex-wrap: wrap; gap: .45rem; align-items: center; }
     #panel-book .detect-note { font-size: .78rem; color: #5a6e63; margin: .45rem 0 0; }
+    #panel-book.reading-mode .book-head { display: none; }
     #panel-book .book-shell {
       display: grid; grid-template-columns: 0fr 1fr; min-height: 62vh;
       transition: grid-template-columns .28s ease;
@@ -82,7 +83,11 @@
     #panel-book .rail-inner { padding: .75rem .65rem 1rem; width: 12.5rem; max-width: 100%; }
     #panel-book .rail-title {
       font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
-      color: var(--sage-deep); margin: 0 0 .55rem; font-weight: 700;
+      color: var(--sage-deep); margin: 0 0 .35rem; font-weight: 700;
+    }
+    #panel-book .chapter-search {
+      width: 100%; margin: 0 0 .55rem; padding: .4rem .55rem; border-radius: 8px;
+      border: 1px solid #cfdfd5; background: #fff; font: inherit; font-size: .82rem;
     }
     #panel-book .chapter-list { list-style: none; margin: 0; padding: 0; max-height: 52vh; overflow: auto; }
     #panel-book .chapter-list button {
@@ -93,41 +98,158 @@
     #panel-book .chapter-list button.sub { padding-left: 1rem; font-size: .8rem; color: #5a635c; }
     #panel-book .chapter-list button:hover,
     #panel-book .chapter-list button.active { background: #d5e6dc; color: var(--accent); }
-    #panel-book .reader-pane { display: flex; flex-direction: column; min-width: 0;
-      background: radial-gradient(circle at top right, #eef5ef 0%, transparent 42%),
-        linear-gradient(180deg, var(--cream), #f3ebe0);
+    #panel-book .chapter-list li.filtered-out { display: none; }
+    #panel-book .reader-pane {
+      display: flex; flex-direction: column; min-width: 0;
+      background: var(--book-bg, linear-gradient(180deg, var(--cream), #f3ebe0));
+      color: var(--book-ink, var(--ink));
+      position: relative;
+    }
+    #panel-book .ebook-top {
+      display: none; flex-direction: column; gap: .35rem;
+      padding: .5rem .75rem .45rem; border-bottom: 1px solid var(--book-line, #e4dccf);
+      background: var(--book-chrome, rgba(255,252,246,.92));
+    }
+    #panel-book.reading-mode .ebook-top { display: flex; }
+    #panel-book .ebook-top-row {
+      display: flex; align-items: center; gap: .35rem;
+    }
+    #panel-book .ebook-top button.icon-btn {
+      padding: .4rem .65rem; font-size: .9rem; min-width: 2.4rem;
+      background: transparent; color: var(--book-accent, var(--accent));
+      border-radius: 10px;
+    }
+    #panel-book .ebook-title-block { flex: 1; text-align: center; min-width: 0; }
+    #panel-book .ebook-chapter {
+      font-size: .82rem; font-weight: 700; color: var(--book-ink, var(--ink));
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #panel-book .ebook-progress {
+      font-size: .72rem; color: var(--book-muted, #6b645c); margin-top: .1rem;
+    }
+    #panel-book .ebook-scrub {
+      width: 100%; accent-color: var(--book-accent, var(--accent));
+      height: 1.1rem; cursor: pointer;
     }
     #panel-book .reader-top {
       display: flex; align-items: center; gap: .4rem; padding: .55rem .7rem;
       border-bottom: 1px solid #e4dccf; background: rgba(255,252,246,.8);
     }
+    #panel-book.reading-mode .reader-top { display: none; }
     #panel-book .reader-top button { padding: .45rem .75rem; font-size: .85rem; }
     #panel-book .chunk-meta { flex: 1; font-size: .78rem; color: #6b645c; text-align: center; }
     #panel-book .read-surface {
       flex: 1; padding: 1.15rem 1.2rem 1.4rem; overflow: auto;
       cursor: pointer; touch-action: pan-y; -webkit-user-select: none; user-select: none;
+      background: var(--book-bg, transparent);
+      color: var(--book-ink, inherit);
+      transition: background .2s ease, color .2s ease;
     }
     #panel-book .chapter-label {
       display: inline-block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
-      color: var(--sage-deep); background: #dceae2; border-radius: 999px; padding: .25rem .65rem;
+      color: var(--book-accent, var(--sage-deep)); background: var(--book-chip, #dceae2);
+      border-radius: 999px; padding: .25rem .65rem;
       margin-bottom: .85rem; font-weight: 700;
     }
     #panel-book .prose {
-      font-family: Georgia, 'Times New Roman', ui-serif, serif;
-      font-size: 1.12rem; line-height: 1.7; color: #2a2621;
+      font-family: var(--book-font, Georgia, 'Times New Roman', ui-serif, serif);
+      font-size: 1.12rem; line-height: 1.7; color: var(--book-ink, #2a2621);
       white-space: pre-wrap; word-break: break-word;
+      transition: color .2s ease, font-family .15s ease;
+    }
+    #panel-book .prose.font-serif { font-family: Georgia, 'Times New Roman', ui-serif, serif; }
+    #panel-book .prose.font-sans { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; }
+    #panel-book .prose.font-rounded {
+      font-family: 'SF Pro Rounded', 'Nunito', 'Segoe UI Rounded', ui-rounded, system-ui, sans-serif;
+      letter-spacing: .01em;
     }
     #panel-book .empty-book { padding: 2rem 1rem; text-align: center; color: var(--muted); }
     #panel-book .read-hint {
       text-align: center; font-size: .78rem; color: #8a8176; padding: .35rem .75rem .7rem;
     }
-
+    #panel-book.reading-mode .read-hint,
+    #panel-book.reading-mode .voice-note { display: none; }
     #panel-book #bookListen.speaking { background: #d5e6dc; color: var(--accent); }
     #panel-book .voice-note { font-size: .72rem; color: #7a736a; text-align: center; padding: 0 .75rem .55rem; }
+    #panel-book .ebook-bottom {
+      display: none; flex-direction: column; gap: 0;
+      border-top: 1px solid var(--book-line, #e4dccf);
+      background: var(--book-chrome, rgba(255,252,246,.94));
+    }
+    #panel-book.reading-mode .ebook-bottom { display: flex; }
+    #panel-book .ebook-listen-row {
+      display: flex; justify-content: center; gap: .45rem; padding: .4rem .75rem .15rem;
+    }
+    #panel-book .ebook-listen-row button { padding: .4rem .9rem; font-size: .82rem; }
+    #panel-book .ebook-nav {
+      display: flex; gap: 0; padding: .25rem .35rem calc(.45rem + env(safe-area-inset-bottom));
+    }
+    #panel-book .ebook-nav button {
+      flex: 1; border-radius: 12px; background: transparent;
+      color: var(--book-muted, #6b645c); font-weight: 600; font-size: .78rem;
+      padding: .55rem .35rem; display: flex; flex-direction: column; align-items: center; gap: .15rem;
+    }
+    #panel-book .ebook-nav button .nav-ico { font-size: 1.05rem; line-height: 1; }
+    #panel-book .ebook-nav button.active,
+    #panel-book .ebook-nav button:hover { color: var(--book-accent, var(--accent)); background: var(--book-chip, #eef5f1); }
+    #panel-book .sheet {
+      display: none; position: absolute; left: 0; right: 0; bottom: 0; z-index: 5;
+      max-height: 70%; overflow: auto; padding: 1rem 1.1rem 1.25rem;
+      background: var(--book-chrome, #fffef9); border-top: 1px solid var(--book-line, #e4dccf);
+      border-radius: 16px 16px 0 0; box-shadow: 0 -8px 28px rgba(0,0,0,.12);
+      color: var(--book-ink, var(--ink));
+    }
+    #panel-book .sheet.open { display: block; }
+    #panel-book .sheet h3 { margin: 0 0 .75rem; font-size: 1.05rem; }
+    #panel-book .sheet .sheet-close {
+      float: right; padding: .3rem .65rem; font-size: .8rem; margin: -.2rem 0 .5rem .5rem;
+    }
+    #panel-book .design-group { margin-bottom: 1rem; }
+    #panel-book .design-group label.group-label {
+      display: block; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--book-muted, #6b645c); font-weight: 700; margin-bottom: .45rem;
+    }
+    #panel-book .font-picks, #panel-book .theme-picks {
+      display: flex; flex-wrap: wrap; gap: .4rem;
+    }
+    #panel-book .font-picks button, #panel-book .theme-picks button {
+      border-radius: 12px; padding: .55rem .75rem; font-size: .82rem; font-weight: 600;
+      background: var(--book-chip, #efeae3); color: var(--book-ink, var(--ink));
+      border: 2px solid transparent;
+    }
+    #panel-book .font-picks button.active, #panel-book .theme-picks button.active {
+      border-color: var(--book-accent, var(--accent)); color: var(--book-accent, var(--accent));
+    }
+    #panel-book .font-picks button[data-font="serif"] { font-family: Georgia, serif; }
+    #panel-book .font-picks button[data-font="sans"] { font-family: system-ui, sans-serif; }
+    #panel-book .font-picks button[data-font="rounded"] {
+      font-family: 'SF Pro Rounded', 'Nunito', system-ui, sans-serif;
+    }
+    #panel-book .theme-swatch {
+      display: inline-block; width: .85rem; height: .85rem; border-radius: 50%;
+      margin-right: .35rem; vertical-align: -0.1rem; border: 1px solid rgba(0,0,0,.12);
+    }
+    #panel-book .color-row {
+      display: flex; flex-wrap: wrap; gap: .75rem; align-items: center;
+    }
+    #panel-book .color-row label {
+      display: flex; align-items: center; gap: .4rem; font-size: .86rem;
+    }
+    #panel-book .color-row input[type="color"] {
+      width: 2.4rem; height: 2rem; border: 1px solid var(--book-line, #ddd); border-radius: 8px;
+      padding: 0; background: transparent; cursor: pointer;
+    }
+    #panel-book .notes-area {
+      width: 100%; min-height: 8rem; border-radius: 12px; padding: .75rem;
+      border: 1px solid var(--book-line, #e4dccf); font: inherit; font-size: .95rem;
+      background: var(--book-bg, #fff); color: var(--book-ink, var(--ink)); resize: vertical;
+    }
+    #panel-book .notes-hint { font-size: .78rem; color: var(--book-muted, #6b645c); margin: .45rem 0 0; }
     #panel-book .privacy {
       font-size: .78rem; color: var(--muted); padding: .55rem 1.1rem .9rem;
       border-top: 1px solid #e4dccf; background: var(--cream); margin: 0;
     }
+    #panel-book.reading-mode .privacy { display: none; }
   </style>
 </head>
 <body>
@@ -169,7 +291,7 @@
     </section>
 
     <section id="panel-book" class="card hidden" aria-label="Private interactive book">
-      <div class="book-head">
+      <div class="book-head" id="bookHead">
         <p class="eyebrow">Book · private · interactive</p>
         <h2>Your book</h2>
         <p>Upload a PDF you own. Text is reflowed on-device for calm reading — never sent to MindPal servers.</p>
@@ -187,10 +309,22 @@
         <aside class="chapter-rail" id="chapterRail" aria-label="Chapters">
           <div class="rail-inner">
             <p class="rail-title">Chapters</p>
+            <input type="search" class="chapter-search" id="chapterSearch" placeholder="Search chapters…" autocomplete="off" hidden />
             <ul class="chapter-list" id="chapterList"></ul>
           </div>
         </aside>
-        <div class="reader-pane">
+        <div class="reader-pane" id="readerPane">
+          <div class="ebook-top" id="ebookTop">
+            <div class="ebook-top-row">
+              <button type="button" class="icon-btn" id="bookBack" title="Close book">‹ Back</button>
+              <div class="ebook-title-block">
+                <div class="ebook-chapter" id="ebookChapter">Chapter</div>
+                <div class="ebook-progress" id="ebookProgress">0%</div>
+              </div>
+              <button type="button" class="icon-btn" id="bookBookmark" title="Bookmark (saved position)">Bookmark</button>
+            </div>
+            <input type="range" class="ebook-scrub" id="bookScrub" min="0" max="0" value="0" aria-label="Reading position" />
+          </div>
           <div class="reader-top">
             <button class="secondary" id="bookPrev" type="button" disabled>‹ Prev</button>
             <span class="chunk-meta" id="bookStatus">No book open yet.</span>
@@ -207,9 +341,56 @@
           </div>
           <p class="read-hint">Tap left/right · swipe ← → · Listen = device voice (offline) · chapter rail collapsed until opened</p>
           <p class="voice-note" id="bookVoiceNote">Voice: device TTS (speechSynthesis). Later: local TTS pack or pre-rendered chapter audio in IndexedDB.</p>
+          <div class="ebook-bottom" id="ebookBottom">
+            <div class="ebook-listen-row">
+              <button class="secondary" id="bookListenBar" type="button" disabled>Listen</button>
+              <button class="secondary" id="bookPauseVoiceBar" type="button" disabled hidden>Pause</button>
+            </div>
+            <nav class="ebook-nav" aria-label="Reader tools">
+              <button type="button" id="navChapters" data-tool="chapters"><span class="nav-ico">☰</span>Chapters</button>
+              <button type="button" id="navSearch" data-tool="search"><span class="nav-ico">⌕</span>Search</button>
+              <button type="button" id="navNotes" data-tool="notes"><span class="nav-ico">✎</span>Notes</button>
+              <button type="button" id="navDesign" data-tool="design"><span class="nav-ico">Aa</span>Design</button>
+            </nav>
+          </div>
+          <div class="sheet" id="designSheet" aria-label="Design">
+            <button type="button" class="secondary sheet-close" data-close-sheet>Done</button>
+            <h3>Design</h3>
+            <div class="design-group">
+              <label class="group-label">Font</label>
+              <div class="font-picks" id="fontPicks">
+                <button type="button" data-font="serif" class="active">Serif · Georgia</button>
+                <button type="button" data-font="sans">Sans · System</button>
+                <button type="button" data-font="rounded">Soft rounded</button>
+              </div>
+            </div>
+            <div class="design-group">
+              <label class="group-label">Themes</label>
+              <div class="theme-picks" id="themePicks">
+                <button type="button" data-theme="paper" class="active"><span class="theme-swatch" style="background:#faf6ef"></span>Paper cream</button>
+                <button type="button" data-theme="sage"><span class="theme-swatch" style="background:#e8f0eb"></span>Sage calm</button>
+                <button type="button" data-theme="night"><span class="theme-swatch" style="background:#1a1d21"></span>Night</button>
+                <button type="button" data-theme="sepia"><span class="theme-swatch" style="background:#f4ecd8"></span>Sepia</button>
+                <button type="button" data-theme="sky"><span class="theme-swatch" style="background:#eef4fa"></span>Soft sky</button>
+              </div>
+            </div>
+            <div class="design-group">
+              <label class="group-label">Colours</label>
+              <div class="color-row">
+                <label>Text <input type="color" id="designTextColor" value="#2a2621" /></label>
+                <label>Background <input type="color" id="designBgColor" value="#faf6ef" /></label>
+              </div>
+            </div>
+          </div>
+          <div class="sheet" id="notesSheet" aria-label="Notes">
+            <button type="button" class="secondary sheet-close" data-close-sheet>Done</button>
+            <h3>Notes</h3>
+            <textarea class="notes-area" id="bookNotes" placeholder="Private notes for this book (saved on this device)…"></textarea>
+            <p class="notes-hint">Stored in localStorage per book name. Stub for future sync.</p>
+          </div>
         </div>
       </div>
-      <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
+      <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position &amp; Design prefs in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
     </section>
 
     <p class="foot">Supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14. Offline shell caches after first open.</p>
@@ -302,10 +483,168 @@
     const BOOK_IDB = 'mindpal-book-idb';
     const BOOK_STORE = 'pdfs';
     const CHUNK_CHARS = 900;
+    const BOOK_DESIGN_KEY = 'mindpal-book-design-v1';
+    const BOOK_NOTES_KEY = 'mindpal-book-notes-v1';
+    const BOOK_BM_KEY = 'mindpal-book-bookmark-v1';
+
+    const DESIGN_THEMES = {
+      paper: { bg: '#faf6ef', ink: '#2a2621', accent: '#2f5d50', muted: '#6b645c', chrome: 'rgba(255,252,246,.94)', chip: '#dceae2', line: '#e4dccf' },
+      sage:  { bg: '#e8f0eb', ink: '#1e2e28', accent: '#3d6b58', muted: '#5a6e63', chrome: 'rgba(232,240,235,.96)', chip: '#cfe3d7', line: '#cfdfd5' },
+      night: { bg: '#1a1d21', ink: '#e8e6e3', accent: '#7eb89a', muted: '#9a958e', chrome: 'rgba(28,32,38,.96)', chip: '#2a3238', line: '#333940' },
+      sepia: { bg: '#f4ecd8', ink: '#5c4a32', accent: '#8b6914', muted: '#8a7a62', chrome: 'rgba(244,236,216,.96)', chip: '#e8dcc0', line: '#e0d4b8' },
+      sky:   { bg: '#eef4fa', ink: '#243447', accent: '#4a7ab0', muted: '#5f7085', chrome: 'rgba(238,244,250,.96)', chip: '#d6e4f2', line: '#cfdceb' }
+    };
 
     let bookState = null;
     let railOpen = false;
     let touchX = null;
+    let bookDesign = { font: 'serif', theme: 'paper', textColor: '#2a2621', bgColor: '#faf6ef' };
+    let activeSheet = null;
+    let chapterSearchMode = false;
+
+    function loadBookDesign() {
+      try {
+        const raw = JSON.parse(localStorage.getItem(BOOK_DESIGN_KEY) || 'null');
+        if (raw && typeof raw === 'object') {
+          bookDesign = {
+            font: ['serif', 'sans', 'rounded'].includes(raw.font) ? raw.font : 'serif',
+            theme: DESIGN_THEMES[raw.theme] ? raw.theme : 'paper',
+            textColor: typeof raw.textColor === 'string' ? raw.textColor : '#2a2621',
+            bgColor: typeof raw.bgColor === 'string' ? raw.bgColor : '#faf6ef'
+          };
+        }
+      } catch (e) {}
+      applyBookDesign();
+    }
+
+    function saveBookDesign() {
+      try { localStorage.setItem(BOOK_DESIGN_KEY, JSON.stringify(bookDesign)); } catch (e) {}
+    }
+
+    function applyBookDesign() {
+      const panel = document.getElementById('panel-book');
+      const prose = document.getElementById('chunkProse');
+      const theme = DESIGN_THEMES[bookDesign.theme] || DESIGN_THEMES.paper;
+      const bg = bookDesign.bgColor || theme.bg;
+      const ink = bookDesign.textColor || theme.ink;
+      panel.style.setProperty('--book-bg', bg);
+      panel.style.setProperty('--book-ink', ink);
+      panel.style.setProperty('--book-accent', theme.accent);
+      panel.style.setProperty('--book-muted', theme.muted);
+      panel.style.setProperty('--book-chrome', theme.chrome);
+      panel.style.setProperty('--book-chip', theme.chip);
+      panel.style.setProperty('--book-line', theme.line);
+      if (prose) {
+        prose.classList.remove('font-serif', 'font-sans', 'font-rounded');
+        prose.classList.add('font-' + (bookDesign.font || 'serif'));
+      }
+      const tc = document.getElementById('designTextColor');
+      const bc = document.getElementById('designBgColor');
+      if (tc) tc.value = ink;
+      if (bc) bc.value = bg;
+      document.querySelectorAll('#fontPicks button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.font === bookDesign.font);
+      });
+      document.querySelectorAll('#themePicks button').forEach((b) => {
+        b.classList.toggle('active', b.dataset.theme === bookDesign.theme);
+      });
+    }
+
+    function setReadingMode(on) {
+      document.getElementById('panel-book').classList.toggle('reading-mode', !!on);
+      if (!on) {
+        closeSheets();
+        chapterSearchMode = false;
+        const search = document.getElementById('chapterSearch');
+        if (search) { search.hidden = true; search.value = ''; filterChapterList(''); }
+      }
+    }
+
+    function closeSheets() {
+      activeSheet = null;
+      document.getElementById('designSheet').classList.remove('open');
+      document.getElementById('notesSheet').classList.remove('open');
+      document.querySelectorAll('.ebook-nav button').forEach((b) => b.classList.remove('active'));
+    }
+
+    function openSheet(name) {
+      closeSheets();
+      if (name === 'design') {
+        activeSheet = 'design';
+        document.getElementById('designSheet').classList.add('open');
+        document.getElementById('navDesign').classList.add('active');
+      } else if (name === 'notes') {
+        activeSheet = 'notes';
+        loadBookNotesIntoUI();
+        document.getElementById('notesSheet').classList.add('open');
+        document.getElementById('navNotes').classList.add('active');
+      }
+    }
+
+    function notesMap() {
+      try { return JSON.parse(localStorage.getItem(BOOK_NOTES_KEY) || '{}') || {}; }
+      catch (e) { return {}; }
+    }
+
+    function loadBookNotesIntoUI() {
+      const ta = document.getElementById('bookNotes');
+      if (!ta) return;
+      if (!bookState) { ta.value = ''; return; }
+      const map = notesMap();
+      ta.value = map[bookState.name] || '';
+    }
+
+    function saveBookNotesFromUI() {
+      if (!bookState) return;
+      const ta = document.getElementById('bookNotes');
+      if (!ta) return;
+      const map = notesMap();
+      map[bookState.name] = ta.value;
+      try { localStorage.setItem(BOOK_NOTES_KEY, JSON.stringify(map)); } catch (e) {}
+    }
+
+    function filterChapterList(q) {
+      const query = String(q || '').trim().toLowerCase();
+      document.querySelectorAll('#chapterList li').forEach((li) => {
+        const t = (li.textContent || '').toLowerCase();
+        li.classList.toggle('filtered-out', !!(query && t.indexOf(query) < 0));
+      });
+    }
+
+    function chapterProgressPct() {
+      if (!bookState || !bookState.chunks.length) return 0;
+      const cur = bookState.chunks[bookState.chunkIndex];
+      const same = [];
+      bookState.chunks.forEach((c, i) => {
+        if (c.chapterTitle === cur.chapterTitle && c.chapterPage === cur.chapterPage) same.push(i);
+      });
+      if (!same.length) return Math.round(((bookState.chunkIndex + 1) / bookState.chunks.length) * 100);
+      const pos = same.indexOf(bookState.chunkIndex);
+      return Math.round(((pos + 1) / same.length) * 100);
+    }
+
+    function updateEbookChrome() {
+      if (!bookState || !bookState.chunks.length) {
+        setReadingMode(false);
+        return;
+      }
+      setReadingMode(true);
+      const c = bookState.chunks[bookState.chunkIndex];
+      const chapEl = document.getElementById('ebookChapter');
+      const progEl = document.getElementById('ebookProgress');
+      const scrub = document.getElementById('bookScrub');
+      if (chapEl) chapEl.textContent = c.chapterTitle || 'Reading';
+      if (progEl) {
+        const pct = chapterProgressPct();
+        progEl.textContent = pct + '% in chapter · ' + (bookState.chunkIndex + 1) + ' / ' + bookState.chunks.length;
+      }
+      if (scrub) {
+        scrub.max = Math.max(0, bookState.chunks.length - 1);
+        scrub.value = bookState.chunkIndex;
+      }
+      const listenBar = document.getElementById('bookListenBar');
+      if (listenBar) listenBar.disabled = false;
+    }
 
     function bookStatus(msg) {
       const el = document.getElementById('bookStatus');
@@ -580,6 +919,9 @@
         document.getElementById('bookNext').disabled = true;
         document.getElementById('railToggle').disabled = true;
         document.getElementById('bookClear').disabled = true;
+        const listenBar = document.getElementById('bookListenBar');
+        if (listenBar) listenBar.disabled = true;
+        updateEbookChrome();
         return;
       }
       empty.classList.add('hidden');
@@ -587,6 +929,7 @@
       const c = bookState.chunks[bookState.chunkIndex];
       document.getElementById('chunkChapter').textContent = c.chapterTitle;
       document.getElementById('chunkProse').textContent = c.text;
+      applyBookDesign();
       bookStatus(bookState.name + ' · ' + (bookState.chunkIndex + 1) + ' / ' + bookState.chunks.length);
       document.getElementById('bookPrev').disabled = bookState.chunkIndex <= 0;
       document.getElementById('bookNext').disabled = bookState.chunkIndex >= bookState.chunks.length - 1;
@@ -594,6 +937,7 @@
       document.getElementById('bookClear').disabled = false;
       highlightRail();
       savePos();
+      updateEbookChrome();
       document.getElementById('readSurface').scrollTop = 0;
     }
 
@@ -607,6 +951,8 @@
       railOpen = !!open;
       document.getElementById('bookShell').classList.toggle('rail-open', railOpen);
       document.getElementById('railToggle').textContent = railOpen ? 'Hide chapters' : 'Chapters';
+      const navCh = document.getElementById('navChapters');
+      if (navCh && !chapterSearchMode) navCh.classList.toggle('active', railOpen);
     }
 
     async function openBookFromBuffer(name, buffer) {
@@ -681,6 +1027,7 @@
       document.getElementById('chapterList').innerHTML = '';
       document.getElementById('bookDetectNote').hidden = true;
       setRail(false);
+      setReadingMode(false);
       renderChunk();
       document.getElementById('bookFile').value = '';
     });
@@ -737,12 +1084,20 @@
       voicePaused = false;
       const listen = document.getElementById('bookListen');
       const pause = document.getElementById('bookPauseVoice');
+      const listenBar = document.getElementById('bookListenBar');
+      const pauseBar = document.getElementById('bookPauseVoiceBar');
       if (listen) {
         listen.textContent = 'Listen';
         listen.classList.remove('speaking');
         listen.disabled = !bookState;
       }
+      if (listenBar) {
+        listenBar.textContent = 'Listen';
+        listenBar.classList.remove('speaking');
+        listenBar.disabled = !bookState;
+      }
       if (pause) { pause.hidden = true; pause.disabled = true; pause.textContent = 'Pause'; }
+      if (pauseBar) { pauseBar.hidden = true; pauseBar.disabled = true; pauseBar.textContent = 'Pause'; }
     }
 
     /** Future hook: play pre-rendered chapter audio from IndexedDB if present. Returns true if handled. */
@@ -775,16 +1130,24 @@
         voicePaused = false;
         const listen = document.getElementById('bookListen');
         const pause = document.getElementById('bookPauseVoice');
+        const listenBar = document.getElementById('bookListenBar');
+        const pauseBar = document.getElementById('bookPauseVoiceBar');
         if (listen) { listen.textContent = 'Stop'; listen.classList.add('speaking'); listen.disabled = false; }
+        if (listenBar) { listenBar.textContent = 'Stop'; listenBar.classList.add('speaking'); listenBar.disabled = false; }
         if (pause) { pause.hidden = false; pause.disabled = false; pause.textContent = 'Pause'; }
+        if (pauseBar) { pauseBar.hidden = false; pauseBar.disabled = false; pauseBar.textContent = 'Pause'; }
       };
       u.onend = () => {
         voiceSpeaking = false;
         voicePaused = false;
         const listen = document.getElementById('bookListen');
         const pause = document.getElementById('bookPauseVoice');
+        const listenBar = document.getElementById('bookListenBar');
+        const pauseBar = document.getElementById('bookPauseVoiceBar');
         if (listen) { listen.textContent = 'Listen'; listen.classList.remove('speaking'); }
+        if (listenBar) { listenBar.textContent = 'Listen'; listenBar.classList.remove('speaking'); }
         if (pause) { pause.hidden = true; pause.disabled = true; }
+        if (pauseBar) { pauseBar.hidden = true; pauseBar.disabled = true; }
       };
       u.onerror = () => stopBookVoice();
       window.speechSynthesis.speak(u);
@@ -818,19 +1181,129 @@
     function onPauseVoiceClick(e) {
       e.stopPropagation();
       if (!deviceTtsAvailable() || !voiceSpeaking) return;
+      const pause = document.getElementById('bookPauseVoice');
+      const pauseBar = document.getElementById('bookPauseVoiceBar');
       if (voicePaused) {
         window.speechSynthesis.resume();
         voicePaused = false;
-        e.target.textContent = 'Pause';
+        if (pause) pause.textContent = 'Pause';
+        if (pauseBar) pauseBar.textContent = 'Pause';
       } else {
         window.speechSynthesis.pause();
         voicePaused = true;
-        e.target.textContent = 'Resume';
+        if (pause) pause.textContent = 'Resume';
+        if (pauseBar) pauseBar.textContent = 'Resume';
       }
     }
 
     document.getElementById('bookListen').addEventListener('click', onListenClick);
     document.getElementById('bookPauseVoice').addEventListener('click', onPauseVoiceClick);
+    document.getElementById('bookListenBar').addEventListener('click', onListenClick);
+    document.getElementById('bookPauseVoiceBar').addEventListener('click', onPauseVoiceClick);
+
+    document.getElementById('bookBack').addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.getElementById('bookClear').click();
+    });
+    document.getElementById('bookBookmark').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!bookState) return;
+      try {
+        localStorage.setItem(BOOK_BM_KEY, JSON.stringify({
+          name: bookState.name,
+          chunkIndex: bookState.chunkIndex,
+          chapterTitle: (bookState.chunks[bookState.chunkIndex] || {}).chapterTitle || '',
+          savedAt: Date.now()
+        }));
+      } catch (err) {}
+      savePos();
+      bookStatus('Bookmark saved · ' + (bookState.chunkIndex + 1) + ' / ' + bookState.chunks.length);
+      const prog = document.getElementById('ebookProgress');
+      if (prog) {
+        const prev = prog.textContent;
+        prog.textContent = 'Bookmark saved';
+        setTimeout(() => { if (bookState) updateEbookChrome(); else prog.textContent = prev; }, 1200);
+      }
+    });
+    document.getElementById('bookScrub').addEventListener('input', (e) => {
+      e.stopPropagation();
+      if (!bookState) return;
+      goChunk(parseInt(e.target.value, 10) || 0);
+    });
+    document.getElementById('bookScrub').addEventListener('click', (e) => e.stopPropagation());
+
+    document.getElementById('navChapters').addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeSheets();
+      chapterSearchMode = false;
+      document.getElementById('chapterSearch').hidden = true;
+      setRail(!railOpen);
+      document.getElementById('navChapters').classList.toggle('active', railOpen);
+    });
+    document.getElementById('navSearch').addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeSheets();
+      chapterSearchMode = true;
+      setRail(true);
+      const search = document.getElementById('chapterSearch');
+      search.hidden = false;
+      search.focus();
+      document.getElementById('navSearch').classList.add('active');
+    });
+    document.getElementById('navNotes').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeSheet === 'notes') closeSheets();
+      else openSheet('notes');
+    });
+    document.getElementById('navDesign').addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeSheet === 'design') closeSheets();
+      else openSheet('design');
+    });
+    document.querySelectorAll('[data-close-sheet]').forEach((btn) => {
+      btn.addEventListener('click', (e) => { e.stopPropagation(); closeSheets(); });
+    });
+    document.getElementById('chapterSearch').addEventListener('input', (e) => {
+      filterChapterList(e.target.value);
+    });
+    document.getElementById('chapterSearch').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('bookNotes').addEventListener('input', () => saveBookNotesFromUI());
+    document.getElementById('bookNotes').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('designSheet').addEventListener('click', (e) => e.stopPropagation());
+    document.getElementById('notesSheet').addEventListener('click', (e) => e.stopPropagation());
+
+    document.getElementById('fontPicks').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-font]');
+      if (!btn) return;
+      e.stopPropagation();
+      bookDesign.font = btn.dataset.font;
+      saveBookDesign();
+      applyBookDesign();
+    });
+    document.getElementById('themePicks').addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-theme]');
+      if (!btn) return;
+      e.stopPropagation();
+      const t = DESIGN_THEMES[btn.dataset.theme];
+      if (!t) return;
+      bookDesign.theme = btn.dataset.theme;
+      bookDesign.bgColor = t.bg;
+      bookDesign.textColor = t.ink;
+      saveBookDesign();
+      applyBookDesign();
+    });
+    document.getElementById('designTextColor').addEventListener('input', (e) => {
+      bookDesign.textColor = e.target.value;
+      saveBookDesign();
+      applyBookDesign();
+    });
+    document.getElementById('designBgColor').addEventListener('input', (e) => {
+      bookDesign.bgColor = e.target.value;
+      saveBookDesign();
+      applyBookDesign();
+    });
+
+    loadBookDesign();
 
     // Stop voice when changing chunk / clearing / leaving UX
     const _goChunk = goChunk;
@@ -847,7 +1320,9 @@
     renderChunk = function () {
       _renderChunk();
       const listen = document.getElementById('bookListen');
+      const listenBar = document.getElementById('bookListenBar');
       if (listen) listen.disabled = !bookState;
+      if (listenBar) listenBar.disabled = !bookState;
       if (!bookState) stopBookVoice();
     };
     if (deviceTtsAvailable()) {
