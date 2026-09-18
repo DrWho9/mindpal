@@ -121,6 +121,9 @@
     #panel-book .read-hint {
       text-align: center; font-size: .78rem; color: #8a8176; padding: .35rem .75rem .7rem;
     }
+
+    #panel-book #bookListen.speaking { background: #d5e6dc; color: var(--accent); }
+    #panel-book .voice-note { font-size: .72rem; color: #7a736a; text-align: center; padding: 0 .75rem .55rem; }
     #panel-book .privacy {
       font-size: .78rem; color: var(--muted); padding: .55rem 1.1rem .9rem;
       border-top: 1px solid #e4dccf; background: var(--cream); margin: 0;
@@ -191,6 +194,8 @@
           <div class="reader-top">
             <button class="secondary" id="bookPrev" type="button" disabled>‹ Prev</button>
             <span class="chunk-meta" id="bookStatus">No book open yet.</span>
+            <button class="secondary" id="bookListen" type="button" disabled title="Read aloud with device voice (works offline if OS voice installed)">Listen</button>
+            <button class="secondary" id="bookPauseVoice" type="button" disabled hidden>Pause</button>
             <button class="secondary" id="bookNext" type="button" disabled>Next ›</button>
           </div>
           <div class="read-surface" id="readSurface" tabindex="0" role="region" aria-label="Reading surface">
@@ -200,10 +205,11 @@
               <div class="prose" id="chunkProse"></div>
             </div>
           </div>
-          <p class="read-hint">Tap left/right · swipe ← → · chapter rail collapsed until opened</p>
+          <p class="read-hint">Tap left/right · swipe ← → · Listen = device voice (offline) · chapter rail collapsed until opened</p>
+          <p class="voice-note" id="bookVoiceNote">Voice: device TTS (speechSynthesis). Later: local TTS pack or pre-rendered chapter audio in IndexedDB.</p>
         </div>
       </div>
-      <p class="privacy">Private uploads only. No scraped libraries. Chunk position in localStorage; optional PDF bytes in IndexedDB on this device only.</p>
+      <p class="privacy">Private uploads only. No scraped libraries. Listen uses on-device Web Speech (no cloud voice API). Chunk position in localStorage; optional PDF bytes / future chapter audio packs in IndexedDB on this device only.</p>
     </section>
 
     <p class="foot">Supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14. Offline shell caches after first open.</p>
@@ -704,6 +710,149 @@
     idbGetPdf().then((row) => {
       if (row && row.buffer) openBookFromBuffer(row.name || 'Saved PDF', row.buffer).catch(function () {});
     });
+
+    /* —— Offline audiobook voice (v1: device Web Speech; hook for local TTS / pre-rendered IDB audio) —— */
+    const BOOK_AUDIO_STORE = 'chapterAudio'; // future: pre-rendered packs
+    let voiceSpeaking = false;
+    let voicePaused = false;
+
+    function deviceTtsAvailable() {
+      return typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
+    }
+
+    function pickDeviceVoice() {
+      try {
+        const voices = window.speechSynthesis.getVoices() || [];
+        const prefer = voices.find((v) => /en(-|_)?(AU|GB|US)/i.test(v.lang) && /female|samantha|karen|moira|zira|google UK/i.test(v.name))
+          || voices.find((v) => /^en/i.test(v.lang))
+          || voices[0]
+          || null;
+        return prefer;
+      } catch (e) { return null; }
+    }
+
+    function stopBookVoice() {
+      try { if (deviceTtsAvailable()) window.speechSynthesis.cancel(); } catch (e) {}
+      voiceSpeaking = false;
+      voicePaused = false;
+      const listen = document.getElementById('bookListen');
+      const pause = document.getElementById('bookPauseVoice');
+      if (listen) {
+        listen.textContent = 'Listen';
+        listen.classList.remove('speaking');
+        listen.disabled = !bookState;
+      }
+      if (pause) { pause.hidden = true; pause.disabled = true; pause.textContent = 'Pause'; }
+    }
+
+    /** Future hook: play pre-rendered chapter audio from IndexedDB if present. Returns true if handled. */
+    async function tryPlayStoredChapterAudio(chapterTitle) {
+      // Placeholder for offline pack / pre-rendered chapter audio (generate online, store with book in IDB).
+      // v1 always returns false → fall through to device speechSynthesis.
+      try {
+        if (!bookState || !chapterTitle) return false;
+        // const db = await idbOpen(); ... get BOOK_AUDIO_STORE by bookState.name + chapterTitle
+        return false;
+      } catch (e) { return false; }
+    }
+
+    function speakCurrentChunk() {
+      if (!bookState || !deviceTtsAvailable()) {
+        bookStatus('No on-device voice available. Install an OS speech voice for offline Listen.');
+        return;
+      }
+      const c = bookState.chunks[bookState.chunkIndex];
+      if (!c) return;
+      stopBookVoice();
+      const u = new SpeechSynthesisUtterance(c.text);
+      u.rate = 0.95;
+      u.pitch = 1;
+      u.lang = 'en-AU';
+      const voice = pickDeviceVoice();
+      if (voice) u.voice = voice;
+      u.onstart = () => {
+        voiceSpeaking = true;
+        voicePaused = false;
+        const listen = document.getElementById('bookListen');
+        const pause = document.getElementById('bookPauseVoice');
+        if (listen) { listen.textContent = 'Stop'; listen.classList.add('speaking'); listen.disabled = false; }
+        if (pause) { pause.hidden = false; pause.disabled = false; pause.textContent = 'Pause'; }
+      };
+      u.onend = () => {
+        voiceSpeaking = false;
+        voicePaused = false;
+        const listen = document.getElementById('bookListen');
+        const pause = document.getElementById('bookPauseVoice');
+        if (listen) { listen.textContent = 'Listen'; listen.classList.remove('speaking'); }
+        if (pause) { pause.hidden = true; pause.disabled = true; }
+      };
+      u.onerror = () => stopBookVoice();
+      window.speechSynthesis.speak(u);
+    }
+
+    async function onListenClick(e) {
+      e.stopPropagation();
+      if (!bookState) return;
+      if (voiceSpeaking && !voicePaused) {
+        stopBookVoice();
+        return;
+      }
+      const c = bookState.chunks[bookState.chunkIndex];
+      const handled = await tryPlayStoredChapterAudio(c && c.chapterTitle);
+      if (handled) return;
+      if (!deviceTtsAvailable()) {
+        bookStatus('Device TTS unavailable. Offline Listen needs an OS voice pack.');
+        return;
+      }
+      // Chrome often loads voices async
+      if (deviceTtsAvailable() && !(window.speechSynthesis.getVoices() || []).length) {
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.onvoiceschanged = null; speakCurrentChunk(); };
+        window.speechSynthesis.getVoices();
+        // also try immediate in case voices already there after tick
+        setTimeout(() => { if (!voiceSpeaking) speakCurrentChunk(); }, 250);
+        return;
+      }
+      speakCurrentChunk();
+    }
+
+    function onPauseVoiceClick(e) {
+      e.stopPropagation();
+      if (!deviceTtsAvailable() || !voiceSpeaking) return;
+      if (voicePaused) {
+        window.speechSynthesis.resume();
+        voicePaused = false;
+        e.target.textContent = 'Pause';
+      } else {
+        window.speechSynthesis.pause();
+        voicePaused = true;
+        e.target.textContent = 'Resume';
+      }
+    }
+
+    document.getElementById('bookListen').addEventListener('click', onListenClick);
+    document.getElementById('bookPauseVoice').addEventListener('click', onPauseVoiceClick);
+
+    // Stop voice when changing chunk / clearing / leaving UX
+    const _goChunk = goChunk;
+    goChunk = function (i) {
+      stopBookVoice();
+      _goChunk(i);
+    };
+    const clearBtn = document.getElementById('bookClear');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => stopBookVoice());
+    }
+    // Enable Listen when a book is rendered
+    const _renderChunk = renderChunk;
+    renderChunk = function () {
+      _renderChunk();
+      const listen = document.getElementById('bookListen');
+      if (listen) listen.disabled = !bookState;
+      if (!bookState) stopBookVoice();
+    };
+    if (deviceTtsAvailable()) {
+      try { window.speechSynthesis.getVoices(); } catch (e) {}
+    }
 
     async function boot() {
       const [vRes, rRes] = await Promise.all([

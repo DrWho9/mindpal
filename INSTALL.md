@@ -15,5 +15,6 @@ This is **MindPal** — not a separate product. Verse for the Day and daily read
 - **UI:** collapsible chapter rail (collapsed by default) · warm cream / soft sage reading surface · ~half-screen reflowed text chunks (not raw PDF canvas as primary).
 - **Advance:** tap left/right thirds of the screen, or swipe ← →. End of a chapter continues into the next on the following tap.
 - Last chunk index remembered in localStorage for that filename.
+- **Listen / Pause:** on-device Web Speech (`speechSynthesis`) — works offline when an OS voice is installed. No paid cloud TTS in v1. Hook reserved for later local TTS packs or pre-rendered chapter audio stored with the book in IndexedDB.
 
-Offline: service worker caches MindPal shell + Verse/Reading content after first open (cache `mindpal-v1-3-book-interactive`). pdf.js + a new PDF still need network / file pick.
+Offline: service worker caches MindPal shell + Verse/Reading content after first open (cache `mindpal-v1-4-book-listen`). pdf.js + a new PDF still need network / file pick.

@@ -1,4 +1,4 @@
-const CACHE = 'mindpal-v1-3-book-interactive';
+const CACHE = 'mindpal-v1-4-book-listen';
 const PRECACHE = [
   './',
   './index.html',
