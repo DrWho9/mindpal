@@ -140,7 +140,7 @@ function patchJs(source) {
   next = replaceOnce(
     next,
     "function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};",
-    "function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};",
+    "function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`No rendered mp4 or webm is available yet.`};",
     "video-hi-gate",
   );
 
