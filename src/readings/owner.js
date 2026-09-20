@@ -8,6 +8,10 @@ export function ownerReadingsCatalog(override) {
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
   }
+  // Pages bundle is type=module: top-level var is module-scoped, not on globalThis.
+  if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) {
+    return mpOwnerReadings;
+  }
   return { readings: [] };
 }
 

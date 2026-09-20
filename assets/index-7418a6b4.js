@@ -6093,7 +6093,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ]
     }
   ]
-};var mpMaddy={
+};if(typeof globalThis!=="undefined")globalThis.mpOwnerReadings=mpOwnerReadings;var mpMaddy={
   "pack_id": "mindpal-videos-maddy-v1",
   "title": "Watch with Maddy",
   "version": "1.0.0",
@@ -7174,6 +7174,10 @@ function ownerReadingsCatalog(override) {
   if (Array.isArray(override)) return { readings: override };
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
+  }
+  // Pages bundle is type=module: top-level var is module-scoped, not on globalThis.
+  if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) {
+    return mpOwnerReadings;
   }
   return { readings: [] };
 }
@@ -9442,6 +9446,10 @@ function ownerReadingsCatalog(override) {
   if (Array.isArray(override)) return { readings: override };
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
+  }
+  // Pages bundle is type=module: top-level var is module-scoped, not on globalThis.
+  if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) {
+    return mpOwnerReadings;
   }
   return { readings: [] };
 }

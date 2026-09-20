@@ -51,6 +51,7 @@ const checks = [
   [js.includes("No speaker library dump here."), "mothers videos skip the speaker-dump default"],
   [js.includes("Drugs & alcohol") && js.includes("mpAodHubPage"), "AOD hub is present"],
   [js.includes("dna-dopamine-loop-v1") && js.includes("mp-hub-featured"), "AOD featured talk-through is present"],
+  [js.includes("globalThis.mpOwnerReadings=mpOwnerReadings"), "owner readings catalog is exposed to the runtime"],
   [js.includes("puppy-and-treat loop") && js.includes("not genetics"), "AOD talk-through spells DNA as drugs and alcohol, not genetics"],
   [js.includes("mpAodFeelingsChip"), "AOD Feelings entry is present"],
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
