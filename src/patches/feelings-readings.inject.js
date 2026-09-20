@@ -33,7 +33,7 @@ function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings f
         (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l(null),children:`Back to list`})
       ]})
     ]}):(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{className:`muted`,children:m.length?`${h.length} matching Pack A reading${h.length===1?``:`s`}.`:`Choose a feeling or a tag to see matching readings.`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:m.length?`${h.length} matching reading${h.length===1?``:`s`}.`:`Choose a feeling or a tag to see matching readings.`}),
       h.length?(0,A.jsx)(`ul`,{className:`mp-support-list`,children:h.map(e=>{
         let t=mpReadings.isDayUnlocked(f,u.completedIds,e.day),n=u.completedIds.includes(e.id);
         return(0,A.jsxs)(`li`,{children:[
