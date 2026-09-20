@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  MOTHER_SUPPORT_TAGS,
   PROBLEM_TAG_IDS,
   THEME_LABEL_TO_TAGS,
   readingProblemTags,
@@ -12,6 +13,8 @@ import {
 import {
   findProblem,
   listProblems,
+  maddyForProblem,
+  motherSupportTags,
   readingsForProblem,
   saveCompanionPrompt,
   takeCompanionPrompt,
@@ -36,7 +39,7 @@ function memoryStorage(initial = {}) {
 }
 
 describe("problem hubs", () => {
-  it("seeds six AU-plain problem hubs", () => {
+  it("seeds seven AU-plain problem hubs including struggling mothers", () => {
     assert.deepEqual(
       listProblems(hubs).map((item) => item.id),
       PROBLEM_TAG_IDS,
@@ -50,6 +53,7 @@ describe("problem hubs", () => {
         "Heavy / low mood",
         "Motivation / get going",
         "Faith / prayer & meaning",
+        "Struggling mothers",
       ],
     );
   });
@@ -68,12 +72,30 @@ describe("problem hubs", () => {
         `${id} should have several Pack A readings`,
       );
     }
+    const mothers = readingsForProblem(packA, "mothers", 100);
+    assert.ok(mothers.length >= 8 && mothers.length <= 15, `mothers has ${mothers.length}`);
+    for (const reading of mothers) {
+      const extra = motherSupportTags(reading);
+      assert.ok(
+        extra.some((tag) => MOTHER_SUPPORT_TAGS.includes(tag)),
+        `${reading.id} should carry a mother-support tag`,
+      );
+    }
   });
 
   it("filters Maddy and open-draft videos by problem tags", () => {
     assert.ok(videosForProblem(maddy, "sleep").some((item) => item.id === "maddy-timed-breath"));
     assert.ok(videosForProblem(videos, "anxiety").some((item) => item.id === "V08"));
     assert.ok(videosForProblem(videos, "motivation").some((item) => item.id === "V09"));
+    assert.deepEqual(
+      maddyForProblem(maddy, "mothers").map((item) => item.id),
+      ["maddy-welcome", "maddy-timed-breath"],
+    );
+    assert.equal(
+      videosForProblem(videos, "mothers").some((item) => /^V\d+/.test(item.id)),
+      false,
+      "HeyGen drafts are not the mothers default",
+    );
   });
 
   it("prefills Companion from a one-shot session prompt", () => {
@@ -94,5 +116,18 @@ describe("problem hubs", () => {
     assert.match(inject, /mpProblemHubList,\{variant:`today`/);
     assert.doesNotMatch(inject, /LOCAL ACCOUNT/);
     assert.doesNotMatch(inject, /Sign in for your morning space/);
+  });
+
+  it("wires a dedicated mothers hub with Companion and safety copy", () => {
+    const mothers = findProblem(hubs, "mothers");
+    assert.match(mothers.intro, /pressure, exhaustion/);
+    assert.match(mothers.companionPrompt, /not a therapist/);
+    assert.match(mothers.companionPrompt, /000/);
+    assert.match(mothers.journalPrompt, /small win amid caring/);
+    assert.match(inject, /mpMothersHubPage/);
+    assert.match(inject, /mpMothersFeelingsChip/);
+    assert.match(inject, /mpMothersWomenCard/);
+    assert.match(inject, /No speaker library dump here/);
+    assert.match(inject, /Need support/);
   });
 });

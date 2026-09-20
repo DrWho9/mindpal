@@ -7,6 +7,18 @@ export const PROBLEM_TAG_IDS = [
   "mood",
   "motivation",
   "faith",
+  "mothers",
+];
+
+/** Extra tags used to filter the mothers hub without becoming their own chips. */
+export const MOTHER_SUPPORT_TAGS = [
+  "motherhood",
+  "postpartum-adjacent",
+  "exhaustion",
+  "overwhelm",
+  "guilt",
+  "self-compassion",
+  "faith",
 ];
 
 export const THEME_LABEL_TO_TAGS = {
@@ -22,8 +34,8 @@ export const THEME_LABEL_TO_TAGS = {
   impatience: ["stress"],
   "over-identification with tasks": ["stress", "motivation"],
   "uncertainty tolerance": ["anxiety"],
-  comparison: ["mood"],
-  "receiving support": ["mood", "anxiety"],
+  comparison: ["mood", "mothers", "guilt"],
+  "receiving support": ["mood", "anxiety", "mothers", "motherhood", "self-compassion"],
   "single-tasking": ["stress", "motivation"],
   "need to be right": ["stress"],
   "holding grudges": ["mood"],
@@ -33,7 +45,7 @@ export const THEME_LABEL_TO_TAGS = {
   "false emergencies": ["anxiety", "stress"],
   "drama resistance": ["stress"],
   "charitable interpretation": ["mood", "faith"],
-  "rest guilt": ["sleep", "mood"],
+  "rest guilt": ["sleep", "mood", "mothers", "guilt", "exhaustion"],
   boundaries: ["stress"],
   "micro-completion": ["motivation"],
   "mental replay": ["anxiety", "sleep"],
@@ -41,27 +53,27 @@ export const THEME_LABEL_TO_TAGS = {
   listening: ["faith"],
   rush: ["stress"],
   judgement: ["mood"],
-  overcommitment: ["stress"],
+  overcommitment: ["stress", "mothers", "exhaustion", "motherhood"],
   "emotional patience": ["mood", "stress"],
   recognition: ["faith", "mood"],
   "embodied reset": ["stress", "anxiety"],
-  "self-forgiveness": ["mood", "faith"],
+  "self-forgiveness": ["mood", "faith", "mothers", "guilt", "self-compassion"],
   "mind-reading": ["anxiety"],
-  "domestic perfection": ["stress"],
+  "domestic perfection": ["stress", "mothers", "motherhood", "guilt"],
   "relational priority": ["mood"],
   grounding: ["anxiety", "stress"],
-  "load shedding": ["stress"],
+  "load shedding": ["stress", "mothers", "exhaustion"],
   "self-talk": ["mood"],
-  "plans changing": ["anxiety", "motivation"],
+  "plans changing": ["anxiety", "motivation", "mothers", "motherhood"],
   "inner critic": ["mood"],
   "over-scheduling": ["stress"],
-  "mood awareness": ["mood"],
+  "mood awareness": ["mood", "mothers", "postpartum-adjacent"],
   "comfortable quiet": ["sleep", "anxiety"],
-  "emotional labour": ["stress", "mood"],
+  "emotional labour": ["stress", "mood", "mothers", "motherhood", "exhaustion"],
   joy: ["mood"],
   "self-judgement at night": ["sleep", "mood"],
   play: ["mood", "motivation"],
-  "expectation load": ["stress"],
+  "expectation load": ["stress", "mothers", "motherhood", "guilt"],
   "body cues": ["sleep", "stress"],
   "image management": ["anxiety", "mood"],
   "impatience with delays": ["stress"],
@@ -71,15 +83,15 @@ export const THEME_LABEL_TO_TAGS = {
   attention: ["faith", "stress"],
   impermanence: ["faith", "anxiety"],
   "after conflict": ["mood"],
-  "evening overload": ["sleep", "stress"],
-  overwhelm: ["stress"],
+  "evening overload": ["sleep", "stress", "mothers", "motherhood", "exhaustion"],
+  overwhelm: ["stress", "mothers", "overwhelm", "exhaustion"],
   acceptance: ["mood", "faith"],
   "soft boundaries": ["stress"],
   "tunnel vision": ["anxiety", "stress"],
   "healing/patience": ["mood"],
   ego: ["stress"],
   waiting: ["anxiety", "motivation"],
-  interruptions: ["stress"],
+  interruptions: ["stress", "mothers", "motherhood"],
   "body tension": ["stress", "sleep"],
   "optimisation pressure": ["stress", "motivation"],
   attribution: ["mood"],
@@ -87,7 +99,7 @@ export const THEME_LABEL_TO_TAGS = {
   "showing up": ["motivation"],
   "specific thanks": ["mood", "faith"],
   catastrophising: ["anxiety"],
-  "asking/delegation": ["stress"],
+  "asking/delegation": ["stress", "mothers", "motherhood"],
   lightness: ["mood"],
   limits: ["stress"],
   reset: ["motivation", "mood"],
@@ -112,9 +124,11 @@ export const THEME_LABEL_TO_TAGS = {
   "fresh start": ["motivation"],
 };
 
+const ALLOWED_TAGS = new Set([...PROBLEM_TAG_IDS, ...MOTHER_SUPPORT_TAGS]);
+
 export function normalizeProblemTags(raw) {
   if (!Array.isArray(raw)) return [];
-  return [...new Set(raw.filter((tag) => PROBLEM_TAG_IDS.includes(tag)))];
+  return [...new Set(raw.filter((tag) => ALLOWED_TAGS.has(tag)))];
 }
 
 export function tagsForThemeLabel(label) {
@@ -136,6 +150,8 @@ const FEELING_TO_PROBLEM = {
   motivation: "motivation",
   faith: "faith",
   gratitude: "faith",
+  mothers: "mothers",
+  motherhood: "mothers",
 };
 
 export function feelingTagsToProblemTags(raw) {

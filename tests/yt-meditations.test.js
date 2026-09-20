@@ -54,8 +54,12 @@ describe("YouTube meditation category structure", () => {
     assert.equal(entriesForCategory(anxiety).length, 5);
     assert.equal(categoryFillNote(sleep), "5 of 10 listed · filling");
     for (const category of catalog.categories.filter((item) => item.status === "filling")) {
-      assert.ok(entriesForCategory(category).length <= 2, category.id);
-      assert.equal(categoryFillNote(category), "This category is filling.");
+      const count = entriesForCategory(category).length;
+      assert.ok(count <= 2, category.id);
+      assert.equal(
+        categoryFillNote(category),
+        count === 0 ? "This category is filling." : `${count} of 10 listed · filling`,
+      );
     }
   });
 
