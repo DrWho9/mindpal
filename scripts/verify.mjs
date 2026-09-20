@@ -33,6 +33,16 @@ const checks = [
   [!sw.includes("videos/maddy"), "service worker does not precache Maddy MP4s"],
   [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
+  [js.includes("Do this next"), "numbered day-steps are present"],
+  [js.includes("Before you sleep"), "evening step is present"],
+  [js.includes("mindpal.todaySteps.v1"), "day-steps storage key is present"],
+  [js.includes("mindpal.dailyWins.v1"), "daily wins storage key is present"],
+  [js.includes("Show Coptic calendar date"), "Coptic settings toggle is present"],
+  [js.includes("mpSignInPage"), "sign-in page is present"],
+  [js.includes("mp-lane-readings"), "Readings lane chrome is present"],
+  [!js.includes("Hide welcome image"), "welcome-image clutter removed"],
+  [!js.includes("Explore the longer small-steps pathway"), "Today small-steps dump removed"],
+  [!js.includes("Optional faith content. Skip anytime."), "Prayer WEB footer removed"],
 ];
 
 const maddyFiles = [
