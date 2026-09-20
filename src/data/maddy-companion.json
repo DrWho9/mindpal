@@ -19,6 +19,14 @@
       "problemTags": [
         "motivation",
         "faith"
+      ],
+      "tags": [
+        "motivation",
+        "faith"
+      ],
+      "emotions": [
+        "motivation",
+        "faith"
       ]
     },
     {
@@ -35,6 +43,14 @@
       "problemTags": [
         "motivation",
         "mood"
+      ],
+      "tags": [
+        "motivation",
+        "low-mood"
+      ],
+      "emotions": [
+        "motivation",
+        "low-mood"
       ]
     },
     {
@@ -52,6 +68,18 @@
         "anxiety",
         "stress",
         "sleep"
+      ],
+      "tags": [
+        "anxiety",
+        "stress",
+        "sleep",
+        "overwhelm"
+      ],
+      "emotions": [
+        "anxiety",
+        "stress",
+        "sleep",
+        "overwhelm"
       ]
     }
   ]
