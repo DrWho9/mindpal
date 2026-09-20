@@ -179,12 +179,6 @@ function patchJs(source) {
     "(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})",
     "today-video-teaser",
   );
-  next = replaceOnce(
-    next,
-    "(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x})",
-    "(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]},(0,A.jsx)(MpWatchWithMaddy,{})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x})",
-    "today-maddy-section",
-  );
 
   if (!next.includes("mindpal-dstss-themes-paraphrase-v1")) {
     throw new Error("Pack A id missing from bundle");

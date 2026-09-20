@@ -1,10 +1,8 @@
-const MEDIA_EXT = /\.(mp4|webm)$/i;
-
 export const MADDY_PACK_ID = "mindpal-videos-maddy-v1";
 export const MADDY_CORE_IDS = ["maddy-welcome", "maddy-tip", "maddy-timed-breath"];
 
 export function hasMaddyMediaUrl(url) {
-  return typeof url === "string" && MEDIA_EXT.test(url.trim());
+  return typeof url === "string" && /\.(mp4|webm)$/i.test(url.trim());
 }
 
 /**

@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,7 +9,9 @@ const sw = readFileSync(join(root, "sw.js"), "utf8");
 const jsName = html.match(/assets\/(index-[^"]+\.js)/)?.[1];
 const cssName = html.match(/assets\/(index-[^"]+\.css)/)?.[1];
 if (!jsName || !cssName) throw new Error("index.html missing hashed assets");
-const js = readFileSync(join(root, "assets", jsName), "utf8");
+const jsPath = join(root, "assets", jsName);
+execFileSync("node", ["--check", jsPath], { cwd: root });
+const js = readFileSync(jsPath, "utf8");
 const checks = [
   [html.includes('src="/mindpal/assets/'), "index.html keeps /mindpal/ JS path"],
   [html.includes('href="/mindpal/assets/'), "index.html keeps /mindpal/ CSS path"],
