@@ -78,6 +78,20 @@ describe("video card click smoke", () => {
     );
   });
 
+  it("treats Feelings Maddy rows as Play with a Pages MP4 src", () => {
+    const result = activateLibraryVideo({
+      id: "maddy-welcome",
+      title: "Welcome",
+      kind: "maddy",
+      src: "/videos/maddy/welcome.mp4",
+      publishedSrc: "/mindpal/videos/maddy/welcome.mp4",
+    });
+    assert.equal(result.fired, true);
+    assert.equal(result.playable, true);
+    assert.equal(result.cta, "Play");
+    assert.equal(result.src, "/mindpal/videos/maddy/welcome.mp4");
+  });
+
   it("activates coach cards into a detail sheet without exposing look_id", () => {
     const look = {
       person: "Denyse",

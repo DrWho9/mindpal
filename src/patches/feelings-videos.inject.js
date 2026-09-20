@@ -1,31 +1,29 @@
 function MpEmotionVideoCard({item:e}){
-  let[t,n]=(0,_.useState)(!1),r=mpReadings.emotionVideoCta(e),i=e.kind===`maddy`||e.kind===`mindpal-playable`,a=e.kind===`youtube`&&e.openUrl,o=e.kind===`mindpal-draft`;
+  let r=mpReadings.emotionVideoCta(e),a=e.kind===`youtube`&&e.openUrl;
   function s(){
-    n(!0);
-    if(i){
-      requestAnimationFrame(()=>{
-        let t=document.getElementById(`mp-emotion-video-${e.id}`);
-        if(t&&typeof t.play==`function`)try{t.play()}catch{}
-        t?.focus?.();
-      });
-    }
+    if(a)return;
+    let t={
+      ...e,
+      person:e.kind===`maddy`?`Maddy`:e.person,
+      kind:e.kind===`maddy`?`companion`:e.kind,
+      src:e.src||e.publishedSrc,
+      videoUrl:e.videoUrl||e.publishedSrc||e.src,
+      heygenDraft:e.kind===`mindpal-draft`
+    };
+    mpReadings.activateLibraryVideo(t);
   }
   return(0,A.jsxs)(`article`,{className:`mp-emotion-video`,"aria-label":`${e.title} · ${r}`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:e.source}),
     (0,A.jsx)(`h3`,{children:e.title}),
     e.description?(0,A.jsx)(`p`,{children:e.description}):null,
     e.durationLabel?(0,A.jsx)(`p`,{className:`muted`,children:e.durationLabel}):null,
-    a?(0,A.jsx)(`a`,{className:`primary`,href:e.openUrl,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:r}):(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:s,children:r}),
-    i&&t&&e.publishedSrc?(0,A.jsx)(`video`,{id:`mp-emotion-video-${e.id}`,controls:!0,playsInline:!0,preload:`metadata`,src:typeof Ge==`function`?Ge(e.src||e.publishedSrc):e.publishedSrc,"aria-label":`${e.title} · Play`}):null,
-    o&&t?(0,A.jsxs)(`div`,{className:`mp-emotion-draft`,children:[
-      e.outline?(0,A.jsx)(`p`,{children:e.outline}):null,
-      e.transcriptText?(0,A.jsx)(`p`,{children:e.transcriptText}):(0,A.jsx)(`p`,{className:`muted`,children:`Draft script preview. HeyGen has not rendered this clip yet.`})
-    ]}):null
+    a?(0,A.jsx)(`a`,{className:`primary`,href:e.openUrl,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:r}):(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:s,children:r})
   ]});
 }
 function MpEmotionVideos({emotion:e,onBrowseSpeakers:t,onBack:n,headingRef:s}){
   let r=mpReadings.normalizeEmotionId(e),i=mpReadings.emotionLabel(r),a=mpReadings.emotionBreadcrumb(r),o=mpReadings.curatedVideosForEmotion(r,{maddy:typeof mpMaddy<`u`?mpMaddy:null,videos:typeof mpVideoCatalog<`u`?mpVideoCatalog:null,meditations:typeof mpMeditationCatalog<`u`?mpMeditationCatalog:null});
   return(0,A.jsxs)(`section`,{className:`mp-emotion-videos`,"aria-label":`Videos`,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`nav`,{"aria-label":`Breadcrumb`,children:(0,A.jsx)(`ol`,{className:`mp-emotion-crumb`,children:a.map((e,t)=>(0,A.jsxs)(`li`,{children:[t?` → `:null,(0,A.jsx)(`span`,{children:e})]},`${e}-${t}`))})}),
     (0,A.jsx)(`h2`,{ref:s,tabIndex:-1,children:`Videos`}),
     (0,A.jsx)(`p`,{children:i?`A short list for ${i} — Maddy, MindPal clips, and YouTube meditations tagged for this feeling. Play or open here; nothing starts by itself.`:`A short mixed list to start with. Choose a feeling above if you want a tighter set.`}),
