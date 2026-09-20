@@ -55,6 +55,16 @@
       "meditationCategoryId": "faith",
       "companionPrompt": "I'd like a short, educational next step around faith, prayer or meaning. Please keep it optional and non-clinical — one gentle reflection, and remind me I can skip anything that does not fit.",
       "journalPrompt": "What felt meaningful today, even in a small way… A hope or prayer I can hold lightly is…"
+    },
+    {
+      "id": "mothers",
+      "title": "Struggling mothers",
+      "shortTitle": "Mothers",
+      "intro": "The days can be full of pressure, exhaustion and a quiet guilt that you are not doing enough. This space is optional company — a few readings, a soothing clip, or one small win. It is not medical care, not a diagnosis, and not a postnatal clinic.",
+      "meditationCategoryId": "self-compassion",
+      "meditationCategoryIds": ["sleep", "self-compassion", "anxiety"],
+      "companionPrompt": "I'm a mother having a hard stretch — tired, stretched, and carrying a bit of guilt. Please stay educational and peer-like: one small, kind next step. You are software, not a therapist, and this is not a diagnosis or medical care. If I am in danger I will use human help / 000.",
+      "journalPrompt": "One small win amid caring for others today… A moment that was good enough, even if the rest was messy, was…"
     }
   ]
 }

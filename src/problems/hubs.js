@@ -1,7 +1,22 @@
-import { PROBLEM_TAG_IDS, feelingTagsToProblemTags, normalizeProblemTags, readingProblemTags } from "./theme-map.js";
+import {
+  MOTHER_SUPPORT_TAGS,
+  PROBLEM_TAG_IDS,
+  feelingTagsToProblemTags,
+  normalizeProblemTags,
+  readingProblemTags,
+} from "./theme-map.js";
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
+export const MOTHERS_PROBLEM_ID = "mothers";
+export const MOTHERS_ROUTE = "Struggling mothers";
+export const MOTHERS_READING_LIMIT = 12;
+export const MOTHERS_MADDY_IDS = ["maddy-welcome", "maddy-timed-breath"];
+export const MOTHERS_MEDITATION_IDS = ["sleep", "self-compassion", "anxiety"];
+
+export function isMothersProblem(id) {
+  return id === MOTHERS_PROBLEM_ID;
+}
 
 export function listProblems(catalog) {
   const list = Array.isArray(catalog?.problems) ? catalog.problems : [];
@@ -13,12 +28,21 @@ export function findProblem(catalog, id) {
   return listProblems(catalog).find((item) => item.id === id) || null;
 }
 
-export function readingsForProblem(pack, problemId, limit = 6) {
+export function readingsForProblem(pack, problemId, limit) {
   const readings = Array.isArray(pack?.readings) ? pack.readings : [];
+  const cap = Number.isFinite(limit)
+    ? limit
+    : problemId === MOTHERS_PROBLEM_ID
+      ? MOTHERS_READING_LIMIT
+      : 6;
   const tagged = readings
     .filter((item) => readingProblemTags(item).includes(problemId))
     .sort((a, b) => Number(a.day) - Number(b.day));
-  return tagged.slice(0, limit);
+  return tagged.slice(0, cap);
+}
+
+export function motherSupportTags(reading) {
+  return readingProblemTags(reading).filter((tag) => MOTHER_SUPPORT_TAGS.includes(tag));
 }
 
 export function videoProblemTags(video) {
@@ -37,6 +61,7 @@ export function videoProblemTags(video) {
   if (/\bmood|heavy|low mood|sad|difficult morning\b/.test(blob)) inferred.push("mood");
   if (/\bmotivat|get going|welcome|start|action|tip\b/.test(blob)) inferred.push("motivation");
   if (/\bfaith|prayer|meaning|welcome\b/.test(blob)) inferred.push("faith");
+  if (/\bmother|matern|postpartum|parenting|caregiv\b/.test(blob)) inferred.push("mothers");
   return normalizeProblemTags(inferred);
 }
 
@@ -46,7 +71,9 @@ export function videosForProblem(catalog, problemId) {
 }
 
 export function maddyForProblem(catalog, problemId) {
-  return videosForProblem(catalog, problemId);
+  const videos = videosForProblem(catalog, problemId);
+  if (problemId !== MOTHERS_PROBLEM_ID) return videos;
+  return MOTHERS_MADDY_IDS.map((id) => videos.find((item) => item.id === id)).filter(Boolean);
 }
 
 export function takeCompanionPrompt(storage = globalThis.sessionStorage) {

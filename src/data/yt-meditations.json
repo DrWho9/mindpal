@@ -273,7 +273,46 @@
       "title": "Self-compassion / kindness",
       "chip": "Kindness",
       "status": "filling",
-      "entries": [],
+      "entries": [
+        {
+          "id": "YT-KIND-01",
+          "title": "The Space Between Self-Esteem and Self Compassion",
+          "channel": "Kristin Neff / TEDx Talks",
+          "views": null,
+          "url": "https://www.youtube.com/watch?v=IvtZBUSplr4",
+          "availability": "checked",
+          "editorialHold": false,
+          "checkedAt": "2026-09-20",
+          "evidenceUrl": "https://www.youtube.com/watch?v=IvtZBUSplr4",
+          "tags": [
+            "low-mood",
+            "self-compassion",
+            "calm"
+          ],
+          "emotions": [
+            "low-mood"
+          ]
+        },
+        {
+          "id": "YT-KIND-02",
+          "title": "Kind talks and guided practices (channel)",
+          "channel": "Tara Brach",
+          "views": null,
+          "url": "https://www.youtube.com/@TaraBrach",
+          "availability": "checked",
+          "editorialHold": false,
+          "checkedAt": "2026-09-20",
+          "evidenceUrl": "https://www.youtube.com/@TaraBrach",
+          "tags": [
+            "low-mood",
+            "self-compassion",
+            "calm"
+          ],
+          "emotions": [
+            "low-mood"
+          ]
+        }
+      ],
       "tags": [
         "low-mood",
         "self-compassion"

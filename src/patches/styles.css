@@ -64,6 +64,12 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .mp-hub-videos button{width:100%;justify-content:space-between}
 .mp-account-footer{margin-top:28px}
 .mp-lane-problem{background:linear-gradient(#eef3ea,#f7f8f2 140px)}
+.mp-problem-card-mothers{border-color:#c9b48a;background:#fff8ee}
+.mp-hub-tags{color:#6a5a3a;font-size:12px}
+.mp-problem-chip-mothers{border-color:#9a6934}
+.mp-mothers-feelings,.mp-mothers-women{margin:0 0 18px}
+.mp-lane-mothers{--mp-lane:#7a5a28}
+.mp-mothers-safety{border-color:#e2d2b0}
 @media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
