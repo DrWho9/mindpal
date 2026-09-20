@@ -44,6 +44,9 @@ const checks = [
   [js.includes("ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})"), "Today youth teaser is hidden"],
   [js.includes("What do you need help with?"), "problem hub list is present"],
   [js.includes("mp-problem-chip") && js.includes("Tap a chip to expand"), "Today problem hubs are expandable chips"],
+  [js.includes("SUPPORT & GROWTH") && js.includes("When it's heavy") && js.includes("Build strength"), "Today splits Support and Growth"],
+  [js.includes("Positive mindset") && js.includes("Rise to a challenge") && js.includes("Gratitude & wins"), "Growth chips are present"],
+  [js.includes("mp-problem-group") && js.includes("mp-problem-chip-growth"), "Growth chip groups are styled"],
   [js.includes("mpProblemHubPage"), "problem hub page is present"],
   [js.includes("Struggling mothers") && js.includes("mpMothersHubPage"), "mothers hub is present"],
   [js.includes("mpMothersFeelingsChip") && js.includes("mpMothersWomenCard"), "mothers Feelings and Women’s entries are present"],
@@ -142,6 +145,9 @@ if (!css.includes("mp-emotion-crumb") || !css.includes("mp-emotion-video")) {
 }
 if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")) {
   throw new Error("Today problem chip styles missing");
+}
+if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
+  throw new Error("Support/Growth group styles missing");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(

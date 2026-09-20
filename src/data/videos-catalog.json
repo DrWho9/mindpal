@@ -22,12 +22,16 @@
       ],
       "problemTags": [
         "motivation",
-        "faith"
+        "faith",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "motivation",
         "faith",
-        "calm"
+        "calm",
+        "mindset",
+        "gratitude"
       ],
       "emotions": [
         "motivation",
@@ -53,12 +57,16 @@
       ],
       "problemTags": [
         "mood",
-        "motivation"
+        "motivation",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "low-mood",
         "motivation",
-        "self-compassion"
+        "self-compassion",
+        "courage",
+        "mindset"
       ],
       "emotions": [
         "low-mood",
@@ -272,12 +280,16 @@
         "callum"
       ],
       "problemTags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "stress"
+        "stress",
+        "challenge",
+        "resilience"
       ],
       "emotions": [
         "motivation"

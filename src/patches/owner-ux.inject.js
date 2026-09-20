@@ -168,21 +168,37 @@ function mpOpenProblem(id,onOpen){
   try{window.dispatchEvent(new Event(`mindpal-problem-change`))}catch{}
   onOpen&&onOpen(id);
 }
+function mpProblemChipClass(item,open){
+  let extra=item.group===`growth`||mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(item)
+    ?` mp-problem-chip-growth`
+    :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:``;
+  return `mp-problem-chip${open?` is-open`:``}${extra}`;
+}
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
-  let n=mpProblems.listProblems(mpProblemHubs),[r,i]=(0,_.useState)(null);
+  let n=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}],[r,i]=(0,_.useState)(null);
+  function chipsFor(group){return group.problems||[]}
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEMS`}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`SUPPORT & GROWTH`}),
     (0,A.jsx)(`h2`,{children:`What do you need help with?`}),
     (0,A.jsx)(`p`,{children:t===`today`?`Tap a chip to expand. Open hub for readings, videos and a journal line.`:`Tap a chip to expand. Each hub gathers readings, videos, Companion and a journal prompt.`}),
-    (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:n.map(t=>{
-      let a=r===t.id;
-      return(0,A.jsx)(`button`,{type:`button`,className:`mp-problem-chip${a?` is-open`:``}${t.id===`mothers`?` mp-problem-chip-mothers`:t.id===`aod`?` mp-problem-chip-aod`:``}`,"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
-    })}),
-    r?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
-      (0,A.jsx)(`h3`,{children:(n.find(e=>e.id===r)||{}).title}),
-      (0,A.jsx)(`p`,{children:(n.find(e=>e.id===r)||{}).intro}),
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
-    ]}):null
+    n.map(g=>{
+      let items=chipsFor(g);
+      if(!items.length)return null;
+      let open=items.find(e=>e.id===r)||null;
+      return(0,A.jsxs)(`div`,{className:`mp-problem-group mp-problem-group-${g.id}`,"aria-label":g.title,children:[
+        (0,A.jsx)(`p`,{className:`mp-problem-group-title`,children:g.title}),
+        (0,A.jsx)(`p`,{className:`muted mp-problem-group-lede`,children:g.lede}),
+        (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:items.map(t=>{
+          let a=r===t.id;
+          return(0,A.jsx)(`button`,{type:`button`,className:mpProblemChipClass(t,a),"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
+        })}),
+        open?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
+          (0,A.jsx)(`h3`,{children:open.title}),
+          (0,A.jsx)(`p`,{children:open.intro}),
+          (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
+        ]}):null
+      ]},g.id);
+    })
   ]});
 }
 function mpMotherYtEntries(problem){
@@ -394,8 +410,10 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{c(e)}})
   ]});
   let u=mpProblems.readingsForProblem(mpPackA,l.id);
-  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":l.title,children:[
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
+  let growth=l.group===`growth`||(mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(l));
+  let videoTag=mpProblems.videoTagForProblem?mpProblems.videoTagForProblem(l.id):l.id;
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem${growth?` mp-lane-growth`:``}`,"aria-label":l.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:growth?`GROWTH · BUILD STRENGTH`:`SUPPORT · WHEN IT'S HEAVY`}),
     (0,A.jsx)(`h1`,{children:l.title}),
     (0,A.jsx)(`p`,{className:`lede`,children:l.intro}),
     (0,A.jsx)(`p`,{className:`muted`,children:mpProblemHubs.disclaimer}),
@@ -408,10 +426,10 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
       ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
     ]}),
-    (0,A.jsx)(mpSupportVideos,{initialTag:l.id,heading:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
+    (0,A.jsx)(mpSupportVideos,{initialTag:videoTag,heading:growth?`Videos for this theme`:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
+      (0,A.jsx)(`p`,{children:growth?`Opens Companion with a short educational prompt for this growth theme. The usual disclaimer stays — this is not a therapist or emergency service.`:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(l.companionPrompt);t&&t(l.companionPrompt)},children:`Talk this through with Companion`})
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[

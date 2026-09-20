@@ -1,6 +1,8 @@
 import {
   AOD_SUPPORT_TAGS,
+  GROWTH_THEME_TAGS,
   MOTHER_SUPPORT_TAGS,
+  PROBLEM_GROUPS,
   PROBLEM_TAG_IDS,
   feelingTagsToProblemTags,
   normalizeProblemTags,
@@ -11,6 +13,8 @@ import {
   isOwnerReading,
   ownerCompanionOpener,
 } from "../readings/owner.js";
+
+export { GROWTH_THEME_TAGS, PROBLEM_GROUPS };
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
@@ -33,9 +37,69 @@ export function isAodProblem(id) {
   return id === AOD_PROBLEM_ID;
 }
 
+const GROWTH_HUB_IDS = new Set([
+  "mindset",
+  "motivation",
+  "stronger-mind",
+  "challenge",
+  "hard-patch",
+  "gratitude",
+]);
+
+export function problemGroupId(item) {
+  if (item?.group === "growth" || item?.group === "support") return item.group;
+  return GROWTH_HUB_IDS.has(item?.id) ? "growth" : "support";
+}
+
 export function listProblems(catalog) {
   const list = Array.isArray(catalog?.problems) ? catalog.problems : [];
   return list.filter((item) => item && PROBLEM_TAG_IDS.includes(item.id));
+}
+
+export function listProblemGroups(catalog) {
+  const problems = listProblems(catalog);
+  const fromCatalog = Array.isArray(catalog?.groups) && catalog.groups.length
+    ? catalog.groups
+    : PROBLEM_GROUPS;
+  return fromCatalog
+    .map((group) => ({
+      id: group.id,
+      title: group.title,
+      lede: group.lede,
+      problems: problems.filter((item) => problemGroupId(item) === group.id),
+    }))
+    .filter((group) => group.problems.length);
+}
+
+export function isGrowthProblem(id) {
+  if (id && typeof id === "object") return problemGroupId(id) === "growth";
+  return GROWTH_HUB_IDS.has(id);
+}
+
+export const PROBLEM_VIDEO_TAGS = {
+  sleep: "sleep",
+  anxiety: "anxiety",
+  stress: "stress",
+  mood: "low-mood",
+  faith: "faith",
+  mothers: "self-compassion",
+  aod: "alcohol",
+  mindset: "mindset",
+  motivation: "motivation",
+  "stronger-mind": "resilience",
+  challenge: "challenge",
+  "hard-patch": "courage",
+  gratitude: "gratitude",
+};
+
+export function videoTagForProblem(problemId) {
+  return PROBLEM_VIDEO_TAGS[problemId] || problemId;
+}
+
+export function growthThemeTags(reading) {
+  return readingProblemTags(reading).filter((tag) =>
+    GROWTH_THEME_TAGS.includes(tag) || GROWTH_HUB_IDS.has(tag),
+  );
 }
 
 export function findProblem(catalog, id) {
@@ -86,6 +150,11 @@ export function videoProblemTags(video) {
   if (/\bfaith|prayer|meaning|welcome\b/.test(blob)) inferred.push("faith");
   if (/\bmother|matern|postpartum|parenting|caregiv\b/.test(blob)) inferred.push("mothers");
   if (/\balcohol|drug|aod|craving|substance|intoxicat\b/.test(blob)) inferred.push("aod");
+  if (/\bmindset|reframe|hope|noticing good|positive\b/.test(blob)) inferred.push("mindset");
+  if (/\bchalleng|courage|stretch|brave\b/.test(blob)) inferred.push("challenge");
+  if (/\bresilien|focus|stronger mind|attention\b/.test(blob)) inferred.push("stronger-mind");
+  if (/\bhard patch|grit|overcome|healing\b/.test(blob)) inferred.push("hard-patch");
+  if (/\bgratitude|thanks|daily win\b/.test(blob)) inferred.push("gratitude");
   return normalizeProblemTags(inferred);
 }
 

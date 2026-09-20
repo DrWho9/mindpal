@@ -46,12 +46,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "motivation",
-        "stress"
+        "stress",
+        "mindset"
       ]
     },
     {
@@ -65,12 +67,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "stress",
         "calm",
-        "self-compassion"
+        "self-compassion",
+        "resilience"
       ]
     },
     {
@@ -104,12 +109,15 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "self-compassion",
         "relationships",
-        "gratitude"
+        "gratitude",
+        "mindset"
       ]
     },
     {
@@ -123,12 +131,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "calm",
-        "anger"
+        "anger",
+        "mindset"
       ]
     },
     {
@@ -181,12 +191,15 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "calm",
-        "faith"
+        "faith",
+        "mindset"
       ]
     },
     {
@@ -239,12 +252,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "anxiety"
+        "anxiety",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -260,12 +276,14 @@
       "theme_tags": [
         "mood",
         "mothers",
-        "guilt"
+        "guilt",
+        "hard-patch"
       ],
       "tags": [
         "low-mood",
         "self-compassion",
-        "motivation"
+        "motivation",
+        "courage"
       ]
     },
     {
@@ -287,7 +305,8 @@
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch"
       ],
       "tags": [
         "relationships",
@@ -310,12 +329,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "motivation"
+        "motivation",
+        "stronger-mind"
       ],
       "tags": [
         "overwhelm",
         "stress",
-        "motivation"
+        "motivation",
+        "resilience"
       ]
     },
     {
@@ -348,7 +369,8 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "anger",
@@ -368,12 +390,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "gratitude"
+        "gratitude",
+        "mindset"
       ]
     },
     {
@@ -388,7 +412,8 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -407,12 +432,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "stress"
+        "stress",
+        "challenge"
       ]
     },
     {
@@ -446,12 +473,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "stress",
         "relationships",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -466,12 +495,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "self-compassion",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -527,12 +558,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "calm"
+        "calm",
+        "challenge"
       ]
     },
     {
@@ -586,7 +619,8 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "faith"
+        "faith",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -624,12 +658,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "relationships",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -666,12 +702,15 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "stress"
+        "stress",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "low-mood",
         "grief",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -686,7 +725,8 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -706,12 +746,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "anxiety"
+        "anxiety",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -734,7 +776,9 @@
         "shame",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch",
+        "courage"
       ],
       "tags": [
         "self-compassion",
@@ -742,7 +786,8 @@
         "faith",
         "recovery-shame",
         "alcohol",
-        "drugs"
+        "drugs",
+        "courage"
       ]
     },
     {
@@ -817,12 +862,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -860,13 +907,16 @@
         "mood",
         "aod",
         "shame",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "low-mood",
         "motivation",
-        "recovery-shame"
+        "recovery-shame",
+        "mindset"
       ]
     },
     {
@@ -883,12 +933,14 @@
         "anxiety",
         "motivation",
         "mothers",
-        "motherhood"
+        "motherhood",
+        "resilience"
       ],
       "tags": [
         "anxiety",
         "stress",
-        "motivation"
+        "motivation",
+        "resilience"
       ]
     },
     {
@@ -905,13 +957,16 @@
         "mood",
         "aod",
         "shame",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "low-mood",
         "anxiety",
-        "recovery-shame"
+        "recovery-shame",
+        "courage"
       ]
     },
     {
@@ -1008,12 +1063,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "calm",
-        "motivation"
+        "motivation",
+        "mindset"
       ]
     },
     {
@@ -1030,7 +1088,8 @@
         "sleep",
         "mood",
         "aod",
-        "shame"
+        "shame",
+        "hard-patch"
       ],
       "tags": [
         "sleep",
@@ -1051,12 +1110,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "calm",
-        "relationships"
+        "relationships",
+        "challenge"
       ]
     },
     {
@@ -1155,12 +1216,15 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "relationships",
-        "faith"
+        "faith",
+        "mindset"
       ]
     },
     {
@@ -1193,12 +1257,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "challenge"
       ]
     },
     {
@@ -1213,12 +1280,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "calm",
         "overwhelm",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -1252,12 +1321,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "relationships",
         "anger",
-        "grief"
+        "grief",
+        "courage"
       ]
     },
     {
@@ -1297,7 +1368,8 @@
         "stress",
         "mothers",
         "overwhelm",
-        "exhaustion"
+        "exhaustion",
+        "hard-patch"
       ],
       "tags": [
         "overwhelm",
@@ -1319,13 +1391,16 @@
         "mood",
         "faith",
         "aod",
-        "recovery-adjacent"
+        "recovery-adjacent",
+        "mindset",
+        "hard-patch"
       ],
       "tags": [
         "calm",
         "faith",
         "grief",
-        "recovery-shame"
+        "recovery-shame",
+        "mindset"
       ]
     },
     {
@@ -1359,12 +1434,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -1381,13 +1458,18 @@
         "mood",
         "aod",
         "recovery-adjacent",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "courage",
+        "resilience"
       ],
       "tags": [
         "grief",
         "self-compassion",
         "calm",
-        "recovery-shame"
+        "recovery-shame",
+        "courage",
+        "resilience"
       ]
     },
     {
@@ -1501,12 +1583,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "self-compassion",
-        "anger"
+        "anger",
+        "mindset"
       ]
     },
     {
@@ -1521,12 +1605,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "anxiety"
+        "anxiety",
+        "stronger-mind"
       ],
       "tags": [
         "overwhelm",
         "anxiety",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -1540,12 +1626,16 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "courage"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "relationships"
+        "relationships",
+        "challenge",
+        "courage"
       ]
     },
     {
@@ -1560,7 +1650,8 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude"
       ],
       "tags": [
         "gratitude",
@@ -1619,12 +1710,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "calm",
         "gratitude",
-        "low-mood"
+        "low-mood",
+        "mindset"
       ]
     },
     {
@@ -1661,12 +1755,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "calm",
         "stress",
-        "motivation"
+        "motivation",
+        "courage"
       ]
     },
     {
@@ -1680,12 +1776,16 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "stronger-mind",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "stress"
+        "stress",
+        "challenge",
+        "resilience"
       ]
     },
     {
@@ -1699,7 +1799,8 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -1739,12 +1840,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "sleep",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -1777,12 +1880,14 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -1796,12 +1901,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "mindset"
       ]
     },
     {
@@ -1834,7 +1942,8 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -1874,12 +1983,14 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "stress"
+        "stress",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "relationships",
-        "stress"
+        "stress",
+        "challenge"
       ]
     },
     {
@@ -1936,7 +2047,8 @@
         "mood",
         "anxiety",
         "aod",
-        "craving"
+        "craving",
+        "hard-patch"
       ],
       "tags": [
         "low-mood",
@@ -1980,7 +2092,8 @@
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch"
       ],
       "tags": [
         "self-compassion",
@@ -1989,7 +2102,8 @@
         "alcohol",
         "drugs",
         "craving",
-        "recovery-shame"
+        "recovery-shame",
+        "courage"
       ]
     },
     {
@@ -2004,7 +2118,8 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "sleep",
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "sleep",
@@ -2023,12 +2138,15 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "faith",
         "gratitude",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -2046,7 +2164,9 @@
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "challenge",
+        "courage"
       ],
       "tags": [
         "motivation",
@@ -2054,7 +2174,9 @@
         "calm",
         "alcohol",
         "drugs",
-        "recovery-shame"
+        "recovery-shame",
+        "challenge",
+        "courage"
       ]
     }
   ]
