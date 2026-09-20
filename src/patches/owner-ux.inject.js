@@ -62,7 +62,10 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     ]});
   }
   return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-${e}`,"aria-label":`Daily wins`,children:[
-    e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):(0,A.jsxs)(A.Fragment,{children:[
+    e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):e===`nudge`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Add a daily win when something small goes well.`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Optional. Never a test.`})
+    ]}):(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`DAILY WINS`}),
       (0,A.jsx)(`h2`,{children:`A win from today`}),
       (0,A.jsx)(`p`,{children:`A sentence is enough. You’ll see these again in Before you sleep.`})
@@ -74,7 +77,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`})
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
+      t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
     o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
   ]});
@@ -145,12 +149,127 @@ function mpFaithSettings(){
       (0,A.jsx)(`input`,{type:`checkbox`,checked:n,onChange:e=>{let t=e.target.checked;mpFaith.setWelcomeImageEnabled(t),r(t)}}),
       `Show welcome image`
     ]}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Kept here so the morning page stays tidy.`}),
-    (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the local sign-in page. Your notes and wins stay on this device.`})
+    (0,A.jsx)(`p`,{className:`muted`,children:`Kept here so the morning page stays tidy.`})
   ]});
 }
-function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s}){
+function mpAccountFooter(){
+  let e=mpSignedInName(``);
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-account-footer`,"aria-label":`Account`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`ACCOUNT`}),
+    (0,A.jsx)(`h2`,{children:e?`Signed in as ${e}`:`Local account`}),
+    (0,A.jsx)(`p`,{children:`Demo login only — this profile stays on this device. Nothing is sent to the cloud.`}),
+    (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Wins, photos and friends stay on this device. Sharing them with other people needs a future backend — nothing is uploaded today.`})
+  ]});
+}
+function mpOpenProblem(id,onOpen){
+  mpProblems.selectProblem(id);
+  try{window.dispatchEvent(new Event(`mindpal-problem-change`))}catch{}
+  onOpen&&onOpen(id);
+}
+function mpProblemHubList({onOpen:e,variant:t=`explore`}){
+  let n=mpProblems.listProblems(mpProblemHubs);
+  return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEMS`}),
+    (0,A.jsx)(`h2`,{children:`What do you need help with?`}),
+    (0,A.jsx)(`p`,{children:t===`today`?`Open a problem hub for readings, videos and a journal line.`:`Each hub gathers readings, videos, Companion and a journal prompt for that theme.`}),
+    (0,A.jsx)(`div`,{className:`mp-problem-grid`,children:n.map(n=>(0,A.jsxs)(`button`,{type:`button`,className:`mp-problem-card`,onClick:()=>mpOpenProblem(n.id,e),children:[
+      (0,A.jsx)(`strong`,{children:n.title}),
+      (0,A.jsx)(`span`,{className:`card-link`,children:`Open hub`})
+    ]},n.id))})
+  ]});
+}
+function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i}){
+  let[a,o]=(0,_.useState)(()=>mpProblems.selectedProblemId());
+  (0,_.useEffect)(()=>{function e(){o(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
+  let s=mpProblems.findProblem(mpProblemHubs,a);
+  if(!s)return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":`Problem hub`,children:[
+    (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
+    (0,A.jsx)(mpProblemHubList,{onOpen:e=>{o(e)}})
+  ]});
+  let c=mpProblems.readingsForProblem(mpPackA,s.id),l=mpProblems.maddyForProblem(mpMaddy,s.id),u=mpProblems.videosForProblem(mpVideoCatalog,s.id);
+  let d=(mpMeditationCatalog&&mpReadings.meditationCategories(mpMeditationCatalog)||[]).find(e=>e.id===s.meditationCategoryId);
+  let f=d?mpReadings.entriesForCategory(d).filter(e=>mpReadings.meditationOpenUrl(e)).slice(0,3):[];
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":s.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
+    (0,A.jsx)(`h1`,{children:s.title}),
+    (0,A.jsx)(`p`,{className:`lede`,children:s.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:mpProblemHubs.disclaimer}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Readings`}),
+      (0,A.jsx)(`p`,{children:`Pack A mornings tagged for this theme. The daily Done gate still lives on the Readings page.`}),
+      c.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:c.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`strong`,{children:e.title}),
+        (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]})
+      ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Videos`}),
+      l.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
+        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:l.map(e=>(0,A.jsxs)(`article`,{className:`maddy-video-card`,children:[
+          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
+          (0,A.jsx)(`p`,{children:e.description}),
+          (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:Ge(e.src),"aria-label":`${e.cardTitle||e.title} with Maddy`})
+        ]},e.id))})
+      ]}):null,
+      u.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Open-draft videos`}),
+        (0,A.jsx)(`ul`,{className:`mp-hub-videos`,children:u.map(t=>{
+          let n=mpReadings.videoCardCta?mpReadings.videoCardCta(t):`Open draft`;
+          return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary`,onClick:()=>e&&e(t.id),children:[(0,A.jsx)(`strong`,{children:t.title}),(0,A.jsx)(`span`,{children:n})]})},t.id);
+        })})
+      ]}):null,
+      f.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:d.title||`Voice-guided on YouTube`}),
+        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
+        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:f.map(e=>{
+          let t=mpReadings.meditationOpenUrl(e);
+          return(0,A.jsxs)(`li`,{children:[
+            (0,A.jsx)(`strong`,{children:e.title}),
+            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
+          ]},e.id);
+        })})
+      ]}):(s.meditationCategoryId===`sleep`||s.meditationCategoryId===`anxiety`)?(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`}):null
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Companion`}),
+      (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(s.companionPrompt);t&&t(s.companionPrompt)},children:`Talk this through with Companion`})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Journal`}),
+      (0,A.jsx)(`p`,{children:s.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        n?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>n(s.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:i||(n?()=>n(`A small win today: `):null)})
+    ]})
+  ]});
+}
+function mpDayStep({id:e,day:t,isNext:n,onOpen:r,onMark:i,extra:a}){
+  let o=mpTodaySteps.STEP_META[e],s=mpTodaySteps.stepStatus(t,e);
+  return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-${e}${n?` is-next`:``}${s!==`todo`?` is-${s}`:``}`,children:[
+    (0,A.jsxs)(`div`,{className:`mp-step-head`,children:[
+      (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${o.number}`,` · `,o.when]}),
+      n?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+      s===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+      s===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
+    ]}),
+    (0,A.jsx)(`h3`,{children:o.title}),
+    (0,A.jsx)(`p`,{children:o.blurb}),
+    a||null,
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:n?`primary`:`secondary`,type:`button`,onClick:r,children:`Open ${o.title}`}),
+      s===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>i(e,`done`),children:`Mark done`}):null,
+      s===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>i(e,`skipped`),children:`Skip`}):null,
+      s!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>i(e,`todo`),children:`Undo`}):null
+    ]})
+  ]});
+}
+function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s,onOpenProblem:v}){
   let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay());
   (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}return window.addEventListener(`visibilitychange`,e),e(),()=>window.removeEventListener(`visibilitychange`,e)},[]);
   let f=mpTodaySteps.nextStepId(u),p=mpFaith.isCopticDateEnabled();
@@ -160,7 +279,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
   }
   let h={readings:t,focus:n,later:i||n,evening:a||r};
   return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub`,"aria-label":`Today’s steps`,children:[
-    (0,A.jsxs)(`div`,{className:`today-greeting`,children:[
+    (0,A.jsxs)(`header`,{className:`today-greeting`,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),
       (0,A.jsx)(`p`,{className:`mp-civil-date`,children:mpCalendar.formatCivilDate()}),
       p?(0,A.jsx)(`p`,{className:`muted mp-coptic-date`,children:mpCalendar.formatCopticLabel()}):null,
@@ -173,10 +292,10 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
       e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
       (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
-        let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,o=n.rowLabel||n.title;
+        let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,g=n.rowLabel||n.title;
         return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${t}${a?` is-next`:``}${i!==`todo`?` is-${i}`:``}`,children:[
           (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[t]&&h[t](),children:[
-            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,o]}),
+            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,g]}),
             a?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
             i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
             i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
@@ -188,6 +307,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
           ]})
         ]},t)
       })}),
+      e.id===`day`?(0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}):null,
       e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
     ]},e.id))
   ]});

@@ -17,6 +17,7 @@ import {
   speakerIdsInCatalog,
 } from "../src/speakers/order.js";
 import { mergeTtsAudioCatalog } from "../src/tts/audio.js";
+import { THEME_LABEL_TO_TAGS } from "../src/problems/theme-map.js";
 
 const root = dirname(fileURLToPath(new URL(".", import.meta.url)));
 const vendorDir = join(root, "vendor", "daystart-8f78bb0");
@@ -32,10 +33,12 @@ function md5(text) {
 
 function stripExports(source) {
   return source
+    .replace(/^import[\s\S]*? from ["'][^"']+["'];?\s*$/gm, "")
     .replace(/^import .*$/gm, "")
     .replace(/^export const /gm, "const ")
     .replace(/^export async function /gm, "async function ")
-    .replace(/^export function /gm, "function ");
+    .replace(/^export function /gm, "function ")
+    .replace(/^export \{[\s\S]*?\};?\s*$/gm, "");
 }
 
 function moduleSource(rel) {
@@ -125,6 +128,12 @@ function wrapRuntime() {
   const ttsAudio = stripExports(
     readFileSync(join(root, "src/tts/audio.js"), "utf8"),
   );
+  const themeMap = stripExports(
+    readFileSync(join(root, "src/problems/theme-map.js"), "utf8"),
+  );
+  const problems = stripExports(
+    readFileSync(join(root, "src/problems/hubs.js"), "utf8"),
+  );
   const ytSection = readFileSync(
     join(root, "src/patches/yt-meditations.inject.js"),
     "utf8",
@@ -151,6 +160,7 @@ function wrapRuntime() {
       discoverPhase1Audio(),
     ),
   );
+  const problemHubs = readFileSync(join(root, "src/data/problem-hubs.json"), "utf8");
   const ux = [
     moduleSource("src/calendar/civil.js"),
     moduleSource("src/calendar/coptic.js"),
@@ -158,11 +168,12 @@ function wrapRuntime() {
     moduleSource("src/today/steps.js"),
     moduleSource("src/today/wins.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins;(function(){${ux}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){${ux}\n${themeMap}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,normalizeProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY};
 })();${ytSection}${sidebarShare}${voicePicker}`;
 }
 
@@ -342,6 +353,19 @@ function patchJs(source) {
   if (!next.includes("mindpal-dstss-themes-paraphrase-v1")) {
     throw new Error("Pack A id missing from bundle");
   }
+  const packAData = JSON.parse(readFileSync(join(root, "src/data/pack-a.json"), "utf8"));
+  const untagged = (packAData.readings || []).filter(
+    (item) => !Array.isArray(item.theme_tags) || !item.theme_tags.length,
+  );
+  if (untagged.length) {
+    throw new Error(`Pack A readings missing theme_tags: ${untagged.map((item) => item.id).join(",")}`);
+  }
+  const unknownTheme = (packAData.readings || []).find(
+    (item) => item.theme_label && !THEME_LABEL_TO_TAGS[item.theme_label],
+  );
+  if (unknownTheme) {
+    throw new Error(`Pack A theme_label not mapped: ${unknownTheme.theme_label}`);
+  }
   if (!next.includes("Open draft")) {
     throw new Error("Open draft CTA missing from bundle");
   }
@@ -474,26 +498,26 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     `"route.today":\`Today\`,"route.explore":\`Explore\``,
-    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.explore":\`Explore\``,
+    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.explore":\`Explore\``,
     "i18n-routes",
   );
   next = replaceOnce(
     next,
     "Ii=[`Feelings`,`YouTube directory`,`Today`,`Explore`,`My diary`,`Focus`,`Companion`,",
-    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Problem`,`Explore`,`My diary`,`Focus`,`Companion`,",
     "hash-routes",
   );
   next = replaceOnce(
     next,
     "Li={Today:`route.today`,Explore:`route.explore`,",
-    "Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Explore:`route.explore`,",
+    "Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,Explore:`route.explore`,",
     "breadcrumb-routes",
   );
 
   next = replaceOnce(
     next,
     "onOpenVerse:()=>requestAnimationFrame(()=>document.getElementById(`today-verse`)?.scrollIntoView({behavior:`smooth`,block:`start`})),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)}",
-    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`)",
+    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:()=>I(`Problem`)",
     "today-hub-links",
   );
   next = replaceOnce(
@@ -537,7 +561,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "initialPrompt:S,onHelp:()=>I(`Get support`)}),t===`Companion`&&",
-    "initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Companion`&&",
+    "initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)}}),t===`Companion`&&",
     "journal-lane-close",
   );
 
@@ -585,6 +609,30 @@ function patchOwnerUx(source) {
     "(0,A.jsx)(`p`,{className:`lede`,children:o(`preferences.introduction`)}),(0,A.jsxs)(`div`,{className:`two-grid`",
     "(0,A.jsx)(`p`,{className:`lede`,children:o(`preferences.introduction`)}),(0,A.jsx)(mpFaithSettings,{}),(0,A.jsxs)(`div`,{className:`two-grid`",
     "settings-calendar",
+  );
+  next = replaceOnce(
+    next,
+    "Hosting, live AI, HeyGen rendering and public release remain separate steps.`})]})]})]})}",
+    "Hosting, live AI, HeyGen rendering and public release remain separate steps.`})]})]}),(0,A.jsx)(mpAccountFooter,{})]})}",
+    "settings-account-footer",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(Nt,{}),",
+    "",
+    "hide-midpage-login-card",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(MpWatchWithMaddy,{}),",
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpProblemHubList,{onOpen:()=>I(`Problem`)}),(0,A.jsx)(MpWatchWithMaddy,{}),",
+    "explore-problem-hubs",
+  );
+  next = replaceOnce(
+    next,
+    "[n,r]=(0,_.useState)(!1),[i,a]=(0,_.useState)(`ordinary`),[o,s]=(0,_.useState)(``),[c,l]=(0,_.useState)(0)",
+    "[n,r]=(0,_.useState)(!1),[i,a]=(0,_.useState)(`ordinary`),[o,s]=(0,_.useState)(()=>mpProblems.takeCompanionPrompt()),[c,l]=(0,_.useState)(0)",
+    "companion-prefill",
   );
 
   next = replaceOnce(
@@ -650,6 +698,30 @@ function patchOwnerUx(source) {
   }
   if (next.includes("Optional faith content. Skip anytime.")) {
     throw new Error("prayer WEB footer still in bundle");
+  }
+  if (!next.includes("Follow today’s steps")) {
+    throw new Error("Morning/Day/Night flow line missing from bundle");
+  }
+  if (!next.includes("What do you need help with?")) {
+    throw new Error("problem hub list missing from bundle");
+  }
+  if (!next.includes("mpProblemHubPage") || !next.includes("Talk this through with Companion")) {
+    throw new Error("problem hub page missing from bundle");
+  }
+  if (!next.includes("mp-account-footer") || !next.includes("mpAccountFooter")) {
+    throw new Error("Settings account footer missing from bundle");
+  }
+  if (next.includes("(0,A.jsx)(Nt,{})")) {
+    throw new Error("mid-page LOCAL ACCOUNT login card still mounted");
+  }
+  if (next.includes("a===`adult`&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`)")) {
+    throw new Error("Today feelings dump button still live");
+  }
+  if (!next.includes("Today’s verse — tap to expand")) {
+    throw new Error("collapsed verse control missing from Today");
+  }
+  if (!next.includes("takeCompanionPrompt")) {
+    throw new Error("Companion prefill helper missing from bundle");
   }
   return next;
 }

@@ -26,7 +26,7 @@
 .mp-signin-page input{width:100%;margin:6px 0 14px}
 .mp-profile-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 16px}
 
-.mp-today-hub{margin-bottom:18px}
+.mp-today-hub{margin-bottom:18px;display:flex;flex-direction:column;gap:18px}
 .mp-civil-date{margin:2px 0 0;font-size:1.15rem;font-weight:650;color:#2f3b2c}
 .mp-coptic-date{margin:2px 0 6px;font-size:.92rem}
 .mp-hub-flow{margin:.4em 0 12px;max-width:46ch}
@@ -42,6 +42,18 @@
 .mp-wins-count{margin:0 0 8px}
 .mp-wins-panel{background:#f7f4ea;border:1px solid #e3dcc6;border-radius:14px;padding:16px 18px;margin:14px 0 20px}
 .mp-wins-hub{padding:12px 14px;margin:12px 0 16px}
+.mp-wins-nudge.mp-wins-panel,.mp-wins-panel.mp-wins-nudge{margin:10px 0 14px;padding:12px 14px}
+.mp-day-band h2{margin:.1em 0 .25em}
+.mp-problem-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 0}
+.mp-problem-card{text-align:left;background:#fffef9;border:1px solid #d5dccb;border-radius:12px;padding:12px 14px;min-height:72px;display:flex;flex-direction:column;gap:6px;font:inherit;color:inherit;cursor:pointer}
+.mp-problem-card:hover{border-color:#7c9163}
+.mp-problem-list-today{margin-top:14px}
+.mp-hub-readings,.mp-hub-videos,.mp-hub-yt{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:10px}
+.mp-hub-readings li,.mp-hub-yt li{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.mp-hub-videos button{width:100%;justify-content:space-between}
+.mp-account-footer{margin-top:28px}
+.mp-lane-problem{background:linear-gradient(#eef3ea,#f7f8f2 140px)}
+@media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
 .mp-wins-list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #e8e1cc}
