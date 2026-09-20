@@ -4,6 +4,7 @@ import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
+  AOD_SUPPORT_TAGS,
   MOTHER_SUPPORT_TAGS,
   PROBLEM_TAG_IDS,
   THEME_LABEL_TO_TAGS,
@@ -11,6 +12,7 @@ import {
   tagsForThemeLabel,
 } from "../src/problems/theme-map.js";
 import {
+  aodSupportTags,
   findProblem,
   listProblems,
   maddyForProblem,
@@ -39,7 +41,7 @@ function memoryStorage(initial = {}) {
 }
 
 describe("problem hubs", () => {
-  it("seeds seven AU-plain problem hubs including struggling mothers", () => {
+  it("seeds eight AU-plain problem hubs including mothers and drugs & alcohol", () => {
     assert.deepEqual(
       listProblems(hubs).map((item) => item.id),
       PROBLEM_TAG_IDS,
@@ -54,6 +56,7 @@ describe("problem hubs", () => {
         "Motivation / get going",
         "Faith / prayer & meaning",
         "Struggling mothers",
+        "Drugs & alcohol",
       ],
     );
   });
@@ -81,6 +84,15 @@ describe("problem hubs", () => {
         `${reading.id} should carry a mother-support tag`,
       );
     }
+    const aod = readingsForProblem(packA, "aod", 100);
+    assert.ok(aod.length >= 8 && aod.length <= 15, `aod has ${aod.length}`);
+    for (const reading of aod) {
+      const extra = aodSupportTags(reading);
+      assert.ok(
+        extra.some((tag) => AOD_SUPPORT_TAGS.includes(tag)),
+        `${reading.id} should carry an AOD-support tag`,
+      );
+    }
   });
 
   it("filters Maddy and open-draft videos by problem tags", () => {
@@ -95,6 +107,15 @@ describe("problem hubs", () => {
       videosForProblem(videos, "mothers").some((item) => /^V\d+/.test(item.id)),
       false,
       "HeyGen drafts are not the mothers default",
+    );
+    assert.deepEqual(
+      maddyForProblem(maddy, "aod").map((item) => item.id),
+      ["maddy-welcome", "maddy-timed-breath"],
+    );
+    assert.equal(
+      videosForProblem(videos, "aod").some((item) => /^V\d+/.test(item.id)),
+      false,
+      "HeyGen drafts are not the AOD default",
     );
   });
 
@@ -129,5 +150,19 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /No speaker library dump here/);
     assert.match(inject, /Need support/);
+  });
+
+  it("wires a dedicated drugs & alcohol hub with safety copy", () => {
+    const aod = findProblem(hubs, "aod");
+    assert.match(aod.intro, /not detox/i);
+    assert.match(aod.intro, /not a replacement for alcohol and other drug treatment/);
+    assert.match(aod.companionPrompt, /not detox/);
+    assert.match(aod.companionPrompt, /000/);
+    assert.match(aod.journalPrompt, /non-shame/);
+    assert.match(inject, /mpAodHubPage/);
+    assert.match(inject, /mpAodFeelingsChip/);
+    assert.match(inject, /intoxicated and in danger/);
+    assert.match(inject, /Need support lists human help/);
+    assert.doesNotMatch(inject, /DirectLine/);
   });
 });

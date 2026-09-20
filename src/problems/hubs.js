@@ -1,4 +1,5 @@
 import {
+  AOD_SUPPORT_TAGS,
   MOTHER_SUPPORT_TAGS,
   PROBLEM_TAG_IDS,
   feelingTagsToProblemTags,
@@ -13,9 +14,18 @@ export const MOTHERS_ROUTE = "Struggling mothers";
 export const MOTHERS_READING_LIMIT = 12;
 export const MOTHERS_MADDY_IDS = ["maddy-welcome", "maddy-timed-breath"];
 export const MOTHERS_MEDITATION_IDS = ["sleep", "self-compassion", "anxiety"];
+export const AOD_PROBLEM_ID = "aod";
+export const AOD_ROUTE = "Drugs & alcohol";
+export const AOD_READING_LIMIT = 12;
+export const AOD_MADDY_IDS = ["maddy-welcome", "maddy-timed-breath"];
+export const AOD_MEDITATION_IDS = ["self-compassion", "anxiety", "stress"];
 
 export function isMothersProblem(id) {
   return id === MOTHERS_PROBLEM_ID;
+}
+
+export function isAodProblem(id) {
+  return id === AOD_PROBLEM_ID;
 }
 
 export function listProblems(catalog) {
@@ -34,7 +44,9 @@ export function readingsForProblem(pack, problemId, limit) {
     ? limit
     : problemId === MOTHERS_PROBLEM_ID
       ? MOTHERS_READING_LIMIT
-      : 6;
+      : problemId === AOD_PROBLEM_ID
+        ? AOD_READING_LIMIT
+        : 6;
   const tagged = readings
     .filter((item) => readingProblemTags(item).includes(problemId))
     .sort((a, b) => Number(a.day) - Number(b.day));
@@ -43,6 +55,10 @@ export function readingsForProblem(pack, problemId, limit) {
 
 export function motherSupportTags(reading) {
   return readingProblemTags(reading).filter((tag) => MOTHER_SUPPORT_TAGS.includes(tag));
+}
+
+export function aodSupportTags(reading) {
+  return readingProblemTags(reading).filter((tag) => AOD_SUPPORT_TAGS.includes(tag));
 }
 
 export function videoProblemTags(video) {
@@ -62,6 +78,7 @@ export function videoProblemTags(video) {
   if (/\bmotivat|get going|welcome|start|action|tip\b/.test(blob)) inferred.push("motivation");
   if (/\bfaith|prayer|meaning|welcome\b/.test(blob)) inferred.push("faith");
   if (/\bmother|matern|postpartum|parenting|caregiv\b/.test(blob)) inferred.push("mothers");
+  if (/\balcohol|drug|aod|craving|substance|intoxicat\b/.test(blob)) inferred.push("aod");
   return normalizeProblemTags(inferred);
 }
 
@@ -72,8 +89,14 @@ export function videosForProblem(catalog, problemId) {
 
 export function maddyForProblem(catalog, problemId) {
   const videos = videosForProblem(catalog, problemId);
-  if (problemId !== MOTHERS_PROBLEM_ID) return videos;
-  return MOTHERS_MADDY_IDS.map((id) => videos.find((item) => item.id === id)).filter(Boolean);
+  const scoped =
+    problemId === MOTHERS_PROBLEM_ID
+      ? MOTHERS_MADDY_IDS
+      : problemId === AOD_PROBLEM_ID
+        ? AOD_MADDY_IDS
+        : null;
+  if (!scoped) return videos;
+  return scoped.map((id) => videos.find((item) => item.id === id)).filter(Boolean);
 }
 
 export function takeCompanionPrompt(storage = globalThis.sessionStorage) {

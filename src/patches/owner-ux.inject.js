@@ -176,7 +176,7 @@ function mpProblemHubList({onOpen:e,variant:t=`explore`}){
     (0,A.jsx)(`p`,{children:t===`today`?`Tap a chip to expand. Open hub for readings, videos and a journal line.`:`Tap a chip to expand. Each hub gathers readings, videos, Companion and a journal prompt.`}),
     (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:n.map(t=>{
       let a=r===t.id;
-      return(0,A.jsx)(`button`,{type:`button`,className:`mp-problem-chip${a?` is-open`:``}${t.id===`mothers`?` mp-problem-chip-mothers`:``}`,"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
+      return(0,A.jsx)(`button`,{type:`button`,className:`mp-problem-chip${a?` is-open`:``}${t.id===`mothers`?` mp-problem-chip-mothers`:t.id===`aod`?` mp-problem-chip-aod`:``}`,"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
     })}),
     r?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
       (0,A.jsx)(`h3`,{children:(n.find(e=>e.id===r)||{}).title}),
@@ -204,6 +204,14 @@ function mpMothersFeelingsChip({onOpen:e}){
     (0,A.jsx)(`h2`,{children:`Struggling mothers`}),
     (0,A.jsx)(`p`,{children:`If the hard part is caring for little ones — tired, stretched, a bit guilty — there is a quiet space for that. Optional support, not medical care.`}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
+  ]});
+}
+function mpAodFeelingsChip({onOpen:e}){
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-aod-feelings`,"aria-label":`Drugs & alcohol`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL SUPPORT · NOT TREATMENT`}),
+    (0,A.jsx)(`h2`,{children:`Drugs & alcohol`}),
+    (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet directory here. Optional company, not detox and not a replacement for AOD treatment.`}),
+    e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the drugs & alcohol space`}):null
   ]});
 }
 function mpMothersWomenCard({onOpen:e}){
@@ -285,10 +293,81 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
     ]})
   ]});
 }
+function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
+  (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
+  let o=mpProblems.findProblem(mpProblemHubs,`aod`);
+  if(!o)return(0,A.jsx)(`p`,{children:`The drugs & alcohol space is not loaded yet.`});
+  let s=mpProblems.readingsForProblem(mpPackA,`aod`),c=mpProblems.maddyForProblem(mpMaddy,`aod`),l=mpMotherYtEntries(o);
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-aod`,"aria-label":`Drugs & alcohol`,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`DRUGS & ALCOHOL · OPTIONAL SUPPORT`}),
+    (0,A.jsx)(`h1`,{children:`Drugs & alcohol`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Soft pointers only.`}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
+      (0,A.jsx)(`p`,{children:`Support excerpts tagged for alcohol, drugs, craving, recovery-adjacent themes, shame, self-compassion and stress. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
+      s.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:s.map(e=>{
+        let t=mpProblems.aodSupportTags?mpProblems.aodSupportTags(e):[];
+        return(0,A.jsxs)(`li`,{children:[
+          (0,A.jsx)(`strong`,{children:e.title}),
+          (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]}),
+          t.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:t.join(` · `)}):null
+        ]},e.id);
+      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
+      n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Videos`}),
+      (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for self-compassion, worry and stress. No speaker library dump here.`}),
+      c.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
+        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:c.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:`Maddy`,kind:`maddy`,src:e.src,videoUrl:e.src}),children:[
+          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
+          (0,A.jsx)(`p`,{children:e.description}),
+          (0,A.jsx)(`span`,{className:`card-link`,children:`Play`})
+        ]},e.id))})
+      ]}):null,
+      l.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Voice-guided on YouTube`}),
+        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
+        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:l.map(e=>{
+          let t=mpReadings.meditationOpenUrl(e);
+          return(0,A.jsxs)(`li`,{children:[
+            (0,A.jsx)(`strong`,{children:e.title}),
+            (0,A.jsx)(`span`,{className:`muted`,children:e.channel||``}),
+            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
+          ]},e.id);
+        })})
+      ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Companion`}),
+      (0,A.jsx)(`p`,{children:`Opens Companion with an educational, peer-like prompt. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Journal / wins`}),
+      (0,A.jsx)(`p`,{children:o.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small, honest win today: `):null)})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel mp-aod-safety`,children:[
+      (0,A.jsx)(`h2`,{children:`If you are in danger, or intoxicated and unsafe`}),
+      (0,A.jsx)(`p`,{children:`This space is not detox and not a replacement for AOD treatment. If you are intoxicated and in danger, or in crisis in Australia, call 000. Need support lists human help and counselling lines already in the app, including Lifeline — we do not invent extra numbers here.`}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null
+      ]})
+    ]})
+  ]});
+}
 function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v}){
   let[s,c]=(0,_.useState)(()=>mpProblems.selectedProblemId());
   (0,_.useEffect)(()=>{function e(){c(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
   if(s===`mothers`)return(0,A.jsx)(mpMothersHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o});
+  if(s===`aod`)return(0,A.jsx)(mpAodHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a});
   let l=mpProblems.findProblem(mpProblemHubs,s);
   if(!l)return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":`Problem hub`,children:[
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),

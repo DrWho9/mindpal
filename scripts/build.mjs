@@ -192,7 +192,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,motherSupportTags,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem};
 })();${ytSection}${sidebarShare}${voicePicker}${feelingsUi}`;
 }
 
@@ -579,19 +579,19 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     `"route.today":\`Today\`,"route.explore":\`Explore\``,
-    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.explore":\`Explore\``,
+    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.aod":\`Drugs & alcohol\`,"route.explore":\`Explore\``,
     "i18n-routes",
   );
   next = replaceOnce(
     next,
     "Ii=[`Feelings`,`YouTube directory`,`Today`,`Explore`,`My diary`,`Focus`,`Companion`,",
-    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Explore`,`My diary`,`Focus`,`Companion`,",
     "hash-routes",
   );
   next = replaceOnce(
     next,
     "Li={Today:`route.today`,Explore:`route.explore`,",
-    "Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,Explore:`route.explore`,",
+    "Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,\"Drugs & alcohol\":`route.aod`,Explore:`route.explore`,",
     "breadcrumb-routes",
   );
 
@@ -663,7 +663,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "initialPrompt:S,onHelp:()=>I(`Get support`)}),t===`Companion`&&",
-    "initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Companion`&&",
+    "initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Drugs & alcohol`&&(0,A.jsx)(mpAodHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small, honest win today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Companion`&&",
     "journal-lane-close",
   );
 
@@ -739,19 +739,19 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "C=[[`sad`,`Sad or low`],[`anxious`,`Anxious or worried`],[`angry`,`Angry or frustrated`],[`overwhelmed`,`Overwhelmed or stressed`],[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`]]",
-    "C=[[`sad`,`Sad or low`],[`anxious`,`Anxious or worried`],[`angry`,`Angry or frustrated`],[`overwhelmed`,`Overwhelmed or stressed`],[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`]]",
+    "C=[[`sad`,`Sad or low`],[`anxious`,`Anxious or worried`],[`angry`,`Angry or frustrated`],[`overwhelmed`,`Overwhelmed or stressed`],[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`]]",
     "feelings-mothers-option",
   );
   next = replaceOnce(
     next,
     'unsure:`Not knowing how to describe this is an acceptable answer.`',
-    'unsure:`Not knowing how to describe this is an acceptable answer.`,mothers:`You can be a loving mother and still need a quiet corner. This is not a diagnosis.`',
+    'unsure:`Not knowing how to describe this is an acceptable answer.`,mothers:`You can be a loving mother and still need a quiet corner. This is not a diagnosis.`,aod:`Craving or shame around drink or other substances can sit here. This is not detox and not a diagnosis.`',
     "feelings-mothers-quote",
   );
   next = replaceOnce(
     next,
     "a===`adult`&&t===`Feelings`&&(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)})",
-    "a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)})]})",
+    "a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)})]})",
     "feelings-mothers-chip",
   );
   next = replaceOnce(
@@ -763,7 +763,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "{name:`Women’s wellbeing`,icon:fn}]",
-    "{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn}]",
+    "{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn}]",
     "sidebar-mothers-nav",
   );
 
@@ -866,6 +866,12 @@ function patchOwnerUx(source) {
   }
   if (!next.includes("One small win amid caring for others")) {
     throw new Error("mothers journal prompt missing from bundle");
+  }
+  if (!next.includes("Drugs & alcohol") || !next.includes("mpAodHubPage")) {
+    throw new Error("AOD hub route or page missing from bundle");
+  }
+  if (!next.includes("mpAodFeelingsChip")) {
+    throw new Error("AOD Feelings entry missing");
   }
   return next;
 }

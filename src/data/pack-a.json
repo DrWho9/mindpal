@@ -283,7 +283,11 @@
         "anxiety",
         "mothers",
         "motherhood",
-        "self-compassion"
+        "self-compassion",
+        "aod",
+        "recovery-adjacent",
+        "alcohol",
+        "drugs"
       ],
       "tags": [
         "relationships",
@@ -722,7 +726,12 @@
         "faith",
         "mothers",
         "guilt",
-        "self-compassion"
+        "self-compassion",
+        "aod",
+        "shame",
+        "recovery-adjacent",
+        "alcohol",
+        "drugs"
       ],
       "tags": [
         "self-compassion",
@@ -842,7 +851,10 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "aod",
+        "shame",
+        "self-compassion"
       ],
       "tags": [
         "self-compassion",
@@ -883,7 +895,10 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "aod",
+        "shame",
+        "self-compassion"
       ],
       "tags": [
         "self-compassion",
@@ -1005,7 +1020,9 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "sleep",
-        "mood"
+        "mood",
+        "aod",
+        "shame"
       ],
       "tags": [
         "sleep",
@@ -1067,7 +1084,9 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "sleep",
-        "stress"
+        "stress",
+        "aod",
+        "craving"
       ],
       "tags": [
         "sleep",
@@ -1288,7 +1307,9 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "aod",
+        "recovery-adjacent"
       ],
       "tags": [
         "calm",
@@ -1346,7 +1367,10 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "aod",
+        "recovery-adjacent",
+        "self-compassion"
       ],
       "tags": [
         "grief",
@@ -1602,7 +1626,9 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "aod",
+        "recovery-adjacent"
       ],
       "tags": [
         "boundaries",
@@ -1895,7 +1921,9 @@
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "anxiety"
+        "anxiety",
+        "aod",
+        "craving"
       ],
       "tags": [
         "low-mood",
@@ -1934,7 +1962,11 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "aod",
+        "recovery-adjacent",
+        "alcohol",
+        "drugs"
       ],
       "tags": [
         "self-compassion",
@@ -1992,7 +2024,11 @@
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "aod",
+        "recovery-adjacent",
+        "alcohol",
+        "drugs"
       ],
       "tags": [
         "motivation",
