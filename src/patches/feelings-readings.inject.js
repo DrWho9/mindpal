@@ -2,7 +2,7 @@ function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings f
   let i=mpReadings.tagsForFeeling(t),a=e&&mpReadings.TAG_VOCAB.includes(e)?e:``,[o,s]=(0,_.useState)(a),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(()=>mpReadings.loadProgress());
   (0,_.useEffect)(()=>{d(mpReadings.loadProgress())},[]);
   (0,_.useEffect)(()=>{s(a||``)},[a]);
-  let f=mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1;
+  let f=mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1,yOwner=g&&(mpReadings.isOwnerReading?mpReadings.isOwnerReading(g):g.pack===`owner`);
   function y(){
     if(!v||!g)return;
     let e=mpReadings.markReadingDone(u,g,f);
@@ -20,16 +20,16 @@ function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings f
     ]}):null,
     g?(0,A.jsxs)(`article`,{className:`mp-support-article`,"aria-label":g.title,children:[
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>l(null),children:`← Back to readings list`}),
-      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[`SUPPORT READING · DAY `,g.day,` · `,g.theme_label]}),
+      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[yOwner?`SUPPORT READING · MINDPAL ORIGINAL`:`SUPPORT READING · DAY ${g.day}`,g.theme_label?` · ${g.theme_label}`:``]}),
       (0,A.jsx)(`h3`,{children:g.title}),
       g.body.split(`
 
 `).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
       (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,g.practice]}),
       (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage(g,f,u.completedIds)}),
-      (0,A.jsx)(`p`,{className:`muted`,children:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:yOwner?`This MindPal original is always open as support. It is not a Pack A morning day.`:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
+        yOwner?null:(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
         (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l(null),children:`Back to list`})
       ]})
     ]}):(0,A.jsxs)(A.Fragment,{children:[
@@ -38,7 +38,7 @@ function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings f
         let t=mpReadings.isDayUnlocked(f,u.completedIds,e.day),n=u.completedIds.includes(e.id);
         return(0,A.jsxs)(`li`,{children:[
           (0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row`,onClick:()=>l(e.id),children:[
-            (0,A.jsxs)(`span`,{className:`mp-support-row-meta`,children:[`Day `,e.day,n?` · Done`:t?` · Unlocked`:` · Locked on morning path`]}),
+            (0,A.jsx)(`span`,{className:`mp-support-row-meta`,children:e.pack===`owner`||e.gate===!1?`MindPal original · always open`:`Day ${e.day}${n?` · Done`:t?` · Unlocked`:` · Locked on morning path`}`}),
             (0,A.jsx)(`strong`,{children:e.title}),
             (0,A.jsx)(`span`,{className:`mp-support-row-tags`,children:mpReadings.readingTags(e).map(mpReadings.formatTag).join(` `)})
           ]})

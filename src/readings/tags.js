@@ -1,3 +1,5 @@
+import { isOwnerReading, mergeOwnerReadings } from "./owner.js";
+
 /** Controlled Pack A feeling/problem tags. Stored without #; UI may show #tag. */
 
 export const TAG_VOCAB = [
@@ -20,6 +22,7 @@ export const TAG_VOCAB = [
   "alcohol",
   "craving",
   "recovery-shame",
+  "learning-loop",
 ];
 
 export const TAG_LABELS = {
@@ -42,6 +45,7 @@ export const TAG_LABELS = {
   alcohol: "Alcohol",
   craving: "Craving",
   "recovery-shame": "Recovery shame",
+  "learning-loop": "Learning loop",
 };
 
 /**
@@ -58,7 +62,7 @@ export const PROBLEM_HUB_TAGS = [
   "aod",
 ];
 
-export const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame"];
+export const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame", "learning-loop"];
 
 export const TAG_ALIASES = {
   mood: "low-mood",
@@ -198,6 +202,7 @@ export const THEME_LABEL_TO_TAGS = {
   closures: ["sleep", "grief", "calm"],
   "ordinary life": ["faith", "gratitude", "calm"],
   "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame"],
+  "learning-loop": ["alcohol", "drugs", "craving", "recovery-shame", "low-mood", "learning-loop"],
 };
 
 export const SUPPORT_DISCLAIMER =
@@ -248,17 +253,21 @@ export function readingHasAnyTag(reading, tags) {
 }
 
 export function readingsForTags(pack, tags) {
-  const readings = Array.isArray(pack?.readings) ? pack.readings.slice() : [];
+  const readings = mergeOwnerReadings(pack);
   const wanted = normalizeTags(tags);
   const filtered = wanted.length
     ? readings.filter((item) => readingHasAnyTag(item, wanted))
     : readings;
-  return filtered.sort((a, b) => Number(a.day) - Number(b.day));
+  return filtered.sort((a, b) => {
+    const ownerDelta = Number(isOwnerReading(b)) - Number(isOwnerReading(a));
+    if (ownerDelta) return ownerDelta;
+    return Number(a.day) - Number(b.day);
+  });
 }
 
 export function usedTags(pack) {
   const counts = new Map(TAG_VOCAB.map((tag) => [tag, 0]));
-  const readings = Array.isArray(pack?.readings) ? pack.readings : [];
+  const readings = mergeOwnerReadings(pack);
   for (const item of readings) {
     for (const tag of readingTags(item)) {
       counts.set(tag, (counts.get(tag) || 0) + 1);
@@ -273,6 +282,9 @@ export function usedTags(pack) {
 }
 
 export function supportUnlockMessage(reading, readings, completedIds) {
+  if (isOwnerReading(reading)) {
+    return "MindPal original support reading — always open. It is not a Pack A morning day, and opening here does not mark Done.";
+  }
   const day = Number(reading?.day);
   if (!reading?.id || !Number.isFinite(day)) {
     return "You can read this as support. Marking Done still follows the morning pathway, one day at a time.";

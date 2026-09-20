@@ -32,6 +32,8 @@ export const AOD_SUPPORT_TAGS = [
   "shame",
   "self-compassion",
   "stress",
+  "low-mood",
+  "learning-loop",
 ];
 
 export const THEME_LABEL_TO_TAGS = {
@@ -156,6 +158,15 @@ export const THEME_LABEL_TO_TAGS = {
   closures: ["sleep", "mood"],
   "ordinary life": ["faith"],
   "fresh start": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
+  "learning-loop": [
+    "aod",
+    "alcohol",
+    "drugs",
+    "craving",
+    "shame",
+    "low-mood",
+    "learning-loop",
+  ],
 };
 
 const ALLOWED_TAGS = new Set([
@@ -197,6 +208,8 @@ const FEELING_TO_PROBLEM = {
   "recovery-shame": "aod",
   "recovery-adjacent": "aod",
   shame: "aod",
+  "low-mood": "mood",
+  "learning-loop": "aod",
 };
 
 export function feelingTagsToProblemTags(raw) {

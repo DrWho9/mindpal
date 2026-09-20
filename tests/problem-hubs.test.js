@@ -25,10 +25,12 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 const packA = JSON.parse(readFileSync(join(root, "../src/data/pack-a.json"), "utf8"));
+const ownerReadings = JSON.parse(readFileSync(join(root, "../src/data/owner-readings.json"), "utf8"));
 const maddy = JSON.parse(readFileSync(join(root, "../src/data/maddy-companion.json"), "utf8"));
 const videos = JSON.parse(readFileSync(join(root, "../src/data/videos-catalog.json"), "utf8"));
 const hubs = JSON.parse(readFileSync(join(root, "../src/data/problem-hubs.json"), "utf8"));
 const inject = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
+globalThis.mpOwnerReadings = ownerReadings;
 
 function memoryStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -85,7 +87,7 @@ describe("problem hubs", () => {
       );
     }
     const aod = readingsForProblem(packA, "aod", 100);
-    assert.ok(aod.length >= 8 && aod.length <= 15, `aod has ${aod.length}`);
+    assert.ok(aod.length >= 8 && aod.length <= 16, `aod has ${aod.length}`);
     for (const reading of aod) {
       const extra = aodSupportTags(reading);
       assert.ok(
@@ -164,5 +166,32 @@ describe("problem hubs", () => {
     assert.match(inject, /intoxicated and in danger/);
     assert.match(inject, /Need support lists human help/);
     assert.doesNotMatch(inject, /DirectLine/);
+    assert.match(aod.companionPrompt, /puppy-and-treat loop/);
+    assert.match(aod.companionPrompt, /not genetics/);
+    assert.match(inject, /mp-hub-featured/);
+    assert.match(inject, /Read the talk-through/);
+  });
+
+  it("features the drugs and alcohol talk-through first on the AOD hub", () => {
+    const aod = readingsForProblem(packA, "aod");
+    assert.equal(aod[0].id, "dna-dopamine-loop-v1");
+    assert.equal(aod[0].pack, "owner");
+    assert.match(aod[0].title, /Drugs and alcohol/);
+    const spelled = aod[0].body.toLowerCase().indexOf("drugs and alcohol");
+    const dna = aod[0].body.search(/\bDNA\b/);
+    assert.ok(spelled >= 0 && dna > spelled, "spell out drugs and alcohol before DNA");
+    assert.match(aod[0].body, /not genetics/);
+    assert.match(aod[0].body, /puppy/);
+    assert.match(aod[0].body, /treat/);
+    assert.match(aod[0].body, /feel down/);
+    assert.match(aod[0].body, /not a DIY detox/i);
+    assert.match(aod[0].body, /Literacy, not a protocol/);
+    assert.match(aod[0].body, /000/);
+    assert.match(aod[0].body, /Need support/);
+    assert.deepEqual(
+      aodSupportTags(aod[0]).sort(),
+      ["alcohol", "craving", "drugs", "learning-loop", "low-mood", "shame"].sort(),
+    );
+    assert.ok(aod.slice(1).every((item) => item.pack !== "owner"));
   });
 });
