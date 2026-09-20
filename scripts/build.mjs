@@ -73,14 +73,19 @@ function wrapRuntime() {
   const playback = stripExports(
     readFileSync(join(root, "src/videos/playback.js"), "utf8"),
   );
+  const maddy = stripExports(
+    readFileSync(join(root, "src/videos/maddy.js"), "utf8"),
+  );
   const packA = readFileSync(join(root, "src/data/pack-a.json"), "utf8");
   const packB = readFileSync(join(root, "src/data/pack-b.json"), "utf8");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpReadings=(function(){${progress}\n${playback}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel}})();`;
+  const maddyCatalog = readFileSync(join(root, "src/data/maddy-companion.json"), "utf8");
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos}})();`;
 }
 
 function patchJs(source) {
   const runtime = wrapRuntime();
   const bt = readFileSync(join(root, "src/patches/daily-reading.inject.js"), "utf8").trim();
+  const maddyUi = readFileSync(join(root, "src/patches/watch-with-maddy.inject.js"), "utf8").trim();
 
   let next = source;
   if (next.includes("/*mp-readings-runtime-start*/")) {
@@ -116,7 +121,7 @@ function patchJs(source) {
   next = replaceOnce(
     next,
     "Meet the signed MindPal coaches and browse the script library.",
-    "Signed coaches plus V01–V12. Open draft shows the script until HeyGen is rendered.",
+    "Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.",
     "videos-card-copy",
   );
   next = replaceOnce(
@@ -144,6 +149,43 @@ function patchJs(source) {
     "video-hi-gate",
   );
 
+  if (next.includes("/*mp-maddy-ui-start*/")) {
+    next = replaceMarkedOrOnce(
+      next,
+      "/*mp-maddy-ui-start*/",
+      "/*mp-maddy-ui-end*/",
+      maddyUi,
+      "",
+      "maddy-ui",
+    );
+  } else {
+    next = replaceOnce(
+      next,
+      "function Ki({openVideo:e})",
+      `/*mp-maddy-ui-start*/${maddyUi}/*mp-maddy-ui-end*/function Ki({openVideo:e})`,
+      "maddy-ui-anchor",
+    );
+  }
+
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),",
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(MpWatchWithMaddy,{}),",
+    "explore-maddy-section",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`h3`,{children:`Meet the MindPal video library`}),(0,A.jsxs)(`p`,{children:[`Gentle exercises and helpful ideas.`,(0,A.jsx)(`br`,{}),`Read the first drafts while films are prepared.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Browse the library `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`12 HeyGen films planned · transcripts available`})",
+    "(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})",
+    "today-video-teaser",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x})",
+    "(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]},(0,A.jsx)(MpWatchWithMaddy,{})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x})",
+    "today-maddy-section",
+  );
+
   if (!next.includes("mindpal-dstss-themes-paraphrase-v1")) {
     throw new Error("Pack A id missing from bundle");
   }
@@ -155,6 +197,15 @@ function patchJs(source) {
   }
   if (!next.includes("mindpal.readings.v1")) {
     throw new Error("progress storage key missing from bundle");
+  }
+  if (!next.includes("Watch with Maddy")) {
+    throw new Error("Watch with Maddy section missing from bundle");
+  }
+  if (!next.includes("/videos/maddy/welcome.mp4")) {
+    throw new Error("Maddy welcome src missing from bundle");
+  }
+  if (!next.includes("playsInline:!0")) {
+    throw new Error("native video playsInline missing from bundle");
   }
   return next;
 }
@@ -212,7 +263,7 @@ function clearOldHashedAssets(keep) {
   }
 }
 
-execFileSync("node", ["--test", "tests/readings-progress.test.js", "tests/videos-playback.test.js"], {
+execFileSync("node", ["--test", "tests/readings-progress.test.js", "tests/videos-playback.test.js", "tests/maddy-companion.test.js"], {
   cwd: root,
   stdio: "inherit",
 });

@@ -7,4 +7,12 @@
 .mindpal-other-practice{max-width:62ch}
 .video-card.is-draft .play-dot{display:none}
 .video-card .card-link.open-draft{font-weight:650}
-.video-placeholder .heygen-not-rendered{margin-top:8px;font-weight:650}/*mp-styles-end*/
+.video-placeholder .heygen-not-rendered{margin-top:8px;font-weight:650}
+.watch-with-maddy{margin:24px 0 28px}
+.watch-with-maddy h2{margin:8px 0 10px}
+.maddy-video-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:18px 0 0;display:grid}
+.maddy-video-card{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:16px;flex-direction:column;gap:8px;min-width:0;padding:16px;display:flex}
+.maddy-video-card h3{margin:0;font-size:22px}
+.maddy-video-card p{margin:0}
+.maddy-video-card video{background:#182d47;border-radius:12px;width:100%;aspect-ratio:16/9;display:block}
+@media (width<=900px){.maddy-video-grid{grid-template-columns:1fr}}/*mp-styles-end*/

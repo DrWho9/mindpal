@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -23,8 +23,23 @@ const checks = [
   [js.includes("HeyGen not rendered yet"), "draft modal copy is present"],
   [!js.includes("HeyGen production planned"), "old HeyGen placeholder copy removed"],
   [((js.match(/publicEligible:!1/g) || []).length >= 12), "catalog drafts stay publicEligible false"],
+  [js.includes("Watch with Maddy"), "Watch with Maddy section is in the bundle"],
+  [js.includes("/videos/maddy/welcome.mp4") && js.includes("/videos/maddy/tip.mp4") && js.includes("/videos/maddy/timed-breath.mp4"), "Maddy MP4 srcs are in the bundle"],
+  [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
+  [js.includes(`"heygenDraftGate": false`), "Maddy catalog skips the HeyGen draft gate"],
+  [!sw.includes("videos/maddy"), "service worker does not precache Maddy MP4s"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
 ];
+
+const maddyFiles = [
+  ["videos/maddy/welcome.mp4", 2163855],
+  ["videos/maddy/tip.mp4", 1946389],
+  ["videos/maddy/timed-breath.mp4", 6126749],
+];
+for (const [rel, size] of maddyFiles) {
+  const path = join(root, rel);
+  checks.push([existsSync(path) && statSync(path).size === size, `published ${rel}`]);
+}
 
 const failed = checks.filter(([ok]) => !ok);
 if (failed.length) {
