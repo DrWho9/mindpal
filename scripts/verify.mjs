@@ -52,7 +52,7 @@ const checks = [
   [js.includes("Drugs & alcohol") && js.includes("mpAodHubPage"), "AOD hub is present"],
   [js.includes("dna-dopamine-loop-v1") && js.includes("mp-hub-featured"), "AOD featured talk-through is present"],
   [js.includes("globalThis.mpOwnerReadings=mpOwnerReadings"), "owner readings catalog is exposed to the runtime"],
-  [js.includes("puppy-and-treat loop") && js.includes("not genetics"), "AOD talk-through spells DNA as drugs and alcohol, not genetics"],
+  [js.includes("Why a drink or a line can teach your brain to feel worse") && js.includes("not your genes"), "AOD talk-through spells DNA as drugs and alcohol, not genes"],
   [js.includes("mpAodFeelingsChip"), "AOD Feelings entry is present"],
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],

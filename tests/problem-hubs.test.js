@@ -166,8 +166,8 @@ describe("problem hubs", () => {
     assert.match(inject, /intoxicated and in danger/);
     assert.match(inject, /Need support lists human help/);
     assert.doesNotMatch(inject, /DirectLine/);
-    assert.match(aod.companionPrompt, /puppy-and-treat loop/);
-    assert.match(aod.companionPrompt, /not genetics/);
+    assert.match(aod.companionPrompt, /reward-learning loop/);
+    assert.match(aod.companionPrompt, /not genes/);
     assert.match(inject, /mp-hub-featured/);
     assert.match(inject, /Read the talk-through/);
   });
@@ -176,16 +176,16 @@ describe("problem hubs", () => {
     const aod = readingsForProblem(packA, "aod");
     assert.equal(aod[0].id, "dna-dopamine-loop-v1");
     assert.equal(aod[0].pack, "owner");
-    assert.match(aod[0].title, /Drugs and alcohol/);
+    assert.match(aod[0].title, /Why a drink or a line can teach your brain to feel worse/);
     const spelled = aod[0].body.toLowerCase().indexOf("drugs and alcohol");
     const dna = aod[0].body.search(/\bDNA\b/);
     assert.ok(spelled >= 0 && dna > spelled, "spell out drugs and alcohol before DNA");
-    assert.match(aod[0].body, /not genetics/);
+    assert.match(aod[0].body, /not your genes/);
     assert.match(aod[0].body, /puppy/);
     assert.match(aod[0].body, /treat/);
-    assert.match(aod[0].body, /feel down/);
-    assert.match(aod[0].body, /not a DIY detox/i);
-    assert.match(aod[0].body, /Literacy, not a protocol/);
+    assert.match(aod[0].body, /feel down|felt awful|feel rough/);
+    assert.match(aod[0].body, /not saying one drink/);
+    assert.match(aod[0].body, /literacy, not a protocol/i);
     assert.match(aod[0].body, /000/);
     assert.match(aod[0].body, /Need support/);
     assert.deepEqual(

@@ -363,7 +363,7 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion on the drugs and alcohol talk-through — the puppy-and-treat loop. DNA is only a nickname for drugs and alcohol, not genetics. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
+      (0,A.jsx)(`p`,{children:`Opens Companion on the drugs and alcohol talk-through — why a drink or a line can teach the brain to feel worse. DNA is only a nickname for drugs and alcohol, not genes. It is software, not a clinician, and it cannot watch over you or run detox.`}),
       e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[

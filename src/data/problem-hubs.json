@@ -73,7 +73,7 @@
       "intro": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is optional company: a few readings, a quiet clip, or one honest sentence. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
       "meditationCategoryId": "self-compassion",
       "meditationCategoryIds": ["self-compassion", "anxiety", "stress"],
-      "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "companionPrompt": "I've opened the MindPal talk-through about drugs and alcohol — sometimes shortened to DNA, meaning substances, not genes. Please stay educational: help me notice the reward-learning loop (feel rough → use → brief relief → come-down) without shame, dosing advice, or “just quit” orders. You are software, not a clinician. This is not detox, not medical advice, and not treatment. If I am dependent, withdrawing, or in danger I will use Need support and human help / 000.",
       "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
     }
   ]
