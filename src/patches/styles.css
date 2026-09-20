@@ -72,3 +72,32 @@
 @media (width<=700px){
   .mp-day-step .button-row{flex-wrap:wrap}
 }
+.coach-look-id{display:none}
+button.coach-card{text-align:left;cursor:pointer;font:inherit;color:inherit;transition:transform .15s,box-shadow .15s,border-color .15s}
+button.coach-card:hover{transform:translateY(-3px);box-shadow:0 8px 20px #354b3210;border-color:#7c9163}
+button.coach-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
+button.coach-card .card-link{margin-top:8px}
+.coach-pro-badge{letter-spacing:.14em}
+.coach-modal .coach-avatar{width:88px;height:88px;margin:0 0 12px}
+.coach-related-videos{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.coach-related-video{width:100%;justify-content:space-between;gap:12px;text-align:left}
+.coach-related-video span{letter-spacing:.04em;font-size:11px;font-weight:650;white-space:nowrap}
+.mindpal-yt-meditations{margin:28px 0 8px}
+.mindpal-yt-rank{margin:12px 0 16px}
+.mindpal-yt-rank summary{cursor:pointer;min-height:44px;font-weight:650}
+.mindpal-yt-chips{flex-wrap:wrap;gap:8px;margin:8px 0 16px;display:flex}
+.mindpal-yt-chip{background:#fff;border:1px solid #cdd6c5;border-radius:999px;min-height:40px;padding:8px 14px;font-size:12px}
+.mindpal-yt-chip.is-active{color:#254c36;background:#e7f0e1;border-color:#304e3b;font-weight:650}
+.mindpal-yt-fill{margin:8px 0 12px}
+.mindpal-yt-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:14px}
+.mindpal-yt-item{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:14px;padding:16px 18px}
+.mindpal-yt-item h3{margin:0 0 6px;font-size:20px}
+.mindpal-yt-meta{color:#55604f;margin:0 0 10px;font-size:13px}
+.mindpal-yt-item .secondary{margin-top:4px}
+.brand-quote{margin-bottom:10px}
+.brand-quote,.brand-quote blockquote,.brand-quote p,.brand-quote q{quotes:none}
+.brand-quote::before,.brand-quote::after,.brand-quote blockquote::before,.brand-quote blockquote::after,.brand-quote p::before,.brand-quote p::after,.brand-quote q::before,.brand-quote q::after{content:none!important}
+.mindpal-sidebar-share{margin:0 10px 22px}
+.mindpal-share-app{width:100%;min-height:40px}
+.mindpal-voice-picker{display:flex;flex-direction:column;gap:4px;min-width:11rem;font-size:12px;color:#55604f}
+.mindpal-voice-picker select{min-height:40px;border:1px solid #cdd6c5;border-radius:10px;background:#fff;padding:0 10px}

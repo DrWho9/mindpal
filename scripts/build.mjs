@@ -11,6 +11,12 @@ import {
 } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  REQUIRED_SPEAKER_IDS,
+  applySpeakerDisplayOrder,
+  speakerIdsInCatalog,
+} from "../src/speakers/order.js";
+import { mergeTtsAudioCatalog } from "../src/tts/audio.js";
 
 const root = dirname(fileURLToPath(new URL(".", import.meta.url)));
 const vendorDir = join(root, "vendor", "daystart-8f78bb0");
@@ -28,6 +34,7 @@ function stripExports(source) {
   return source
     .replace(/^import .*$/gm, "")
     .replace(/^export const /gm, "const ")
+    .replace(/^export async function /gm, "async function ")
     .replace(/^export function /gm, "function ");
 }
 
@@ -71,6 +78,28 @@ function snapshotBaseline() {
   }
 }
 
+function discoverPhase1Audio() {
+  const found = [];
+  const dirs = [
+    ["audio/phase1", "/mindpal/audio/phase1"],
+    ["audio", "/mindpal/audio"],
+    ["public/audio/phase1", "/mindpal/audio/phase1"],
+    ["public/audio", "/mindpal/audio"],
+  ];
+  for (const [rel, urlBase] of dirs) {
+    const dir = join(root, rel);
+    if (!existsSync(dir)) continue;
+    for (const name of readdirSync(dir)) {
+      if (!/\.(mp3|ogg|wav|m4a|webm)$/i.test(name)) continue;
+      found.push({
+        id: name.replace(/\.[^.]+$/, ""),
+        url: `${urlBase}/${name}`,
+      });
+    }
+  }
+  return found;
+}
+
 function wrapRuntime() {
   const progress = stripExports(
     readFileSync(join(root, "src/readings/progress.js"), "utf8"),
@@ -81,9 +110,47 @@ function wrapRuntime() {
   const maddy = stripExports(
     readFileSync(join(root, "src/videos/maddy.js"), "utf8"),
   );
+  const coaches = stripExports(
+    readFileSync(join(root, "src/coaches/related.js"), "utf8"),
+  );
+  const meditations = stripExports(
+    readFileSync(join(root, "src/videos/yt-meditations.js"), "utf8"),
+  );
+  const share = stripExports(
+    readFileSync(join(root, "src/share/app.js"), "utf8"),
+  );
+  const ttsVoices = stripExports(
+    readFileSync(join(root, "src/tts/voices.js"), "utf8"),
+  );
+  const ttsAudio = stripExports(
+    readFileSync(join(root, "src/tts/audio.js"), "utf8"),
+  );
+  const ytSection = readFileSync(
+    join(root, "src/patches/yt-meditations.inject.js"),
+    "utf8",
+  ).trim();
+  const sidebarShare = readFileSync(
+    join(root, "src/patches/sidebar-share.inject.js"),
+    "utf8",
+  ).trim();
+  const voicePicker = readFileSync(
+    join(root, "src/patches/voice-picker.inject.js"),
+    "utf8",
+  ).trim();
   const packA = readFileSync(join(root, "src/data/pack-a.json"), "utf8");
   const packB = readFileSync(join(root, "src/data/pack-b.json"), "utf8");
   const maddyCatalog = readFileSync(join(root, "src/data/maddy-companion.json"), "utf8");
+  const videoCatalog = readFileSync(join(root, "src/data/videos-catalog.json"), "utf8");
+  const meditationCatalog = readFileSync(
+    join(root, "src/data/yt-meditations.json"),
+    "utf8",
+  );
+  const ttsCatalog = JSON.stringify(
+    mergeTtsAudioCatalog(
+      JSON.parse(readFileSync(join(root, "src/data/tts-audio.json"), "utf8")),
+      discoverPhase1Audio(),
+    ),
+  );
   const ux = [
     moduleSource("src/calendar/civil.js"),
     moduleSource("src/calendar/coptic.js"),
@@ -91,20 +158,21 @@ function wrapRuntime() {
     moduleSource("src/today/steps.js"),
     moduleSource("src/today/wins.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins;(function(){${ux}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins;(function(){${ux}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-})();`;
+})();${ytSection}${sidebarShare}${voicePicker}`;
 }
 
 function patchJs(source) {
   const runtime = wrapRuntime();
   const bt = readFileSync(join(root, "src/patches/daily-reading.inject.js"), "utf8").trim();
+  const gt = readFileSync(join(root, "src/patches/signed-coaches.inject.js"), "utf8").trim();
   const maddyUi = readFileSync(join(root, "src/patches/watch-with-maddy.inject.js"), "utf8").trim();
 
-  let next = source;
+  let next = applySpeakerDisplayOrder(source);
   if (next.includes("/*mp-readings-runtime-start*/")) {
     next = replaceMarkedOrOnce(
       next,
@@ -128,6 +196,79 @@ function patchJs(source) {
   const xt = next.indexOf("var xt={version:1,note:", btStart);
   if (xt < 0) throw new Error("reading component end anchor missing");
   next = `${next.slice(0, btStart)}/*mp-bt-start*/${bt}/*mp-bt-end*/${next.slice(xt)}`;
+
+  if (next.includes("/*mp-gt-start*/")) {
+    next = replaceMarkedOrOnce(
+      next,
+      "/*mp-gt-start*/",
+      "/*mp-gt-end*/",
+      gt,
+      "",
+      "gt",
+    );
+  } else {
+    const gtStart = next.indexOf("function Gt()");
+    const gtEnd = next.indexOf("var Kt=", gtStart);
+    if (gtStart < 0 || gtEnd < 0) throw new Error("signed coaches anchor missing");
+    next = `${next.slice(0, gtStart)}/*mp-gt-start*/${gt}/*mp-gt-end*/${next.slice(gtEnd)}`;
+  }
+
+  next = replaceOnce(
+    next,
+    "t===`verse`&&(0,A.jsx)(Rt,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&",
+    "(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(Rt,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&",
+    "explore-yt-meditations",
+  );
+
+  next = replaceOnce(
+    next,
+    '"brand.quote":`“The happiness of your life depends on the quality of your thoughts.”`',
+    '"brand.quote":`The happiness of your life depends on the quality of your thoughts.`',
+    "sidebar-quote-marks",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)})",
+    "(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)})",
+    "sidebar-share",
+  );
+
+  next = replaceOnce(
+    next,
+    "function st(){if(typeof window>`u`||!window.speechSynthesis)return null;let e=window.speechSynthesis.getVoices()||[],t=t=>e.find(e=>t.test(e.name)||t.test(e.lang));return t(/google/i)||t(/natural|neural|enhanced/i)||t(/en-AU/i)||t(/^en[-_]/i)||e[0]||null}",
+    "function st(){return mpReadings.pickBrowserVoice(typeof window<`u`&&window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[])}",
+    "tts-voice-pick",
+  );
+  next = replaceOnce(
+    next,
+    "function ct(e,t){if(!e||typeof window>`u`||!window.speechSynthesis)return t?.(),()=>{};window.speechSynthesis.cancel();let n=new SpeechSynthesisUtterance(e);n.rate=.92,n.pitch=1.02;let r=st();r?(n.voice=r,n.lang=r.lang||`en-AU`):n.lang=`en-AU`,n.onend=()=>t?.(),n.onerror=()=>t?.();let i=()=>window.speechSynthesis.speak(n);return window.speechSynthesis.getVoices().length?i():window.speechSynthesis.onvoiceschanged=()=>{let e=st();e&&(n.voice=e,n.lang=e.lang||`en-AU`),i()},()=>{try{window.speechSynthesis.cancel()}catch{}}}",
+    "function ct(e,t){return mpReadings.speakBrowser(e,t)}",
+    "tts-speak-browser",
+  );
+  next = replaceOnce(
+    next,
+    "function dt(e,t){if(ut(),!e?.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{let o=await it();if(!n){if(o)try{let o=await at(e,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(e,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
+    "function dt(e,t){let x=mpReadings.unwrapListenInput(e),u=x.text,d=x.id;if(ut(),!u.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{if(n)return;let p=mpReadings.prerenderedAudioUrl(typeof mpTtsAudio<`u`?mpTtsAudio:null,d);if(p){try{if(await mpReadings.playAudioUrl(p,{signal:i.signal})){n||(lt===a&&(lt=null),t?.());return}}catch{if(n)return}}let o=await it();if(!n){if(o)try{let o=await at(u,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(u,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
+    "tts-listen-order",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`})",
+    "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{})",
+    "verse-voice-picker",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`})",
+    "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{})",
+    "focus-voice-picker",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`})",
+    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`}),(0,A.jsx)(mpVoicePicker,{})",
+    "ttspad-voice-picker",
+  );
 
   next = replaceOnce(
     next,
@@ -218,6 +359,73 @@ function patchJs(source) {
   }
   if (!next.includes("playsInline:!0")) {
     throw new Error("native video playsInline missing from bundle");
+  }
+  if (!next.includes(`type:\`button\`,className:\`coach-card\``)) {
+    throw new Error("coach cards are not activatable buttons");
+  }
+  if (next.includes("look_id ·") || next.includes("className:`coach-look-id`")) {
+    throw new Error("look_id must stay out of visible coach UI");
+  }
+  if (
+    next.includes("Preview stills load from") ||
+    next.includes("No BFL or HeyGen spend from this section.")
+  ) {
+    throw new Error("technical coach catalog copy leaked into the UI");
+  }
+  if (!next.includes("This is a signed DayStart coach look.")) {
+    throw new Error("signed coach look note missing");
+  }
+  const speakerIds = speakerIdsInCatalog(next);
+  if (speakerIds.join(",") !== REQUIRED_SPEAKER_IDS.join(",")) {
+    throw new Error(`speaker order mismatch: ${speakerIds.join(",")}`);
+  }
+  if (!next.includes("Voice-guided meditations on YouTube")) {
+    throw new Error("YouTube meditation reference section missing");
+  }
+  if (!next.includes("Sleep / insomnia talk-down") || !next.includes("Faith-friendly / Christian contemplative")) {
+    throw new Error("meditation category structure missing");
+  }
+  if (!next.includes("This category is filling.")) {
+    throw new Error("filling stubs missing");
+  }
+  if (!next.includes("mpYtMeditationsSection")) {
+    throw new Error("meditation section not mounted in Explore");
+  }
+  const ytInject = readFileSync(join(root, "src/patches/yt-meditations.inject.js"), "utf8");
+  if (ytInject.includes("<iframe") || ytInject.includes("<video")) {
+    throw new Error("meditation section must not embed or host media");
+  }
+  const quoteI18n = next.match(/"brand\.quote":`([^`]*)`/);
+  if (
+    !quoteI18n ||
+    quoteI18n[1] !==
+      "The happiness of your life depends on the quality of your thoughts."
+  ) {
+    throw new Error("Marcus Aurelius quote must remain, without decorative quotation marks");
+  }
+  if (/[“”"]/.test(quoteI18n[1])) {
+    throw new Error("decorative quotation marks remain on the sidebar quote");
+  }
+  if (!next.includes('"brand.author":`— Marcus Aurelius`')) {
+    throw new Error("Marcus Aurelius attribution missing");
+  }
+  if (!next.includes("mpSidebarShare") || !next.includes("Share MindPal")) {
+    throw new Error("sidebar Share button missing");
+  }
+  if (next.includes("||e[0]||null") || next.includes("n.rate=.92")) {
+    throw new Error("old sick-robot voice pick or rate remains");
+  }
+  if (!next.includes("pickBrowserVoice") || !next.includes("mpVoicePicker")) {
+    throw new Error("Listen voice picker missing");
+  }
+  if (!next.includes("speakBrowser") || !next.includes("prerenderedAudioUrl")) {
+    throw new Error("Listen playback helpers missing");
+  }
+  if (!next.includes("mpTtsAudio") || !next.includes("mindpal.tts.voice.v1")) {
+    throw new Error("TTS catalog or voice persistence missing");
+  }
+  if (/\nexport (async )?function |\nexport const /.test(next)) {
+    throw new Error("unstripped ESM export remains in the Pages bundle");
   }
   return next;
 }
@@ -480,6 +688,7 @@ execFileSync("node", ["--test", ...readdirSync(join(root, "tests")).filter((name
 });
 
 snapshotBaseline();
+mkdirSync(assetsDir, { recursive: true });
 const js = patchJs(readFileSync(join(vendorDir, "index-BiA2yEms.js"), "utf8"));
 const css = patchCss(readFileSync(join(vendorDir, "index-CLdVgkKd.css"), "utf8"));
 const jsFile = `index-${shortHash(js)}.js`;

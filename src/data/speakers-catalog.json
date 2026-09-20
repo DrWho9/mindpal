@@ -1,0 +1,147 @@
+[
+  {
+    "id": "tony-robbins",
+    "name": "Tony Robbins",
+    "aliases": [],
+    "role": "Author, personal and business coach and motivational speaker",
+    "roleEvidence": [
+      "https://www.tonyrobbins.com/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "steven-bartlett",
+    "name": "Steven Bartlett",
+    "aliases": [
+      "The Diary of a CEO"
+    ],
+    "role": "Entrepreneur, author and host of The Diary of a CEO",
+    "roleEvidence": [
+      "https://stevenbartlett.com/about/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "mel-robbins",
+    "name": "Mel Robbins",
+    "aliases": [],
+    "role": "Author, podcast host and personal-development speaker",
+    "roleEvidence": [
+      "https://www.melrobbins.com/about-mel/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "jay-shetty",
+    "name": "Jay Shetty",
+    "aliases": [],
+    "role": "Author, entrepreneur and host of On Purpose",
+    "roleEvidence": [
+      "https://www.jayshetty.me/about-jay"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "david-goggins",
+    "name": "David Goggins",
+    "aliases": [],
+    "role": "Retired Navy SEAL, endurance athlete, author and motivational speaker",
+    "roleEvidence": [
+      "https://davidgoggins.com/about/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "jordan-peterson",
+    "name": "Jordan Peterson",
+    "aliases": [],
+    "role": "Author, psychologist, online educator and professor emeritus",
+    "roleEvidence": [
+      "https://www.jordanbpeterson.com/about/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "andrew-huberman",
+    "name": "Andrew Huberman",
+    "aliases": [],
+    "role": "Neuroscientist, Stanford associate professor and podcast host",
+    "roleEvidence": [
+      "https://profiles.stanford.edu/andrew-huberman"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "brene-brown",
+    "name": "Brené Brown",
+    "aliases": [],
+    "role": "Research professor, author and speaker on vulnerability and connection",
+    "roleEvidence": [
+      "https://www.ted.com/speakers/brene_brown"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "james-clear",
+    "name": "James Clear",
+    "aliases": [],
+    "role": "Author and speaker on habits and decision making",
+    "roleEvidence": [
+      "https://jamesclear.com/about"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "julie-smith",
+    "name": "Julie Smith",
+    "aliases": [],
+    "role": "Clinical psychologist, author and content creator",
+    "roleEvidence": [
+      "https://drjulie.co.uk/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "kristin-neff",
+    "name": "Kristin Neff",
+    "aliases": [],
+    "role": "Self-compassion researcher, teacher and author",
+    "roleEvidence": [
+      "https://self-compassion.org/kristin-neff/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "susan-david",
+    "name": "Susan David",
+    "aliases": [],
+    "role": "Psychologist, author and speaker on emotional agility",
+    "roleEvidence": [
+      "https://www.susandavid.com/about/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  },
+  {
+    "id": "russ-harris",
+    "name": "Russ Harris",
+    "aliases": [],
+    "role": "ACT trainer, author and therapist with a medical background",
+    "roleEvidence": [
+      "https://www.actmindfully.com.au/workshops/in-person-workshops-with-dr-russ-harris/"
+    ],
+    "verified": true,
+    "checkedAt": "2026-09-09"
+  }
+]
