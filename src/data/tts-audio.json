@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "phase": 1,
+  "kind": "neural_prerendered",
+  "base": "/mindpal/audio/phase1/",
+  "note": "Drop Phase-1 Neural mp3/ogg files under /mindpal/audio/phase1/{readingId}.mp3 and list them here. Listen plays these first; speechSynthesis is the fallback.",
+  "entries": []
+}

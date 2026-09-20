@@ -43,6 +43,32 @@ const checks = [
   [!js.includes("Hide welcome image"), "welcome-image clutter removed"],
   [!js.includes("Explore the longer small-steps pathway"), "Today small-steps dump removed"],
   [!js.includes("Optional faith content. Skip anytime."), "Prayer WEB footer removed"],
+  [js.includes(`type:\`button\`,className:\`coach-card\``), "coach cards are buttons"],
+  [js.includes("This is a signed DayStart coach look."), "signed look note is present"],
+  [js.includes("Related Explore videos"), "coach modal lists related videos"],
+  [!js.includes("look_id ·") && !js.includes("className:`coach-look-id`"), "look_id hex is not shown"],
+  [!js.includes("Preview stills load from"), "technical preview path is not in UI copy"],
+  [!js.includes("No BFL or HeyGen spend from this section."), "spend language is not in the coach footer"],
+  [js.includes("More coaches are on hold for now."), "short hold line is present"],
+  [js.includes("x=[{id:`tony-robbins`"), "Speakers you enjoy starts with Tony Robbins"],
+  [js.includes("Voice-guided meditations on YouTube"), "YouTube meditation reference is present"],
+  [js.includes("Sleep / insomnia talk-down"), "sleep category is present"],
+  [js.includes("Anxiety / worry"), "anxiety category is present"],
+  [js.includes("This category is filling."), "filling category stubs are present"],
+  [js.includes("How these lists are ranked"), "ranking rule help is present"],
+  [js.includes("views TBD"), "views TBD fallback is present"],
+  [js.includes("mindpal-yt-chips"), "category chips are present"],
+  [js.includes("className:`brand-quote`"), "sidebar quote card remains"],
+  [js.includes('"brand.quote":`The happiness of your life depends on the quality of your thoughts.`'), "Marcus Aurelius quote text remains without quote marks"],
+  [js.includes('"brand.author":`— Marcus Aurelius`'), "Marcus Aurelius attribution remains"],
+  [!js.includes("“The happiness of your life") && !js.includes('"The happiness of your life'), "decorative quotation marks removed from sidebar quote"],
+  [js.includes("mpSidebarShare") && js.includes("Share MindPal"), "sidebar Share button is present"],
+  [js.includes("pickBrowserVoice") && js.includes("mpVoicePicker"), "Listen voice picker is present"],
+  [js.includes("mindpal.tts.voice.v1"), "Listen voice choice is persisted"],
+  [js.includes("speakBrowser") && !js.includes("n.rate=.92"), "softer browser speech replaces 0.92 rate"],
+  [js.includes("prerenderedAudioUrl") && js.includes("mpTtsAudio"), "Phase-1 Neural audio is wired first"],
+  [!js.includes("||e[0]||null"), "voices[0] fallthrough is gone"],
+  [!/\nexport (async )?function |\nexport const /.test(js), "Pages bundle has no leftover ESM exports"],
 ];
 
 const maddyFiles = [
@@ -58,6 +84,11 @@ for (const [rel, size] of maddyFiles) {
 const failed = checks.filter(([ok]) => !ok);
 if (failed.length) {
   throw new Error(`verify failed:\n${failed.map(([, msg]) => `- ${msg}`).join("\n")}`);
+}
+
+const css = readFileSync(join(root, "assets", cssName), "utf8");
+if (!css.includes(".brand-quote") || !css.includes("quotes:none")) {
+  throw new Error("sidebar quote CSS must neutralize decorative quote glyphs");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(

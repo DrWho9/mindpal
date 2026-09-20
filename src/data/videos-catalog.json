@@ -8,14 +8,18 @@
       "title": "Welcome: choose a small moment",
       "category": "Understanding & reflection",
       "outline": "An introduction to choice, privacy, free core features and the limits of MindPal.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
-      "transcriptText": "Welcome to MindPal. This is an AI-generated presenter. MindPal offers short wellbeing practices and optional reflection activities. You can choose a small step, or simply explore.\n\nSome days you may want a few minutes. On other days, thirty seconds may be enough. You can skip the check-in, stop an exercise, or return another day. There is no streak to protect.\n\nWriting is optional. Before saving personal information, check the privacy information for this version. Other people using the same device or browser may be able to see saved entries. You can reflect without typing anything into MindPal.\n\nAny automated guide in MindPal is software, not a person or a therapist. MindPal cannot diagnose you, advise on medication, or monitor emergencies. Human support matters, and you can use MindPal alongside professional care.\n\nThe “Help me now” section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "transcriptText": "Welcome to MindPal. This is an AI-generated presenter. MindPal offers short wellbeing practices and optional reflection activities. You can choose a small step, or simply explore.\n\nSome days you may want a few minutes. On other days, thirty seconds may be enough. You can skip the check-in, stop an exercise, or return another day. There is no streak to protect.\n\nWriting is optional. Before saving personal information, check the privacy information for this version. Other people using the same device or browser may be able to see saved entries. You can reflect without typing anything into MindPal.\n\nAny automated guide in MindPal is software, not a person or a therapist. MindPal cannot diagnose you, advise on medication, or monitor emergencies. Human support matters, and you can use MindPal alongside professional care.\n\nThe \u201cHelp me now\u201d section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "chloe",
+        "callum"
+      ]
     },
     {
       "id": "V02",
@@ -23,14 +27,17 @@
       "title": "A gentle start to a difficult morning",
       "category": "Understanding & reflection",
       "outline": "Make room for a difficult morning. Offer rest, one manageable action or finishing here without a positive-thinking requirement.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
-      "transcriptText": "A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.\n\nIf it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.\n\nYou might make one task smaller, or leave it for later. What is manageable depends on your circumstances, your energy and your surroundings.\n\nIf these words do not fit today, you can leave them aside. MindPal offers choices, not a test of how well you cope. You can seek human support. The ‘Help me now’ section lists urgent-support options.",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "transcriptText": "A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.\n\nIf it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.\n\nYou might make one task smaller, or leave it for later. What is manageable depends on your circumstances, your energy and your surroundings.\n\nIf these words do not fit today, you can leave them aside. MindPal offers choices, not a test of how well you cope. You can seek human support. The \u2018Help me now\u2019 section lists urgent-support options.",
       "targetDurationSeconds": 60,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse"
+      ]
     },
     {
       "id": "V03",
@@ -38,14 +45,17 @@
       "title": "A comfortable pause, with choices",
       "category": "Everyday practices",
       "outline": "Optional ordinary breathing with no holds or forced pace; external grounding alternative and physical-symptom limits.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "This is an optional pause for everyday stress. You can stop at any time. If breathing exercises are uncomfortable for you, you can try noticing one neutral detail around you instead. You do not need to follow your breath.\n\nIf you would like to try, stay in a comfortable position. Let your breath remain at its ordinary depth and pace. No big breath, counting or holding is needed. Notice one breath coming and going, if that feels okay.\n\nIf focusing on your breathing brings dizziness, a sense of not getting enough air, discomfort or more panic, stop the exercise. You can shift attention to a neutral detail nearby using a sense that feels comfortable, or finish altogether.\n\nYou can stay with that detail briefly, or finish now. There is no need to make a feeling disappear. Seek medical advice for new, persistent or concerning physical symptoms. For severe difficulty breathing or another medical emergency in Australia, call triple zero. This exercise cannot tell you what is causing a symptom.\n\nWhen you are ready, choose what is manageable next: rest, a small practical action, or support from a person. It is also okay to do nothing further here. You can return to the text guide whenever you want.",
       "targetDurationSeconds": 120,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse"
+      ]
     },
     {
       "id": "V04",
@@ -53,14 +63,17 @@
       "title": "Notice one steady detail",
       "category": "Everyday practices",
       "outline": "Notice one neutral external detail; choose any comfortable sense, stop or seek human support.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "You can stop this practice at any time. If it feels okay, notice one ordinary detail near you. Your eyes can stay open.\n\nIt might be a colour, the edge of an object, a quiet sound, or a surface supporting you. Choose a sense that feels comfortable enough. There is no correct thing to notice.\n\nDescribe one feature to yourself, such as a straight edge or a soft surface. You can pause the video and take your own time.\n\nIf this attention feels uncomfortable, stop. You can look elsewhere, change position if comfortable, or choose support from a person.\n\nThere is no need to make your feelings disappear. You can finish, rest, or choose one manageable next step. You do not have to decide yet.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "callum"
+      ]
     },
     {
       "id": "V05",
@@ -68,14 +81,17 @@
       "title": "Grounding without following your breath",
       "category": "Everyday practices",
       "outline": "External grounding for people who prefer not to focus on breathing; no guaranteed calming outcome.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "You do not need to follow your breathing to take a moment. This is an optional way to notice something outside yourself.\n\nChoose one neutral detail nearby, perhaps a shape, a colour or a quiet sound. Use whichever sense is comfortable for you, or skip this activity.\n\nNotice one feature. You can pause the video for as long or as little as you want.\n\nIf noticing this way makes things harder, stop and choose something else. The aim is to offer a choice, not to guarantee a particular feeling. Rest or human support may be more useful. You can finish here.",
       "targetDurationSeconds": 60,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse"
+      ]
     },
     {
       "id": "V06",
@@ -83,14 +99,17 @@
       "title": "Finding a word for a feeling",
       "category": "Everyday practices",
       "outline": "Optional feeling words, including mixed and not sure, with a practical-needs alternative.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "A feeling does not need a perfect name. If you want to, choose a word that seems close enough: worried, sad, frustrated, tired, lonely, mixed, or not sure.\n\nYou can use your own word, or choose none. There is no need to explain what happened or tell a difficult story.\n\nPerhaps try, I notice some worry. Or, I am not sure what this is. A word describes an experience; it is not a diagnosis.\n\nYou might instead ask what you need next: a quieter space, rest, or a safe person to speak with. Choose only what fits your circumstances.\n\nIf words make this harder, leave them aside. You can notice an ordinary object nearby or finish. Nothing needs to be written, saved or sent to AI.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "chloe"
+      ]
     },
     {
       "id": "V07",
@@ -98,14 +117,17 @@
       "title": "Words with less pressure",
       "category": "Everyday practices",
       "outline": "A believable kind or neutral sentence, without excusing harm or requiring positive feelings.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "You do not have to feel positive about a difficult day. If a harsh sentence about yourself is present, you may leave it alone, or try words with less pressure.\n\nThis is difficult. I can take one thing at a time. I may need some support.\n\nChoose a sentence only if it feels believable. If kindness feels uncomfortable, something neutral can be enough: I am here, taking a moment.\n\nYou can pause, use different words, or stop. This is not a requirement to change how you feel.\n\nYou do not have to excuse harmful behaviour from anyone. If someone is hurting or controlling you, support and safety matter.\n\nPerhaps lowering one demand or asking for help would be useful. You do not need to complete an action to finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "chloe"
+      ]
     },
     {
       "id": "V08",
@@ -113,14 +135,17 @@
       "title": "Anxiety: support without solving everything",
       "category": "Understanding & reflection",
       "outline": "Everyday anxiety education and choices for human support; new or severe physical symptoms need medical assessment.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
-      "transcriptText": "When you describe feeling anxious, you do not have to solve everything in one sitting. This short guide offers choices for everyday wellbeing; it cannot assess or diagnose what you are experiencing.\n\nYou might want a practical next step, a short external attention exercise, a break from this screen, or contact with someone who can support you. Breathing exercises are optional. You do not have to use them.\n\nPhysical symptoms can have different causes. MindPal cannot tell whether a symptom is anxiety. New, severe or concerning symptoms need medical help. In immediate danger or a medical emergency in Australia, call triple zero.\n\nIf worry or distress is affecting your daily life, you can discuss it with a qualified health professional. You do not need a label before asking for support.\n\nFor a conversation, you might prepare one question or mention one thing that has been difficult. You can decide what to share. You do not need to retell a painful event here.\n\nYou can finish now. You can open ‘Help me now’ for urgent-support options without completing a practice. MindPal does not monitor emergencies or summon help for you.",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "transcriptText": "When you describe feeling anxious, you do not have to solve everything in one sitting. This short guide offers choices for everyday wellbeing; it cannot assess or diagnose what you are experiencing.\n\nYou might want a practical next step, a short external attention exercise, a break from this screen, or contact with someone who can support you. Breathing exercises are optional. You do not have to use them.\n\nPhysical symptoms can have different causes. MindPal cannot tell whether a symptom is anxiety. New, severe or concerning symptoms need medical help. In immediate danger or a medical emergency in Australia, call triple zero.\n\nIf worry or distress is affecting your daily life, you can discuss it with a qualified health professional. You do not need a label before asking for support.\n\nFor a conversation, you might prepare one question or mention one thing that has been difficult. You can decide what to share. You do not need to retell a painful event here.\n\nYou can finish now. You can open \u2018Help me now\u2019 for urgent-support options without completing a practice. MindPal does not monitor emergencies or summon help for you.",
       "targetDurationSeconds": 120,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "callum"
+      ]
     },
     {
       "id": "V09",
@@ -128,14 +153,18 @@
       "title": "One manageable action",
       "category": "Everyday practices",
       "outline": "Choose one manageable action, preparation, rest or help; never push through symptoms.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "Think about the next few minutes, rather than the whole day. Is there one small action that might be useful or meaningful? You can also choose rest.\n\nPerhaps place one item where you need it, choose some music, or prepare a question for a person who supports you. Choose something that fits your situation.\n\nYou can make the action smaller, prepare without doing it, or decide against it. There is no score for finishing.\n\nIf pain, fatigue or your surroundings make it unsuitable, change the action or stop. You do not have to push through symptoms. New or severe symptoms may need medical assessment.\n\nIf you try something, you can ask whether it was manageable. The answer can be no. That information may help you choose differently, without judging yourself. You can finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "chloe",
+        "callum"
+      ]
     },
     {
       "id": "V10",
@@ -143,44 +172,55 @@
       "title": "One-sentence daily reflection",
       "category": "Understanding & reflection",
       "outline": "Optional brief diary reflection, stop if writing adds distress, and explicit local-storage and AI boundaries.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
       "transcriptText": "A reflection can be one sentence, one word, or nothing today. You do not need to explain everything that happened. You can keep this simple and finish whenever you want.\n\nYou might choose one question: What felt manageable? What was difficult? Or, what might I need next? Choose only one if it helps. You can also write something entirely different.\n\nIf writing makes you feel more stuck or distressed, stop. You could notice something around you, take a break, or reach out for human support. You do not have to turn this into a lesson.\n\nYou can reflect without typing anything into MindPal. Before saving personal information, check the privacy information for this version, including where entries are stored and who could access them. On a shared device or browser, someone else may be able to see saved entries. Before using any AI reflection feature, check what text would be sent and how it would be used. You can choose not to use it.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse"
+      ]
     },
     {
       "id": "V11",
       "assetIdentifier": "MP-V11-en-AU-v1.1",
       "title": "Menstrual mood changes: preparing for a care discussion",
-      "category": "Women’s wellbeing",
+      "category": "Women\u2019s wellbeing",
       "outline": "Specialist review required: optional observations and questions for a clinician; no PMS/PMDD diagnosis or cycle prediction.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
-      "transcriptText": "If you have noticed mood changes that seem related to your menstrual cycle, you can bring those observations to a qualified health professional. You do not have to work out a diagnosis yourself.\n\nThis guide does not decide whether you have PMS, PMDD, or another condition. MindPal does not predict your cycle or recommend medicines or hormonal treatment.\n\nIf keeping notes feels useful, you might record a date, what you noticed, and whether it affected something in daily life. You can keep the note brief. You do not have to record bleeding, intimate details or any information you would rather keep out of an app.\n\nBrief notes may help start a conversation, but they are not a diagnostic assessment. A clinician may suggest daily symptom recording across at least two menstrual cycles to understand a pattern. You do not need to wait or finish a diary before asking for help, especially if symptoms are severe or disrupting daily life.\n\nYou can also prepare a question without keeping a diary: I have noticed changes in my mood and would like help understanding them. Or, what information would be useful for our next appointment?\n\nYour experience does not have to fit a regular cycle to deserve attention. You can mention uncertainty, irregular periods, or other changes to the clinician. MindPal will not interpret those details for you.\n\nIf recording makes you more distressed or preoccupied, stop. You can ask for support without collecting more information first.\n\nThis is an optional pathway. You decide what to save and share with a clinician. If you think you may act on thoughts of suicide or self-harm, or you are in immediate danger, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. You can also find support options in “Help me now”. MindPal does not monitor you or contact help for you.",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "transcriptText": "If you have noticed mood changes that seem related to your menstrual cycle, you can bring those observations to a qualified health professional. You do not have to work out a diagnosis yourself.\n\nThis guide does not decide whether you have PMS, PMDD, or another condition. MindPal does not predict your cycle or recommend medicines or hormonal treatment.\n\nIf keeping notes feels useful, you might record a date, what you noticed, and whether it affected something in daily life. You can keep the note brief. You do not have to record bleeding, intimate details or any information you would rather keep out of an app.\n\nBrief notes may help start a conversation, but they are not a diagnostic assessment. A clinician may suggest daily symptom recording across at least two menstrual cycles to understand a pattern. You do not need to wait or finish a diary before asking for help, especially if symptoms are severe or disrupting daily life.\n\nYou can also prepare a question without keeping a diary: I have noticed changes in my mood and would like help understanding them. Or, what information would be useful for our next appointment?\n\nYour experience does not have to fit a regular cycle to deserve attention. You can mention uncertainty, irregular periods, or other changes to the clinician. MindPal will not interpret those details for you.\n\nIf recording makes you more distressed or preoccupied, stop. You can ask for support without collecting more information first.\n\nThis is an optional pathway. You decide what to save and share with a clinician. If you think you may act on thoughts of suicide or self-harm, or you are in immediate danger, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. You can also find support options in \u201cHelp me now\u201d. MindPal does not monitor you or contact help for you.",
       "targetDurationSeconds": 150,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse",
+        "chloe"
+      ]
     },
     {
       "id": "V12",
       "assetIdentifier": "MP-V12-en-AU-v1.1",
       "title": "Perimenopause, menopause, mood and asking for support",
-      "category": "Women’s wellbeing",
+      "category": "Women\u2019s wellbeing",
       "outline": "Specialist review required: questions about mood, sleep and changes for a clinician; no menopause diagnosis or treatment advice.",
-      "placeholderLabel": "Media placeholder — no HeyGen video generated",
-      "transcriptText": "If you have questions about perimenopause—the transition leading up to menopause—menopause itself, or changes in mood or sleep, you can discuss them with a qualified health professional. You do not have to decide on the cause before asking for help.\n\nMindPal cannot diagnose menopause or explain the cause of a mood, sleep or physical symptom. It does not recommend hormonal treatment, supplements or changes to medication.\n\nYou might prepare one or two questions for an appointment. For example: I have noticed a change in how I am feeling. What could we consider? Or, what support is available for what is affecting my day?\n\nIf notes are useful, keep them in a form that suits you. You could mention when a change started and what you would like help with. You do not have to complete a checklist or share intimate details with an app.\n\nSeveral things may contribute to changes in mood or sleep. If low mood, anxiety or sleep problems persist or affect daily life, arrange a healthcare appointment rather than assuming they are part of menopause. New, severe or concerning physical symptoms also need medical assessment.\n\nYou can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.\n\nThis pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.",
+      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "transcriptText": "If you have questions about perimenopause\u2014the transition leading up to menopause\u2014menopause itself, or changes in mood or sleep, you can discuss them with a qualified health professional. You do not have to decide on the cause before asking for help.\n\nMindPal cannot diagnose menopause or explain the cause of a mood, sleep or physical symptom. It does not recommend hormonal treatment, supplements or changes to medication.\n\nYou might prepare one or two questions for an appointment. For example: I have noticed a change in how I am feeling. What could we consider? Or, what support is available for what is affecting my day?\n\nIf notes are useful, keep them in a form that suits you. You could mention when a change started and what you would like help with. You do not have to complete a checklist or share intimate details with an app.\n\nSeveral things may contribute to changes in mood or sleep. If low mood, anxiety or sleep problems persist or affect daily life, arrange a healthcare appointment rather than assuming they are part of menopause. New, severe or concerning physical symptoms also need medical assessment.\n\nYou can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.\n\nThis pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. \u201cHelp me now\u201d lists further support options.",
       "targetDurationSeconds": 150,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
       "publicationStatus": "UNPRODUCED",
       "videoUrl": null,
-      "publicEligible": false
+      "publicEligible": false,
+      "coachSlugs": [
+        "denyse",
+        "chloe"
+      ]
     }
   ]
 }
