@@ -3399,7 +3399,10 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "relationships",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "alcohol",
+        "drugs",
+        "recovery-shame"
       ]
     },
     {
@@ -3843,7 +3846,10 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "self-compassion",
         "grief",
-        "faith"
+        "faith",
+        "recovery-shame",
+        "alcohol",
+        "drugs"
       ]
     },
     {
@@ -3966,7 +3972,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "self-compassion",
         "low-mood",
-        "motivation"
+        "motivation",
+        "recovery-shame"
       ]
     },
     {
@@ -4010,7 +4017,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "self-compassion",
         "low-mood",
-        "anxiety"
+        "anxiety",
+        "recovery-shame"
       ]
     },
     {
@@ -4134,7 +4142,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "sleep",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "recovery-shame"
       ]
     },
     {
@@ -4198,7 +4207,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "sleep",
         "stress",
-        "calm"
+        "calm",
+        "craving"
       ]
     },
     {
@@ -4421,7 +4431,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "calm",
         "faith",
-        "grief"
+        "grief",
+        "recovery-shame"
       ]
     },
     {
@@ -4482,7 +4493,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "grief",
         "self-compassion",
-        "calm"
+        "calm",
+        "recovery-shame"
       ]
     },
     {
@@ -4740,7 +4752,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "boundaries",
         "overwhelm",
-        "self-compassion"
+        "self-compassion",
+        "recovery-shame"
       ]
     },
     {
@@ -5035,7 +5048,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "low-mood",
         "anger",
-        "grief"
+        "grief",
+        "craving"
       ]
     },
     {
@@ -5078,7 +5092,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "self-compassion",
         "grief",
-        "motivation"
+        "motivation",
+        "alcohol",
+        "drugs",
+        "craving",
+        "recovery-shame"
       ]
     },
     {
@@ -5140,7 +5158,10 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "motivation",
         "self-compassion",
-        "calm"
+        "calm",
+        "alcohol",
+        "drugs",
+        "recovery-shame"
       ]
     }
   ]
@@ -7121,6 +7142,10 @@ const TAG_VOCAB = [
   "gratitude",
   "boundaries",
   "calm",
+  "drugs",
+  "alcohol",
+  "craving",
+  "recovery-shame",
 ];
 
 const TAG_LABELS = {
@@ -7139,10 +7164,14 @@ const TAG_LABELS = {
   gratitude: "Gratitude",
   boundaries: "Boundaries",
   calm: "Calm",
+  drugs: "Drugs",
+  alcohol: "Alcohol",
+  craving: "Craving",
+  "recovery-shame": "Recovery shame",
 };
 
 /**
- * PR #8 problem-hub ids. `mood` aliases to `low-mood` in this vocab so
+ * PR #8 / #16 problem-hub ids. `mood` aliases to `low-mood` in this vocab so
  * Morning/Day/Night hubs and Feelings chips can share catalogs.
  */
 const PROBLEM_HUB_TAGS = [
@@ -7152,10 +7181,15 @@ const PROBLEM_HUB_TAGS = [
   "mood",
   "motivation",
   "faith",
+  "aod",
 ];
+
+const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame"];
 
 const TAG_ALIASES = {
   mood: "low-mood",
+  "recovery-adjacent": "recovery-shame",
+  shame: "recovery-shame",
 };
 
 /** Feelings dropdown ids → controlled tags (any-match). */
@@ -7165,7 +7199,7 @@ const FEELING_TO_TAGS = {
   angry: ["anger"],
   overwhelmed: ["overwhelm", "stress"],
   lonely: ["relationships", "low-mood"],
-  guilty: ["self-compassion"],
+  guilty: ["self-compassion", "recovery-shame"],
   numb: ["low-mood"],
   unsure: ["calm", "self-compassion"],
   sleep: ["sleep", "calm"],
@@ -7177,7 +7211,11 @@ const FEELING_TO_TAGS = {
   faith: ["faith"],
   overwhelm: ["overwhelm", "stress"],
   mothers: ["self-compassion", "overwhelm", "faith"],
-  aod: ["self-compassion", "stress", "overwhelm"],
+  aod: AOD_FEELING_TAGS,
+  drugs: ["drugs", "alcohol", "craving"],
+  alcohol: ["alcohol", "craving", "recovery-shame"],
+  craving: ["craving"],
+  "recovery-shame": ["recovery-shame"],
 };
 
 /**
@@ -7199,7 +7237,7 @@ const THEME_LABEL_TO_TAGS = {
   "over-identification with tasks": ["stress", "motivation", "overwhelm"],
   "uncertainty tolerance": ["anxiety", "worry", "calm"],
   comparison: ["low-mood", "self-compassion", "motivation"],
-  "receiving support": ["relationships", "self-compassion", "low-mood"],
+  "receiving support": ["relationships", "self-compassion", "low-mood", "alcohol", "drugs", "recovery-shame"],
   "single-tasking": ["overwhelm", "stress", "motivation"],
   "need to be right": ["relationships", "anger", "boundaries"],
   "holding grudges": ["anger", "grief", "relationships"],
@@ -7221,24 +7259,24 @@ const THEME_LABEL_TO_TAGS = {
   "emotional patience": ["low-mood", "grief", "calm"],
   recognition: ["relationships", "gratitude", "motivation"],
   "embodied reset": ["anxiety", "worry", "calm"],
-  "self-forgiveness": ["self-compassion", "grief", "faith"],
+  "self-forgiveness": ["self-compassion", "grief", "faith", "recovery-shame", "alcohol", "drugs"],
   "mind-reading": ["anxiety", "worry", "relationships"],
   "domestic perfection": ["stress", "self-compassion", "overwhelm"],
   "relational priority": ["relationships", "anger", "calm"],
   grounding: ["anxiety", "overwhelm", "calm"],
   "load shedding": ["overwhelm", "stress", "boundaries"],
-  "self-talk": ["self-compassion", "low-mood", "motivation"],
+  "self-talk": ["self-compassion", "low-mood", "motivation", "recovery-shame"],
   "plans changing": ["anxiety", "stress", "motivation"],
-  "inner critic": ["self-compassion", "low-mood", "anxiety"],
+  "inner critic": ["self-compassion", "low-mood", "anxiety", "recovery-shame"],
   "over-scheduling": ["overwhelm", "stress", "boundaries"],
   "mood awareness": ["low-mood", "calm", "self-compassion"],
   "comfortable quiet": ["relationships", "calm", "anxiety"],
   "emotional labour": ["boundaries", "relationships", "overwhelm"],
   joy: ["gratitude", "calm", "motivation"],
-  "self-judgement at night": ["sleep", "self-compassion", "low-mood"],
+  "self-judgement at night": ["sleep", "self-compassion", "low-mood", "recovery-shame"],
   play: ["motivation", "calm", "relationships"],
   "expectation load": ["stress", "overwhelm", "self-compassion"],
-  "body cues": ["sleep", "stress", "calm"],
+  "body cues": ["sleep", "stress", "calm", "craving"],
   "image management": ["anxiety", "self-compassion", "stress"],
   "impatience with delays": ["anger", "stress", "calm"],
   appreciation: ["gratitude", "relationships", "faith"],
@@ -7249,10 +7287,10 @@ const THEME_LABEL_TO_TAGS = {
   "after conflict": ["relationships", "anger", "grief"],
   "evening overload": ["sleep", "overwhelm", "stress"],
   overwhelm: ["overwhelm", "stress", "motivation"],
-  acceptance: ["calm", "faith", "grief"],
+  acceptance: ["calm", "faith", "grief", "recovery-shame"],
   "soft boundaries": ["boundaries", "relationships", "stress"],
   "tunnel vision": ["anxiety", "overwhelm", "calm"],
-  "healing/patience": ["grief", "self-compassion", "calm"],
+  "healing/patience": ["grief", "self-compassion", "calm", "recovery-shame"],
   ego: ["relationships", "self-compassion", "motivation"],
   waiting: ["anxiety", "stress", "calm"],
   interruptions: ["stress", "relationships", "anger"],
@@ -7265,7 +7303,7 @@ const THEME_LABEL_TO_TAGS = {
   catastrophising: ["anxiety", "worry", "overwhelm"],
   "asking/delegation": ["overwhelm", "relationships", "boundaries"],
   lightness: ["calm", "gratitude", "low-mood"],
-  limits: ["boundaries", "overwhelm", "self-compassion"],
+  limits: ["boundaries", "overwhelm", "self-compassion", "recovery-shame"],
   reset: ["calm", "stress", "motivation"],
   process: ["motivation", "self-compassion", "stress"],
   receiving: ["relationships", "self-compassion", "low-mood"],
@@ -7280,12 +7318,12 @@ const THEME_LABEL_TO_TAGS = {
   priorities: ["motivation", "relationships", "stress"],
   overstimulation: ["overwhelm", "sleep", "stress"],
   "productivity myths": ["motivation", "stress", "self-compassion"],
-  "emotions passing": ["low-mood", "anger", "grief"],
+  "emotions passing": ["low-mood", "anger", "grief", "craving"],
   "pressure to perform": ["anxiety", "stress", "self-compassion"],
-  "old strategies": ["self-compassion", "grief", "motivation"],
+  "old strategies": ["self-compassion", "grief", "motivation", "alcohol", "drugs", "craving", "recovery-shame"],
   closures: ["sleep", "grief", "calm"],
   "ordinary life": ["faith", "gratitude", "calm"],
-  "fresh start": ["motivation", "self-compassion", "calm"],
+  "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame"],
 };
 
 const SUPPORT_DISCLAIMER =
@@ -7814,6 +7852,7 @@ const FEELING_SUPPORT = {
   motivation: "One small start is enough. You do not have to finish everything.",
   faith: "Optional meaning or prayer — skip anything that does not fit.",
   overwhelm: "You can leave this activity and come back another time.",
+  aod: "Craving or shame around drink or other substances can sit here. This is not detox and not a diagnosis.",
   "": "You can explore without putting a name to how you feel.",
 };
 
@@ -8600,7 +8639,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -9089,6 +9128,7 @@ const AOD_SUPPORT_TAGS = [
   "drugs",
   "craving",
   "recovery-adjacent",
+  "recovery-shame",
   "shame",
   "self-compassion",
   "stress",
@@ -9253,6 +9293,10 @@ const FEELING_TO_PROBLEM = {
   aod: "aod",
   alcohol: "aod",
   drugs: "aod",
+  craving: "aod",
+  "recovery-shame": "aod",
+  "recovery-adjacent": "aod",
+  shame: "aod",
 };
 
 function feelingTagsToProblemTags(raw) {
@@ -9565,8 +9609,9 @@ function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for t
   ]});
 }
 function mpFeelingDirectory({feelingId:e=``,initialTag:t=``,onSpeakers:n}={}){
+  let r=e===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`;
   return(0,A.jsxs)(`div`,{className:`mp-feeling-directory`,children:[
-    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:`Readings for this feeling`}),
+    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:r}),
     (0,A.jsx)(mpSupportVideos,{feelingId:e,initialTag:t,heading:`Videos for this feeling`,onSpeakers:n})
   ]});
 }
@@ -9586,13 +9631,14 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
       (0,A.jsx)(`option`,{value:`lonely`,children:`Lonely or disconnected`}),
       (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
       (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
-      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`})
+      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`}),
+      (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`})
     ]}),
     (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
   ]});
 }
 function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
-  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`]];
+  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`]];
   return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
     (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),
@@ -9610,9 +9656,9 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     ]}),
     (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation. “One steady detail” is an optional practice you can skip or stop; it is offered to everyone here, not selected as a treatment for your feeling.`}),
     s&&(0,A.jsxs)(`div`,{children:[
-      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?`Readings for this feeling`:`Videos for this feeling`}),
+      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`:`Videos for this feeling`}),
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
-      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
+      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
         (0,A.jsx)(MpEmotionVideos,{headingRef:l,emotion:a,onBrowseSpeakers:i||r}),
         (0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
       ]})
@@ -9909,6 +9955,7 @@ function mpAodFeelingsChip({onOpen:e}){
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL SUPPORT · NOT TREATMENT`}),
     (0,A.jsx)(`h2`,{children:`Drugs & alcohol`}),
     (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet directory here. Optional company, not detox and not a replacement for AOD treatment.`}),
+    (0,A.jsx)(mpSupportReadings,{feelingId:`aod`,heading:`Readings for drugs & alcohol`,showChips:!1}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the drugs & alcohol space`}):null
   ]});
 }

@@ -78,8 +78,9 @@ function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for t
   ]});
 }
 function mpFeelingDirectory({feelingId:e=``,initialTag:t=``,onSpeakers:n}={}){
+  let r=e===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`;
   return(0,A.jsxs)(`div`,{className:`mp-feeling-directory`,children:[
-    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:`Readings for this feeling`}),
+    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:r}),
     (0,A.jsx)(mpSupportVideos,{feelingId:e,initialTag:t,heading:`Videos for this feeling`,onSpeakers:n})
   ]});
 }
@@ -99,13 +100,14 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
       (0,A.jsx)(`option`,{value:`lonely`,children:`Lonely or disconnected`}),
       (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
       (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
-      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`})
+      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`}),
+      (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`})
     ]}),
     (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
   ]});
 }
 function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
-  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`]];
+  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`]];
   return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
     (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),
@@ -123,9 +125,9 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     ]}),
     (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation. “One steady detail” is an optional practice you can skip or stop; it is offered to everyone here, not selected as a treatment for your feeling.`}),
     s&&(0,A.jsxs)(`div`,{children:[
-      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?`Readings for this feeling`:`Videos for this feeling`}),
+      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`:`Videos for this feeling`}),
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
-      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
+      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
         (0,A.jsx)(MpEmotionVideos,{headingRef:l,emotion:a,onBrowseSpeakers:i||r}),
         (0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
       ]})
