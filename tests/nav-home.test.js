@@ -111,5 +111,6 @@ describe("brand home wiring", () => {
     assert.match(build, /className:`brand mp-top-brand`/);
     assert.match(build, /sidebar-brand-home/);
     assert.match(build, /topbar-brand-home/);
+    assert.match(build, /replaceAll\("\.showModal\(\)", "\.show\(\)"\)/);
   });
 });

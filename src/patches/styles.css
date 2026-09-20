@@ -29,8 +29,9 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .app.mp-signin-shell .bottom-nav{display:none}
 
 /* Brand stays above sheets so MindPal is always a home control.
-   Native <dialog>.showModal() uses the top layer, so z-index cannot
-   win — leave the chrome strip outside the backdrop instead. */
+   Vendor sheets used dialog.showModal(), which inerts the page so
+   the wordmark cannot receive clicks. They are modeless now; keep
+   them centered and dim only the workspace. */
 .sidebar{z-index:50}
 .topbar{z-index:51}
 button.brand{
@@ -41,16 +42,39 @@ button.brand{
   color:inherit;
 }
 .mp-top-brand{display:none}
-dialog::backdrop{left:246px}
-.modal-backdrop{left:246px}
+dialog[open]{
+  position:fixed;
+  inset:0;
+  margin:auto;
+  height:fit-content;
+  z-index:60;
+}
+.modal-backdrop{left:246px;z-index:40}
+.app:has(dialog[open]) .workspace::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  left:246px;
+  background:#24352be0;
+  -webkit-backdrop-filter:blur(5px);
+  backdrop-filter:blur(5px);
+  z-index:40;
+  pointer-events:none;
+}
 @media (width<=1180px){
-  dialog::backdrop,.modal-backdrop{left:215px}
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:215px}
 }
 @media (width<=900px){
-  dialog::backdrop,.modal-backdrop{left:190px}
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:190px}
 }
 @media (width<=640px){
-  dialog::backdrop,.modal-backdrop{left:0;top:64px}
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:0;top:64px}
+  dialog.thought-practice[open]{
+    inset:64px 0 0;
+    height:calc(100dvh - 64px);
+    margin:0;
+    transform:none;
+  }
   .mp-top-brand{
     display:flex;
     align-items:center;

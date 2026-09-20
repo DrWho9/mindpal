@@ -811,6 +811,12 @@ function patchOwnerUx(source) {
     "topbar-brand-home",
   );
 
+  const showModalCount = next.split(".showModal()").length - 1;
+  if (showModalCount < 1) {
+    throw new Error("expected vendor showModal() dialogs to make modeless");
+  }
+  next = next.replaceAll(".showModal()", ".show()");
+
   if (!next.includes("Do this next")) {
     throw new Error("day-steps chrome missing from bundle");
   }
@@ -903,6 +909,9 @@ function patchOwnerUx(source) {
   }
   if (!next.includes("mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome}")) {
     throw new Error("mpNav home helper missing from bundle");
+  }
+  if (next.includes("showModal")) {
+    throw new Error("showModal remains after brand-home patch");
   }
   return next;
 }

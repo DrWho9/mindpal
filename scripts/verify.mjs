@@ -120,6 +120,7 @@ const checks = [
   [js.includes("className:`brand mp-top-brand`"), "mobile topbar exposes a MindPal home control"],
   [js.includes("mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome}"), "home helper is in the runtime"],
   [!js.includes("className:`brand`,onClick:()=>I(`Today`)"), "sidebar brand no longer uses the raw Today setter"],
+  [!js.includes("showModal"), "native dialogs are modeless so the brand can receive clicks"],
 ];
 
 const maddyFiles = [
@@ -156,8 +157,8 @@ if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
 }
-if (!css.includes("dialog::backdrop{left:246px}")) {
-  throw new Error("native dialog backdrops must leave the sidebar brand clickable");
+if (!css.includes("dialog[open]") || !css.includes(".app:has(dialog[open]) .workspace::before")) {
+  throw new Error("modeless dialogs must stay centered and leave the brand undimmed");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(
