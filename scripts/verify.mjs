@@ -43,6 +43,7 @@ const checks = [
   [js.includes("!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`)"), "Today feelings button is hidden"],
   [js.includes("ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})"), "Today youth teaser is hidden"],
   [js.includes("What do you need help with?"), "problem hub list is present"],
+  [js.includes("mp-problem-chip") && js.includes("Tap a chip to expand"), "Today problem hubs are expandable chips"],
   [js.includes("mpProblemHubPage"), "problem hub page is present"],
   [js.includes("mpAccountFooter"), "Settings account footer is present"],
   [!js.includes("(0,A.jsx)(Nt,{})"), "mid-page LOCAL ACCOUNT card is unmounted"],
@@ -125,6 +126,9 @@ if (!css.includes("mp-band-morning") || !css.includes("mp-band-night") || !css.i
 }
 if (!css.includes("mp-emotion-crumb") || !css.includes("mp-emotion-video")) {
   throw new Error("emotion video directory styles missing");
+}
+if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")) {
+  throw new Error("Today problem chip styles missing");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(

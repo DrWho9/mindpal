@@ -169,15 +169,20 @@ function mpOpenProblem(id,onOpen){
   onOpen&&onOpen(id);
 }
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
-  let n=mpProblems.listProblems(mpProblemHubs);
+  let n=mpProblems.listProblems(mpProblemHubs),[r,i]=(0,_.useState)(null);
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEMS`}),
     (0,A.jsx)(`h2`,{children:`What do you need help with?`}),
-    (0,A.jsx)(`p`,{children:t===`today`?`Open a problem hub for readings, videos and a journal line.`:`Each hub gathers readings, videos, Companion and a journal prompt for that theme.`}),
-    (0,A.jsx)(`div`,{className:`mp-problem-grid`,children:n.map(n=>(0,A.jsxs)(`button`,{type:`button`,className:`mp-problem-card`,onClick:()=>mpOpenProblem(n.id,e),children:[
-      (0,A.jsx)(`strong`,{children:n.title}),
-      (0,A.jsx)(`span`,{className:`card-link`,children:`Open hub`})
-    ]},n.id))})
+    (0,A.jsx)(`p`,{children:t===`today`?`Tap a chip to expand. Open hub for readings, videos and a journal line.`:`Tap a chip to expand. Each hub gathers readings, videos, Companion and a journal prompt.`}),
+    (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:n.map(t=>{
+      let a=r===t.id;
+      return(0,A.jsx)(`button`,{type:`button`,className:`mp-problem-chip${a?` is-open`:``}`,"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
+    })}),
+    r?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
+      (0,A.jsx)(`h3`,{children:(n.find(e=>e.id===r)||{}).title}),
+      (0,A.jsx)(`p`,{children:(n.find(e=>e.id===r)||{}).intro}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
+    ]}):null
   ]});
 }
 function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onSpeakers:p}){
@@ -256,6 +261,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
+    (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),
     mpTodaySteps.BANDS.map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
       (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
@@ -277,7 +283,6 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
           ]})
         ]},t)
       })}),
-      e.id===`day`?(0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}):null,
       e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
     ]},e.id))
   ]});

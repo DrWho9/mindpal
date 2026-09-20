@@ -89,6 +89,9 @@ describe("problem hubs", () => {
     assert.match(inject, /Today’s verse — tap to expand/);
     assert.match(inject, /mp-account-footer/);
     assert.match(inject, /What do you need help with\?/);
+    assert.match(inject, /mp-problem-chip/);
+    assert.match(inject, /Tap a chip to expand/);
+    assert.match(inject, /mpProblemHubList,\{variant:`today`/);
     assert.doesNotMatch(inject, /LOCAL ACCOUNT/);
     assert.doesNotMatch(inject, /Sign in for your morning space/);
   });

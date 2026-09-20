@@ -807,6 +807,9 @@ function patchOwnerUx(source) {
   if (!next.includes("What do you need help with?")) {
     throw new Error("problem hub list missing from bundle");
   }
+  if (!next.includes("mp-problem-chip") || !next.includes("Tap a chip to expand")) {
+    throw new Error("Today problem chips missing from the front page");
+  }
   if (!next.includes("mpProblemHubPage") || !next.includes("Talk this through with Companion")) {
     throw new Error("problem hub page missing from bundle");
   }
