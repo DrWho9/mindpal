@@ -8,6 +8,7 @@ export const PROBLEM_TAG_IDS = [
   "motivation",
   "faith",
   "mothers",
+  "aod",
 ];
 
 /** Extra tags used to filter the mothers hub without becoming their own chips. */
@@ -19,6 +20,17 @@ export const MOTHER_SUPPORT_TAGS = [
   "guilt",
   "self-compassion",
   "faith",
+];
+
+/** Extra tags for the drugs & alcohol hub — not their own Explore chips. */
+export const AOD_SUPPORT_TAGS = [
+  "alcohol",
+  "drugs",
+  "craving",
+  "recovery-adjacent",
+  "shame",
+  "self-compassion",
+  "stress",
 ];
 
 export const THEME_LABEL_TO_TAGS = {
@@ -35,7 +47,17 @@ export const THEME_LABEL_TO_TAGS = {
   "over-identification with tasks": ["stress", "motivation"],
   "uncertainty tolerance": ["anxiety"],
   comparison: ["mood", "mothers", "guilt"],
-  "receiving support": ["mood", "anxiety", "mothers", "motherhood", "self-compassion"],
+  "receiving support": [
+    "mood",
+    "anxiety",
+    "mothers",
+    "motherhood",
+    "self-compassion",
+    "aod",
+    "recovery-adjacent",
+    "alcohol",
+    "drugs",
+  ],
   "single-tasking": ["stress", "motivation"],
   "need to be right": ["stress"],
   "holding grudges": ["mood"],
@@ -57,24 +79,35 @@ export const THEME_LABEL_TO_TAGS = {
   "emotional patience": ["mood", "stress"],
   recognition: ["faith", "mood"],
   "embodied reset": ["stress", "anxiety"],
-  "self-forgiveness": ["mood", "faith", "mothers", "guilt", "self-compassion"],
+  "self-forgiveness": [
+    "mood",
+    "faith",
+    "mothers",
+    "guilt",
+    "self-compassion",
+    "aod",
+    "shame",
+    "recovery-adjacent",
+    "alcohol",
+    "drugs",
+  ],
   "mind-reading": ["anxiety"],
   "domestic perfection": ["stress", "mothers", "motherhood", "guilt"],
   "relational priority": ["mood"],
   grounding: ["anxiety", "stress"],
   "load shedding": ["stress", "mothers", "exhaustion"],
-  "self-talk": ["mood"],
+  "self-talk": ["mood", "aod", "shame", "self-compassion"],
   "plans changing": ["anxiety", "motivation", "mothers", "motherhood"],
-  "inner critic": ["mood"],
+  "inner critic": ["mood", "aod", "shame", "self-compassion"],
   "over-scheduling": ["stress"],
   "mood awareness": ["mood", "mothers", "postpartum-adjacent"],
   "comfortable quiet": ["sleep", "anxiety"],
   "emotional labour": ["stress", "mood", "mothers", "motherhood", "exhaustion"],
   joy: ["mood"],
-  "self-judgement at night": ["sleep", "mood"],
+  "self-judgement at night": ["sleep", "mood", "aod", "shame"],
   play: ["mood", "motivation"],
   "expectation load": ["stress", "mothers", "motherhood", "guilt"],
-  "body cues": ["sleep", "stress"],
+  "body cues": ["sleep", "stress", "aod", "craving"],
   "image management": ["anxiety", "mood"],
   "impatience with delays": ["stress"],
   appreciation: ["mood", "faith"],
@@ -85,10 +118,10 @@ export const THEME_LABEL_TO_TAGS = {
   "after conflict": ["mood"],
   "evening overload": ["sleep", "stress", "mothers", "motherhood", "exhaustion"],
   overwhelm: ["stress", "mothers", "overwhelm", "exhaustion"],
-  acceptance: ["mood", "faith"],
+  acceptance: ["mood", "faith", "aod", "recovery-adjacent"],
   "soft boundaries": ["stress"],
   "tunnel vision": ["anxiety", "stress"],
-  "healing/patience": ["mood"],
+  "healing/patience": ["mood", "aod", "recovery-adjacent", "self-compassion"],
   ego: ["stress"],
   waiting: ["anxiety", "motivation"],
   interruptions: ["stress", "mothers", "motherhood"],
@@ -101,7 +134,7 @@ export const THEME_LABEL_TO_TAGS = {
   catastrophising: ["anxiety"],
   "asking/delegation": ["stress", "mothers", "motherhood"],
   lightness: ["mood"],
-  limits: ["stress"],
+  limits: ["stress", "aod", "recovery-adjacent"],
   reset: ["motivation", "mood"],
   process: ["motivation"],
   receiving: ["mood"],
@@ -116,15 +149,19 @@ export const THEME_LABEL_TO_TAGS = {
   priorities: ["motivation", "stress"],
   overstimulation: ["stress", "sleep"],
   "productivity myths": ["motivation", "stress"],
-  "emotions passing": ["mood", "anxiety"],
+  "emotions passing": ["mood", "anxiety", "aod", "craving"],
   "pressure to perform": ["anxiety", "stress"],
-  "old strategies": ["motivation"],
+  "old strategies": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
   closures: ["sleep", "mood"],
   "ordinary life": ["faith"],
-  "fresh start": ["motivation"],
+  "fresh start": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
 };
 
-const ALLOWED_TAGS = new Set([...PROBLEM_TAG_IDS, ...MOTHER_SUPPORT_TAGS]);
+const ALLOWED_TAGS = new Set([
+  ...PROBLEM_TAG_IDS,
+  ...MOTHER_SUPPORT_TAGS,
+  ...AOD_SUPPORT_TAGS,
+]);
 
 export function normalizeProblemTags(raw) {
   if (!Array.isArray(raw)) return [];
@@ -152,6 +189,9 @@ const FEELING_TO_PROBLEM = {
   gratitude: "faith",
   mothers: "mothers",
   motherhood: "mothers",
+  aod: "aod",
+  alcohol: "aod",
+  drugs: "aod",
 };
 
 export function feelingTagsToProblemTags(raw) {

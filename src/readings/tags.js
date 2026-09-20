@@ -72,6 +72,7 @@ export const FEELING_TO_TAGS = {
   faith: ["faith"],
   overwhelm: ["overwhelm", "stress"],
   mothers: ["self-compassion", "overwhelm", "faith"],
+  aod: ["self-compassion", "stress", "overwhelm"],
 };
 
 /**

@@ -65,6 +65,16 @@
       "meditationCategoryIds": ["sleep", "self-compassion", "anxiety"],
       "companionPrompt": "I'm a mother having a hard stretch — tired, stretched, and carrying a bit of guilt. Please stay educational and peer-like: one small, kind next step. You are software, not a therapist, and this is not a diagnosis or medical care. If I am in danger I will use human help / 000.",
       "journalPrompt": "One small win amid caring for others today… A moment that was good enough, even if the rest was messy, was…"
+    },
+    {
+      "id": "aod",
+      "title": "Drugs & alcohol",
+      "shortTitle": "Drugs & alcohol",
+      "intro": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is optional company: a few readings, a quiet clip, or one honest sentence. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
+      "meditationCategoryId": "self-compassion",
+      "meditationCategoryIds": ["self-compassion", "anxiety", "stress"],
+      "companionPrompt": "I'm finding drink or other substances hard — craving, shame, or starting again. Please stay educational and peer-like: one small, non-shame next step. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
     }
   ]
 }

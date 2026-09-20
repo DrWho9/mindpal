@@ -69,9 +69,12 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .mp-problem-card-mothers{border-color:#c9b48a;background:#fff8ee}
 .mp-hub-tags{color:#6a5a3a;font-size:12px}
 .mp-problem-chip-mothers{border-color:#9a6934}
-.mp-mothers-feelings,.mp-mothers-women{margin:0 0 18px}
+.mp-problem-chip-aod{border-color:#8a9bb0}
+.mp-mothers-feelings,.mp-mothers-women,.mp-aod-feelings{margin:0 0 18px}
 .mp-lane-mothers{--mp-lane:#7a5a28}
+.mp-lane-aod{--mp-lane:#3d5470}
 .mp-mothers-safety{border-color:#e2d2b0}
+.mp-aod-safety{border-color:#c5d0dc}
 @media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
