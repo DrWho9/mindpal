@@ -246,6 +246,14 @@ function updateServiceWorker(jsFile, cssFile, html, js, css) {
     /\{url:"index.html",revision:"[a-f0-9]+"\}/,
     `{url:"index.html",revision:"${md5(html)}"}`,
   );
+  const nav = 'e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))';
+  const navDeny =
+    'e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"),{denylist:[/\\/videos\\//,/\\.(?:mp4|webm)$/i]}))';
+  if (sw.includes(nav)) {
+    sw = sw.replace(nav, navDeny);
+  } else if (!sw.includes("denylist:[/\\/videos\\//")) {
+    throw new Error("service worker navigation route missing");
+  }
   writeFileSync(path, sw);
 }
 

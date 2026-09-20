@@ -31,6 +31,7 @@ const checks = [
   [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
   [js.includes(`"heygenDraftGate": false`), "Maddy catalog skips the HeyGen draft gate"],
   [!sw.includes("videos/maddy"), "service worker does not precache Maddy MP4s"],
+  [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
 ];
 
