@@ -20,12 +20,17 @@
         "motivation",
         "faith",
         "mothers",
-        "aod"
+        "aod",
+        "mindset",
+        "gratitude",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "faith",
-        "calm"
+        "calm",
+        "mindset",
+        "gratitude"
       ],
       "emotions": [
         "motivation",
@@ -45,13 +50,17 @@
       "heygenDraft": false,
       "problemTags": [
         "motivation",
-        "mood"
+        "mood",
+        "mindset",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "low-mood",
         "self-compassion",
-        "calm"
+        "calm",
+        "mindset",
+        "resilience"
       ],
       "emotions": [
         "motivation",
@@ -74,14 +83,16 @@
         "stress",
         "sleep",
         "mothers",
-        "aod"
+        "aod",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "stress",
         "sleep",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ],
       "emotions": [
         "anxiety",

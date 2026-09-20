@@ -4,24 +4,24 @@ export const VIDEO_DIRECTORY_LIMIT = 10;
 
 /** Thoughtful emotion tags for HeyGen V01–V12 drafts. */
 export const CATALOG_VIDEO_TAGS = {
-  V01: ["motivation", "calm", "faith"],
-  V02: ["low-mood", "self-compassion", "motivation"],
+  V01: ["motivation", "calm", "faith", "mindset", "gratitude"],
+  V02: ["low-mood", "self-compassion", "motivation", "courage", "mindset"],
   V03: ["stress", "anxiety", "calm"],
   V04: ["overwhelm", "anxiety", "calm"],
   V05: ["anxiety", "stress", "calm"],
   V06: ["low-mood", "anxiety", "anger", "self-compassion"],
   V07: ["self-compassion", "low-mood", "anger", "boundaries"],
   V08: ["anxiety", "worry", "calm"],
-  V09: ["motivation", "overwhelm", "stress"],
+  V09: ["motivation", "overwhelm", "stress", "challenge", "resilience"],
   V10: ["low-mood", "self-compassion", "grief"],
   V11: ["low-mood", "self-compassion", "worry"],
   V12: ["low-mood", "sleep", "anxiety"],
 };
 
 export const MADDY_VIDEO_TAGS = {
-  "maddy-welcome": ["motivation", "calm", "faith"],
-  "maddy-tip": ["motivation", "self-compassion", "calm"],
-  "maddy-timed-breath": ["anxiety", "stress", "sleep", "calm"],
+  "maddy-welcome": ["motivation", "calm", "faith", "mindset", "gratitude"],
+  "maddy-tip": ["motivation", "self-compassion", "calm", "mindset", "resilience"],
+  "maddy-timed-breath": ["anxiety", "stress", "sleep", "calm", "resilience"],
 };
 
 export const YT_ENTRY_TAGS = {
@@ -35,19 +35,21 @@ export const YT_ENTRY_TAGS = {
   "YT-ANX-03": ["anxiety", "calm"],
   "YT-ANX-04": ["anxiety", "stress"],
   "YT-ANX-05": ["anxiety", "self-compassion", "worry"],
+  "YT-KIND-01": ["low-mood", "self-compassion", "calm", "courage"],
+  "YT-KIND-02": ["low-mood", "self-compassion", "calm", "courage"],
 };
 
 export const YT_CATEGORY_TAGS = {
   sleep: ["sleep", "calm"],
   anxiety: ["anxiety", "worry"],
   stress: ["stress", "overwhelm"],
-  morning: ["motivation", "calm"],
+  morning: ["motivation", "calm", "mindset"],
   "body-scan": ["calm", "stress"],
-  "self-compassion": ["self-compassion"],
+  "self-compassion": ["self-compassion", "courage"],
   breathing: ["calm", "anxiety"],
   grief: ["grief", "low-mood"],
   short: ["calm", "overwhelm"],
-  faith: ["faith", "calm"],
+  faith: ["faith", "calm", "gratitude"],
 };
 
 export function itemTags(item) {

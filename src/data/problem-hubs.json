@@ -1,9 +1,22 @@
 {
-  "version": "1.0.0",
+  "version": "1.1.0",
   "disclaimer": "Supportive wellbeing pointers, not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.",
+  "groups": [
+    {
+      "id": "support",
+      "title": "Support",
+      "lede": "When it's heavy"
+    },
+    {
+      "id": "growth",
+      "title": "Growth",
+      "lede": "Build strength"
+    }
+  ],
   "problems": [
     {
       "id": "sleep",
+      "group": "support",
       "title": "Sleep / restless night",
       "shortTitle": "Sleep",
       "intro": "A restless night is common. These are gentle options for winding down — not a sleep clinic, and nothing here has to be finished.",
@@ -13,6 +26,7 @@
     },
     {
       "id": "anxiety",
+      "group": "support",
       "title": "Anxiety / worry",
       "shortTitle": "Anxiety",
       "intro": "Worry can loop. Here is a short set of readings, clips and a journal line — take what helps and leave the rest.",
@@ -22,6 +36,7 @@
     },
     {
       "id": "stress",
+      "group": "support",
       "title": "Stress / overwhelm",
       "shortTitle": "Stress",
       "intro": "When the day feels too full, one smaller step is enough. These are optional pauses, not a productivity plan.",
@@ -31,6 +46,7 @@
     },
     {
       "id": "mood",
+      "group": "support",
       "title": "Heavy / low mood",
       "shortTitle": "Low mood",
       "intro": "A heavy day does not need a cheerful script. Sit with a short reading or a sentence — only if you want to.",
@@ -39,16 +55,8 @@
       "journalPrompt": "Today feels heavy because… One small kindness I can offer myself is…"
     },
     {
-      "id": "motivation",
-      "title": "Motivation / get going",
-      "shortTitle": "Get going",
-      "intro": "Starting can be the hard part. These are tiny on-ramps — two minutes counts, and skipping is allowed.",
-      "meditationCategoryId": "morning",
-      "companionPrompt": "I'd like a short, educational next step for getting going when I feel stuck. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
-      "journalPrompt": "I am finding it hard to start because… The tiniest next step I could take is…"
-    },
-    {
       "id": "faith",
+      "group": "support",
       "title": "Faith / prayer & meaning",
       "shortTitle": "Faith",
       "intro": "Optional faith and meaning — a verse, a reading, or a quiet question. Skip anytime. Not a sermon and not clinical care.",
@@ -58,6 +66,7 @@
     },
     {
       "id": "mothers",
+      "group": "support",
       "title": "Struggling mothers",
       "shortTitle": "Mothers",
       "intro": "The days can be full of pressure, exhaustion and a quiet guilt that you are not doing enough. This space is optional company — a few readings, a soothing clip, or one small win. It is not medical care, not a diagnosis, and not a postnatal clinic.",
@@ -68,6 +77,7 @@
     },
     {
       "id": "aod",
+      "group": "support",
       "title": "Drugs & alcohol",
       "shortTitle": "Drugs & alcohol",
       "intro": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is optional company: a few readings, a quiet clip, or one honest sentence. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
@@ -75,6 +85,66 @@
       "meditationCategoryIds": ["self-compassion", "anxiety", "stress"],
       "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
       "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
+    },
+    {
+      "id": "mindset",
+      "group": "growth",
+      "title": "Positive mindset",
+      "shortTitle": "Positive mindset",
+      "intro": "Hope is a practice, not a performance. These are small ways to reframe and notice what is already good — without pretending the hard bits are not there.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for practising a more hopeful mindset. Please keep it practical and non-clinical — one small reframe or noticing practice, and remind me this is not a positivity test.",
+      "journalPrompt": "One thing that was quietly good today… A kinder sentence I can try is…"
+    },
+    {
+      "id": "motivation",
+      "group": "growth",
+      "title": "Motivation / a gentle start",
+      "shortTitle": "Motivation",
+      "intro": "Starting can feel heavy. Here is gentle fuel — two minutes counts, and skipping is allowed. No shame, no hustle score.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for finding a little fuel to start. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
+      "journalPrompt": "What I would like a little fuel for… The kindest first step I could take is…"
+    },
+    {
+      "id": "stronger-mind",
+      "group": "growth",
+      "title": "Stronger mind",
+      "shortTitle": "Stronger mind",
+      "intro": "Focus and resilience are literacies you can practise. Small reps, not a boot camp.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for building a steadier mind — focus or resilience, without hustle. Please keep it practical and non-clinical — one small attention practice, and remind me this is not a toughness test.",
+      "journalPrompt": "One place my attention kept slipping… A small practice that would strengthen it is…"
+    },
+    {
+      "id": "challenge",
+      "group": "growth",
+      "title": "Rise to a challenge",
+      "shortTitle": "Rise to a challenge",
+      "intro": "A healthy stretch — courage for the next hill, not a demand to go past what you can hold. Rest is part of rising.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for rising to a challenge I chose. Please keep it practical and non-clinical — one brave, sized-right step, and remind me rest is part of stretch.",
+      "journalPrompt": "The challenge I want to meet… A sized-right next step, not a heroic leap, is…"
+    },
+    {
+      "id": "hard-patch",
+      "group": "growth",
+      "title": "Overcome a hard patch",
+      "shortTitle": "Overcome a hard patch",
+      "intro": "Grit with self-compassion. You can be determined and still be kind to yourself in the same hour.",
+      "meditationCategoryId": "self-compassion",
+      "companionPrompt": "I'd like a short, educational next step for getting through a hard patch. Please keep it practical and non-clinical — one sturdy, kind move, and remind me this is not a toughness test.",
+      "journalPrompt": "What feels hard right now… One kind, determined thing I can do next is…"
+    },
+    {
+      "id": "gratitude",
+      "group": "growth",
+      "title": "Gratitude & wins",
+      "shortTitle": "Gratitude & wins",
+      "intro": "Thanks and small wins train a second scan — what is already holding you up. Not a highlight reel.",
+      "meditationCategoryId": "faith",
+      "companionPrompt": "I'd like a short, educational next step for noticing gratitude or a small win. Please keep it practical and non-clinical — one specific thanks, and remind me this is optional.",
+      "journalPrompt": "One ordinary thing I can thank… A small win I can name is…"
     }
   ]
 }
