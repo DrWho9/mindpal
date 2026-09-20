@@ -42,8 +42,16 @@ describe("today steps pathway", () => {
     assert.equal(bandForStep("evening")?.id, "night");
   });
 
-  it("orders morning through before-sleep", () => {
+  it("orders Morning → Day → Night", () => {
     assert.deepEqual(STEP_IDS, ["readings", "focus", "later", "evening"]);
+    assert.deepEqual(
+      BANDS.map((band) => band.id),
+      ["morning", "day", "night"],
+    );
+    assert.deepEqual(BANDS[0].stepIds, ["readings"]);
+    assert.deepEqual(BANDS[1].stepIds, ["focus", "later"]);
+    assert.deepEqual(BANDS[2].stepIds, ["evening"]);
+    assert.match(BANDS[1].lede, /help with a problem/);
     assert.equal(nextStepId(emptyDay(day)), "readings");
   });
 
@@ -69,6 +77,7 @@ describe("today steps pathway", () => {
     assert.equal(JSON.parse(storage.store.get(STEPS_STORAGE_KEY)).date, "2026-09-20");
     assert.equal(loadDay(storage, day).steps.readings, "done");
     assert.equal(saved.steps.readings, "done");
+    assert.equal("journal" in saved.steps, false);
   });
 
   it("resets when the civil day changes", () => {
@@ -76,7 +85,7 @@ describe("today steps pathway", () => {
       [STEPS_STORAGE_KEY]: JSON.stringify({
         version: 1,
         date: "2026-09-19",
-        steps: { readings: "done", focus: "done", journal: "done", later: "done", evening: "done" },
+        steps: { readings: "done", focus: "done", later: "done", evening: "done" },
       }),
     });
     const loaded = loadDay(storage, day);

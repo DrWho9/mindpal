@@ -1,0 +1,60 @@
+{
+  "version": "1.0.0",
+  "disclaimer": "Supportive wellbeing pointers, not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.",
+  "problems": [
+    {
+      "id": "sleep",
+      "title": "Sleep / restless night",
+      "shortTitle": "Sleep",
+      "intro": "A restless night is common. These are gentle options for winding down — not a sleep clinic, and nothing here has to be finished.",
+      "meditationCategoryId": "sleep",
+      "companionPrompt": "I'd like a short, educational next step for a restless night. Please keep it practical and non-clinical — one small wind-down I could try, and remind me this is not medical advice.",
+      "journalPrompt": "Tonight felt restless because… One kind thing I can try before sleep is…"
+    },
+    {
+      "id": "anxiety",
+      "title": "Anxiety / worry",
+      "shortTitle": "Anxiety",
+      "intro": "Worry can loop. Here is a short set of readings, clips and a journal line — take what helps and leave the rest.",
+      "meditationCategoryId": "anxiety",
+      "companionPrompt": "I'd like a short, educational next step for everyday worry. Please keep it practical and non-clinical — one small thing I could notice or do, and remind me this is not a diagnosis.",
+      "journalPrompt": "The worry that keeps returning is… One smaller, kinder sentence about it is…"
+    },
+    {
+      "id": "stress",
+      "title": "Stress / overwhelm",
+      "shortTitle": "Stress",
+      "intro": "When the day feels too full, one smaller step is enough. These are optional pauses, not a productivity plan.",
+      "meditationCategoryId": "stress",
+      "companionPrompt": "I'd like a short, educational next step for feeling overloaded. Please keep it practical and non-clinical — help me shrink today by one thing, and remind me this is not treatment.",
+      "journalPrompt": "What is making today feel too full… One demand I can set down or shrink is…"
+    },
+    {
+      "id": "mood",
+      "title": "Heavy / low mood",
+      "shortTitle": "Low mood",
+      "intro": "A heavy day does not need a cheerful script. Sit with a short reading or a sentence — only if you want to.",
+      "meditationCategoryId": "grief",
+      "companionPrompt": "I'd like a short, educational next step for a heavy or low mood. Please keep it gentle and non-clinical — one manageable option, and remind me this is not therapy or a diagnosis.",
+      "journalPrompt": "Today feels heavy because… One small kindness I can offer myself is…"
+    },
+    {
+      "id": "motivation",
+      "title": "Motivation / get going",
+      "shortTitle": "Get going",
+      "intro": "Starting can be the hard part. These are tiny on-ramps — two minutes counts, and skipping is allowed.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for getting going when I feel stuck. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
+      "journalPrompt": "I am finding it hard to start because… The tiniest next step I could take is…"
+    },
+    {
+      "id": "faith",
+      "title": "Faith / prayer & meaning",
+      "shortTitle": "Faith",
+      "intro": "Optional faith and meaning — a verse, a reading, or a quiet question. Skip anytime. Not a sermon and not clinical care.",
+      "meditationCategoryId": "faith",
+      "companionPrompt": "I'd like a short, educational next step around faith, prayer or meaning. Please keep it optional and non-clinical — one gentle reflection, and remind me I can skip anything that does not fit.",
+      "journalPrompt": "What felt meaningful today, even in a small way… A hope or prayer I can hold lightly is…"
+    }
+  ]
+}

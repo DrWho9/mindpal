@@ -52,7 +52,7 @@ export const BANDS = [
   {
     id: "day",
     title: "Day",
-    lede: "One focus, then an optional pause.",
+    lede: "One focus, an optional pause, or help with a problem.",
     stepIds: ["focus", "later"],
   },
   {

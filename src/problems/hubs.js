@@ -1,0 +1,93 @@
+import { PROBLEM_TAG_IDS, normalizeProblemTags, readingProblemTags } from "./theme-map.js";
+
+export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
+export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
+
+export function listProblems(catalog) {
+  const list = Array.isArray(catalog?.problems) ? catalog.problems : [];
+  return list.filter((item) => item && PROBLEM_TAG_IDS.includes(item.id));
+}
+
+export function findProblem(catalog, id) {
+  if (typeof id !== "string" || !id.trim()) return null;
+  return listProblems(catalog).find((item) => item.id === id) || null;
+}
+
+export function readingsForProblem(pack, problemId, limit = 6) {
+  const readings = Array.isArray(pack?.readings) ? pack.readings : [];
+  const tagged = readings
+    .filter((item) => readingProblemTags(item).includes(problemId))
+    .sort((a, b) => Number(a.day) - Number(b.day));
+  return tagged.slice(0, limit);
+}
+
+export function videoProblemTags(video) {
+  const direct = normalizeProblemTags(video?.problemTags || video?.theme_tags);
+  if (direct.length) return direct;
+  const blob = [video?.id, video?.title, video?.category, video?.outline, video?.description]
+    .filter((part) => typeof part === "string")
+    .join(" ")
+    .toLowerCase();
+  const inferred = [];
+  if (/\bsleep|night|restless|insomnia|wind-?down\b/.test(blob)) inferred.push("sleep");
+  if (/\banxiety|worry|worried|panic\b/.test(blob)) inferred.push("anxiety");
+  if (/\bstress|overwhelm|overloaded|pressure\b/.test(blob)) inferred.push("stress");
+  if (/\bmood|heavy|low mood|sad|difficult morning\b/.test(blob)) inferred.push("mood");
+  if (/\bmotivat|get going|welcome|start|action|tip\b/.test(blob)) inferred.push("motivation");
+  if (/\bfaith|prayer|meaning|welcome\b/.test(blob)) inferred.push("faith");
+  return normalizeProblemTags(inferred);
+}
+
+export function videosForProblem(catalog, problemId) {
+  const videos = Array.isArray(catalog?.videos) ? catalog.videos : [];
+  return videos.filter((item) => videoProblemTags(item).includes(problemId));
+}
+
+export function maddyForProblem(catalog, problemId) {
+  return videosForProblem(catalog, problemId);
+}
+
+export function takeCompanionPrompt(storage = globalThis.sessionStorage) {
+  if (!storage) return "";
+  try {
+    const value = storage.getItem(COMPANION_PROMPT_KEY) || "";
+    storage.removeItem(COMPANION_PROMPT_KEY);
+    return typeof value === "string" ? value : "";
+  } catch {
+    return "";
+  }
+}
+
+export function saveCompanionPrompt(text, storage = globalThis.sessionStorage) {
+  const value = typeof text === "string" ? text.trim() : "";
+  if (!storage) return value;
+  try {
+    if (value) storage.setItem(COMPANION_PROMPT_KEY, value);
+    else storage.removeItem(COMPANION_PROMPT_KEY);
+  } catch {
+    /* private mode */
+  }
+  return value;
+}
+
+export function selectedProblemId(storage = globalThis.sessionStorage) {
+  if (!storage) return null;
+  try {
+    const value = storage.getItem(SELECTED_PROBLEM_KEY);
+    return PROBLEM_TAG_IDS.includes(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
+
+export function selectProblem(id, storage = globalThis.sessionStorage) {
+  const next = PROBLEM_TAG_IDS.includes(id) ? id : null;
+  if (!storage) return next;
+  try {
+    if (next) storage.setItem(SELECTED_PROBLEM_KEY, next);
+    else storage.removeItem(SELECTED_PROBLEM_KEY);
+  } catch {
+    /* private mode */
+  }
+  return next;
+}
