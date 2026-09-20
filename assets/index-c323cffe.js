@@ -7978,6 +7978,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
   let d=(mpMeditationCatalog&&mpReadings.meditationCategories(mpMeditationCatalog)||[]).find(e=>e.id===s.meditationCategoryId);
   let f=d?mpReadings.entriesForCategory(d).filter(e=>mpReadings.meditationOpenUrl(e)).slice(0,3):[];
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":s.title,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
     (0,A.jsx)(`h1`,{children:s.title}),
     (0,A.jsx)(`p`,{className:`lede`,children:s.intro}),
@@ -7995,17 +7996,22 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
       (0,A.jsx)(`h2`,{children:`Videos`}),
       l.length?(0,A.jsxs)(A.Fragment,{children:[
         (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
-        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:l.map(e=>(0,A.jsxs)(`article`,{className:`maddy-video-card`,children:[
-          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
-          (0,A.jsx)(`p`,{children:e.description}),
-          (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:Ge(e.src),"aria-label":`${e.cardTitle||e.title} with Maddy`})
-        ]},e.id))})
+        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:l.map(t=>{
+          let n=mpReadings.libraryCardModel(t);
+          return(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,"aria-label":n.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t),onKeyDown:e=>{(e.key===`Enter`||e.key===` `)&&(e.preventDefault(),mpReadings.activateLibraryVideo(t))},children:[
+            (0,A.jsx)(`h3`,{children:t.cardTitle||t.title}),
+            (0,A.jsx)(`p`,{children:t.description}),
+            (0,A.jsxs)(`div`,{className:`maddy-play-cover`,"aria-hidden":`true`,children:[
+              (0,A.jsx)(`span`,{className:`card-link`,children:n.cta})
+            ]})
+          ]},t.id);
+        })})
       ]}):null,
       u.length?(0,A.jsxs)(A.Fragment,{children:[
         (0,A.jsx)(`h3`,{children:`Open-draft videos`}),
         (0,A.jsx)(`ul`,{className:`mp-hub-videos`,children:u.map(t=>{
           let n=mpReadings.videoCardCta?mpReadings.videoCardCta(t):`Open draft`;
-          return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary`,onClick:()=>e&&e(t.id),children:[(0,A.jsx)(`strong`,{children:t.title}),(0,A.jsx)(`span`,{children:n})]})},t.id);
+          return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary`,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:r=>{(r.key===`Enter`||r.key===` `)&&(r.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsx)(`strong`,{children:t.title}),(0,A.jsx)(`span`,{children:n})]})},t.id);
         })})
       ]}):null,
       f.length?(0,A.jsxs)(A.Fragment,{children:[

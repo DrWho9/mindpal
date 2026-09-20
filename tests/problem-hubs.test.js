@@ -92,4 +92,10 @@ describe("problem hubs", () => {
     assert.doesNotMatch(inject, /LOCAL ACCOUNT/);
     assert.doesNotMatch(inject, /Sign in for your morning space/);
   });
+
+  it("problem hub video cards fire the shared click host", () => {
+    assert.match(inject, /activateLibraryVideo\(t\)/);
+    assert.match(inject, /type:`button`,className:`maddy-video-card`/);
+    assert.match(inject, /MpLibraryHost/);
+  });
 });
