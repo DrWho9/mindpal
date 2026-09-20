@@ -113,6 +113,9 @@ function wrapRuntime() {
   const maddy = stripExports(
     readFileSync(join(root, "src/videos/maddy.js"), "utf8"),
   );
+  const cards = stripExports(
+    readFileSync(join(root, "src/videos/cards.js"), "utf8"),
+  );
   const coaches = stripExports(
     readFileSync(join(root, "src/coaches/related.js"), "utf8"),
   );
@@ -133,6 +136,9 @@ function wrapRuntime() {
   );
   const problems = stripExports(
     readFileSync(join(root, "src/problems/hubs.js"), "utf8"),
+  );
+  const maddyListen = stripExports(
+    readFileSync(join(root, "src/tts/maddy-listen.js"), "utf8"),
   );
   const ytSection = readFileSync(
     join(root, "src/patches/yt-meditations.inject.js"),
@@ -168,7 +174,7 @@ function wrapRuntime() {
     moduleSource("src/today/steps.js"),
     moduleSource("src/today/wins.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){${ux}\n${themeMap}\n${problems}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){${ux}\n${themeMap}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
@@ -259,25 +265,25 @@ function patchJs(source) {
   next = replaceOnce(
     next,
     "function dt(e,t){if(ut(),!e?.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{let o=await it();if(!n){if(o)try{let o=await at(e,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(e,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
-    "function dt(e,t){let x=mpReadings.unwrapListenInput(e),u=x.text,d=x.id;if(ut(),!u.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{if(n)return;let p=mpReadings.prerenderedAudioUrl(typeof mpTtsAudio<`u`?mpTtsAudio:null,d);if(p){try{if(await mpReadings.playAudioUrl(p,{signal:i.signal})){n||(lt===a&&(lt=null),t?.());return}}catch{if(n)return}}let o=await it();if(!n){if(o)try{let o=await at(u,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(u,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
+    "function dt(e,t){let x=mpReadings.unwrapListenInput(e),u=x.text,d=x.id;if(ut(),!u.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{if(n)return;let p=mpReadings.resolveListenAudioUrl(x,typeof mpTtsAudio<`u`?mpTtsAudio:null);if(p){try{if(await mpReadings.playAudioUrl(p,{signal:i.signal})){n||(lt===a&&(lt=null),t?.());return}}catch{if(n)return}}let o=await it();if(!n){if(o)try{let o=await at(u,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(u,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
     "tts-listen-order",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`})",
-    "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{})",
+    "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "verse-voice-picker",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`})",
-    "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{})",
+    "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "focus-voice-picker",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`})",
-    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`}),(0,A.jsx)(mpVoicePicker,{})",
+    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "ttspad-voice-picker",
   );
 
@@ -302,10 +308,14 @@ function patchJs(source) {
 
   const oldCard =
     "a.map((t,n)=>(0,A.jsxs)(`button`,{className:`video-card`,\"aria-label\":`${t.id} ${t.title} · Draft script preview`,onClick:()=>e(t.id),children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}),(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · DRAFT SCRIPT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t.transcriptText?`Read transcript`:`View production outline`,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id))";
-  const newCard =
+  const midCard =
     "a.map((t,n)=>{let o=hi(t).available;return(0,A.jsxs)(`button`,{className:`video-card${o?``:` is-draft`}`,\"aria-label\":`${t.id} ${t.title} · ${o?`Play`:`Open draft`}`,onClick:()=>e(t.id),children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o?``:` open-draft`}`,children:[o?`Play`:`Open draft`,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})";
+  const newCard =
+    "a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,\"aria-label\":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})";
   if (next.includes(newCard)) {
     /* already patched from a previous in-place edit */
+  } else if (next.includes(midCard)) {
+    next = replaceOnce(next, midCard, newCard, "video-card-activate");
   } else {
     next = replaceOnce(next, oldCard, newCard, "video-card");
   }
@@ -447,6 +457,18 @@ function patchJs(source) {
   }
   if (!next.includes("mpTtsAudio") || !next.includes("mindpal.tts.voice.v1")) {
     throw new Error("TTS catalog or voice persistence missing");
+  }
+  if (!next.includes("activateLibraryVideo") || !next.includes("MpLibraryHost")) {
+    throw new Error("video card activation host missing");
+  }
+  if (!next.includes("type:`button`,className:`maddy-video-card`")) {
+    throw new Error("Maddy cards must be activatable buttons");
+  }
+  if (!next.includes("Play Maddy’s welcome") || !next.includes("Play Maddy’s tip")) {
+    throw new Error("Play Maddy listen controls missing");
+  }
+  if (!next.includes("Maddy (when available)") || !next.includes("resolveListenAudioUrl")) {
+    throw new Error("Maddy listen preference missing");
   }
   if (/\nexport (async )?function |\nexport const /.test(next)) {
     throw new Error("unstripped ESM export remains in the Pages bundle");

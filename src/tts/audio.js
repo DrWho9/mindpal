@@ -1,11 +1,13 @@
-const AUDIO_EXT = /\.(mp3|ogg|wav|m4a|webm)$/i;
+const AUDIO_EXT = /\.(mp3|ogg|wav|m4a|webm|mp4)$/i;
 
 function isSafeAudioUrl(url) {
   if (typeof url !== "string" || !url) return false;
   if (!AUDIO_EXT.test(url)) return false;
   return (
     url.startsWith("/mindpal/audio/") ||
-    url.startsWith("https://drwho9.github.io/mindpal/audio/")
+    url.startsWith("https://drwho9.github.io/mindpal/audio/") ||
+    url.startsWith("/mindpal/videos/maddy/") ||
+    url.startsWith("https://drwho9.github.io/mindpal/videos/maddy/")
   );
 }
 
