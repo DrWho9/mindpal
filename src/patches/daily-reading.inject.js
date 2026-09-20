@@ -1,13 +1,6 @@
 function bt({mode:e=`random`,tag:t}){
   if(t){
-    let n=(0,_.useMemo)(()=>_t(t),[t]),r=(0,_.useMemo)(()=>vt(t),[t]),[i,a]=(0,_.useState)(r),[o,s]=(0,_.useState)(!1),[c,l]=(0,_.useState)(``),{listening:u,listenStatus:d,toggle:f,stop:p}=mt();
-    return(0,A.jsxs)(`section`,{className:`activity-detail`,"aria-label":`Daily reading`,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[`DAILY READING · DAY `,i.day,` · ABOUT `,i.minutes,` MIN · `,n.length,` IN `,`TOPIC`,gt?` · ${gt}`:``]}),(0,A.jsx)(`h3`,{children:i.title}),i.body.split(`
-
-`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,i.practice]}),(0,A.jsx)(`p`,{className:`muted`,children:`Original MindPal reading · supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>f({id:i.id,text:yt(i)}),children:u?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(yt(i)+`
-
-— MindPal daily reading`);l(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>l(``),2e3)},children:`Copy`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await pt(yt(i)+`
-
-— MindPal daily reading`,i.title||`MindPal reading`);e!==`cancelled`&&(l(e===`shared`?`Shared.`:e===`copied`?`Copied for sharing.`:`Could not share.`),setTimeout(()=>l(``),2e3))},children:`Share`}),(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{s(!0)},children:o?`Marked for today`:`I read this`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{p(),ut(),s(!1),l(``),a(vt(t,i.id))},children:`Another random reading`})]}),c||d?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:c||d}):null,o&&(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:`Nice work. You can leave this here or draw another reading.`}),null]});
+    return(0,A.jsx)(mpSupportReadings,{initialTag:t,heading:`Readings for this feeling`,showChips:!1});
   }
   let[n,r]=(0,_.useState)(()=>mpReadings.loadProgress()),i=mpReadings.packAComplete(n),a=mpReadings.orderedReadings(i?mpPackB:mpPackA),o=i?mpPackB:mpPackA,[s,c]=(0,_.useState)(null),[l,u]=(0,_.useState)(i&&!n.packBBannerSeen),[d,f]=(0,_.useState)(!1),[p,m]=(0,_.useState)(``),{listening:h,listenStatus:g,toggle:v,stop:y}=mt();
   (0,_.useEffect)(()=>{r(mpReadings.loadProgress())},[]);

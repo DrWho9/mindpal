@@ -180,7 +180,7 @@ function mpProblemHubList({onOpen:e,variant:t=`explore`}){
     ]},n.id))})
   ]});
 }
-function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i}){
+function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onSpeakers:p}){
   let[a,o]=(0,_.useState)(()=>mpProblems.selectedProblemId());
   (0,_.useEffect)(()=>{function e(){o(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
   let s=mpProblems.findProblem(mpProblemHubs,a);
@@ -188,9 +188,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{o(e)}})
   ]});
-  let c=mpProblems.readingsForProblem(mpPackA,s.id),l=mpProblems.maddyForProblem(mpMaddy,s.id),u=mpProblems.videosForProblem(mpVideoCatalog,s.id);
-  let d=(mpMeditationCatalog&&mpReadings.meditationCategories(mpMeditationCatalog)||[]).find(e=>e.id===s.meditationCategoryId);
-  let f=d?mpReadings.entriesForCategory(d).filter(e=>mpReadings.meditationOpenUrl(e)).slice(0,3):[];
+  let c=mpProblems.readingsForProblem(mpPackA,s.id);
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":s.title,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
     (0,A.jsx)(`h1`,{children:s.title}),
@@ -205,35 +203,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
       ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
     ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Videos`}),
-      l.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
-        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:l.map(e=>(0,A.jsxs)(`article`,{className:`maddy-video-card`,children:[
-          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
-          (0,A.jsx)(`p`,{children:e.description}),
-          (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:Ge(e.src),"aria-label":`${e.cardTitle||e.title} with Maddy`})
-        ]},e.id))})
-      ]}):null,
-      u.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Open-draft videos`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-videos`,children:u.map(t=>{
-          let n=mpReadings.videoCardCta?mpReadings.videoCardCta(t):`Open draft`;
-          return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary`,onClick:()=>e&&e(t.id),children:[(0,A.jsx)(`strong`,{children:t.title}),(0,A.jsx)(`span`,{children:n})]})},t.id);
-        })})
-      ]}):null,
-      f.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:d.title||`Voice-guided on YouTube`}),
-        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:f.map(e=>{
-          let t=mpReadings.meditationOpenUrl(e);
-          return(0,A.jsxs)(`li`,{children:[
-            (0,A.jsx)(`strong`,{children:e.title}),
-            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
-          ]},e.id);
-        })})
-      ]}):(s.meditationCategoryId===`sleep`||s.meditationCategoryId===`anxiety`)?(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`}):null
-    ]}),
+    (0,A.jsx)(mpSupportVideos,{initialTag:s.id,heading:`Videos for this feeling`,showChips:!1,onSpeakers:p}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
       (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),

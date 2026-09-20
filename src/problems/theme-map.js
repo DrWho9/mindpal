@@ -122,8 +122,31 @@ export function tagsForThemeLabel(label) {
   return normalizeProblemTags(THEME_LABEL_TO_TAGS[label.trim()] || []);
 }
 
+const FEELING_TO_PROBLEM = {
+  sleep: "sleep",
+  anxiety: "anxiety",
+  worry: "anxiety",
+  stress: "stress",
+  overwhelm: "stress",
+  anger: "stress",
+  "low-mood": "mood",
+  mood: "mood",
+  grief: "mood",
+  "self-compassion": "mood",
+  motivation: "motivation",
+  faith: "faith",
+  gratitude: "faith",
+};
+
+export function feelingTagsToProblemTags(raw) {
+  if (!Array.isArray(raw)) return [];
+  return normalizeProblemTags(raw.map((tag) => FEELING_TO_PROBLEM[tag] || tag));
+}
+
 export function readingProblemTags(reading) {
   const fromItem = normalizeProblemTags(reading?.theme_tags || reading?.problemTags);
   if (fromItem.length) return fromItem;
+  const fromFeeling = feelingTagsToProblemTags(reading?.tags);
+  if (fromFeeling.length) return fromFeeling;
   return tagsForThemeLabel(reading?.theme_label);
 }

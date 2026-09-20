@@ -22,7 +22,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=FiPDV9L5qpQ",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm",
+            "self-compassion"
           ],
           "emotions": [
             "sleep"
@@ -40,7 +42,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=IrY_b_teSX8",
           "tags": [
-            "sleep"
+            "sleep",
+            "grief",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -58,7 +62,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=_xzjWPSPTq8",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm",
+            "faith"
           ],
           "emotions": [
             "sleep"
@@ -75,7 +81,8 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@jasonstephensonmeditation",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -92,7 +99,8 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@TheHonestGuys",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -100,7 +108,8 @@
         }
       ],
       "tags": [
-        "sleep"
+        "sleep",
+        "calm"
       ],
       "emotions": [
         "sleep"
@@ -123,7 +132,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=MFxlK1ZvOmA",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "worry",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -140,7 +151,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=EVqMNGb9Zi4",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "worry",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -157,7 +170,8 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=rCGGIK0oPkQ",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -174,7 +188,8 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@headspace",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "stress"
           ],
           "emotions": [
             "anxiety"
@@ -191,7 +206,9 @@
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@TaraBrach",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "self-compassion",
+            "worry"
           ],
           "emotions": [
             "anxiety"
@@ -199,7 +216,8 @@
         }
       ],
       "tags": [
-        "anxiety"
+        "anxiety",
+        "worry"
       ],
       "emotions": [
         "anxiety"
@@ -227,7 +245,8 @@
       "status": "filling",
       "entries": [],
       "tags": [
-        "motivation"
+        "motivation",
+        "calm"
       ],
       "emotions": [
         "motivation"
@@ -241,7 +260,8 @@
       "entries": [],
       "tags": [
         "stress",
-        "overwhelm"
+        "overwhelm",
+        "calm"
       ],
       "emotions": [
         "stress",
@@ -255,7 +275,8 @@
       "status": "filling",
       "entries": [],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "self-compassion"
       ],
       "emotions": [
         "low-mood"
@@ -269,7 +290,8 @@
       "entries": [],
       "tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "calm"
       ],
       "emotions": [
         "anxiety",
@@ -283,7 +305,8 @@
       "status": "filling",
       "entries": [],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "grief"
       ],
       "emotions": [
         "low-mood"
@@ -297,7 +320,9 @@
       "entries": [],
       "tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "calm",
+        "overwhelm"
       ],
       "emotions": [
         "anxiety",
@@ -311,7 +336,8 @@
       "status": "filling",
       "entries": [],
       "tags": [
-        "faith"
+        "faith",
+        "calm"
       ],
       "emotions": [
         "faith"
