@@ -4,6 +4,8 @@ import {
   STEPS_STORAGE_KEY,
   STEP_IDS,
   HUB_FLOW_LINE,
+  BANDS,
+  bandForStep,
   emptyDay,
   hubStepCaption,
   loadDay,
@@ -26,14 +28,22 @@ const day = new Date(2026, 8, 20, 9, 0, 0);
 
 describe("today steps pathway", () => {
   it("keeps the hub as a short numbered flow", () => {
-    assert.equal(HUB_FLOW_LINE, "Follow today’s steps at your pace.");
+    assert.equal(HUB_FLOW_LINE, "Follow today’s steps — Morning, Day, then Night.");
     assert.equal(stepRowLabel("readings"), "Readings — Verse of the day");
     assert.equal(hubStepCaption("readings"), "Step 1 · Readings — Verse of the day");
-    assert.equal(hubStepCaption("evening"), "Step 5 · Before you sleep");
+    assert.equal(hubStepCaption("evening"), "Step 4 · Before you sleep");
+  });
+
+  it("groups steps into Morning, Day and Night bands", () => {
+    assert.deepEqual(BANDS.map((band) => band.id), ["morning", "day", "night"]);
+    assert.equal(bandForStep("readings")?.id, "morning");
+    assert.equal(bandForStep("focus")?.id, "day");
+    assert.equal(bandForStep("later")?.id, "day");
+    assert.equal(bandForStep("evening")?.id, "night");
   });
 
   it("orders morning through before-sleep", () => {
-    assert.deepEqual(STEP_IDS, ["readings", "focus", "journal", "later", "evening"]);
+    assert.deepEqual(STEP_IDS, ["readings", "focus", "later", "evening"]);
     assert.equal(nextStepId(emptyDay(day)), "readings");
   });
 
@@ -41,8 +51,7 @@ describe("today steps pathway", () => {
     let state = emptyDay(day);
     state = markStep(state, "readings", "done", day);
     state = markStep(state, "focus", "skipped", day);
-    assert.equal(nextStepId(state), "journal");
-    state = markStep(state, "journal", "done", day);
+    assert.equal(nextStepId(state), "later");
     state = markStep(state, "later", "skipped", day);
     assert.equal(nextStepId(state), "evening");
     state = markStep(state, "evening", "done", day);

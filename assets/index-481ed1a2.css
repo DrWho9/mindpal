@@ -29,7 +29,15 @@
 .mp-today-hub{margin-bottom:18px}
 .mp-civil-date{margin:2px 0 0;font-size:1.15rem;font-weight:650;color:#2f3b2c}
 .mp-coptic-date{margin:2px 0 6px;font-size:.92rem}
-.mp-hub-flow{margin:.4em 0 0;max-width:40ch}
+.mp-hub-flow{margin:.4em 0 12px;max-width:46ch}
+.mp-day-band{border-radius:16px;padding:14px 14px 16px;border:1px solid #dfe4d5;margin:0 0 12px}
+.mp-band-morning{background:linear-gradient(#e7efe6,#fffef9 90px)}
+.mp-band-day{background:linear-gradient(#e4eef6,#fffef9 90px)}
+.mp-band-night{background:linear-gradient(#ebe6de,#fffef9 90px)}
+.mp-day-band > .eyebrow{margin:0 0 2px}
+.mp-day-band > .muted{margin:0 0 10px}
+.mp-verse-collapse{background:#fffef9;border:1px solid #c9dccb;border-radius:12px;padding:10px 14px;margin:0 0 12px}
+.mp-verse-collapse summary{cursor:pointer;font-weight:650;min-height:40px;display:flex;align-items:center}
 .mp-wins-nudge{margin:0 0 8px;max-width:46ch}
 .mp-wins-count{margin:0 0 8px}
 .mp-wins-panel{background:#f7f4ea;border:1px solid #e3dcc6;border-radius:14px;padding:16px 18px;margin:14px 0 20px}

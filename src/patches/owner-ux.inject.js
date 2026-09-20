@@ -86,6 +86,12 @@ function mpMaddyTeaser({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
   ]});
 }
+function mpCollapsedVerse(){
+  return(0,A.jsxs)(`details`,{className:`mp-verse-collapse`,children:[
+    (0,A.jsx)(`summary`,{children:`Today’s verse — tap to expand`}),
+    (0,A.jsx)(Rt,{})
+  ]});
+}
 function mpReadingsPage(){
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings`,"aria-label":`Readings`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`READINGS`}),
@@ -152,7 +158,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
     let n=mpTodaySteps.saveDay(mpTodaySteps.markStep(u,e,t));
     d(n);
   }
-  let h={readings:t,focus:n,journal:r,later:i||n,evening:a||r};
+  let h={readings:t,focus:n,later:i||n,evening:a||r};
   return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub`,"aria-label":`Today’s steps`,children:[
     (0,A.jsxs)(`div`,{className:`today-greeting`,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),
@@ -161,23 +167,28 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
-    (0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}),
-    (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:mpTodaySteps.STEP_IDS.map(e=>{
-      let t=mpTodaySteps.STEP_META[e],n=mpTodaySteps.stepStatus(u,e),i=f===e,a=t.rowLabel||t.title;
-      return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${e}${i?` is-next`:``}${n!==`todo`?` is-${n}`:``}`,children:[
-        (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[e]&&h[e](),children:[
-          (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${t.number}`,` · `,a]}),
-          i?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
-          n===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
-          n===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
-        ]}),
-        (0,A.jsxs)(`div`,{className:`mp-step-actions`,children:[
-          n===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(e,`done`),children:`Mark done`}):null,
-          n===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(e,`skipped`),children:`Skip`}):null,
-          n!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(e,`todo`),children:`Undo`}):null
-        ]})
-      ]},e)
-    })}),
-    (0,A.jsx)(mpMaddyTeaser,{onOpen:s})
+    mpTodaySteps.BANDS.map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
+      (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
+      e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
+      e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
+      (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
+        let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,o=n.rowLabel||n.title;
+        return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${t}${a?` is-next`:``}${i!==`todo`?` is-${i}`:``}`,children:[
+          (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[t]&&h[t](),children:[
+            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,o]}),
+            a?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+            i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+            i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
+          ]}),
+          (0,A.jsxs)(`div`,{className:`mp-step-actions`,children:[
+            i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`done`),children:`Mark done`}):null,
+            i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`skipped`),children:`Skip`}):null,
+            i!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`todo`),children:`Undo`}):null
+          ]})
+        ]},t)
+      })}),
+      e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
+    ]},e.id))
   ]});
 }
