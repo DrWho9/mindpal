@@ -44,11 +44,16 @@ button.brand{
 .mp-top-brand{display:none}
 dialog[open]{
   position:fixed;
-  inset:0;
-  margin:auto;
+  top:50%;
+  left:calc(246px + (100vw - 246px) / 2);
+  transform:translate(-50%,-50%);
+  margin:0;
   height:fit-content;
+  max-height:90dvh;
   z-index:60;
+  pointer-events:none;
 }
+dialog[open]>*{pointer-events:auto}
 .modal-backdrop{left:246px;z-index:40}
 .app:has(dialog[open]) .workspace::before{
   content:"";
@@ -63,15 +68,21 @@ dialog[open]{
 }
 @media (width<=1180px){
   .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:215px}
+  dialog[open]{left:calc(215px + (100vw - 215px) / 2)}
 }
 @media (width<=900px){
   .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:190px}
+  dialog[open]{left:calc(190px + (100vw - 190px) / 2)}
 }
 @media (width<=640px){
   .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:0;top:64px}
+  dialog[open]{left:50%;top:calc(64px + (100dvh - 64px) / 2)}
   dialog.thought-practice[open]{
     inset:64px 0 0;
+    left:0;
+    top:64px;
     height:calc(100dvh - 64px);
+    max-height:none;
     margin:0;
     transform:none;
   }
