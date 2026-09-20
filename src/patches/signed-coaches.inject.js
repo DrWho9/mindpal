@@ -4,8 +4,11 @@ function Gt(){
   let c=t?mpReadings.videosForCoach(t,(mpVideoCatalog&&mpVideoCatalog.videos)||li.videos):[];
   let l=e=>{
     s();
-    let t=(li.videos||[]).find(t=>t.id===e);
-    t&&i(t);
+    let t=e&&typeof e==`object`?e:(mpVideoCatalog&&mpVideoCatalog.videos||li.videos||[]).find(t=>t.id===e);
+    t&&mpReadings.activateLibraryVideo(t,n=>{
+      let r=(li.videos||[]).find(t=>t.id===n);
+      r&&i(r);
+    });
   };
   (0,_.useEffect)(()=>{
     if(!t)return;
@@ -16,7 +19,7 @@ function Gt(){
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`COACHES · SIGNED PRO`}),
     (0,A.jsx)(`h2`,{children:`Meet the signed MindPal coaches`}),
     (0,A.jsx)(`p`,{children:`Choose a signed DayStart coach to see their look and related Explore videos.`}),
-    (0,A.jsx)(`div`,{className:`coach-grid`,children:e.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`coach-card`,"data-look-id":e.look_id,"data-coach-slug":e.slug,"aria-haspopup":`dialog`,"aria-label":`Open ${e.person}, signed DayStart coach`,onClick:()=>n(e),children:[
+    (0,A.jsx)(`div`,{className:`coach-grid`,children:e.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`coach-card`,"data-look-id":e.look_id,"data-coach-slug":e.slug,"aria-haspopup":`dialog`,"aria-label":`Open ${e.person}, signed DayStart coach`,onClick:()=>mpReadings.activateCoachCard(e,n),onKeyDown:t=>{(t.key===`Enter`||t.key===` `)&&(t.preventDefault(),mpReadings.activateCoachCard(e,n))},children:[
       (0,A.jsx)(Wt,{look:e}),
       (0,A.jsx)(`p`,{className:`eyebrow coach-pro-badge`,children:e.kind||`PRO`}),
       (0,A.jsx)(`h3`,{children:e.person}),
@@ -42,7 +45,7 @@ function Gt(){
       (0,A.jsx)(`h3`,{children:`Related Explore videos`}),
       c.length?(0,A.jsx)(`ul`,{className:`coach-related-videos`,children:c.map(e=>{
         let t=mpReadings.videoCardCta(e);
-        return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary coach-related-video`,"aria-label":mpReadings.videoCardAriaLabel(e),onClick:()=>l(e.id),children:[(0,A.jsx)(`strong`,{children:e.title}),(0,A.jsx)(`span`,{children:t})] })},e.id);
+        return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary coach-related-video`,"aria-label":mpReadings.videoCardAriaLabel(e),onClick:()=>l(e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),l(e))},children:[(0,A.jsx)(`strong`,{children:e.title}),(0,A.jsx)(`span`,{children:t})] })},e.id);
       })}):(0,A.jsx)(`p`,{className:`muted`,children:`No related Explore videos for this coach yet.`})
     ]})}):null,
     r?(0,A.jsx)(gi,{video:r,onClose:()=>i(null),onHelp:()=>i(null)}):null

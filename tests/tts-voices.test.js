@@ -20,6 +20,14 @@ import {
   prerenderedAudioUrl,
   unwrapListenInput,
 } from "../src/tts/audio.js";
+import {
+  MADDY_PREF_LABEL,
+  MADDY_PREF_URI,
+  companionLinkedClip,
+  effectiveListenPref,
+  isMaddyVoicePref,
+  resolveListenAudioUrl,
+} from "../src/tts/maddy-listen.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const picker = readFileSync(
@@ -53,6 +61,14 @@ describe("Listen voice pick", () => {
       voice("Google UK English Female", "en-GB", "guk"),
     ];
     assert.equal(pickVoice(voices, "").voiceURI, "guk");
+  });
+
+  it("does not treat the Maddy preference as a missing browser voice", () => {
+    const voices = [
+      voice("Compact", "en-US", "compact-0"),
+      voice("Microsoft Natasha Online (Natural) - English (Australia)", "en-AU", "natasha"),
+    ];
+    assert.equal(pickVoice(voices, "maddy").voiceURI, "natasha");
   });
 
   it("uses a saved URI when present", () => {
@@ -189,7 +205,36 @@ describe("Listen UI keeps a Voice picker near Listen", () => {
   it("injects a persisted picker and daily Listen passes reading id", () => {
     assert.match(picker, /Listen voice/);
     assert.match(picker, /saveVoiceURI/);
+    assert.match(picker, /MADDY_PREF_LABEL/);
+    assert.match(picker, /Play Maddy’s welcome/);
+    assert.match(picker, /Play Maddy’s tip/);
     assert.match(daily, /mpVoicePicker/);
+    assert.match(daily, /mpMaddyListenButtons/);
     assert.match(daily, /id:b\.id,text:yt\(b\)/);
+  });
+});
+
+describe("Maddy listen preference", () => {
+  it("defaults empty storage to Maddy (when available) and keeps the v1 key", () => {
+    assert.equal(MADDY_PREF_URI, "maddy");
+    assert.equal(MADDY_PREF_LABEL, "Maddy (when available)");
+    assert.equal(isMaddyVoicePref("maddy"), true);
+    assert.equal(effectiveListenPref(""), "maddy");
+    assert.equal(TTS_VOICE_KEY, "mindpal.tts.voice.v1");
+  });
+
+  it("reuses companion MP4 audio only for linked Maddy ids", () => {
+    assert.equal(
+      companionLinkedClip({ id: "maddy-tip", text: "unused" }).url,
+      "/mindpal/videos/maddy/tip.mp4",
+    );
+    assert.equal(
+      resolveListenAudioUrl({ id: "maddy-welcome", text: "Hi" }, { entries: [] }, "maddy"),
+      "/mindpal/videos/maddy/welcome.mp4",
+    );
+    assert.equal(
+      resolveListenAudioUrl({ id: "dstss-day-1", text: "A morning reading." }, { entries: [] }, "maddy"),
+      null,
+    );
   });
 });

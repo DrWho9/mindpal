@@ -20,8 +20,14 @@ export function isHighQualityVoice(voice) {
 }
 
 export function isLowQualityVoice(voice) {
-  return /compact|espeak|robot|dummy/.test(
+  return /compact|espeak|robot|dummy|novelty|whisper|trinoids|zarvox|boing|cellos|bad news|good news|pipe organ|albert|junior|kathy|princess|ralph|fred|bells|hysterical|organ|siri/.test(
     `${norm(voice?.name)} ${norm(voice?.voiceURI)}`,
+  );
+}
+
+export function isWarmFemaleVoice(voice) {
+  return /female|karen|catherine|serena|natasha|sonia|samantha|moira|tessa|fiona|susan|zira|aria|jenny|michelle|salli|ivy|joanna|kendra|kimberly|olivia|emma|libby/.test(
+    norm(voice?.name),
   );
 }
 
@@ -41,8 +47,15 @@ export function voiceScore(voice) {
   if (loc < 0) return -1000;
   let score = loc * 100;
   if (isHighQualityVoice(voice)) score += 80;
+  if (/premium|studio|neural2|online \(natural\)|wavenet/.test(norm(voice.name))) {
+    score += 15;
+  }
   if (isLowQualityVoice(voice)) score -= 200;
-  if (/warm|soft|calm/.test(norm(voice.name))) score += 5;
+  if (isWarmFemaleVoice(voice)) score += 25;
+  if (/warm|soft|calm/.test(norm(voice.name))) score += 8;
+  if (/\bmale\b|david|mark|george|daniel|james|ravi|thomas/.test(norm(voice.name))) {
+    score -= 8;
+  }
   return score;
 }
 
@@ -89,7 +102,7 @@ export function pickVoice(voices = [], preferredURI = loadSavedVoiceURI()) {
   const list = Array.isArray(voices) ? voices.filter(Boolean) : [];
   if (!list.length) return null;
 
-  if (preferredURI) {
+  if (preferredURI && !/^maddy\b/i.test(preferredURI)) {
     const saved = list.find(
       (voice) => voice.voiceURI === preferredURI || voice.name === preferredURI,
     );

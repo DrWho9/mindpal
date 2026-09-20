@@ -81,6 +81,11 @@ const checks = [
   [js.includes("mindpal.tts.voice.v1"), "Listen voice choice is persisted"],
   [js.includes("speakBrowser") && !js.includes("n.rate=.92"), "softer browser speech replaces 0.92 rate"],
   [js.includes("prerenderedAudioUrl") && js.includes("mpTtsAudio"), "Phase-1 Neural audio is wired first"],
+  [js.includes("activateLibraryVideo") && js.includes("MpLibraryHost"), "video cards dispatch a live click host"],
+  [js.includes("type:`button`,className:`maddy-video-card`"), "Maddy cards are buttons"],
+  [js.includes("Play Maddy’s welcome") && js.includes("Play Maddy’s tip"), "Play Maddy listen controls are present"],
+  [js.includes("Maddy (when available)") && js.includes("resolveListenAudioUrl"), "Maddy listen preference is wired"],
+  [js.includes("/mindpal/videos/maddy/welcome.mp4"), "Maddy listen URLs keep the Pages base path"],
   [!js.includes("||e[0]||null"), "voices[0] fallthrough is gone"],
   [!/\nexport (async )?function |\nexport const /.test(js), "Pages bundle has no leftover ESM exports"],
 ];
