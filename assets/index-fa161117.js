@@ -3153,12 +3153,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "motivation",
-        "stress"
+        "stress",
+        "mindset"
       ]
     },
     {
@@ -3172,12 +3174,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "stress",
         "calm",
-        "self-compassion"
+        "self-compassion",
+        "resilience"
       ]
     },
     {
@@ -3211,12 +3216,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "self-compassion",
         "relationships",
-        "gratitude"
+        "gratitude",
+        "mindset"
       ]
     },
     {
@@ -3230,12 +3238,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "calm",
-        "anger"
+        "anger",
+        "mindset"
       ]
     },
     {
@@ -3288,12 +3298,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "calm",
-        "faith"
+        "faith",
+        "mindset"
       ]
     },
     {
@@ -3346,12 +3359,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "anxiety"
+        "anxiety",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -3367,12 +3383,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "mothers",
-        "guilt"
+        "guilt",
+        "hard-patch"
       ],
       "tags": [
         "low-mood",
         "self-compassion",
-        "motivation"
+        "motivation",
+        "courage"
       ]
     },
     {
@@ -3394,7 +3412,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch"
       ],
       "tags": [
         "relationships",
@@ -3417,12 +3436,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "motivation"
+        "motivation",
+        "stronger-mind"
       ],
       "tags": [
         "overwhelm",
         "stress",
-        "motivation"
+        "motivation",
+        "resilience"
       ]
     },
     {
@@ -3455,7 +3476,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "anger",
@@ -3475,12 +3497,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "gratitude"
+        "gratitude",
+        "mindset"
       ]
     },
     {
@@ -3495,7 +3519,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -3514,12 +3539,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "stress"
+        "stress",
+        "challenge"
       ]
     },
     {
@@ -3553,12 +3580,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "stress",
         "relationships",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -3573,12 +3602,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "self-compassion",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -3634,12 +3665,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "calm"
+        "calm",
+        "challenge"
       ]
     },
     {
@@ -3693,7 +3726,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "faith"
+        "faith",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -3731,12 +3765,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "relationships",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -3773,12 +3809,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "stress"
+        "stress",
+        "stronger-mind",
+        "resilience"
       ],
       "tags": [
         "low-mood",
         "grief",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -3793,7 +3832,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -3813,12 +3853,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "anxiety"
+        "anxiety",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "worry",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -3841,7 +3883,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "shame",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch",
+        "courage"
       ],
       "tags": [
         "self-compassion",
@@ -3849,7 +3893,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "faith",
         "recovery-shame",
         "alcohol",
-        "drugs"
+        "drugs",
+        "courage"
       ]
     },
     {
@@ -3924,12 +3969,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -3967,13 +4014,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood",
         "aod",
         "shame",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "low-mood",
         "motivation",
-        "recovery-shame"
+        "recovery-shame",
+        "mindset"
       ]
     },
     {
@@ -3990,12 +4040,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "anxiety",
         "motivation",
         "mothers",
-        "motherhood"
+        "motherhood",
+        "resilience"
       ],
       "tags": [
         "anxiety",
         "stress",
-        "motivation"
+        "motivation",
+        "resilience"
       ]
     },
     {
@@ -4012,13 +4064,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood",
         "aod",
         "shame",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "self-compassion",
         "low-mood",
         "anxiety",
-        "recovery-shame"
+        "recovery-shame",
+        "courage"
       ]
     },
     {
@@ -4115,12 +4170,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "calm",
-        "motivation"
+        "motivation",
+        "mindset"
       ]
     },
     {
@@ -4137,7 +4195,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "sleep",
         "mood",
         "aod",
-        "shame"
+        "shame",
+        "hard-patch"
       ],
       "tags": [
         "sleep",
@@ -4158,12 +4217,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "motivation"
+        "motivation",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "calm",
-        "relationships"
+        "relationships",
+        "challenge"
       ]
     },
     {
@@ -4262,12 +4323,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "relationships",
-        "faith"
+        "faith",
+        "mindset"
       ]
     },
     {
@@ -4300,12 +4364,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "challenge"
       ]
     },
     {
@@ -4320,12 +4387,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "calm",
         "overwhelm",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -4359,12 +4428,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "relationships",
         "anger",
-        "grief"
+        "grief",
+        "courage"
       ]
     },
     {
@@ -4404,7 +4475,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "stress",
         "mothers",
         "overwhelm",
-        "exhaustion"
+        "exhaustion",
+        "hard-patch"
       ],
       "tags": [
         "overwhelm",
@@ -4426,13 +4498,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood",
         "faith",
         "aod",
-        "recovery-adjacent"
+        "recovery-adjacent",
+        "mindset",
+        "hard-patch"
       ],
       "tags": [
         "calm",
         "faith",
         "grief",
-        "recovery-shame"
+        "recovery-shame",
+        "mindset"
       ]
     },
     {
@@ -4466,12 +4541,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ]
     },
     {
@@ -4488,13 +4565,18 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood",
         "aod",
         "recovery-adjacent",
-        "self-compassion"
+        "self-compassion",
+        "hard-patch",
+        "courage",
+        "resilience"
       ],
       "tags": [
         "grief",
         "self-compassion",
         "calm",
-        "recovery-shame"
+        "recovery-shame",
+        "courage",
+        "resilience"
       ]
     },
     {
@@ -4608,12 +4690,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset"
       ],
       "tags": [
         "relationships",
         "self-compassion",
-        "anger"
+        "anger",
+        "mindset"
       ]
     },
     {
@@ -4628,12 +4712,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress",
-        "anxiety"
+        "anxiety",
+        "stronger-mind"
       ],
       "tags": [
         "overwhelm",
         "anxiety",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -4647,12 +4733,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "courage"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "relationships"
+        "relationships",
+        "challenge",
+        "courage"
       ]
     },
     {
@@ -4667,7 +4757,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood",
-        "faith"
+        "faith",
+        "gratitude"
       ],
       "tags": [
         "gratitude",
@@ -4726,12 +4817,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "calm",
         "gratitude",
-        "low-mood"
+        "low-mood",
+        "mindset"
       ]
     },
     {
@@ -4768,12 +4862,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "calm",
         "stress",
-        "motivation"
+        "motivation",
+        "courage"
       ]
     },
     {
@@ -4787,12 +4883,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "stronger-mind",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "stress"
+        "stress",
+        "challenge",
+        "resilience"
       ]
     },
     {
@@ -4806,7 +4906,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -4846,12 +4947,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "sleep",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -4884,12 +4987,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "stress"
+        "stress",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "self-compassion",
-        "stress"
+        "stress",
+        "resilience"
       ]
     },
     {
@@ -4903,12 +5008,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "mood"
+        "mood",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "gratitude",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "mindset"
       ]
     },
     {
@@ -4941,7 +5049,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "motivation"
+        "motivation",
+        "gratitude"
       ],
       "tags": [
         "relationships",
@@ -4981,12 +5090,14 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
-        "stress"
+        "stress",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "relationships",
-        "stress"
+        "stress",
+        "challenge"
       ]
     },
     {
@@ -5043,7 +5154,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood",
         "anxiety",
         "aod",
-        "craving"
+        "craving",
+        "hard-patch"
       ],
       "tags": [
         "low-mood",
@@ -5087,7 +5199,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "hard-patch"
       ],
       "tags": [
         "self-compassion",
@@ -5096,7 +5209,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "alcohol",
         "drugs",
         "craving",
-        "recovery-shame"
+        "recovery-shame",
+        "courage"
       ]
     },
     {
@@ -5111,7 +5225,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "sleep",
-        "mood"
+        "mood",
+        "hard-patch"
       ],
       "tags": [
         "sleep",
@@ -5130,12 +5245,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
-        "faith"
+        "faith",
+        "gratitude",
+        "mindset"
       ],
       "tags": [
         "faith",
         "gratitude",
-        "calm"
+        "calm",
+        "mindset"
       ]
     },
     {
@@ -5153,7 +5271,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "aod",
         "recovery-adjacent",
         "alcohol",
-        "drugs"
+        "drugs",
+        "challenge",
+        "courage"
       ],
       "tags": [
         "motivation",
@@ -5161,7 +5281,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "calm",
         "alcohol",
         "drugs",
-        "recovery-shame"
+        "recovery-shame",
+        "challenge",
+        "courage"
       ]
     }
   ]
@@ -6115,12 +6237,17 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "motivation",
         "faith",
         "mothers",
-        "aod"
+        "aod",
+        "mindset",
+        "gratitude",
+        "challenge"
       ],
       "tags": [
         "motivation",
         "faith",
-        "calm"
+        "calm",
+        "mindset",
+        "gratitude"
       ],
       "emotions": [
         "motivation",
@@ -6140,13 +6267,17 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "heygenDraft": false,
       "problemTags": [
         "motivation",
-        "mood"
+        "mood",
+        "mindset",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "low-mood",
         "self-compassion",
-        "calm"
+        "calm",
+        "mindset",
+        "resilience"
       ],
       "emotions": [
         "motivation",
@@ -6169,14 +6300,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "stress",
         "sleep",
         "mothers",
-        "aod"
+        "aod",
+        "stronger-mind"
       ],
       "tags": [
         "anxiety",
         "stress",
         "sleep",
         "overwhelm",
-        "calm"
+        "calm",
+        "resilience"
       ],
       "emotions": [
         "anxiety",
@@ -6210,12 +6343,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "problemTags": [
         "motivation",
-        "faith"
+        "faith",
+        "mindset",
+        "gratitude"
       ],
       "tags": [
         "motivation",
         "faith",
-        "calm"
+        "calm",
+        "mindset",
+        "gratitude"
       ],
       "emotions": [
         "motivation",
@@ -6241,12 +6378,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "problemTags": [
         "mood",
-        "motivation"
+        "motivation",
+        "hard-patch",
+        "mindset"
       ],
       "tags": [
         "low-mood",
         "motivation",
-        "self-compassion"
+        "self-compassion",
+        "courage",
+        "mindset"
       ],
       "emotions": [
         "low-mood",
@@ -6460,12 +6601,16 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "callum"
       ],
       "problemTags": [
-        "motivation"
+        "motivation",
+        "challenge",
+        "stronger-mind"
       ],
       "tags": [
         "motivation",
         "overwhelm",
-        "stress"
+        "stress",
+        "challenge",
+        "resilience"
       ],
       "emotions": [
         "motivation"
@@ -6811,7 +6956,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "entries": [],
       "tags": [
         "motivation",
-        "calm"
+        "calm",
+        "mindset"
       ],
       "emotions": [
         "motivation"
@@ -6852,7 +6998,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "tags": [
             "low-mood",
             "self-compassion",
-            "calm"
+            "calm",
+            "courage"
           ],
           "emotions": [
             "low-mood"
@@ -6871,7 +7018,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "tags": [
             "low-mood",
             "self-compassion",
-            "calm"
+            "calm",
+            "courage"
           ],
           "emotions": [
             "low-mood"
@@ -6880,7 +7028,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "low-mood",
-        "self-compassion"
+        "self-compassion",
+        "courage"
       ],
       "emotions": [
         "low-mood"
@@ -6941,7 +7090,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "entries": [],
       "tags": [
         "faith",
-        "calm"
+        "calm",
+        "gratitude"
       ],
       "emotions": [
         "faith"
@@ -6949,11 +7099,24 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     }
   ]
 };var mpTtsAudio={"version":1,"phase":1,"kind":"neural_prerendered","base":"/mindpal/audio/phase1/","entries":[]};var mpProblemHubs={
-  "version": "1.0.0",
+  "version": "1.1.0",
   "disclaimer": "Supportive wellbeing pointers, not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.",
+  "groups": [
+    {
+      "id": "support",
+      "title": "Support",
+      "lede": "When it's heavy"
+    },
+    {
+      "id": "growth",
+      "title": "Growth",
+      "lede": "Build strength"
+    }
+  ],
   "problems": [
     {
       "id": "sleep",
+      "group": "support",
       "title": "Sleep / restless night",
       "shortTitle": "Sleep",
       "intro": "A restless night is common. These are gentle options for winding down — not a sleep clinic, and nothing here has to be finished.",
@@ -6963,6 +7126,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     },
     {
       "id": "anxiety",
+      "group": "support",
       "title": "Anxiety / worry",
       "shortTitle": "Anxiety",
       "intro": "Worry can loop. Here is a short set of readings, clips and a journal line — take what helps and leave the rest.",
@@ -6972,6 +7136,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     },
     {
       "id": "stress",
+      "group": "support",
       "title": "Stress / overwhelm",
       "shortTitle": "Stress",
       "intro": "When the day feels too full, one smaller step is enough. These are optional pauses, not a productivity plan.",
@@ -6981,6 +7146,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     },
     {
       "id": "mood",
+      "group": "support",
       "title": "Heavy / low mood",
       "shortTitle": "Low mood",
       "intro": "A heavy day does not need a cheerful script. Sit with a short reading or a sentence — only if you want to.",
@@ -6989,16 +7155,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "journalPrompt": "Today feels heavy because… One small kindness I can offer myself is…"
     },
     {
-      "id": "motivation",
-      "title": "Motivation / get going",
-      "shortTitle": "Get going",
-      "intro": "Starting can be the hard part. These are tiny on-ramps — two minutes counts, and skipping is allowed.",
-      "meditationCategoryId": "morning",
-      "companionPrompt": "I'd like a short, educational next step for getting going when I feel stuck. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
-      "journalPrompt": "I am finding it hard to start because… The tiniest next step I could take is…"
-    },
-    {
       "id": "faith",
+      "group": "support",
       "title": "Faith / prayer & meaning",
       "shortTitle": "Faith",
       "intro": "Optional faith and meaning — a verse, a reading, or a quiet question. Skip anytime. Not a sermon and not clinical care.",
@@ -7008,6 +7166,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     },
     {
       "id": "mothers",
+      "group": "support",
       "title": "Struggling mothers",
       "shortTitle": "Mothers",
       "intro": "The days can be full of pressure, exhaustion and a quiet guilt that you are not doing enough. This space is optional company — a few readings, a soothing clip, or one small win. It is not medical care, not a diagnosis, and not a postnatal clinic.",
@@ -7018,6 +7177,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     },
     {
       "id": "aod",
+      "group": "support",
       "title": "Drugs & alcohol",
       "shortTitle": "Drugs & alcohol",
       "intro": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is optional company: a few readings, a quiet clip, or one honest sentence. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
@@ -7025,6 +7185,66 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "meditationCategoryIds": ["self-compassion", "anxiety", "stress"],
       "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
       "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
+    },
+    {
+      "id": "mindset",
+      "group": "growth",
+      "title": "Positive mindset",
+      "shortTitle": "Positive mindset",
+      "intro": "Hope is a practice, not a performance. These are small ways to reframe and notice what is already good — without pretending the hard bits are not there.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for practising a more hopeful mindset. Please keep it practical and non-clinical — one small reframe or noticing practice, and remind me this is not a positivity test.",
+      "journalPrompt": "One thing that was quietly good today… A kinder sentence I can try is…"
+    },
+    {
+      "id": "motivation",
+      "group": "growth",
+      "title": "Motivation / a gentle start",
+      "shortTitle": "Motivation",
+      "intro": "Starting can feel heavy. Here is gentle fuel — two minutes counts, and skipping is allowed. No shame, no hustle score.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for finding a little fuel to start. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
+      "journalPrompt": "What I would like a little fuel for… The kindest first step I could take is…"
+    },
+    {
+      "id": "stronger-mind",
+      "group": "growth",
+      "title": "Stronger mind",
+      "shortTitle": "Stronger mind",
+      "intro": "Focus and resilience are literacies you can practise. Small reps, not a boot camp.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for building a steadier mind — focus or resilience, without hustle. Please keep it practical and non-clinical — one small attention practice, and remind me this is not a toughness test.",
+      "journalPrompt": "One place my attention kept slipping… A small practice that would strengthen it is…"
+    },
+    {
+      "id": "challenge",
+      "group": "growth",
+      "title": "Rise to a challenge",
+      "shortTitle": "Rise to a challenge",
+      "intro": "A healthy stretch — courage for the next hill, not a demand to go past what you can hold. Rest is part of rising.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I'd like a short, educational next step for rising to a challenge I chose. Please keep it practical and non-clinical — one brave, sized-right step, and remind me rest is part of stretch.",
+      "journalPrompt": "The challenge I want to meet… A sized-right next step, not a heroic leap, is…"
+    },
+    {
+      "id": "hard-patch",
+      "group": "growth",
+      "title": "Overcome a hard patch",
+      "shortTitle": "Overcome a hard patch",
+      "intro": "Grit with self-compassion. You can be determined and still be kind to yourself in the same hour.",
+      "meditationCategoryId": "self-compassion",
+      "companionPrompt": "I'd like a short, educational next step for getting through a hard patch. Please keep it practical and non-clinical — one sturdy, kind move, and remind me this is not a toughness test.",
+      "journalPrompt": "What feels hard right now… One kind, determined thing I can do next is…"
+    },
+    {
+      "id": "gratitude",
+      "group": "growth",
+      "title": "Gratitude & wins",
+      "shortTitle": "Gratitude & wins",
+      "intro": "Thanks and small wins train a second scan — what is already holding you up. Not a highlight reel.",
+      "meditationCategoryId": "faith",
+      "companionPrompt": "I'd like a short, educational next step for noticing gratitude or a small win. Please keep it practical and non-clinical — one specific thanks, and remind me this is optional.",
+      "journalPrompt": "One ordinary thing I can thank… A small win I can name is…"
     }
   ]
 };var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
@@ -7238,6 +7458,10 @@ const TAG_VOCAB = [
   "self-compassion",
   "relationships",
   "gratitude",
+  "mindset",
+  "courage",
+  "resilience",
+  "challenge",
   "boundaries",
   "calm",
   "drugs",
@@ -7261,6 +7485,10 @@ const TAG_LABELS = {
   "self-compassion": "Self-compassion",
   relationships: "Relationships",
   gratitude: "Gratitude",
+  mindset: "Positive mindset",
+  courage: "Courage",
+  resilience: "Resilience",
+  challenge: "Challenge",
   boundaries: "Boundaries",
   calm: "Calm",
   drugs: "Drugs",
@@ -7282,6 +7510,11 @@ const PROBLEM_HUB_TAGS = [
   "motivation",
   "faith",
   "aod",
+  "mindset",
+  "stronger-mind",
+  "challenge",
+  "hard-patch",
+  "gratitude",
 ];
 
 const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame", "learning-loop"];
@@ -7290,6 +7523,8 @@ const TAG_ALIASES = {
   mood: "low-mood",
   "recovery-adjacent": "recovery-shame",
   shame: "recovery-shame",
+  "stronger-mind": "resilience",
+  "hard-patch": "courage",
 };
 
 /** Feelings dropdown ids → controlled tags (any-match). */
@@ -7308,6 +7543,13 @@ const FEELING_TO_TAGS = {
   "low-mood": ["low-mood", "grief"],
   anger: ["anger"],
   motivation: ["motivation"],
+  mindset: ["mindset", "gratitude"],
+  "stronger-mind": ["resilience", "motivation"],
+  challenge: ["challenge", "motivation"],
+  "hard-patch": ["courage", "self-compassion"],
+  gratitude: ["gratitude"],
+  courage: ["courage"],
+  resilience: ["resilience"],
   faith: ["faith"],
   overwhelm: ["overwhelm", "stress"],
   mothers: ["self-compassion", "overwhelm", "faith"],
@@ -7325,105 +7567,105 @@ const FEELING_TO_TAGS = {
  */
 const THEME_LABEL_TO_TAGS = {
   "small irritations": ["anger", "stress", "calm"],
-  imperfection: ["self-compassion", "motivation", "stress"],
-  "gentleness vs pressure": ["stress", "calm", "self-compassion"],
+  imperfection: ["self-compassion", "motivation", "stress", "mindset"],
+  "gentleness vs pressure": ["stress", "calm", "self-compassion", "resilience"],
   "rumination escalation": ["worry", "anxiety", "overwhelm"],
-  compassion: ["self-compassion", "relationships", "gratitude"],
-  "perspective-taking": ["relationships", "calm", "anger"],
+  compassion: ["self-compassion", "relationships", "gratitude", "mindset"],
+  "perspective-taking": ["relationships", "calm", "anger", "mindset"],
   "prioritising conflict": ["relationships", "anger", "boundaries"],
   "reactive communication": ["anger", "relationships", "calm"],
-  "gratitude for small": ["gratitude", "calm", "faith"],
+  "gratitude for small": ["gratitude", "calm", "faith", "mindset"],
   impatience: ["stress", "anger", "calm"],
   "over-identification with tasks": ["stress", "motivation", "overwhelm"],
-  "uncertainty tolerance": ["anxiety", "worry", "calm"],
-  comparison: ["low-mood", "self-compassion", "motivation"],
+  "uncertainty tolerance": ["anxiety", "worry", "calm", "resilience"],
+  comparison: ["low-mood", "self-compassion", "motivation", "courage"],
   "receiving support": ["relationships", "self-compassion", "low-mood", "alcohol", "drugs", "recovery-shame"],
-  "single-tasking": ["overwhelm", "stress", "motivation"],
+  "single-tasking": ["overwhelm", "stress", "motivation", "resilience"],
   "need to be right": ["relationships", "anger", "boundaries"],
   "holding grudges": ["anger", "grief", "relationships"],
-  "scarcity mindset": ["anxiety", "worry", "gratitude"],
+  "scarcity mindset": ["anxiety", "worry", "gratitude", "mindset"],
   connection: ["relationships", "gratitude", "faith"],
-  "waiting to start": ["motivation", "overwhelm", "stress"],
+  "waiting to start": ["motivation", "overwhelm", "stress", "challenge"],
   "false emergencies": ["anxiety", "stress", "overwhelm"],
-  "drama resistance": ["stress", "relationships", "calm"],
-  "charitable interpretation": ["relationships", "self-compassion", "calm"],
+  "drama resistance": ["stress", "relationships", "calm", "resilience"],
+  "charitable interpretation": ["relationships", "self-compassion", "calm", "mindset"],
   "rest guilt": ["sleep", "self-compassion", "stress"],
   boundaries: ["boundaries", "relationships", "stress"],
-  "micro-completion": ["motivation", "overwhelm", "calm"],
+  "micro-completion": ["motivation", "overwhelm", "calm", "challenge"],
   "mental replay": ["worry", "anxiety", "anger"],
   "work spillover": ["stress", "sleep", "boundaries"],
   listening: ["relationships", "calm", "gratitude"],
   rush: ["stress", "calm", "overwhelm"],
-  judgement: ["self-compassion", "relationships", "calm"],
+  judgement: ["self-compassion", "relationships", "calm", "mindset"],
   overcommitment: ["overwhelm", "stress", "boundaries"],
-  "emotional patience": ["low-mood", "grief", "calm"],
+  "emotional patience": ["low-mood", "grief", "calm", "resilience"],
   recognition: ["relationships", "gratitude", "motivation"],
-  "embodied reset": ["anxiety", "worry", "calm"],
-  "self-forgiveness": ["self-compassion", "grief", "faith", "recovery-shame", "alcohol", "drugs"],
+  "embodied reset": ["anxiety", "worry", "calm", "resilience"],
+  "self-forgiveness": ["self-compassion", "grief", "faith", "recovery-shame", "alcohol", "drugs", "courage"],
   "mind-reading": ["anxiety", "worry", "relationships"],
   "domestic perfection": ["stress", "self-compassion", "overwhelm"],
   "relational priority": ["relationships", "anger", "calm"],
-  grounding: ["anxiety", "overwhelm", "calm"],
+  grounding: ["anxiety", "overwhelm", "calm", "resilience"],
   "load shedding": ["overwhelm", "stress", "boundaries"],
-  "self-talk": ["self-compassion", "low-mood", "motivation", "recovery-shame"],
-  "plans changing": ["anxiety", "stress", "motivation"],
-  "inner critic": ["self-compassion", "low-mood", "anxiety", "recovery-shame"],
+  "self-talk": ["self-compassion", "low-mood", "motivation", "recovery-shame", "mindset"],
+  "plans changing": ["anxiety", "stress", "motivation", "resilience"],
+  "inner critic": ["self-compassion", "low-mood", "anxiety", "recovery-shame", "courage"],
   "over-scheduling": ["overwhelm", "stress", "boundaries"],
   "mood awareness": ["low-mood", "calm", "self-compassion"],
   "comfortable quiet": ["relationships", "calm", "anxiety"],
   "emotional labour": ["boundaries", "relationships", "overwhelm"],
-  joy: ["gratitude", "calm", "motivation"],
+  joy: ["gratitude", "calm", "motivation", "mindset"],
   "self-judgement at night": ["sleep", "self-compassion", "low-mood", "recovery-shame"],
-  play: ["motivation", "calm", "relationships"],
+  play: ["motivation", "calm", "relationships", "challenge"],
   "expectation load": ["stress", "overwhelm", "self-compassion"],
   "body cues": ["sleep", "stress", "calm", "craving"],
   "image management": ["anxiety", "self-compassion", "stress"],
   "impatience with delays": ["anger", "stress", "calm"],
-  appreciation: ["gratitude", "relationships", "faith"],
+  appreciation: ["gratitude", "relationships", "faith", "mindset"],
   "grievance collecting": ["anger", "relationships", "grief"],
-  "invisible progress": ["motivation", "self-compassion", "low-mood"],
-  attention: ["calm", "overwhelm", "stress"],
+  "invisible progress": ["motivation", "self-compassion", "low-mood", "challenge"],
+  attention: ["calm", "overwhelm", "stress", "resilience"],
   impermanence: ["faith", "grief", "calm"],
-  "after conflict": ["relationships", "anger", "grief"],
+  "after conflict": ["relationships", "anger", "grief", "courage"],
   "evening overload": ["sleep", "overwhelm", "stress"],
   overwhelm: ["overwhelm", "stress", "motivation"],
-  acceptance: ["calm", "faith", "grief", "recovery-shame"],
+  acceptance: ["calm", "faith", "grief", "recovery-shame", "mindset"],
   "soft boundaries": ["boundaries", "relationships", "stress"],
-  "tunnel vision": ["anxiety", "overwhelm", "calm"],
-  "healing/patience": ["grief", "self-compassion", "calm", "recovery-shame"],
+  "tunnel vision": ["anxiety", "overwhelm", "calm", "resilience"],
+  "healing/patience": ["grief", "self-compassion", "calm", "recovery-shame", "courage", "resilience"],
   ego: ["relationships", "self-compassion", "motivation"],
   waiting: ["anxiety", "stress", "calm"],
   interruptions: ["stress", "relationships", "anger"],
   "body tension": ["stress", "sleep", "calm"],
   "optimisation pressure": ["stress", "motivation", "overwhelm"],
-  attribution: ["relationships", "self-compassion", "anger"],
-  "mental clutter": ["overwhelm", "anxiety", "stress"],
-  "showing up": ["motivation", "self-compassion", "relationships"],
+  attribution: ["relationships", "self-compassion", "anger", "mindset"],
+  "mental clutter": ["overwhelm", "anxiety", "stress", "resilience"],
+  "showing up": ["motivation", "self-compassion", "relationships", "challenge", "courage"],
   "specific thanks": ["gratitude", "relationships", "faith"],
   catastrophising: ["anxiety", "worry", "overwhelm"],
   "asking/delegation": ["overwhelm", "relationships", "boundaries"],
-  lightness: ["calm", "gratitude", "low-mood"],
+  lightness: ["calm", "gratitude", "low-mood", "mindset"],
   limits: ["boundaries", "overwhelm", "self-compassion", "recovery-shame"],
-  reset: ["calm", "stress", "motivation"],
-  process: ["motivation", "self-compassion", "stress"],
+  reset: ["calm", "stress", "motivation", "courage"],
+  process: ["motivation", "self-compassion", "stress", "challenge", "resilience"],
   receiving: ["relationships", "self-compassion", "low-mood"],
   "self-consciousness": ["anxiety", "self-compassion", "relationships"],
-  "prep without panic": ["anxiety", "sleep", "stress"],
+  "prep without panic": ["anxiety", "sleep", "stress", "resilience"],
   "waiting in line": ["stress", "calm", "anger"],
-  pace: ["motivation", "self-compassion", "stress"],
-  "joy permission": ["gratitude", "self-compassion", "low-mood"],
+  pace: ["motivation", "self-compassion", "stress", "resilience"],
+  "joy permission": ["gratitude", "self-compassion", "low-mood", "mindset"],
   disengaging: ["anger", "boundaries", "relationships"],
   maintenance: ["relationships", "gratitude", "motivation"],
   "not knowing": ["anxiety", "faith", "calm"],
-  priorities: ["motivation", "relationships", "stress"],
+  priorities: ["motivation", "relationships", "stress", "challenge"],
   overstimulation: ["overwhelm", "sleep", "stress"],
   "productivity myths": ["motivation", "stress", "self-compassion"],
   "emotions passing": ["low-mood", "anger", "grief", "craving"],
   "pressure to perform": ["anxiety", "stress", "self-compassion"],
-  "old strategies": ["self-compassion", "grief", "motivation", "alcohol", "drugs", "craving", "recovery-shame"],
+  "old strategies": ["self-compassion", "grief", "motivation", "alcohol", "drugs", "craving", "recovery-shame", "courage"],
   closures: ["sleep", "grief", "calm"],
-  "ordinary life": ["faith", "gratitude", "calm"],
-  "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame"],
+  "ordinary life": ["faith", "gratitude", "calm", "mindset"],
+  "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame", "challenge", "courage"],
   "learning-loop": ["alcohol", "drugs", "craving", "recovery-shame", "low-mood", "learning-loop"],
 };
 
@@ -8141,24 +8383,24 @@ const VIDEO_DIRECTORY_LIMIT = 10;
 
 /** Thoughtful emotion tags for HeyGen V01–V12 drafts. */
 const CATALOG_VIDEO_TAGS = {
-  V01: ["motivation", "calm", "faith"],
-  V02: ["low-mood", "self-compassion", "motivation"],
+  V01: ["motivation", "calm", "faith", "mindset", "gratitude"],
+  V02: ["low-mood", "self-compassion", "motivation", "courage", "mindset"],
   V03: ["stress", "anxiety", "calm"],
   V04: ["overwhelm", "anxiety", "calm"],
   V05: ["anxiety", "stress", "calm"],
   V06: ["low-mood", "anxiety", "anger", "self-compassion"],
   V07: ["self-compassion", "low-mood", "anger", "boundaries"],
   V08: ["anxiety", "worry", "calm"],
-  V09: ["motivation", "overwhelm", "stress"],
+  V09: ["motivation", "overwhelm", "stress", "challenge", "resilience"],
   V10: ["low-mood", "self-compassion", "grief"],
   V11: ["low-mood", "self-compassion", "worry"],
   V12: ["low-mood", "sleep", "anxiety"],
 };
 
 const MADDY_VIDEO_TAGS = {
-  "maddy-welcome": ["motivation", "calm", "faith"],
-  "maddy-tip": ["motivation", "self-compassion", "calm"],
-  "maddy-timed-breath": ["anxiety", "stress", "sleep", "calm"],
+  "maddy-welcome": ["motivation", "calm", "faith", "mindset", "gratitude"],
+  "maddy-tip": ["motivation", "self-compassion", "calm", "mindset", "resilience"],
+  "maddy-timed-breath": ["anxiety", "stress", "sleep", "calm", "resilience"],
 };
 
 const YT_ENTRY_TAGS = {
@@ -8172,19 +8414,21 @@ const YT_ENTRY_TAGS = {
   "YT-ANX-03": ["anxiety", "calm"],
   "YT-ANX-04": ["anxiety", "stress"],
   "YT-ANX-05": ["anxiety", "self-compassion", "worry"],
+  "YT-KIND-01": ["low-mood", "self-compassion", "calm", "courage"],
+  "YT-KIND-02": ["low-mood", "self-compassion", "calm", "courage"],
 };
 
 const YT_CATEGORY_TAGS = {
   sleep: ["sleep", "calm"],
   anxiety: ["anxiety", "worry"],
   stress: ["stress", "overwhelm"],
-  morning: ["motivation", "calm"],
+  morning: ["motivation", "calm", "mindset"],
   "body-scan": ["calm", "stress"],
-  "self-compassion": ["self-compassion"],
+  "self-compassion": ["self-compassion", "courage"],
   breathing: ["calm", "anxiety"],
   grief: ["grief", "low-mood"],
   short: ["calm", "overwhelm"],
-  faith: ["faith", "calm"],
+  faith: ["faith", "calm", "gratitude"],
 };
 
 function itemTags(item) {
@@ -9206,18 +9450,36 @@ function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
   return { store: saveWinsStore(store, storage), items };
 }
 
-/** Map existing Pack A theme_label values onto problem-hub tags. */
+/** Map existing Pack A theme_label values onto support- and growth-hub tags. */
 
-const PROBLEM_TAG_IDS = [
+const SUPPORT_TAG_IDS = [
   "sleep",
   "anxiety",
   "stress",
   "mood",
-  "motivation",
   "faith",
   "mothers",
   "aod",
 ];
+
+const GROWTH_TAG_IDS = [
+  "mindset",
+  "motivation",
+  "stronger-mind",
+  "challenge",
+  "hard-patch",
+  "gratitude",
+];
+
+const PROBLEM_TAG_IDS = [...SUPPORT_TAG_IDS, ...GROWTH_TAG_IDS];
+
+const PROBLEM_GROUPS = [
+  { id: "support", title: "Support", lede: "When it's heavy" },
+  { id: "growth", title: "Growth", lede: "Build strength" },
+];
+
+/** Extra growth theme tags — used on readings/videos, not their own Today chips. */
+const GROWTH_THEME_TAGS = ["courage", "resilience"];
 
 /** Extra tags used to filter the mothers hub without becoming their own chips. */
 const MOTHER_SUPPORT_TAGS = [
@@ -9246,18 +9508,18 @@ const AOD_SUPPORT_TAGS = [
 
 const THEME_LABEL_TO_TAGS = {
   "small irritations": ["stress"],
-  imperfection: ["motivation", "mood"],
-  "gentleness vs pressure": ["stress"],
+  imperfection: ["motivation", "mood", "mindset"],
+  "gentleness vs pressure": ["stress", "stronger-mind", "resilience"],
   "rumination escalation": ["anxiety"],
-  compassion: ["mood", "faith"],
-  "perspective-taking": ["stress"],
+  compassion: ["mood", "faith", "mindset", "gratitude"],
+  "perspective-taking": ["stress", "mindset"],
   "prioritising conflict": ["stress"],
   "reactive communication": ["stress"],
-  "gratitude for small": ["mood", "faith"],
+  "gratitude for small": ["mood", "faith", "gratitude", "mindset"],
   impatience: ["stress"],
   "over-identification with tasks": ["stress", "motivation"],
-  "uncertainty tolerance": ["anxiety"],
-  comparison: ["mood", "mothers", "guilt"],
+  "uncertainty tolerance": ["anxiety", "stronger-mind", "resilience"],
+  comparison: ["mood", "mothers", "guilt", "hard-patch"],
   "receiving support": [
     "mood",
     "anxiety",
@@ -9268,28 +9530,29 @@ const THEME_LABEL_TO_TAGS = {
     "recovery-adjacent",
     "alcohol",
     "drugs",
+    "hard-patch",
   ],
-  "single-tasking": ["stress", "motivation"],
+  "single-tasking": ["stress", "motivation", "stronger-mind"],
   "need to be right": ["stress"],
-  "holding grudges": ["mood"],
-  "scarcity mindset": ["anxiety", "mood"],
-  connection: ["faith", "mood"],
-  "waiting to start": ["motivation"],
+  "holding grudges": ["mood", "hard-patch"],
+  "scarcity mindset": ["anxiety", "mood", "mindset"],
+  connection: ["faith", "mood", "gratitude"],
+  "waiting to start": ["motivation", "challenge"],
   "false emergencies": ["anxiety", "stress"],
-  "drama resistance": ["stress"],
-  "charitable interpretation": ["mood", "faith"],
+  "drama resistance": ["stress", "stronger-mind"],
+  "charitable interpretation": ["mood", "faith", "mindset"],
   "rest guilt": ["sleep", "mood", "mothers", "guilt", "exhaustion"],
   boundaries: ["stress"],
-  "micro-completion": ["motivation"],
+  "micro-completion": ["motivation", "challenge"],
   "mental replay": ["anxiety", "sleep"],
   "work spillover": ["stress", "sleep"],
-  listening: ["faith"],
+  listening: ["faith", "gratitude"],
   rush: ["stress"],
-  judgement: ["mood"],
+  judgement: ["mood", "mindset"],
   overcommitment: ["stress", "mothers", "exhaustion", "motherhood"],
-  "emotional patience": ["mood", "stress"],
-  recognition: ["faith", "mood"],
-  "embodied reset": ["stress", "anxiety"],
+  "emotional patience": ["mood", "stress", "stronger-mind", "resilience"],
+  recognition: ["faith", "mood", "gratitude"],
+  "embodied reset": ["stress", "anxiety", "stronger-mind"],
   "self-forgiveness": [
     "mood",
     "faith",
@@ -9301,71 +9564,81 @@ const THEME_LABEL_TO_TAGS = {
     "recovery-adjacent",
     "alcohol",
     "drugs",
+    "hard-patch",
+    "courage",
   ],
   "mind-reading": ["anxiety"],
   "domestic perfection": ["stress", "mothers", "motherhood", "guilt"],
   "relational priority": ["mood"],
-  grounding: ["anxiety", "stress"],
+  grounding: ["anxiety", "stress", "stronger-mind"],
   "load shedding": ["stress", "mothers", "exhaustion"],
-  "self-talk": ["mood", "aod", "shame", "self-compassion"],
-  "plans changing": ["anxiety", "motivation", "mothers", "motherhood"],
-  "inner critic": ["mood", "aod", "shame", "self-compassion"],
+  "self-talk": ["mood", "aod", "shame", "self-compassion", "hard-patch", "mindset"],
+  "plans changing": ["anxiety", "motivation", "mothers", "motherhood", "resilience"],
+  "inner critic": ["mood", "aod", "shame", "self-compassion", "hard-patch", "mindset"],
   "over-scheduling": ["stress"],
   "mood awareness": ["mood", "mothers", "postpartum-adjacent"],
   "comfortable quiet": ["sleep", "anxiety"],
   "emotional labour": ["stress", "mood", "mothers", "motherhood", "exhaustion"],
-  joy: ["mood"],
-  "self-judgement at night": ["sleep", "mood", "aod", "shame"],
-  play: ["mood", "motivation"],
+  joy: ["mood", "gratitude", "mindset"],
+  "self-judgement at night": ["sleep", "mood", "aod", "shame", "hard-patch"],
+  play: ["mood", "motivation", "challenge"],
   "expectation load": ["stress", "mothers", "motherhood", "guilt"],
   "body cues": ["sleep", "stress", "aod", "craving"],
   "image management": ["anxiety", "mood"],
   "impatience with delays": ["stress"],
-  appreciation: ["mood", "faith"],
+  appreciation: ["mood", "faith", "gratitude", "mindset"],
   "grievance collecting": ["mood"],
-  "invisible progress": ["motivation"],
-  attention: ["faith", "stress"],
+  "invisible progress": ["motivation", "challenge", "stronger-mind"],
+  attention: ["faith", "stress", "stronger-mind"],
   impermanence: ["faith", "anxiety"],
-  "after conflict": ["mood"],
+  "after conflict": ["mood", "hard-patch"],
   "evening overload": ["sleep", "stress", "mothers", "motherhood", "exhaustion"],
-  overwhelm: ["stress", "mothers", "overwhelm", "exhaustion"],
-  acceptance: ["mood", "faith", "aod", "recovery-adjacent"],
+  overwhelm: ["stress", "mothers", "overwhelm", "exhaustion", "hard-patch"],
+  acceptance: ["mood", "faith", "aod", "recovery-adjacent", "mindset", "hard-patch"],
   "soft boundaries": ["stress"],
-  "tunnel vision": ["anxiety", "stress"],
-  "healing/patience": ["mood", "aod", "recovery-adjacent", "self-compassion"],
+  "tunnel vision": ["anxiety", "stress", "stronger-mind"],
+  "healing/patience": [
+    "mood",
+    "aod",
+    "recovery-adjacent",
+    "self-compassion",
+    "hard-patch",
+    "courage",
+    "resilience",
+  ],
   ego: ["stress"],
   waiting: ["anxiety", "motivation"],
   interruptions: ["stress", "mothers", "motherhood"],
   "body tension": ["stress", "sleep"],
   "optimisation pressure": ["stress", "motivation"],
-  attribution: ["mood"],
-  "mental clutter": ["stress", "anxiety"],
-  "showing up": ["motivation"],
-  "specific thanks": ["mood", "faith"],
+  attribution: ["mood", "mindset"],
+  "mental clutter": ["stress", "anxiety", "stronger-mind"],
+  "showing up": ["motivation", "challenge", "courage"],
+  "specific thanks": ["mood", "faith", "gratitude"],
   catastrophising: ["anxiety"],
   "asking/delegation": ["stress", "mothers", "motherhood"],
-  lightness: ["mood"],
+  lightness: ["mood", "mindset", "gratitude"],
   limits: ["stress", "aod", "recovery-adjacent"],
-  reset: ["motivation", "mood"],
-  process: ["motivation"],
-  receiving: ["mood"],
+  reset: ["motivation", "mood", "hard-patch"],
+  process: ["motivation", "stronger-mind", "challenge"],
+  receiving: ["mood", "gratitude"],
   "self-consciousness": ["anxiety", "mood"],
-  "prep without panic": ["anxiety", "stress"],
+  "prep without panic": ["anxiety", "stress", "stronger-mind"],
   "waiting in line": ["stress"],
-  pace: ["stress"],
-  "joy permission": ["mood"],
+  pace: ["stress", "stronger-mind"],
+  "joy permission": ["mood", "gratitude", "mindset"],
   disengaging: ["stress"],
-  maintenance: ["motivation"],
+  maintenance: ["motivation", "gratitude"],
   "not knowing": ["anxiety", "faith"],
-  priorities: ["motivation", "stress"],
+  priorities: ["motivation", "stress", "challenge"],
   overstimulation: ["stress", "sleep"],
   "productivity myths": ["motivation", "stress"],
-  "emotions passing": ["mood", "anxiety", "aod", "craving"],
+  "emotions passing": ["mood", "anxiety", "aod", "craving", "hard-patch"],
   "pressure to perform": ["anxiety", "stress"],
-  "old strategies": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
-  closures: ["sleep", "mood"],
-  "ordinary life": ["faith"],
-  "fresh start": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
+  "old strategies": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs", "hard-patch"],
+  closures: ["sleep", "mood", "hard-patch"],
+  "ordinary life": ["faith", "gratitude", "mindset"],
+  "fresh start": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs", "challenge", "courage"],
   "learning-loop": [
     "aod",
     "alcohol",
@@ -9381,6 +9654,7 @@ const ALLOWED_TAGS = new Set([
   ...PROBLEM_TAG_IDS,
   ...MOTHER_SUPPORT_TAGS,
   ...AOD_SUPPORT_TAGS,
+  ...GROWTH_THEME_TAGS,
 ]);
 
 function normalizeProblemTags(raw) {
@@ -9406,7 +9680,13 @@ const FEELING_TO_PROBLEM = {
   "self-compassion": "mood",
   motivation: "motivation",
   faith: "faith",
-  gratitude: "faith",
+  gratitude: "gratitude",
+  mindset: "mindset",
+  courage: "hard-patch",
+  resilience: "stronger-mind",
+  challenge: "challenge",
+  "stronger-mind": "stronger-mind",
+  "hard-patch": "hard-patch",
   mothers: "mothers",
   motherhood: "mothers",
   aod: "aod",
@@ -9491,6 +9771,7 @@ function ownerCompanionOpener(problemId, fallback, override) {
 
 
 
+
 const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
 const MOTHERS_PROBLEM_ID = "mothers";
@@ -9512,9 +9793,69 @@ function isAodProblem(id) {
   return id === AOD_PROBLEM_ID;
 }
 
+const GROWTH_HUB_IDS = new Set([
+  "mindset",
+  "motivation",
+  "stronger-mind",
+  "challenge",
+  "hard-patch",
+  "gratitude",
+]);
+
+function problemGroupId(item) {
+  if (item?.group === "growth" || item?.group === "support") return item.group;
+  return GROWTH_HUB_IDS.has(item?.id) ? "growth" : "support";
+}
+
 function listProblems(catalog) {
   const list = Array.isArray(catalog?.problems) ? catalog.problems : [];
   return list.filter((item) => item && PROBLEM_TAG_IDS.includes(item.id));
+}
+
+function listProblemGroups(catalog) {
+  const problems = listProblems(catalog);
+  const fromCatalog = Array.isArray(catalog?.groups) && catalog.groups.length
+    ? catalog.groups
+    : PROBLEM_GROUPS;
+  return fromCatalog
+    .map((group) => ({
+      id: group.id,
+      title: group.title,
+      lede: group.lede,
+      problems: problems.filter((item) => problemGroupId(item) === group.id),
+    }))
+    .filter((group) => group.problems.length);
+}
+
+function isGrowthProblem(id) {
+  if (id && typeof id === "object") return problemGroupId(id) === "growth";
+  return GROWTH_HUB_IDS.has(id);
+}
+
+const PROBLEM_VIDEO_TAGS = {
+  sleep: "sleep",
+  anxiety: "anxiety",
+  stress: "stress",
+  mood: "low-mood",
+  faith: "faith",
+  mothers: "self-compassion",
+  aod: "alcohol",
+  mindset: "mindset",
+  motivation: "motivation",
+  "stronger-mind": "resilience",
+  challenge: "challenge",
+  "hard-patch": "courage",
+  gratitude: "gratitude",
+};
+
+function videoTagForProblem(problemId) {
+  return PROBLEM_VIDEO_TAGS[problemId] || problemId;
+}
+
+function growthThemeTags(reading) {
+  return readingProblemTags(reading).filter((tag) =>
+    GROWTH_THEME_TAGS.includes(tag) || GROWTH_HUB_IDS.has(tag),
+  );
 }
 
 function findProblem(catalog, id) {
@@ -9565,6 +9906,11 @@ function videoProblemTags(video) {
   if (/\bfaith|prayer|meaning|welcome\b/.test(blob)) inferred.push("faith");
   if (/\bmother|matern|postpartum|parenting|caregiv\b/.test(blob)) inferred.push("mothers");
   if (/\balcohol|drug|aod|craving|substance|intoxicat\b/.test(blob)) inferred.push("aod");
+  if (/\bmindset|reframe|hope|noticing good|positive\b/.test(blob)) inferred.push("mindset");
+  if (/\bchalleng|courage|stretch|brave\b/.test(blob)) inferred.push("challenge");
+  if (/\bresilien|focus|stronger mind|attention\b/.test(blob)) inferred.push("stronger-mind");
+  if (/\bhard patch|grit|overcome|healing\b/.test(blob)) inferred.push("hard-patch");
+  if (/\bgratitude|thanks|daily win\b/.test(blob)) inferred.push("gratitude");
   return normalizeProblemTags(inferred);
 }
 
@@ -9634,7 +9980,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -10092,21 +10438,37 @@ function mpOpenProblem(id,onOpen){
   try{window.dispatchEvent(new Event(`mindpal-problem-change`))}catch{}
   onOpen&&onOpen(id);
 }
+function mpProblemChipClass(item,open){
+  let extra=item.group===`growth`||mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(item)
+    ?` mp-problem-chip-growth`
+    :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:``;
+  return `mp-problem-chip${open?` is-open`:``}${extra}`;
+}
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
-  let n=mpProblems.listProblems(mpProblemHubs),[r,i]=(0,_.useState)(null);
+  let n=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}],[r,i]=(0,_.useState)(null);
+  function chipsFor(group){return group.problems||[]}
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEMS`}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`SUPPORT & GROWTH`}),
     (0,A.jsx)(`h2`,{children:`What do you need help with?`}),
     (0,A.jsx)(`p`,{children:t===`today`?`Tap a chip to expand. Open hub for readings, videos and a journal line.`:`Tap a chip to expand. Each hub gathers readings, videos, Companion and a journal prompt.`}),
-    (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:n.map(t=>{
-      let a=r===t.id;
-      return(0,A.jsx)(`button`,{type:`button`,className:`mp-problem-chip${a?` is-open`:``}${t.id===`mothers`?` mp-problem-chip-mothers`:t.id===`aod`?` mp-problem-chip-aod`:``}`,"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
-    })}),
-    r?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
-      (0,A.jsx)(`h3`,{children:(n.find(e=>e.id===r)||{}).title}),
-      (0,A.jsx)(`p`,{children:(n.find(e=>e.id===r)||{}).intro}),
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
-    ]}):null
+    n.map(g=>{
+      let items=chipsFor(g);
+      if(!items.length)return null;
+      let open=items.find(e=>e.id===r)||null;
+      return(0,A.jsxs)(`div`,{className:`mp-problem-group mp-problem-group-${g.id}`,"aria-label":g.title,children:[
+        (0,A.jsx)(`p`,{className:`mp-problem-group-title`,children:g.title}),
+        (0,A.jsx)(`p`,{className:`muted mp-problem-group-lede`,children:g.lede}),
+        (0,A.jsx)(`div`,{className:`mp-problem-chips`,children:items.map(t=>{
+          let a=r===t.id;
+          return(0,A.jsx)(`button`,{type:`button`,className:mpProblemChipClass(t,a),"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
+        })}),
+        open?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
+          (0,A.jsx)(`h3`,{children:open.title}),
+          (0,A.jsx)(`p`,{children:open.intro}),
+          (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
+        ]}):null
+      ]},g.id);
+    })
   ]});
 }
 function mpMotherYtEntries(problem){
@@ -10318,8 +10680,10 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{c(e)}})
   ]});
   let u=mpProblems.readingsForProblem(mpPackA,l.id);
-  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":l.title,children:[
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
+  let growth=l.group===`growth`||(mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(l));
+  let videoTag=mpProblems.videoTagForProblem?mpProblems.videoTagForProblem(l.id):l.id;
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem${growth?` mp-lane-growth`:``}`,"aria-label":l.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:growth?`GROWTH · BUILD STRENGTH`:`SUPPORT · WHEN IT'S HEAVY`}),
     (0,A.jsx)(`h1`,{children:l.title}),
     (0,A.jsx)(`p`,{className:`lede`,children:l.intro}),
     (0,A.jsx)(`p`,{className:`muted`,children:mpProblemHubs.disclaimer}),
@@ -10332,10 +10696,10 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
       ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
     ]}),
-    (0,A.jsx)(mpSupportVideos,{initialTag:l.id,heading:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
+    (0,A.jsx)(mpSupportVideos,{initialTag:videoTag,heading:growth?`Videos for this theme`:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
+      (0,A.jsx)(`p`,{children:growth?`Opens Companion with a short educational prompt for this growth theme. The usual disclaimer stays — this is not a therapist or emergency service.`:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(l.companionPrompt);t&&t(l.companionPrompt)},children:`Talk this through with Companion`})
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
