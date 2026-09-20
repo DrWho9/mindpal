@@ -26,8 +26,13 @@ function md5(text) {
 
 function stripExports(source) {
   return source
+    .replace(/^import .*$/gm, "")
     .replace(/^export const /gm, "const ")
     .replace(/^export function /gm, "function ");
+}
+
+function moduleSource(rel) {
+  return stripExports(readFileSync(join(root, rel), "utf8"));
 }
 
 function replaceOnce(haystack, needle, replacement, label) {
@@ -79,7 +84,19 @@ function wrapRuntime() {
   const packA = readFileSync(join(root, "src/data/pack-a.json"), "utf8");
   const packB = readFileSync(join(root, "src/data/pack-b.json"), "utf8");
   const maddyCatalog = readFileSync(join(root, "src/data/maddy-companion.json"), "utf8");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos}})();`;
+  const ux = [
+    moduleSource("src/calendar/civil.js"),
+    moduleSource("src/calendar/coptic.js"),
+    moduleSource("src/prefs/faith.js"),
+    moduleSource("src/today/steps.js"),
+    moduleSource("src/today/wins.js"),
+  ].join("\n");
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins;(function(){${ux}
+mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
+mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
+mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus};
+mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
+})();`;
 }
 
 function patchJs(source) {
@@ -179,6 +196,7 @@ function patchJs(source) {
     "(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})",
     "today-video-teaser",
   );
+  next = patchOwnerUx(next);
 
   if (!next.includes("mindpal-dstss-themes-paraphrase-v1")) {
     throw new Error("Pack A id missing from bundle");
@@ -200,6 +218,197 @@ function patchJs(source) {
   }
   if (!next.includes("playsInline:!0")) {
     throw new Error("native video playsInline missing from bundle");
+  }
+  return next;
+}
+
+function patchOwnerUx(source) {
+  const ux = readFileSync(join(root, "src/patches/owner-ux.inject.js"), "utf8").trim();
+  const oldRr =
+    "function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r}){let i=Lr();return(0,A.jsxs)(`section`,{className:`today-shortcuts`,\"aria-label\":`Today shortcuts`,children:[(0,A.jsxs)(`div`,{className:`today-greeting`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),(0,A.jsx)(`h1`,{children:e?`Good ${i}, ${e}.`:`Good ${i}.`}),e&&(0,A.jsxs)(`span`,{className:`tag device-tag`,children:[e,` · on this device`]})]}),(0,A.jsxs)(`div`,{className:`today-shortcut-grid`,children:[(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:t,children:[(0,A.jsx)(Sn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`TODAY’S VERSE`}),(0,A.jsx)(`strong`,{children:`Read today’s verse`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:n,children:[(0,A.jsx)(sn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`FOCUS`}),(0,A.jsx)(`strong`,{children:`What’s on your mind today?`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open Focus `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:r,children:[(0,A.jsx)(rn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`JOURNAL`}),(0,A.jsx)(`strong`,{children:`Write a quick note`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open Journal `,(0,A.jsx)(nn,{size:16})]})]})]})]})}";
+
+  let next = source;
+  if (next.includes("function mpSignInPage(")) {
+    const start = next.indexOf("function mpNotifySession()");
+    const end = next.indexOf("function Lr(e=new Date)");
+    if (start >= 0 && end > start) {
+      next = `${next.slice(0, start)}${ux}\n${next.slice(end)}`;
+    }
+  } else {
+    next = replaceOnce(next, oldRr, "", "remove-old-today-hub");
+    next = replaceOnce(
+      next,
+      "function Lr(e=new Date)",
+      `${ux}\nfunction Lr(e=new Date)`,
+      "owner-ux-inject",
+    );
+  }
+
+  next = replaceOnce(
+    next,
+    "function Ot(){localStorage.removeItem(Ct)}",
+    "function Ot(){localStorage.removeItem(Ct);try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}}",
+    "signout-event",
+  );
+  next = replaceOnce(
+    next,
+    "return r.push(a),Et(r),localStorage.setItem(Ct,a.username),a}async function jt",
+    "return r.push(a),Et(r),localStorage.setItem(Ct,a.username),window.dispatchEvent(new Event(`mindpal-session-change`)),a}async function jt",
+    "create-session-event",
+  );
+  next = replaceOnce(
+    next,
+    "return localStorage.setItem(Ct,n.username),n}function Mt",
+    "return localStorage.setItem(Ct,n.username),window.dispatchEvent(new Event(`mindpal-session-change`)),n}function Mt",
+    "signin-session-event",
+  );
+
+  next = replaceOnce(
+    next,
+    `"route.today":\`Today\`,"route.explore":\`Explore\``,
+    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.explore":\`Explore\``,
+    "i18n-routes",
+  );
+  next = replaceOnce(
+    next,
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "hash-routes",
+  );
+  next = replaceOnce(
+    next,
+    "Li={Today:`route.today`,Explore:`route.explore`,",
+    "Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Explore:`route.explore`,",
+    "breadcrumb-routes",
+  );
+
+  next = replaceOnce(
+    next,
+    "onOpenVerse:()=>requestAnimationFrame(()=>document.getElementById(`today-verse`)?.scrollIntoView({behavior:`smooth`,block:`start`})),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)}",
+    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)}",
+    "today-hub-links",
+  );
+
+  next = replaceOnce(
+    next,
+    "a===`adult`&&t===`Today`&&(0,A.jsx)(kr,{",
+    "!1&&t===`Today`&&(0,A.jsx)(kr,{",
+    "hide-today-dump",
+  );
+  next = replaceOnce(
+    next,
+    "a===`adult`&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)})",
+    "!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)})",
+    "hide-today-reminders-dump",
+  );
+  next = replaceOnce(
+    next,
+    "t===`Today`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`",
+    "!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`",
+    "hide-today-hero",
+  );
+
+  next = replaceOnce(
+    next,
+    "t===`Focus`&&(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)}),t===`My diary`&&(0,A.jsx)(Yi,{",
+    "t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{",
+    "lane-pages",
+  );
+  next = replaceOnce(
+    next,
+    "initialPrompt:S,onHelp:()=>I(`Get support`)}),t===`Companion`&&",
+    "initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Companion`&&",
+    "journal-lane-close",
+  );
+
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsx)(`div`,{className:`three-grid topic-grid`",
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsx)(mpMoreStepsCard,{}),(0,A.jsx)(`div`,{className:`three-grid topic-grid`",
+    "focus-more-steps",
+  );
+
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>f(!d),children:d?`Hide welcome image`:`Show welcome image`}),",
+    "",
+    "hide-welcome-toggle",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:`Explore the longer small-steps pathway`}),(0,A.jsx)(We,{})]}),",
+    "",
+    "remove-small-steps-dump",
+  );
+  next = replaceOnce(
+    next,
+    ",(0,A.jsx)(`p`,{children:`Optional faith content. Skip anytime. Not a clinical intervention. WEB = World English Bible (public domain).`})",
+    "",
+    "prayer-footer",
+  );
+
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`h3`,{children:`Verse`}),(0,A.jsx)(`p`,{children:`A short verse and reflection for today, with an optional prayer.`})",
+    "(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`})",
+    "explore-readings-label",
+  );
+  next = replaceOnce(
+    next,
+    "children:`TODAY’S VERSE`}),(0,A.jsx)(`h3`,{children:`Readings`})",
+    "children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`})",
+    "explore-readings-type",
+  );
+
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`p`,{className:`lede`,children:o(`preferences.introduction`)}),(0,A.jsxs)(`div`,{className:`two-grid`",
+    "(0,A.jsx)(`p`,{className:`lede`,children:o(`preferences.introduction`)}),(0,A.jsx)(mpFaithSettings,{}),(0,A.jsxs)(`div`,{className:`two-grid`",
+    "settings-calendar",
+  );
+
+  next = replaceOnce(
+    next,
+    "F=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
+    "F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),()=>window.removeEventListener(`mindpal-session-change`,e)},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
+    "session-state",
+  );
+  next = replaceOnce(
+    next,
+    "className:`app`,children:[(0,A.jsx)(`a`,{className:`skip`",
+    "className:`app${a===`adult`&&!mpAuthed?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`",
+    "signin-shell-class",
+  );
+  next = replaceOnce(
+    next,
+    "try`)})]}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`",
+    "try`)})]}):a===`adult`&&!mpAuthed?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`",
+    "signin-gate",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I})",
+    "mpAuthed||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null",
+    "hide-tabs-until-signin",
+  );
+
+  if (!next.includes("Do this next")) {
+    throw new Error("day-steps chrome missing from bundle");
+  }
+  if (!next.includes("Before you sleep")) {
+    throw new Error("evening step missing from bundle");
+  }
+  if (!next.includes("Show Coptic calendar date")) {
+    throw new Error("Coptic settings toggle missing from bundle");
+  }
+  if (next.includes("Hide welcome image")) {
+    throw new Error("welcome-image clutter still in bundle");
+  }
+  if (next.includes("Explore the longer small-steps pathway")) {
+    throw new Error("small-steps dump still in bundle");
+  }
+  if (next.includes("Optional faith content. Skip anytime.")) {
+    throw new Error("prayer WEB footer still in bundle");
   }
   return next;
 }
@@ -265,7 +474,7 @@ function clearOldHashedAssets(keep) {
   }
 }
 
-execFileSync("node", ["--test", "tests/readings-progress.test.js", "tests/videos-playback.test.js", "tests/maddy-companion.test.js"], {
+execFileSync("node", ["--test", ...readdirSync(join(root, "tests")).filter((name) => name.endsWith(".test.js")).map((name) => join("tests", name))], {
   cwd: root,
   stdio: "inherit",
 });
