@@ -50,6 +50,23 @@ describe("goHome", () => {
     assert.ok(events.includes(HOME_EVENT));
   });
 
+  it("closes open dialog sheets when going home", () => {
+    const closed = [];
+    const win = {
+      document: {
+        querySelectorAll() {
+          return [{ close: () => closed.push("exercise") }];
+        },
+      },
+      dispatchEvent() {
+        return true;
+      },
+      scrollTo() {},
+    };
+    goHome(() => {}, { window: win });
+    assert.deepEqual(closed, ["exercise"]);
+  });
+
   it("falls back to the Today hash when navigate is missing", () => {
     const pushed = [];
     const events = [];

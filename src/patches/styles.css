@@ -28,7 +28,9 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .app.mp-signin-shell .demo-banner,
 .app.mp-signin-shell .bottom-nav{display:none}
 
-/* Brand stays above sheets so MindPal is always a home control */
+/* Brand stays above sheets so MindPal is always a home control.
+   Native <dialog>.showModal() uses the top layer, so z-index cannot
+   win — leave the chrome strip outside the backdrop instead. */
 .sidebar{z-index:50}
 .topbar{z-index:51}
 button.brand{
@@ -39,7 +41,16 @@ button.brand{
   color:inherit;
 }
 .mp-top-brand{display:none}
+dialog::backdrop{left:246px}
+.modal-backdrop{left:246px}
+@media (width<=1180px){
+  dialog::backdrop,.modal-backdrop{left:215px}
+}
+@media (width<=900px){
+  dialog::backdrop,.modal-backdrop{left:190px}
+}
 @media (width<=640px){
+  dialog::backdrop,.modal-backdrop{left:0;top:64px}
   .mp-top-brand{
     display:flex;
     align-items:center;

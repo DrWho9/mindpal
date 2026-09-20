@@ -156,6 +156,9 @@ if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
 }
+if (!css.includes("dialog::backdrop{left:246px}")) {
+  throw new Error("native dialog backdrops must leave the sidebar brand clickable");
+}
 
 const extra = readdirSync(join(root, "assets")).filter(
   (name) => /^index-/.test(name) && name !== jsName && name !== cssName,

@@ -38,6 +38,18 @@ export function goHome(navigate, deps = {}) {
     /* listeners are optional */
   }
   try {
+    const dialogs = win?.document?.querySelectorAll?.("dialog[open]") || [];
+    for (const dialog of dialogs) {
+      try {
+        dialog.close();
+      } catch {
+        /* ignore already-closed dialogs */
+      }
+    }
+  } catch {
+    /* document may be unavailable */
+  }
+  try {
     win?.scrollTo?.({ top: 0, behavior: "instant" });
   } catch {
     /* scroll is a soft extra on home */
