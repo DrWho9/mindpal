@@ -161,7 +161,7 @@ function wrapRuntime() {
   return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpReadings=(function(){${progress}\n${playback}\n${maddy}\n${coaches}\n${meditations}\n${share}\n${ttsVoices}\n${ttsAudio}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins;(function(){${ux}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
-mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus};
+mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 })();${ytSection}${sidebarShare}${voicePicker}`;
 }
@@ -493,8 +493,20 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "onOpenVerse:()=>requestAnimationFrame(()=>document.getElementById(`today-verse`)?.scrollIntoView({behavior:`smooth`,block:`start`})),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)}",
-    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)}",
+    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`)",
     "today-hub-links",
+  );
+  next = replaceOnce(
+    next,
+    "a===`adult`&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),",
+    "!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),",
+    "hide-today-feelings",
+  );
+  next = replaceOnce(
+    next,
+    "(t===`Today`||ne)&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})",
+    "ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})",
+    "hide-today-youth-teaser",
   );
 
   next = replaceOnce(
@@ -603,11 +615,32 @@ function patchOwnerUx(source) {
   if (!next.includes("Do this next")) {
     throw new Error("day-steps chrome missing from bundle");
   }
+  if (!next.includes("Follow today’s steps — Morning, Day, then Night.")) {
+    throw new Error("hub flow copy missing from bundle");
+  }
+  if (!next.includes("Today’s verse — tap to expand")) {
+    throw new Error("collapsed Morning verse missing from bundle");
+  }
+  if (!next.includes("mp-day-band") || !next.includes("mp-band-${e.id}")) {
+    throw new Error("Morning/Day/Night bands missing from bundle");
+  }
+  if (!next.includes("Readings — Verse of the day")) {
+    throw new Error("compact readings row missing from bundle");
+  }
+  if (!next.includes("Open Watch with Maddy")) {
+    throw new Error("Maddy teaser link-out missing from bundle");
+  }
+  if (next.includes("A short pathway for this day")) {
+    throw new Error("old hub lede still in bundle");
+  }
   if (!next.includes("Before you sleep")) {
     throw new Error("evening step missing from bundle");
   }
   if (!next.includes("Show Coptic calendar date")) {
     throw new Error("Coptic settings toggle missing from bundle");
+  }
+  if (!next.includes("!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`)")) {
+    throw new Error("Today feelings button still live");
   }
   if (next.includes("Hide welcome image")) {
     throw new Error("welcome-image clutter still in bundle");

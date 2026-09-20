@@ -2,7 +2,9 @@ import { civilDateKey } from "../calendar/civil.js";
 
 export const STEPS_STORAGE_KEY = "mindpal.todaySteps.v1";
 
-export const STEP_IDS = ["readings", "focus", "journal", "later", "evening"];
+export const STEP_IDS = ["readings", "focus", "later", "evening"];
+
+export const HUB_FLOW_LINE = "Follow today’s steps — Morning, Day, then Night.";
 
 export const STEP_META = {
   readings: {
@@ -10,38 +12,68 @@ export const STEP_META = {
     number: 1,
     when: "Morning",
     title: "Readings",
-    blurb: "A verse, a prayer, and today’s pack reading.",
+    rowLabel: "Readings — Verse of the day",
+    blurb: "A verse (tucked away until you want it) and today’s pack reading.",
   },
   focus: {
     id: "focus",
     number: 2,
-    when: "Morning",
+    when: "Day",
     title: "A Focus moment",
+    rowLabel: "A Focus moment",
     blurb: "One small practice for what’s on your mind.",
-  },
-  journal: {
-    id: "journal",
-    number: 3,
-    when: "Anytime",
-    title: "Journal",
-    blurb: "A few lines — only if you want them written down.",
   },
   later: {
     id: "later",
-    number: 4,
-    when: "Later",
+    number: 3,
+    when: "Day",
     title: "A later pause",
+    rowLabel: "A later pause",
     blurb: "Optional. A breath or another small activity when the day has room.",
     optional: true,
   },
   evening: {
     id: "evening",
-    number: 5,
-    when: "Evening",
+    number: 4,
+    when: "Night",
     title: "Before you sleep",
-    blurb: "Read today’s wins together, then a short wind-down note in Journal.",
+    rowLabel: "Before you sleep",
+    blurb: "Read today’s wins, then a short wind-down note in Journal.",
   },
 };
+
+export const BANDS = [
+  {
+    id: "morning",
+    title: "Morning",
+    lede: "Start gently. One reading is enough.",
+    stepIds: ["readings"],
+  },
+  {
+    id: "day",
+    title: "Day",
+    lede: "One focus, then an optional pause.",
+    stepIds: ["focus", "later"],
+  },
+  {
+    id: "night",
+    title: "Night",
+    lede: "Close the day with wins and a short diary note.",
+    stepIds: ["evening"],
+  },
+];
+
+export function stepRowLabel(stepId) {
+  const meta = STEP_META[stepId];
+  if (!meta) return "";
+  return meta.rowLabel || meta.title;
+}
+
+export function hubStepCaption(stepId) {
+  const meta = STEP_META[stepId];
+  if (!meta) return "";
+  return `Step ${meta.number} · ${stepRowLabel(stepId)}`;
+}
 
 export function emptyDay(date = new Date()) {
   return {
@@ -50,7 +82,6 @@ export function emptyDay(date = new Date()) {
     steps: {
       readings: "todo",
       focus: "todo",
-      journal: "todo",
       later: "todo",
       evening: "todo",
     },
@@ -120,4 +151,8 @@ export function stepStatus(day, stepId) {
   return day?.steps?.[stepId] === "done" || day?.steps?.[stepId] === "skipped"
     ? day.steps[stepId]
     : "todo";
+}
+
+export function bandForStep(stepId) {
+  return BANDS.find((band) => band.stepIds.includes(stepId)) || null;
 }

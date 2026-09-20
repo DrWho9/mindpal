@@ -54,11 +54,15 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     a(``),s(`Saved on this device for today.`),r(e.items);
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
-  return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-${e}`,"aria-label":`Daily wins`,children:[
-    e===`hub`?(0,A.jsxs)(A.Fragment,{children:[
+  if(e===`hub`){
+    return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Through the day, add your daily wins — small ones count — so you can read them together tonight.`}),
-      (0,A.jsx)(`p`,{className:`muted`,children:`Noticing a small win is a gentle way to practise spotting what’s going well. Optional, and never a test.`})
-    ]}):e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):(0,A.jsxs)(A.Fragment,{children:[
+      n.length?(0,A.jsx)(`p`,{className:`muted mp-wins-count`,children:n.length===1?`1 saved today.`:`${n.length} saved today.`}):null,
+      t?(0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:t,children:`Add a win`}):null
+    ]});
+  }
+  return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-${e}`,"aria-label":`Daily wins`,children:[
+    e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`DAILY WINS`}),
       (0,A.jsx)(`h2`,{children:`A win from today`}),
       (0,A.jsx)(`p`,{children:`A sentence is enough. You’ll see these again in Before you sleep.`})
@@ -70,10 +74,22 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
-      t&&e===`hub`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`})
     ]}),
     o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
+  ]});
+}
+function mpMaddyTeaser({onOpen:e}){
+  return(0,A.jsxs)(`aside`,{className:`mp-maddy-teaser`,"aria-label":`Watch with Maddy`,children:[
+    (0,A.jsx)(`p`,{className:`mp-maddy-teaser-label`,children:`Watch with Maddy`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Welcome, Daily tip and Timed breath — open the clips on Explore.`}),
+    e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
+  ]});
+}
+function mpCollapsedVerse(){
+  return(0,A.jsxs)(`details`,{className:`mp-verse-collapse`,children:[
+    (0,A.jsx)(`summary`,{children:`Today’s verse — tap to expand`}),
+    (0,A.jsx)(Rt,{})
   ]});
 }
 function mpReadingsPage(){
@@ -134,42 +150,45 @@ function mpFaithSettings(){
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the local sign-in page. Your notes and wins stay on this device.`})
   ]});
 }
-function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o}){
-  let s=mpSignedInName(e),c=mpCalendar.partOfDay(),[l,u]=(0,_.useState)(()=>mpTodaySteps.loadDay());
-  (0,_.useEffect)(()=>{function e(){u(mpTodaySteps.loadDay())}return window.addEventListener(`visibilitychange`,e),e(),()=>window.removeEventListener(`visibilitychange`,e)},[]);
-  let d=mpTodaySteps.nextStepId(l),f=mpFaith.isCopticDateEnabled();
-  function p(e,t){
-    let n=mpTodaySteps.saveDay(mpTodaySteps.markStep(l,e,t));
-    u(n);
+function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s}){
+  let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay());
+  (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}return window.addEventListener(`visibilitychange`,e),e(),()=>window.removeEventListener(`visibilitychange`,e)},[]);
+  let f=mpTodaySteps.nextStepId(u),p=mpFaith.isCopticDateEnabled();
+  function m(e,t){
+    let n=mpTodaySteps.saveDay(mpTodaySteps.markStep(u,e,t));
+    d(n);
   }
-  let m={readings:t,focus:n,journal:r,later:i||n,evening:a||r};
+  let h={readings:t,focus:n,later:i||n,evening:a||r};
   return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub`,"aria-label":`Today’s steps`,children:[
     (0,A.jsxs)(`div`,{className:`today-greeting`,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),
       (0,A.jsx)(`p`,{className:`mp-civil-date`,children:mpCalendar.formatCivilDate()}),
-      f?(0,A.jsx)(`p`,{className:`muted mp-coptic-date`,children:mpCalendar.formatCopticLabel()}):null,
-      (0,A.jsx)(`h1`,{children:s?`Good ${c}, ${s}.`:`Good ${c}.`}),
-      (0,A.jsx)(`p`,{className:`lede`,children:`A short pathway for this day — one step at a time, in any honest order.`})
+      p?(0,A.jsx)(`p`,{className:`muted mp-coptic-date`,children:mpCalendar.formatCopticLabel()}):null,
+      (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
+      (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
-    (0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}),
-    (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:mpTodaySteps.STEP_IDS.map(e=>{
-      let t=mpTodaySteps.STEP_META[e],n=mpTodaySteps.stepStatus(l,e),i=d===e;
-      return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-${e}${i?` is-next`:``}${n!==`todo`?` is-${n}`:``}`,children:[
-        (0,A.jsxs)(`div`,{className:`mp-step-head`,children:[
-          (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${t.number}`,` · `,t.when]}),
-          i?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
-          n===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
-          n===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
-        ]}),
-        (0,A.jsx)(`h2`,{children:t.title}),
-        (0,A.jsx)(`p`,{children:t.blurb}),
-        (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          (0,A.jsx)(`button`,{className:i?`primary`:`secondary`,type:`button`,onClick:()=>m[e]&&m[e](),children:`Open ${t.title}`}),
-          n===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>p(e,`done`),children:`Mark done`}):null,
-          n===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>p(e,`skipped`),children:`Skip`}):null,
-          n!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>p(e,`todo`),children:`Undo`}):null
-        ]})
-      ]},e)
-    })})
+    mpTodaySteps.BANDS.map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
+      (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
+      e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
+      e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
+      (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
+        let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,o=n.rowLabel||n.title;
+        return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${t}${a?` is-next`:``}${i!==`todo`?` is-${i}`:``}`,children:[
+          (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[t]&&h[t](),children:[
+            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,o]}),
+            a?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+            i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+            i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
+          ]}),
+          (0,A.jsxs)(`div`,{className:`mp-step-actions`,children:[
+            i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`done`),children:`Mark done`}):null,
+            i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`skipped`),children:`Skip`}):null,
+            i!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>m(t,`todo`),children:`Undo`}):null
+          ]})
+        ]},t)
+      })}),
+      e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
+    ]},e.id))
   ]});
 }
