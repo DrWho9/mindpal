@@ -4,12 +4,15 @@ export const STEPS_STORAGE_KEY = "mindpal.todaySteps.v1";
 
 export const STEP_IDS = ["readings", "focus", "journal", "later", "evening"];
 
+export const HUB_FLOW_LINE = "Follow today’s steps at your pace.";
+
 export const STEP_META = {
   readings: {
     id: "readings",
     number: 1,
     when: "Morning",
     title: "Readings",
+    rowLabel: "Readings — Verse of the day",
     blurb: "A verse, a prayer, and today’s pack reading.",
   },
   focus: {
@@ -17,6 +20,7 @@ export const STEP_META = {
     number: 2,
     when: "Morning",
     title: "A Focus moment",
+    rowLabel: "A Focus moment",
     blurb: "One small practice for what’s on your mind.",
   },
   journal: {
@@ -24,6 +28,7 @@ export const STEP_META = {
     number: 3,
     when: "Anytime",
     title: "Journal",
+    rowLabel: "Journal",
     blurb: "A few lines — only if you want them written down.",
   },
   later: {
@@ -31,6 +36,7 @@ export const STEP_META = {
     number: 4,
     when: "Later",
     title: "A later pause",
+    rowLabel: "A later pause",
     blurb: "Optional. A breath or another small activity when the day has room.",
     optional: true,
   },
@@ -39,9 +45,22 @@ export const STEP_META = {
     number: 5,
     when: "Evening",
     title: "Before you sleep",
+    rowLabel: "Before you sleep",
     blurb: "Read today’s wins together, then a short wind-down note in Journal.",
   },
 };
+
+export function stepRowLabel(stepId) {
+  const meta = STEP_META[stepId];
+  if (!meta) return "";
+  return meta.rowLabel || meta.title;
+}
+
+export function hubStepCaption(stepId) {
+  const meta = STEP_META[stepId];
+  if (!meta) return "";
+  return `Step ${meta.number} · ${stepRowLabel(stepId)}`;
+}
 
 export function emptyDay(date = new Date()) {
   return {

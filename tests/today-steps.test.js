@@ -3,11 +3,14 @@ import { describe, it } from "node:test";
 import {
   STEPS_STORAGE_KEY,
   STEP_IDS,
+  HUB_FLOW_LINE,
   emptyDay,
+  hubStepCaption,
   loadDay,
   markStep,
   nextStepId,
   saveDay,
+  stepRowLabel,
 } from "../src/today/steps.js";
 
 function memoryStorage(initial = {}) {
@@ -22,6 +25,13 @@ function memoryStorage(initial = {}) {
 const day = new Date(2026, 8, 20, 9, 0, 0);
 
 describe("today steps pathway", () => {
+  it("keeps the hub as a short numbered flow", () => {
+    assert.equal(HUB_FLOW_LINE, "Follow today’s steps at your pace.");
+    assert.equal(stepRowLabel("readings"), "Readings — Verse of the day");
+    assert.equal(hubStepCaption("readings"), "Step 1 · Readings — Verse of the day");
+    assert.equal(hubStepCaption("evening"), "Step 5 · Before you sleep");
+  });
+
   it("orders morning through before-sleep", () => {
     assert.deepEqual(STEP_IDS, ["readings", "focus", "journal", "later", "evening"]);
     assert.equal(nextStepId(emptyDay(day)), "readings");
