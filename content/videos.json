@@ -13,7 +13,15 @@
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 32,
       "src": "videos/maddy/welcome.mp4",
-      "description": "Soft introduction to MindPal companionship."
+      "description": "Soft introduction to MindPal companionship.",
+      "tags": [
+        "motivation",
+        "faith"
+      ],
+      "emotions": [
+        "motivation",
+        "faith"
+      ]
     },
     {
       "id": "maddy-tip",
@@ -22,7 +30,15 @@
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 29,
       "src": "videos/maddy/tip.mp4",
-      "description": "A calm tip for using daily readings without pressure."
+      "description": "A calm tip for using daily readings without pressure.",
+      "tags": [
+        "motivation",
+        "low-mood"
+      ],
+      "emotions": [
+        "motivation",
+        "low-mood"
+      ]
     },
     {
       "id": "maddy-timed-breath",
@@ -31,7 +47,19 @@
       "look": "Meditation FIT (seated, fitness wear, coastal)",
       "duration_sec": 101,
       "src": "videos/maddy/timed-breath.mp4",
-      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count."
+      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count.",
+      "tags": [
+        "anxiety",
+        "stress",
+        "sleep",
+        "overwhelm"
+      ],
+      "emotions": [
+        "anxiety",
+        "stress",
+        "sleep",
+        "overwhelm"
+      ]
     }
   ]
 }

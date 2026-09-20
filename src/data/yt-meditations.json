@@ -20,7 +20,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=FiPDV9L5qpQ"
+          "evidenceUrl": "https://www.youtube.com/watch?v=FiPDV9L5qpQ",
+          "tags": [
+            "sleep"
+          ],
+          "emotions": [
+            "sleep"
+          ]
         },
         {
           "id": "YT-SLEEP-02",
@@ -32,7 +38,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=IrY_b_teSX8"
+          "evidenceUrl": "https://www.youtube.com/watch?v=IrY_b_teSX8",
+          "tags": [
+            "sleep"
+          ],
+          "emotions": [
+            "sleep"
+          ]
         },
         {
           "id": "YT-SLEEP-03",
@@ -44,7 +56,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=_xzjWPSPTq8"
+          "evidenceUrl": "https://www.youtube.com/watch?v=_xzjWPSPTq8",
+          "tags": [
+            "sleep"
+          ],
+          "emotions": [
+            "sleep"
+          ]
         },
         {
           "id": "YT-SLEEP-04",
@@ -55,7 +73,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/@jasonstephensonmeditation"
+          "evidenceUrl": "https://www.youtube.com/@jasonstephensonmeditation",
+          "tags": [
+            "sleep"
+          ],
+          "emotions": [
+            "sleep"
+          ]
         },
         {
           "id": "YT-SLEEP-05",
@@ -66,8 +90,20 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/@TheHonestGuys"
+          "evidenceUrl": "https://www.youtube.com/@TheHonestGuys",
+          "tags": [
+            "sleep"
+          ],
+          "emotions": [
+            "sleep"
+          ]
         }
+      ],
+      "tags": [
+        "sleep"
+      ],
+      "emotions": [
+        "sleep"
       ]
     },
     {
@@ -85,7 +121,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=MFxlK1ZvOmA"
+          "evidenceUrl": "https://www.youtube.com/watch?v=MFxlK1ZvOmA",
+          "tags": [
+            "anxiety"
+          ],
+          "emotions": [
+            "anxiety"
+          ]
         },
         {
           "id": "YT-ANX-02",
@@ -96,7 +138,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=EVqMNGb9Zi4"
+          "evidenceUrl": "https://www.youtube.com/watch?v=EVqMNGb9Zi4",
+          "tags": [
+            "anxiety"
+          ],
+          "emotions": [
+            "anxiety"
+          ]
         },
         {
           "id": "YT-ANX-03",
@@ -107,7 +155,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/watch?v=rCGGIK0oPkQ"
+          "evidenceUrl": "https://www.youtube.com/watch?v=rCGGIK0oPkQ",
+          "tags": [
+            "anxiety"
+          ],
+          "emotions": [
+            "anxiety"
+          ]
         },
         {
           "id": "YT-ANX-04",
@@ -118,7 +172,13 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/@headspace"
+          "evidenceUrl": "https://www.youtube.com/@headspace",
+          "tags": [
+            "anxiety"
+          ],
+          "emotions": [
+            "anxiety"
+          ]
         },
         {
           "id": "YT-ANX-05",
@@ -129,8 +189,20 @@
           "availability": "checked",
           "editorialHold": false,
           "checkedAt": "2026-09-20",
-          "evidenceUrl": "https://www.youtube.com/@TaraBrach"
+          "evidenceUrl": "https://www.youtube.com/@TaraBrach",
+          "tags": [
+            "anxiety"
+          ],
+          "emotions": [
+            "anxiety"
+          ]
         }
+      ],
+      "tags": [
+        "anxiety"
+      ],
+      "emotions": [
+        "anxiety"
       ]
     },
     {
@@ -138,56 +210,112 @@
       "title": "Stress / overwhelm",
       "chip": "Stress",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "stress",
+        "overwhelm"
+      ],
+      "emotions": [
+        "stress",
+        "overwhelm"
+      ]
     },
     {
       "id": "morning",
       "title": "Morning / start-of-day",
       "chip": "Morning",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "motivation"
+      ],
+      "emotions": [
+        "motivation"
+      ]
     },
     {
       "id": "body-scan",
       "title": "Body scan / somatic",
       "chip": "Body scan",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "stress",
+        "overwhelm"
+      ],
+      "emotions": [
+        "stress",
+        "overwhelm"
+      ]
     },
     {
       "id": "self-compassion",
       "title": "Self-compassion / kindness",
       "chip": "Kindness",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "low-mood"
+      ],
+      "emotions": [
+        "low-mood"
+      ]
     },
     {
       "id": "breathing",
       "title": "Breathing / calm focus",
       "chip": "Breathing",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "anxiety",
+        "stress"
+      ],
+      "emotions": [
+        "anxiety",
+        "stress"
+      ]
     },
     {
       "id": "grief",
       "title": "Grief / heavy emotions (gentle)",
       "chip": "Grief",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "low-mood"
+      ],
+      "emotions": [
+        "low-mood"
+      ]
     },
     {
       "id": "short",
       "title": "Short ≤10 min beginners",
       "chip": "Short",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "anxiety",
+        "stress"
+      ],
+      "emotions": [
+        "anxiety",
+        "stress"
+      ]
     },
     {
       "id": "faith",
       "title": "Faith-friendly / Christian contemplative",
       "chip": "Faith",
       "status": "filling",
-      "entries": []
+      "entries": [],
+      "tags": [
+        "faith"
+      ],
+      "emotions": [
+        "faith"
+      ]
     }
   ]
 }

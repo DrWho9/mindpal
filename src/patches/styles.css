@@ -137,3 +137,13 @@ button.coach-card .card-link{margin-top:8px}
 .mindpal-voice-picker select{min-height:40px;border:1px solid #cdd6c5;border-radius:10px;background:#fff;padding:0 10px}
 .mindpal-voice-note{max-width:28ch;line-height:1.4}
 .mindpal-maddy-listen{display:flex;flex-wrap:wrap;gap:8px}
+.mp-emotion-videos{margin:18px 0 8px}
+.mp-emotion-crumb{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-wrap:wrap;gap:4px;color:#5c6756;font-size:13px;font-weight:650}
+.mp-emotion-crumb li{display:inline-flex;align-items:center;gap:4px}
+.mp-emotion-video-list{display:grid;gap:14px;margin:14px 0 10px}
+.mp-emotion-video{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px}
+.mp-emotion-video h3{margin:0;font-size:1.25rem}
+.mp-emotion-video .primary{align-self:flex-start;margin-top:4px}
+.mp-emotion-video video{background:#182d47;border-radius:12px;width:100%;aspect-ratio:16/9;display:block}
+.mp-emotion-draft{background:#fffef9;border:1px solid #e3dcc6;border-radius:12px;padding:12px 14px}
+.mp-emotion-speakers{margin:8px 0 4px}

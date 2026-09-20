@@ -88,6 +88,12 @@ const checks = [
   [js.includes("/mindpal/videos/maddy/welcome.mp4"), "Maddy listen URLs keep the Pages base path"],
   [!js.includes("||e[0]||null"), "voices[0] fallthrough is gone"],
   [!/\nexport (async )?function |\nexport const /.test(js), "Pages bundle has no leftover ESM exports"],
+  [js.includes("curatedVideosForEmotion") && js.includes("MpEmotionVideos"), "emotion-scoped Feelings videos are present"],
+  [js.includes("Browse all videos by speaker"), "secondary speaker browse link is present"],
+  [js.includes("mp-emotion-crumb"), "Feelings → emotion → Videos breadcrumb is present"],
+  [js.includes(`"low-mood"`) && js.includes(`"overwhelm"`), "video catalog emotions include low-mood and overwhelm"],
+  [!js.includes("Browse the whole video directory"), "generic directory is no longer the Feelings Videos default"],
+  [!js.includes("(0,A.jsx)(ge,{initialTopic:"), "Feelings Videos does not mount the speaker picker"],
 ];
 
 const maddyFiles = [
@@ -111,6 +117,9 @@ if (!css.includes(".brand-quote") || !css.includes("quotes:none")) {
 }
 if (!css.includes("mp-band-morning") || !css.includes("mp-band-night") || !css.includes("mp-verse-collapse")) {
   throw new Error("Morning/Day/Night band styles missing");
+}
+if (!css.includes("mp-emotion-crumb") || !css.includes("mp-emotion-video")) {
+  throw new Error("emotion video directory styles missing");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(

@@ -2,7 +2,7 @@
   "name": "mindpal-pages",
   "private": true,
   "type": "module",
-  "description": "GitHub Pages shell for MindPal. Source of the live UI is the published DayStart build; this package patches Pack A, open-draft videos, Maddy clips, Owner UX (Morning/Day/Night + problem hubs), signed coach cards, speaker order, YouTube meditation link-outs, sidebar Share, and Listen TTS.",
+  "description": "GitHub Pages shell for MindPal. Source of the live UI is the published DayStart build; this package patches Pack A, open-draft videos, Maddy clips, Owner UX (Morning/Day/Night + problem hubs), signed coach cards, speaker order, YouTube meditation link-outs, emotion-scoped Feelings videos, sidebar Share, and Listen TTS.",
   "scripts": {
     "test": "node --test tests/*.test.js",
     "build": "node scripts/build.mjs",
