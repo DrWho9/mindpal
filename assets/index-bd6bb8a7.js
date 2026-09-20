@@ -42,7 +42,7 @@ function MpEmotionVideos({emotion:e,onBrowseSpeakers:t,onBack:n,headingRef:s}){
     n?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:n,children:`Back to choices`}):null
   ]});
 }
-function ve({onDiary:e,onPractice:t,onLeave:n,onDirectory:r}){
+function ve(props){return mpFeelingsPage(props)}function mpFeelingsLegacy({onDiary:e,onPractice:t,onLeave:n,onDirectory:r}){
   let[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),c=(0,_.useRef)(null),l=(0,_.useRef)(null),u=mpReadings.FEELING_EMOTIONS,d=mpReadings.FEELING_SUPPORT;
   (0,_.useEffect)(()=>{o&&c.current?.focus()},[o]);
   return(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
@@ -3136,6 +3136,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "anger",
+        "stress",
+        "calm"
       ]
     },
     {
@@ -3151,6 +3156,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "motivation",
         "mood"
+      ],
+      "tags": [
+        "self-compassion",
+        "motivation",
+        "stress"
       ]
     },
     {
@@ -3165,6 +3175,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "calm",
+        "self-compassion"
       ]
     },
     {
@@ -3179,6 +3194,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety"
+      ],
+      "tags": [
+        "worry",
+        "anxiety",
+        "overwhelm"
       ]
     },
     {
@@ -3194,6 +3214,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "self-compassion",
+        "relationships",
+        "gratitude"
       ]
     },
     {
@@ -3208,6 +3233,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "relationships",
+        "calm",
+        "anger"
       ]
     },
     {
@@ -3222,6 +3252,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "relationships",
+        "anger",
+        "boundaries"
       ]
     },
     {
@@ -3236,6 +3271,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "anger",
+        "relationships",
+        "calm"
       ]
     },
     {
@@ -3251,6 +3291,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "gratitude",
+        "calm",
+        "faith"
       ]
     },
     {
@@ -3265,6 +3310,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "anger",
+        "calm"
       ]
     },
     {
@@ -3280,6 +3330,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "motivation"
+      ],
+      "tags": [
+        "stress",
+        "motivation",
+        "overwhelm"
       ]
     },
     {
@@ -3294,6 +3349,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety"
+      ],
+      "tags": [
+        "anxiety",
+        "worry",
+        "calm"
       ]
     },
     {
@@ -3308,6 +3368,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "low-mood",
+        "self-compassion",
+        "motivation"
       ]
     },
     {
@@ -3323,6 +3388,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "anxiety"
+      ],
+      "tags": [
+        "relationships",
+        "self-compassion",
+        "low-mood"
       ]
     },
     {
@@ -3336,6 +3406,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "stress",
+        "motivation"
+      ],
+      "tags": [
+        "overwhelm",
         "stress",
         "motivation"
       ]
@@ -3352,6 +3427,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "relationships",
+        "anger",
+        "boundaries"
       ]
     },
     {
@@ -3366,6 +3446,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "anger",
+        "grief",
+        "relationships"
       ]
     },
     {
@@ -3381,6 +3466,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "mood"
+      ],
+      "tags": [
+        "anxiety",
+        "worry",
+        "gratitude"
       ]
     },
     {
@@ -3396,6 +3486,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "faith",
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "gratitude",
+        "faith"
       ]
     },
     {
@@ -3410,6 +3505,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "overwhelm",
+        "stress"
       ]
     },
     {
@@ -3425,6 +3525,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "stress"
+      ],
+      "tags": [
+        "anxiety",
+        "stress",
+        "overwhelm"
       ]
     },
     {
@@ -3439,6 +3544,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "relationships",
+        "calm"
       ]
     },
     {
@@ -3454,6 +3564,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "relationships",
+        "self-compassion",
+        "calm"
       ]
     },
     {
@@ -3469,6 +3584,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "sleep",
         "mood"
+      ],
+      "tags": [
+        "sleep",
+        "self-compassion",
+        "stress"
       ]
     },
     {
@@ -3482,6 +3602,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "stress"
+      ],
+      "tags": [
+        "boundaries",
+        "relationships",
         "stress"
       ]
     },
@@ -3497,6 +3622,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "overwhelm",
+        "calm"
       ]
     },
     {
@@ -3512,6 +3642,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "sleep"
+      ],
+      "tags": [
+        "worry",
+        "anxiety",
+        "anger"
       ]
     },
     {
@@ -3527,6 +3662,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "sleep"
+      ],
+      "tags": [
+        "stress",
+        "sleep",
+        "boundaries"
       ]
     },
     {
@@ -3541,6 +3681,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith"
+      ],
+      "tags": [
+        "relationships",
+        "calm",
+        "gratitude"
       ]
     },
     {
@@ -3555,6 +3700,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "calm",
+        "overwhelm"
       ]
     },
     {
@@ -3569,6 +3719,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "self-compassion",
+        "relationships",
+        "calm"
       ]
     },
     {
@@ -3583,6 +3738,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "overwhelm",
+        "stress",
+        "boundaries"
       ]
     },
     {
@@ -3598,6 +3758,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "stress"
+      ],
+      "tags": [
+        "low-mood",
+        "grief",
+        "calm"
       ]
     },
     {
@@ -3613,6 +3778,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "faith",
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "gratitude",
+        "motivation"
       ]
     },
     {
@@ -3628,6 +3798,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "anxiety"
+      ],
+      "tags": [
+        "anxiety",
+        "worry",
+        "calm"
       ]
     },
     {
@@ -3643,6 +3818,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "self-compassion",
+        "grief",
+        "faith"
       ]
     },
     {
@@ -3657,6 +3837,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety"
+      ],
+      "tags": [
+        "anxiety",
+        "worry",
+        "relationships"
       ]
     },
     {
@@ -3671,6 +3856,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "self-compassion",
+        "overwhelm"
       ]
     },
     {
@@ -3685,6 +3875,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "anger",
+        "calm"
       ]
     },
     {
@@ -3700,6 +3895,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "stress"
+      ],
+      "tags": [
+        "anxiety",
+        "overwhelm",
+        "calm"
       ]
     },
     {
@@ -3714,6 +3914,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "overwhelm",
+        "stress",
+        "boundaries"
       ]
     },
     {
@@ -3728,6 +3933,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "self-compassion",
+        "low-mood",
+        "motivation"
       ]
     },
     {
@@ -3743,6 +3953,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "motivation"
+      ],
+      "tags": [
+        "anxiety",
+        "stress",
+        "motivation"
       ]
     },
     {
@@ -3757,6 +3972,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "self-compassion",
+        "low-mood",
+        "anxiety"
       ]
     },
     {
@@ -3771,6 +3991,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "overwhelm",
+        "stress",
+        "boundaries"
       ]
     },
     {
@@ -3785,6 +4010,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "low-mood",
+        "calm",
+        "self-compassion"
       ]
     },
     {
@@ -3799,6 +4029,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "sleep",
+        "anxiety"
+      ],
+      "tags": [
+        "relationships",
+        "calm",
         "anxiety"
       ]
     },
@@ -3815,6 +4050,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "mood"
+      ],
+      "tags": [
+        "boundaries",
+        "relationships",
+        "overwhelm"
       ]
     },
     {
@@ -3829,6 +4069,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "gratitude",
+        "calm",
+        "motivation"
       ]
     },
     {
@@ -3844,6 +4089,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "sleep",
         "mood"
+      ],
+      "tags": [
+        "sleep",
+        "self-compassion",
+        "low-mood"
       ]
     },
     {
@@ -3859,6 +4109,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "calm",
+        "relationships"
       ]
     },
     {
@@ -3873,6 +4128,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "overwhelm",
+        "self-compassion"
       ]
     },
     {
@@ -3888,6 +4148,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "sleep",
         "stress"
+      ],
+      "tags": [
+        "sleep",
+        "stress",
+        "calm"
       ]
     },
     {
@@ -3903,6 +4168,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "mood"
+      ],
+      "tags": [
+        "anxiety",
+        "self-compassion",
+        "stress"
       ]
     },
     {
@@ -3917,6 +4187,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "anger",
+        "stress",
+        "calm"
       ]
     },
     {
@@ -3932,6 +4207,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "gratitude",
+        "relationships",
+        "faith"
       ]
     },
     {
@@ -3946,6 +4226,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "anger",
+        "relationships",
+        "grief"
       ]
     },
     {
@@ -3960,6 +4245,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "self-compassion",
+        "low-mood"
       ]
     },
     {
@@ -3974,6 +4264,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith",
+        "stress"
+      ],
+      "tags": [
+        "calm",
+        "overwhelm",
         "stress"
       ]
     },
@@ -3990,6 +4285,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "faith",
         "anxiety"
+      ],
+      "tags": [
+        "faith",
+        "grief",
+        "calm"
       ]
     },
     {
@@ -4004,6 +4304,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "anger",
+        "grief"
       ]
     },
     {
@@ -4019,6 +4324,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "sleep",
         "stress"
+      ],
+      "tags": [
+        "sleep",
+        "overwhelm",
+        "stress"
       ]
     },
     {
@@ -4033,6 +4343,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "overwhelm",
+        "stress",
+        "motivation"
       ]
     },
     {
@@ -4048,6 +4363,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "calm",
+        "faith",
+        "grief"
       ]
     },
     {
@@ -4061,6 +4381,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "stress"
+      ],
+      "tags": [
+        "boundaries",
+        "relationships",
         "stress"
       ]
     },
@@ -4077,6 +4402,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "stress"
+      ],
+      "tags": [
+        "anxiety",
+        "overwhelm",
+        "calm"
       ]
     },
     {
@@ -4091,6 +4421,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "grief",
+        "self-compassion",
+        "calm"
       ]
     },
     {
@@ -4105,6 +4440,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "relationships",
+        "self-compassion",
+        "motivation"
       ]
     },
     {
@@ -4120,6 +4460,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "motivation"
+      ],
+      "tags": [
+        "anxiety",
+        "stress",
+        "calm"
       ]
     },
     {
@@ -4134,6 +4479,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "relationships",
+        "anger"
       ]
     },
     {
@@ -4149,6 +4499,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "sleep"
+      ],
+      "tags": [
+        "stress",
+        "sleep",
+        "calm"
       ]
     },
     {
@@ -4164,6 +4519,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "motivation"
+      ],
+      "tags": [
+        "stress",
+        "motivation",
+        "overwhelm"
       ]
     },
     {
@@ -4178,6 +4538,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "self-compassion",
+        "anger"
       ]
     },
     {
@@ -4193,6 +4558,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "anxiety"
+      ],
+      "tags": [
+        "overwhelm",
+        "anxiety",
+        "stress"
       ]
     },
     {
@@ -4207,6 +4577,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "self-compassion",
+        "relationships"
       ]
     },
     {
@@ -4222,6 +4597,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "faith"
+      ],
+      "tags": [
+        "gratitude",
+        "relationships",
+        "faith"
       ]
     },
     {
@@ -4236,6 +4616,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "anxiety"
+      ],
+      "tags": [
+        "anxiety",
+        "worry",
+        "overwhelm"
       ]
     },
     {
@@ -4250,6 +4635,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "overwhelm",
+        "relationships",
+        "boundaries"
       ]
     },
     {
@@ -4264,6 +4654,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "calm",
+        "gratitude",
+        "low-mood"
       ]
     },
     {
@@ -4278,6 +4673,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "boundaries",
+        "overwhelm",
+        "self-compassion"
       ]
     },
     {
@@ -4293,6 +4693,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "motivation",
         "mood"
+      ],
+      "tags": [
+        "calm",
+        "stress",
+        "motivation"
       ]
     },
     {
@@ -4307,6 +4712,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "self-compassion",
+        "stress"
       ]
     },
     {
@@ -4321,6 +4731,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "relationships",
+        "self-compassion",
+        "low-mood"
       ]
     },
     {
@@ -4336,6 +4751,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "mood"
+      ],
+      "tags": [
+        "anxiety",
+        "self-compassion",
+        "relationships"
       ]
     },
     {
@@ -4351,6 +4771,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "stress"
+      ],
+      "tags": [
+        "anxiety",
+        "sleep",
+        "stress"
       ]
     },
     {
@@ -4365,6 +4790,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "stress",
+        "calm",
+        "anger"
       ]
     },
     {
@@ -4378,6 +4808,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "stress"
+      ],
+      "tags": [
+        "motivation",
+        "self-compassion",
         "stress"
       ]
     },
@@ -4393,6 +4828,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "mood"
+      ],
+      "tags": [
+        "gratitude",
+        "self-compassion",
+        "low-mood"
       ]
     },
     {
@@ -4407,6 +4847,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "stress"
+      ],
+      "tags": [
+        "anger",
+        "boundaries",
+        "relationships"
       ]
     },
     {
@@ -4420,6 +4865,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "motivation"
+      ],
+      "tags": [
+        "relationships",
+        "gratitude",
         "motivation"
       ]
     },
@@ -4436,6 +4886,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "faith"
+      ],
+      "tags": [
+        "anxiety",
+        "faith",
+        "calm"
       ]
     },
     {
@@ -4450,6 +4905,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation",
+        "stress"
+      ],
+      "tags": [
+        "motivation",
+        "relationships",
         "stress"
       ]
     },
@@ -4466,6 +4926,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "stress",
         "sleep"
+      ],
+      "tags": [
+        "overwhelm",
+        "sleep",
+        "stress"
       ]
     },
     {
@@ -4481,6 +4946,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "motivation",
         "stress"
+      ],
+      "tags": [
+        "motivation",
+        "stress",
+        "self-compassion"
       ]
     },
     {
@@ -4496,6 +4966,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "mood",
         "anxiety"
+      ],
+      "tags": [
+        "low-mood",
+        "anger",
+        "grief"
       ]
     },
     {
@@ -4511,6 +4986,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "anxiety",
         "stress"
+      ],
+      "tags": [
+        "anxiety",
+        "stress",
+        "self-compassion"
       ]
     },
     {
@@ -4524,6 +5004,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "source": "mindpal_original_paraphrase_pack_a",
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
+        "motivation"
+      ],
+      "tags": [
+        "self-compassion",
+        "grief",
         "motivation"
       ]
     },
@@ -4540,6 +5025,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "theme_tags": [
         "sleep",
         "mood"
+      ],
+      "tags": [
+        "sleep",
+        "grief",
+        "calm"
       ]
     },
     {
@@ -4554,6 +5044,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "faith"
+      ],
+      "tags": [
+        "faith",
+        "gratitude",
+        "calm"
       ]
     },
     {
@@ -4568,6 +5063,11 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "inspiration_credit": "Inspired by themes from Don't Sweat the Small Stuff (not a reprint; original MindPal wording)",
       "theme_tags": [
         "motivation"
+      ],
+      "tags": [
+        "motivation",
+        "self-compassion",
+        "calm"
       ]
     }
   ]
@@ -5483,7 +5983,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "motivation",
-        "faith"
+        "faith",
+        "calm"
       ],
       "emotions": [
         "motivation",
@@ -5507,7 +6008,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "motivation",
-        "low-mood"
+        "low-mood",
+        "self-compassion",
+        "calm"
       ],
       "emotions": [
         "motivation",
@@ -5534,7 +6037,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "anxiety",
         "stress",
         "sleep",
-        "overwhelm"
+        "overwhelm",
+        "calm"
       ],
       "emotions": [
         "anxiety",
@@ -5554,8 +6058,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Welcome: choose a small moment",
       "category": "Understanding & reflection",
       "outline": "An introduction to choice, privacy, free core features and the limits of MindPal.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
-      "transcriptText": "Welcome to MindPal. This is an AI-generated presenter. MindPal offers short wellbeing practices and optional reflection activities. You can choose a small step, or simply explore.\n\nSome days you may want a few minutes. On other days, thirty seconds may be enough. You can skip the check-in, stop an exercise, or return another day. There is no streak to protect.\n\nWriting is optional. Before saving personal information, check the privacy information for this version. Other people using the same device or browser may be able to see saved entries. You can reflect without typing anything into MindPal.\n\nAny automated guide in MindPal is software, not a person or a therapist. MindPal cannot diagnose you, advise on medication, or monitor emergencies. Human support matters, and you can use MindPal alongside professional care.\n\nThe \u201cHelp me now\u201d section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "transcriptText": "Welcome to MindPal. This is an AI-generated presenter. MindPal offers short wellbeing practices and optional reflection activities. You can choose a small step, or simply explore.\n\nSome days you may want a few minutes. On other days, thirty seconds may be enough. You can skip the check-in, stop an exercise, or return another day. There is no streak to protect.\n\nWriting is optional. Before saving personal information, check the privacy information for this version. Other people using the same device or browser may be able to see saved entries. You can reflect without typing anything into MindPal.\n\nAny automated guide in MindPal is software, not a person or a therapist. MindPal cannot diagnose you, advise on medication, or monitor emergencies. Human support matters, and you can use MindPal alongside professional care.\n\nThe “Help me now” section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
@@ -5572,7 +6076,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "motivation",
-        "faith"
+        "faith",
+        "calm"
       ],
       "emotions": [
         "motivation",
@@ -5585,8 +6090,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "A gentle start to a difficult morning",
       "category": "Understanding & reflection",
       "outline": "Make room for a difficult morning. Offer rest, one manageable action or finishing here without a positive-thinking requirement.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
-      "transcriptText": "A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.\n\nIf it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.\n\nYou might make one task smaller, or leave it for later. What is manageable depends on your circumstances, your energy and your surroundings.\n\nIf these words do not fit today, you can leave them aside. MindPal offers choices, not a test of how well you cope. You can seek human support. The \u2018Help me now\u2019 section lists urgent-support options.",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "transcriptText": "A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.\n\nIf it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.\n\nYou might make one task smaller, or leave it for later. What is manageable depends on your circumstances, your energy and your surroundings.\n\nIf these words do not fit today, you can leave them aside. MindPal offers choices, not a test of how well you cope. You can seek human support. The ‘Help me now’ section lists urgent-support options.",
       "targetDurationSeconds": 60,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
@@ -5602,7 +6107,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "low-mood",
-        "motivation"
+        "motivation",
+        "self-compassion"
       ],
       "emotions": [
         "low-mood",
@@ -5615,7 +6121,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "A comfortable pause, with choices",
       "category": "Everyday practices",
       "outline": "Optional ordinary breathing with no holds or forced pace; external grounding alternative and physical-symptom limits.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "This is an optional pause for everyday stress. You can stop at any time. If breathing exercises are uncomfortable for you, you can try noticing one neutral detail around you instead. You do not need to follow your breath.\n\nIf you would like to try, stay in a comfortable position. Let your breath remain at its ordinary depth and pace. No big breath, counting or holding is needed. Notice one breath coming and going, if that feels okay.\n\nIf focusing on your breathing brings dizziness, a sense of not getting enough air, discomfort or more panic, stop the exercise. You can shift attention to a neutral detail nearby using a sense that feels comfortable, or finish altogether.\n\nYou can stay with that detail briefly, or finish now. There is no need to make a feeling disappear. Seek medical advice for new, persistent or concerning physical symptoms. For severe difficulty breathing or another medical emergency in Australia, call triple zero. This exercise cannot tell you what is causing a symptom.\n\nWhen you are ready, choose what is manageable next: rest, a small practical action, or support from a person. It is also okay to do nothing further here. You can return to the text guide whenever you want.",
       "targetDurationSeconds": 120,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5633,7 +6139,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "stress",
         "anxiety",
-        "overwhelm"
+        "overwhelm",
+        "calm"
       ],
       "emotions": [
         "stress",
@@ -5647,7 +6154,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Notice one steady detail",
       "category": "Everyday practices",
       "outline": "Notice one neutral external detail; choose any comfortable sense, stop or seek human support.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "You can stop this practice at any time. If it feels okay, notice one ordinary detail near you. Your eyes can stay open.\n\nIt might be a colour, the edge of an object, a quiet sound, or a surface supporting you. Choose a sense that feels comfortable enough. There is no correct thing to notice.\n\nDescribe one feature to yourself, such as a straight edge or a soft surface. You can pause the video and take your own time.\n\nIf this attention feels uncomfortable, stop. You can look elsewhere, change position if comfortable, or choose support from a person.\n\nThere is no need to make your feelings disappear. You can finish, rest, or choose one manageable next step. You do not have to decide yet.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5665,7 +6172,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "tags": [
         "anxiety",
         "stress",
-        "overwhelm"
+        "overwhelm",
+        "calm"
       ],
       "emotions": [
         "anxiety",
@@ -5679,7 +6187,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Grounding without following your breath",
       "category": "Everyday practices",
       "outline": "External grounding for people who prefer not to focus on breathing; no guaranteed calming outcome.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "You do not need to follow your breathing to take a moment. This is an optional way to notice something outside yourself.\n\nChoose one neutral detail nearby, perhaps a shape, a colour or a quiet sound. Use whichever sense is comfortable for you, or skip this activity.\n\nNotice one feature. You can pause the video for as long or as little as you want.\n\nIf noticing this way makes things harder, stop and choose something else. The aim is to offer a choice, not to guarantee a particular feeling. Rest or human support may be more useful. You can finish here.",
       "targetDurationSeconds": 60,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5696,7 +6204,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "calm"
       ],
       "emotions": [
         "anxiety",
@@ -5709,7 +6218,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Finding a word for a feeling",
       "category": "Everyday practices",
       "outline": "Optional feeling words, including mixed and not sure, with a practical-needs alternative.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "A feeling does not need a perfect name. If you want to, choose a word that seems close enough: worried, sad, frustrated, tired, lonely, mixed, or not sure.\n\nYou can use your own word, or choose none. There is no need to explain what happened or tell a difficult story.\n\nPerhaps try, I notice some worry. Or, I am not sure what this is. A word describes an experience; it is not a diagnosis.\n\nYou might instead ask what you need next: a quieter space, rest, or a safe person to speak with. Choose only what fits your circumstances.\n\nIf words make this harder, leave them aside. You can notice an ordinary object nearby or finish. Nothing needs to be written, saved or sent to AI.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5725,7 +6234,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "low-mood",
-        "anger"
+        "anger",
+        "anxiety",
+        "self-compassion"
       ],
       "emotions": [
         "low-mood",
@@ -5738,7 +6249,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Words with less pressure",
       "category": "Everyday practices",
       "outline": "A believable kind or neutral sentence, without excusing harm or requiring positive feelings.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "You do not have to feel positive about a difficult day. If a harsh sentence about yourself is present, you may leave it alone, or try words with less pressure.\n\nThis is difficult. I can take one thing at a time. I may need some support.\n\nChoose a sentence only if it feels believable. If kindness feels uncomfortable, something neutral can be enough: I am here, taking a moment.\n\nYou can pause, use different words, or stop. This is not a requirement to change how you feel.\n\nYou do not have to excuse harmful behaviour from anyone. If someone is hurting or controlling you, support and safety matter.\n\nPerhaps lowering one demand or asking for help would be useful. You do not need to complete an action to finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5754,7 +6265,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "low-mood",
-        "anger"
+        "anger",
+        "self-compassion",
+        "boundaries"
       ],
       "emotions": [
         "low-mood",
@@ -5767,8 +6280,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "Anxiety: support without solving everything",
       "category": "Understanding & reflection",
       "outline": "Everyday anxiety education and choices for human support; new or severe physical symptoms need medical assessment.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
-      "transcriptText": "When you describe feeling anxious, you do not have to solve everything in one sitting. This short guide offers choices for everyday wellbeing; it cannot assess or diagnose what you are experiencing.\n\nYou might want a practical next step, a short external attention exercise, a break from this screen, or contact with someone who can support you. Breathing exercises are optional. You do not have to use them.\n\nPhysical symptoms can have different causes. MindPal cannot tell whether a symptom is anxiety. New, severe or concerning symptoms need medical help. In immediate danger or a medical emergency in Australia, call triple zero.\n\nIf worry or distress is affecting your daily life, you can discuss it with a qualified health professional. You do not need a label before asking for support.\n\nFor a conversation, you might prepare one question or mention one thing that has been difficult. You can decide what to share. You do not need to retell a painful event here.\n\nYou can finish now. You can open \u2018Help me now\u2019 for urgent-support options without completing a practice. MindPal does not monitor emergencies or summon help for you.",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "transcriptText": "When you describe feeling anxious, you do not have to solve everything in one sitting. This short guide offers choices for everyday wellbeing; it cannot assess or diagnose what you are experiencing.\n\nYou might want a practical next step, a short external attention exercise, a break from this screen, or contact with someone who can support you. Breathing exercises are optional. You do not have to use them.\n\nPhysical symptoms can have different causes. MindPal cannot tell whether a symptom is anxiety. New, severe or concerning symptoms need medical help. In immediate danger or a medical emergency in Australia, call triple zero.\n\nIf worry or distress is affecting your daily life, you can discuss it with a qualified health professional. You do not need a label before asking for support.\n\nFor a conversation, you might prepare one question or mention one thing that has been difficult. You can decide what to share. You do not need to retell a painful event here.\n\nYou can finish now. You can open ‘Help me now’ for urgent-support options without completing a practice. MindPal does not monitor emergencies or summon help for you.",
       "targetDurationSeconds": 120,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
@@ -5782,7 +6295,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "anxiety"
       ],
       "tags": [
-        "anxiety"
+        "anxiety",
+        "worry",
+        "calm"
       ],
       "emotions": [
         "anxiety"
@@ -5794,7 +6309,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "One manageable action",
       "category": "Everyday practices",
       "outline": "Choose one manageable action, preparation, rest or help; never push through symptoms.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "Think about the next few minutes, rather than the whole day. Is there one small action that might be useful or meaningful? You can also choose rest.\n\nPerhaps place one item where you need it, choose some music, or prepare a question for a person who supports you. Choose something that fits your situation.\n\nYou can make the action smaller, prepare without doing it, or decide against it. There is no score for finishing.\n\nIf pain, fatigue or your surroundings make it unsuitable, change the action or stop. You do not have to push through symptoms. New or severe symptoms may need medical assessment.\n\nIf you try something, you can ask whether it was manageable. The answer can be no. That information may help you choose differently, without judging yourself. You can finish here.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5810,7 +6325,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "motivation"
       ],
       "tags": [
-        "motivation"
+        "motivation",
+        "overwhelm",
+        "stress"
       ],
       "emotions": [
         "motivation"
@@ -5822,7 +6339,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "title": "One-sentence daily reflection",
       "category": "Understanding & reflection",
       "outline": "Optional brief diary reflection, stop if writing adds distress, and explicit local-storage and AI boundaries.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
       "transcriptText": "A reflection can be one sentence, one word, or nothing today. You do not need to explain everything that happened. You can keep this simple and finish whenever you want.\n\nYou might choose one question: What felt manageable? What was difficult? Or, what might I need next? Choose only one if it helps. You can also write something entirely different.\n\nIf writing makes you feel more stuck or distressed, stop. You could notice something around you, take a break, or reach out for human support. You do not have to turn this into a lesson.\n\nYou can reflect without typing anything into MindPal. Before saving personal information, check the privacy information for this version, including where entries are stored and who could access them. On a shared device or browser, someone else may be able to see saved entries. Before using any AI reflection feature, check what text would be sent and how it would be used. You can choose not to use it.",
       "targetDurationSeconds": 90,
       "scriptReadiness": "COMPLETE_DRAFT",
@@ -5837,7 +6354,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood"
       ],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "self-compassion",
+        "grief"
       ],
       "emotions": [
         "low-mood"
@@ -5847,10 +6366,10 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "id": "V11",
       "assetIdentifier": "MP-V11-en-AU-v1.1",
       "title": "Menstrual mood changes: preparing for a care discussion",
-      "category": "Women\u2019s wellbeing",
+      "category": "Women’s wellbeing",
       "outline": "Specialist review required: optional observations and questions for a clinician; no PMS/PMDD diagnosis or cycle prediction.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
-      "transcriptText": "If you have noticed mood changes that seem related to your menstrual cycle, you can bring those observations to a qualified health professional. You do not have to work out a diagnosis yourself.\n\nThis guide does not decide whether you have PMS, PMDD, or another condition. MindPal does not predict your cycle or recommend medicines or hormonal treatment.\n\nIf keeping notes feels useful, you might record a date, what you noticed, and whether it affected something in daily life. You can keep the note brief. You do not have to record bleeding, intimate details or any information you would rather keep out of an app.\n\nBrief notes may help start a conversation, but they are not a diagnostic assessment. A clinician may suggest daily symptom recording across at least two menstrual cycles to understand a pattern. You do not need to wait or finish a diary before asking for help, especially if symptoms are severe or disrupting daily life.\n\nYou can also prepare a question without keeping a diary: I have noticed changes in my mood and would like help understanding them. Or, what information would be useful for our next appointment?\n\nYour experience does not have to fit a regular cycle to deserve attention. You can mention uncertainty, irregular periods, or other changes to the clinician. MindPal will not interpret those details for you.\n\nIf recording makes you more distressed or preoccupied, stop. You can ask for support without collecting more information first.\n\nThis is an optional pathway. You decide what to save and share with a clinician. If you think you may act on thoughts of suicide or self-harm, or you are in immediate danger, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. You can also find support options in \u201cHelp me now\u201d. MindPal does not monitor you or contact help for you.",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "transcriptText": "If you have noticed mood changes that seem related to your menstrual cycle, you can bring those observations to a qualified health professional. You do not have to work out a diagnosis yourself.\n\nThis guide does not decide whether you have PMS, PMDD, or another condition. MindPal does not predict your cycle or recommend medicines or hormonal treatment.\n\nIf keeping notes feels useful, you might record a date, what you noticed, and whether it affected something in daily life. You can keep the note brief. You do not have to record bleeding, intimate details or any information you would rather keep out of an app.\n\nBrief notes may help start a conversation, but they are not a diagnostic assessment. A clinician may suggest daily symptom recording across at least two menstrual cycles to understand a pattern. You do not need to wait or finish a diary before asking for help, especially if symptoms are severe or disrupting daily life.\n\nYou can also prepare a question without keeping a diary: I have noticed changes in my mood and would like help understanding them. Or, what information would be useful for our next appointment?\n\nYour experience does not have to fit a regular cycle to deserve attention. You can mention uncertainty, irregular periods, or other changes to the clinician. MindPal will not interpret those details for you.\n\nIf recording makes you more distressed or preoccupied, stop. You can ask for support without collecting more information first.\n\nThis is an optional pathway. You decide what to save and share with a clinician. If you think you may act on thoughts of suicide or self-harm, or you are in immediate danger, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. You can also find support options in “Help me now”. MindPal does not monitor you or contact help for you.",
       "targetDurationSeconds": 150,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
@@ -5865,7 +6384,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         "mood"
       ],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "self-compassion",
+        "worry"
       ],
       "emotions": [
         "low-mood"
@@ -5875,10 +6396,10 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "id": "V12",
       "assetIdentifier": "MP-V12-en-AU-v1.1",
       "title": "Perimenopause, menopause, mood and asking for support",
-      "category": "Women\u2019s wellbeing",
+      "category": "Women’s wellbeing",
       "outline": "Specialist review required: questions about mood, sleep and changes for a clinician; no menopause diagnosis or treatment advice.",
-      "placeholderLabel": "Media placeholder \u2014 no HeyGen video generated",
-      "transcriptText": "If you have questions about perimenopause\u2014the transition leading up to menopause\u2014menopause itself, or changes in mood or sleep, you can discuss them with a qualified health professional. You do not have to decide on the cause before asking for help.\n\nMindPal cannot diagnose menopause or explain the cause of a mood, sleep or physical symptom. It does not recommend hormonal treatment, supplements or changes to medication.\n\nYou might prepare one or two questions for an appointment. For example: I have noticed a change in how I am feeling. What could we consider? Or, what support is available for what is affecting my day?\n\nIf notes are useful, keep them in a form that suits you. You could mention when a change started and what you would like help with. You do not have to complete a checklist or share intimate details with an app.\n\nSeveral things may contribute to changes in mood or sleep. If low mood, anxiety or sleep problems persist or affect daily life, arrange a healthcare appointment rather than assuming they are part of menopause. New, severe or concerning physical symptoms also need medical assessment.\n\nYou can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.\n\nThis pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. \u201cHelp me now\u201d lists further support options.",
+      "placeholderLabel": "Media placeholder — no HeyGen video generated",
+      "transcriptText": "If you have questions about perimenopause—the transition leading up to menopause—menopause itself, or changes in mood or sleep, you can discuss them with a qualified health professional. You do not have to decide on the cause before asking for help.\n\nMindPal cannot diagnose menopause or explain the cause of a mood, sleep or physical symptom. It does not recommend hormonal treatment, supplements or changes to medication.\n\nYou might prepare one or two questions for an appointment. For example: I have noticed a change in how I am feeling. What could we consider? Or, what support is available for what is affecting my day?\n\nIf notes are useful, keep them in a form that suits you. You could mention when a change started and what you would like help with. You do not have to complete a checklist or share intimate details with an app.\n\nSeveral things may contribute to changes in mood or sleep. If low mood, anxiety or sleep problems persist or affect daily life, arrange a healthcare appointment rather than assuming they are part of menopause. New, severe or concerning physical symptoms also need medical assessment.\n\nYou can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.\n\nThis pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.",
       "targetDurationSeconds": 150,
       "scriptReadiness": "COMPLETE_DRAFT",
       "clinicalStatus": "DRAFT",
@@ -5895,7 +6416,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       ],
       "tags": [
         "low-mood",
-        "sleep"
+        "sleep",
+        "anxiety"
       ],
       "emotions": [
         "low-mood",
@@ -5927,7 +6449,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=FiPDV9L5qpQ",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm",
+            "self-compassion"
           ],
           "emotions": [
             "sleep"
@@ -5945,7 +6469,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=IrY_b_teSX8",
           "tags": [
-            "sleep"
+            "sleep",
+            "grief",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -5963,7 +6489,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=_xzjWPSPTq8",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm",
+            "faith"
           ],
           "emotions": [
             "sleep"
@@ -5980,7 +6508,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@jasonstephensonmeditation",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -5997,7 +6526,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@TheHonestGuys",
           "tags": [
-            "sleep"
+            "sleep",
+            "calm"
           ],
           "emotions": [
             "sleep"
@@ -6005,7 +6535,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         }
       ],
       "tags": [
-        "sleep"
+        "sleep",
+        "calm"
       ],
       "emotions": [
         "sleep"
@@ -6028,7 +6559,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=MFxlK1ZvOmA",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "worry",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -6045,7 +6578,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=EVqMNGb9Zi4",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "worry",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -6062,7 +6597,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/watch?v=rCGGIK0oPkQ",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "calm"
           ],
           "emotions": [
             "anxiety"
@@ -6079,7 +6615,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@headspace",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "stress"
           ],
           "emotions": [
             "anxiety"
@@ -6096,7 +6633,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
           "checkedAt": "2026-09-20",
           "evidenceUrl": "https://www.youtube.com/@TaraBrach",
           "tags": [
-            "anxiety"
+            "anxiety",
+            "self-compassion",
+            "worry"
           ],
           "emotions": [
             "anxiety"
@@ -6104,7 +6643,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
         }
       ],
       "tags": [
-        "anxiety"
+        "anxiety",
+        "worry"
       ],
       "emotions": [
         "anxiety"
@@ -6132,7 +6672,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "status": "filling",
       "entries": [],
       "tags": [
-        "motivation"
+        "motivation",
+        "calm"
       ],
       "emotions": [
         "motivation"
@@ -6146,7 +6687,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "entries": [],
       "tags": [
         "stress",
-        "overwhelm"
+        "overwhelm",
+        "calm"
       ],
       "emotions": [
         "stress",
@@ -6160,7 +6702,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "status": "filling",
       "entries": [],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "self-compassion"
       ],
       "emotions": [
         "low-mood"
@@ -6174,7 +6717,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "entries": [],
       "tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "calm"
       ],
       "emotions": [
         "anxiety",
@@ -6188,7 +6732,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "status": "filling",
       "entries": [],
       "tags": [
-        "low-mood"
+        "low-mood",
+        "grief"
       ],
       "emotions": [
         "low-mood"
@@ -6202,7 +6747,9 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "entries": [],
       "tags": [
         "anxiety",
-        "stress"
+        "stress",
+        "calm",
+        "overwhelm"
       ],
       "emotions": [
         "anxiety",
@@ -6216,7 +6763,8 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "status": "filling",
       "entries": [],
       "tags": [
-        "faith"
+        "faith",
+        "calm"
       ],
       "emotions": [
         "faith"
@@ -6417,6 +6965,286 @@ function pickRandom(readings, excludeId) {
   const list = pool.length ? pool : readings;
   if (!list.length) return null;
   return list[Math.floor(Math.random() * list.length)];
+}
+
+/** Controlled Pack A feeling/problem tags. Stored without #; UI may show #tag. */
+
+const TAG_VOCAB = [
+  "anger",
+  "low-mood",
+  "anxiety",
+  "worry",
+  "sleep",
+  "stress",
+  "overwhelm",
+  "grief",
+  "motivation",
+  "faith",
+  "self-compassion",
+  "relationships",
+  "gratitude",
+  "boundaries",
+  "calm",
+];
+
+const TAG_LABELS = {
+  anger: "Anger",
+  "low-mood": "Low mood",
+  anxiety: "Anxiety",
+  worry: "Worry",
+  sleep: "Sleep",
+  stress: "Stress",
+  overwhelm: "Overwhelm",
+  grief: "Grief",
+  motivation: "Motivation",
+  faith: "Faith",
+  "self-compassion": "Self-compassion",
+  relationships: "Relationships",
+  gratitude: "Gratitude",
+  boundaries: "Boundaries",
+  calm: "Calm",
+};
+
+/**
+ * PR #8 problem-hub ids. `mood` aliases to `low-mood` in this vocab so
+ * Morning/Day/Night hubs and Feelings chips can share catalogs.
+ */
+const PROBLEM_HUB_TAGS = [
+  "sleep",
+  "anxiety",
+  "stress",
+  "mood",
+  "motivation",
+  "faith",
+];
+
+const TAG_ALIASES = {
+  mood: "low-mood",
+};
+
+/** Feelings dropdown ids → controlled tags (any-match). */
+const FEELING_TO_TAGS = {
+  sad: ["low-mood", "grief"],
+  anxious: ["anxiety", "worry"],
+  angry: ["anger"],
+  overwhelmed: ["overwhelm", "stress"],
+  lonely: ["relationships", "low-mood"],
+  guilty: ["self-compassion"],
+  numb: ["low-mood"],
+  unsure: ["calm", "self-compassion"],
+  sleep: ["sleep", "calm"],
+  anxiety: ["anxiety", "worry"],
+  stress: ["stress", "overwhelm"],
+  "low-mood": ["low-mood", "grief"],
+  anger: ["anger"],
+  motivation: ["motivation"],
+  faith: ["faith"],
+  overwhelm: ["overwhelm", "stress"],
+};
+
+/**
+ * Thoughtful theme_label → tags for every Pack A reading.
+ * Overlaps problem-hub ids used on the Morning/Day/Night branch
+ * (anxiety, sleep, stress, motivation, faith) plus richer feeling vocab.
+ */
+const THEME_LABEL_TO_TAGS = {
+  "small irritations": ["anger", "stress", "calm"],
+  imperfection: ["self-compassion", "motivation", "stress"],
+  "gentleness vs pressure": ["stress", "calm", "self-compassion"],
+  "rumination escalation": ["worry", "anxiety", "overwhelm"],
+  compassion: ["self-compassion", "relationships", "gratitude"],
+  "perspective-taking": ["relationships", "calm", "anger"],
+  "prioritising conflict": ["relationships", "anger", "boundaries"],
+  "reactive communication": ["anger", "relationships", "calm"],
+  "gratitude for small": ["gratitude", "calm", "faith"],
+  impatience: ["stress", "anger", "calm"],
+  "over-identification with tasks": ["stress", "motivation", "overwhelm"],
+  "uncertainty tolerance": ["anxiety", "worry", "calm"],
+  comparison: ["low-mood", "self-compassion", "motivation"],
+  "receiving support": ["relationships", "self-compassion", "low-mood"],
+  "single-tasking": ["overwhelm", "stress", "motivation"],
+  "need to be right": ["relationships", "anger", "boundaries"],
+  "holding grudges": ["anger", "grief", "relationships"],
+  "scarcity mindset": ["anxiety", "worry", "gratitude"],
+  connection: ["relationships", "gratitude", "faith"],
+  "waiting to start": ["motivation", "overwhelm", "stress"],
+  "false emergencies": ["anxiety", "stress", "overwhelm"],
+  "drama resistance": ["stress", "relationships", "calm"],
+  "charitable interpretation": ["relationships", "self-compassion", "calm"],
+  "rest guilt": ["sleep", "self-compassion", "stress"],
+  boundaries: ["boundaries", "relationships", "stress"],
+  "micro-completion": ["motivation", "overwhelm", "calm"],
+  "mental replay": ["worry", "anxiety", "anger"],
+  "work spillover": ["stress", "sleep", "boundaries"],
+  listening: ["relationships", "calm", "gratitude"],
+  rush: ["stress", "calm", "overwhelm"],
+  judgement: ["self-compassion", "relationships", "calm"],
+  overcommitment: ["overwhelm", "stress", "boundaries"],
+  "emotional patience": ["low-mood", "grief", "calm"],
+  recognition: ["relationships", "gratitude", "motivation"],
+  "embodied reset": ["anxiety", "worry", "calm"],
+  "self-forgiveness": ["self-compassion", "grief", "faith"],
+  "mind-reading": ["anxiety", "worry", "relationships"],
+  "domestic perfection": ["stress", "self-compassion", "overwhelm"],
+  "relational priority": ["relationships", "anger", "calm"],
+  grounding: ["anxiety", "overwhelm", "calm"],
+  "load shedding": ["overwhelm", "stress", "boundaries"],
+  "self-talk": ["self-compassion", "low-mood", "motivation"],
+  "plans changing": ["anxiety", "stress", "motivation"],
+  "inner critic": ["self-compassion", "low-mood", "anxiety"],
+  "over-scheduling": ["overwhelm", "stress", "boundaries"],
+  "mood awareness": ["low-mood", "calm", "self-compassion"],
+  "comfortable quiet": ["relationships", "calm", "anxiety"],
+  "emotional labour": ["boundaries", "relationships", "overwhelm"],
+  joy: ["gratitude", "calm", "motivation"],
+  "self-judgement at night": ["sleep", "self-compassion", "low-mood"],
+  play: ["motivation", "calm", "relationships"],
+  "expectation load": ["stress", "overwhelm", "self-compassion"],
+  "body cues": ["sleep", "stress", "calm"],
+  "image management": ["anxiety", "self-compassion", "stress"],
+  "impatience with delays": ["anger", "stress", "calm"],
+  appreciation: ["gratitude", "relationships", "faith"],
+  "grievance collecting": ["anger", "relationships", "grief"],
+  "invisible progress": ["motivation", "self-compassion", "low-mood"],
+  attention: ["calm", "overwhelm", "stress"],
+  impermanence: ["faith", "grief", "calm"],
+  "after conflict": ["relationships", "anger", "grief"],
+  "evening overload": ["sleep", "overwhelm", "stress"],
+  overwhelm: ["overwhelm", "stress", "motivation"],
+  acceptance: ["calm", "faith", "grief"],
+  "soft boundaries": ["boundaries", "relationships", "stress"],
+  "tunnel vision": ["anxiety", "overwhelm", "calm"],
+  "healing/patience": ["grief", "self-compassion", "calm"],
+  ego: ["relationships", "self-compassion", "motivation"],
+  waiting: ["anxiety", "stress", "calm"],
+  interruptions: ["stress", "relationships", "anger"],
+  "body tension": ["stress", "sleep", "calm"],
+  "optimisation pressure": ["stress", "motivation", "overwhelm"],
+  attribution: ["relationships", "self-compassion", "anger"],
+  "mental clutter": ["overwhelm", "anxiety", "stress"],
+  "showing up": ["motivation", "self-compassion", "relationships"],
+  "specific thanks": ["gratitude", "relationships", "faith"],
+  catastrophising: ["anxiety", "worry", "overwhelm"],
+  "asking/delegation": ["overwhelm", "relationships", "boundaries"],
+  lightness: ["calm", "gratitude", "low-mood"],
+  limits: ["boundaries", "overwhelm", "self-compassion"],
+  reset: ["calm", "stress", "motivation"],
+  process: ["motivation", "self-compassion", "stress"],
+  receiving: ["relationships", "self-compassion", "low-mood"],
+  "self-consciousness": ["anxiety", "self-compassion", "relationships"],
+  "prep without panic": ["anxiety", "sleep", "stress"],
+  "waiting in line": ["stress", "calm", "anger"],
+  pace: ["motivation", "self-compassion", "stress"],
+  "joy permission": ["gratitude", "self-compassion", "low-mood"],
+  disengaging: ["anger", "boundaries", "relationships"],
+  maintenance: ["relationships", "gratitude", "motivation"],
+  "not knowing": ["anxiety", "faith", "calm"],
+  priorities: ["motivation", "relationships", "stress"],
+  overstimulation: ["overwhelm", "sleep", "stress"],
+  "productivity myths": ["motivation", "stress", "self-compassion"],
+  "emotions passing": ["low-mood", "anger", "grief"],
+  "pressure to perform": ["anxiety", "stress", "self-compassion"],
+  "old strategies": ["self-compassion", "grief", "motivation"],
+  closures: ["sleep", "grief", "calm"],
+  "ordinary life": ["faith", "gratitude", "calm"],
+  "fresh start": ["motivation", "self-compassion", "calm"],
+};
+
+const SUPPORT_DISCLAIMER =
+  "Support content to help you reflect — not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.";
+
+function formatTag(tag) {
+  return TAG_VOCAB.includes(tag) ? `#${tag}` : "";
+}
+
+function canonicalizeTag(tag) {
+  if (typeof tag !== "string") return "";
+  const trimmed = tag.trim().replace(/^#/, "");
+  const mapped = TAG_ALIASES[trimmed] || trimmed;
+  return TAG_VOCAB.includes(mapped) ? mapped : "";
+}
+
+function normalizeTags(raw) {
+  if (!Array.isArray(raw)) return [];
+  return [...new Set(raw.map(canonicalizeTag).filter(Boolean))];
+}
+
+function tagsForThemeLabel(label) {
+  if (typeof label !== "string" || !label.trim()) return [];
+  return normalizeTags(THEME_LABEL_TO_TAGS[label.trim()] || []);
+}
+
+function tagsForFeeling(feelingId) {
+  if (typeof feelingId !== "string" || !feelingId.trim()) return [];
+  const key = feelingId.trim();
+  if (FEELING_TO_TAGS[key]) return normalizeTags(FEELING_TO_TAGS[key]);
+  const asTag = canonicalizeTag(key);
+  return asTag ? [asTag] : [];
+}
+
+function readingTags(reading) {
+  const stored = normalizeTags(reading?.tags);
+  if (stored.length) return stored;
+  const hub = normalizeTags(reading?.problemTags || reading?.theme_tags);
+  if (hub.length) return hub;
+  return tagsForThemeLabel(reading?.theme_label);
+}
+
+function readingHasAnyTag(reading, tags) {
+  const wanted = normalizeTags(tags);
+  if (!wanted.length) return true;
+  const have = readingTags(reading);
+  return wanted.some((tag) => have.includes(tag));
+}
+
+function readingsForTags(pack, tags) {
+  const readings = Array.isArray(pack?.readings) ? pack.readings.slice() : [];
+  const wanted = normalizeTags(tags);
+  const filtered = wanted.length
+    ? readings.filter((item) => readingHasAnyTag(item, wanted))
+    : readings;
+  return filtered.sort((a, b) => Number(a.day) - Number(b.day));
+}
+
+function usedTags(pack) {
+  const counts = new Map(TAG_VOCAB.map((tag) => [tag, 0]));
+  const readings = Array.isArray(pack?.readings) ? pack.readings : [];
+  for (const item of readings) {
+    for (const tag of readingTags(item)) {
+      counts.set(tag, (counts.get(tag) || 0) + 1);
+    }
+  }
+  return TAG_VOCAB.filter((tag) => (counts.get(tag) || 0) > 0).map((tag) => ({
+    id: tag,
+    label: TAG_LABELS[tag],
+    chip: formatTag(tag),
+    count: counts.get(tag) || 0,
+  }));
+}
+
+function supportUnlockMessage(reading, readings, completedIds) {
+  const day = Number(reading?.day);
+  if (!reading?.id || !Number.isFinite(day)) {
+    return "You can read this as support. Marking Done still follows the morning pathway, one day at a time.";
+  }
+  if (completedIds.includes(reading.id)) {
+    return `Already marked Done on the morning pathway (Day ${day} of 100).`;
+  }
+  if (day <= 1) {
+    return "You can read this as support. Day 1 is unlocked on the morning Readings pathway — Done there counts toward the pack.";
+  }
+  const prevDone = readings.some(
+    (item) => Number(item.day) === day - 1 && completedIds.includes(item.id),
+  );
+  if (prevDone) {
+    return `You can read this as support. Day ${day} is unlocked on the morning pathway — Done there (or here) counts. Opening or listening is not Done.`;
+  }
+  return `You can read this as support. On the morning Readings path, Day ${day} unlocks after you mark Day ${day - 1} Done. Opening here does not skip that gate.`;
+}
+
+function applyControlledTags(reading) {
+  const tags = tagsForThemeLabel(reading?.theme_label);
+  return { ...reading, tags };
 }
 
 const MEDIA_EXT = /\.(mp4|webm)$/i;
@@ -7009,6 +7837,160 @@ function emotionVideoCta(item) {
   return "Open draft";
 }
 
+
+const VIDEO_DIRECTORY_LIMIT = 10;
+
+/** Thoughtful emotion tags for HeyGen V01–V12 drafts. */
+const CATALOG_VIDEO_TAGS = {
+  V01: ["motivation", "calm", "faith"],
+  V02: ["low-mood", "self-compassion", "motivation"],
+  V03: ["stress", "anxiety", "calm"],
+  V04: ["overwhelm", "anxiety", "calm"],
+  V05: ["anxiety", "stress", "calm"],
+  V06: ["low-mood", "anxiety", "anger", "self-compassion"],
+  V07: ["self-compassion", "low-mood", "anger", "boundaries"],
+  V08: ["anxiety", "worry", "calm"],
+  V09: ["motivation", "overwhelm", "stress"],
+  V10: ["low-mood", "self-compassion", "grief"],
+  V11: ["low-mood", "self-compassion", "worry"],
+  V12: ["low-mood", "sleep", "anxiety"],
+};
+
+const MADDY_VIDEO_TAGS = {
+  "maddy-welcome": ["motivation", "calm", "faith"],
+  "maddy-tip": ["motivation", "self-compassion", "calm"],
+  "maddy-timed-breath": ["anxiety", "stress", "sleep", "calm"],
+};
+
+const YT_ENTRY_TAGS = {
+  "YT-SLEEP-01": ["sleep", "calm", "self-compassion"],
+  "YT-SLEEP-02": ["sleep", "grief", "calm"],
+  "YT-SLEEP-03": ["sleep", "calm", "faith"],
+  "YT-SLEEP-04": ["sleep", "calm"],
+  "YT-SLEEP-05": ["sleep", "calm"],
+  "YT-ANX-01": ["anxiety", "worry", "calm"],
+  "YT-ANX-02": ["worry", "anxiety", "calm"],
+  "YT-ANX-03": ["anxiety", "calm"],
+  "YT-ANX-04": ["anxiety", "stress"],
+  "YT-ANX-05": ["anxiety", "self-compassion", "worry"],
+};
+
+const YT_CATEGORY_TAGS = {
+  sleep: ["sleep", "calm"],
+  anxiety: ["anxiety", "worry"],
+  stress: ["stress", "overwhelm"],
+  morning: ["motivation", "calm"],
+  "body-scan": ["calm", "stress"],
+  "self-compassion": ["self-compassion"],
+  breathing: ["calm", "anxiety"],
+  grief: ["grief", "low-mood"],
+  short: ["calm", "overwhelm"],
+  faith: ["faith", "calm"],
+};
+
+function itemTags(item) {
+  const stored = normalizeTags(item?.tags);
+  if (stored.length) return stored;
+  const hub = normalizeTags(item?.problemTags || item?.theme_tags);
+  if (hub.length) return hub;
+  if (item?.id && CATALOG_VIDEO_TAGS[item.id]) return normalizeTags(CATALOG_VIDEO_TAGS[item.id]);
+  if (item?.id && MADDY_VIDEO_TAGS[item.id]) return normalizeTags(MADDY_VIDEO_TAGS[item.id]);
+  if (item?.id && YT_ENTRY_TAGS[item.id]) return normalizeTags(YT_ENTRY_TAGS[item.id]);
+  if (item?.categoryId && YT_CATEGORY_TAGS[item.categoryId]) {
+    return normalizeTags(YT_CATEGORY_TAGS[item.categoryId]);
+  }
+  return [];
+}
+
+function applyItemTags(item, mapped) {
+  const tags = normalizeTags(mapped || itemTags(item));
+  return { ...item, tags };
+}
+
+function sourceRank(source) {
+  if (source === "maddy") return 30;
+  if (source === "youtube") return 16;
+  if (source === "catalog") return 8;
+  return 0;
+}
+
+function matchScore(tags, wanted) {
+  if (!wanted.length) return 1;
+  return wanted.reduce((sum, tag) => sum + (tags.includes(tag) ? 3 : 0), 0);
+}
+
+function flattenYoutubeEntries(catalog) {
+  const categories = Array.isArray(catalog?.categories) ? catalog.categories : [];
+  const out = [];
+  for (const category of categories) {
+    const entries = Array.isArray(category?.entries) ? category.entries : [];
+    for (const entry of entries) {
+      out.push({
+        ...entry,
+        categoryId: category.id,
+        categoryTitle: category.title,
+        tags: itemTags({ ...entry, categoryId: category.id }),
+      });
+    }
+  }
+  return out;
+}
+
+function collectFeelingMedia({
+  catalog,
+  maddy,
+  meditations,
+} = {}) {
+  const rows = [];
+  for (const video of Array.isArray(maddy?.videos) ? maddy.videos : []) {
+    rows.push({
+      ...video,
+      source: "maddy",
+      tags: itemTags(video),
+      title: video.cardTitle || video.title,
+    });
+  }
+  for (const video of Array.isArray(catalog?.videos) ? catalog.videos : []) {
+    rows.push({
+      ...video,
+      source: "catalog",
+      tags: itemTags(video),
+    });
+  }
+  for (const entry of flattenYoutubeEntries(meditations)) {
+    rows.push({
+      ...entry,
+      source: "youtube",
+    });
+  }
+  return rows;
+}
+
+function mediaForTags(sources, tags, limit = VIDEO_DIRECTORY_LIMIT) {
+  const wanted = normalizeTags(tags);
+  const rows = collectFeelingMedia(sources).filter((item) => {
+    if (!wanted.length) return true;
+    return readingHasAnyTag(item, wanted);
+  });
+  rows.sort((a, b) => {
+    const sb = matchScore(itemTags(b), wanted) + sourceRank(b.source);
+    const sa = matchScore(itemTags(a), wanted) + sourceRank(a.source);
+    if (sb !== sa) return sb - sa;
+    return String(a.id).localeCompare(String(b.id));
+  });
+  return rows.slice(0, Math.max(0, Number(limit) || VIDEO_DIRECTORY_LIMIT));
+}
+
+function mediaForFeeling(sources, feelingId, limit = VIDEO_DIRECTORY_LIMIT) {
+  return mediaForTags(sources, tagsForFeeling(feelingId), limit);
+}
+
+function mediaSourceLabel(item) {
+  if (item?.source === "maddy") return "Watch with Maddy";
+  if (item?.source === "youtube") return "YouTube meditation";
+  return "MindPal draft";
+}
+
 const MINDPAL_PAGES_URL = "https://drwho9.github.io/mindpal/";
 const MINDPAL_SHARE_TITLE = "MindPal";
 const MINDPAL_SHARE_TEXT = "A little space for your thoughts.";
@@ -7466,7 +8448,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -8049,9 +9031,32 @@ function tagsForThemeLabel(label) {
   return normalizeProblemTags(THEME_LABEL_TO_TAGS[label.trim()] || []);
 }
 
+const FEELING_TO_PROBLEM = {
+  sleep: "sleep",
+  anxiety: "anxiety",
+  worry: "anxiety",
+  stress: "stress",
+  overwhelm: "stress",
+  anger: "stress",
+  "low-mood": "mood",
+  mood: "mood",
+  grief: "mood",
+  "self-compassion": "mood",
+  motivation: "motivation",
+  faith: "faith",
+  gratitude: "faith",
+};
+
+function feelingTagsToProblemTags(raw) {
+  if (!Array.isArray(raw)) return [];
+  return normalizeProblemTags(raw.map((tag) => FEELING_TO_PROBLEM[tag] || tag));
+}
+
 function readingProblemTags(reading) {
   const fromItem = normalizeProblemTags(reading?.theme_tags || reading?.problemTags);
   if (fromItem.length) return fromItem;
+  const fromFeeling = feelingTagsToProblemTags(reading?.tags);
+  if (fromFeeling.length) return fromFeeling;
   return tagsForThemeLabel(reading?.theme_label);
 }
 
@@ -8080,6 +9085,8 @@ function readingsForProblem(pack, problemId, limit = 6) {
 function videoProblemTags(video) {
   const direct = normalizeProblemTags(video?.problemTags || video?.theme_tags);
   if (direct.length) return direct;
+  const fromFeeling = feelingTagsToProblemTags(video?.tags);
+  if (fromFeeling.length) return fromFeeling;
   const blob = [video?.id, video?.title, video?.category, video?.outline, video?.description]
     .filter((part) => typeof part === "string")
     .join(" ")
@@ -8152,7 +9159,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,normalizeProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -8227,16 +9234,148 @@ function mpMaddyListenButtons(){
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>n(`welcome`),children:e===`welcome`?`Playing welcome…`:`Play Maddy’s welcome`}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>n(`tip`),children:e===`tip`?`Playing tip…`:`Play Maddy’s tip`})
   ]});
+}function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings for this feeling`,showChips:r=!0}={}){
+  let i=mpReadings.tagsForFeeling(t),a=e&&mpReadings.TAG_VOCAB.includes(e)?e:``,[o,s]=(0,_.useState)(a),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(()=>mpReadings.loadProgress());
+  (0,_.useEffect)(()=>{d(mpReadings.loadProgress())},[]);
+  (0,_.useEffect)(()=>{s(a||``)},[a]);
+  let f=mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1;
+  function y(){
+    if(!v||!g)return;
+    let e=mpReadings.markReadingDone(u,g,f);
+    mpReadings.saveProgress(e),d(e);
+  }
+  return(0,A.jsxs)(`section`,{className:`mp-support-readings`,"aria-label":n,children:[
+    (0,A.jsx)(`h2`,{children:n}),
+    (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
+    r?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`muted`,children:`Browse by tag. Stored without # — shown as hashtags.`}),
+      (0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse readings by tag`,children:p.map(e=>{
+        let t=o===e.id||!o&&i.includes(e.id);
+        return(0,A.jsxs)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${t?` is-active`:``}`,"aria-pressed":t,onClick:()=>{s(n=>n===e.id?``:e.id),l(null)},children:[e.chip,` · `,e.count]},e.id);
+      })})
+    ]}):null,
+    g?(0,A.jsxs)(`article`,{className:`mp-support-article`,"aria-label":g.title,children:[
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>l(null),children:`← Back to readings list`}),
+      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[`SUPPORT READING · DAY `,g.day,` · `,g.theme_label]}),
+      (0,A.jsx)(`h3`,{children:g.title}),
+      g.body.split(`
+
+`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+      (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,g.practice]}),
+      (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage(g,f,u.completedIds)}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l(null),children:`Back to list`})
+      ]})
+    ]}):(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`muted`,children:m.length?`${h.length} matching Pack A reading${h.length===1?``:`s`}.`:`Choose a feeling or a tag to see matching readings.`}),
+      h.length?(0,A.jsx)(`ul`,{className:`mp-support-list`,children:h.map(e=>{
+        let t=mpReadings.isDayUnlocked(f,u.completedIds,e.day),n=u.completedIds.includes(e.id);
+        return(0,A.jsxs)(`li`,{children:[
+          (0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row`,onClick:()=>l(e.id),children:[
+            (0,A.jsxs)(`span`,{className:`mp-support-row-meta`,children:[`Day `,e.day,n?` · Done`:t?` · Unlocked`:` · Locked on morning path`]}),
+            (0,A.jsx)(`strong`,{children:e.title}),
+            (0,A.jsx)(`span`,{className:`mp-support-row-tags`,children:mpReadings.readingTags(e).map(mpReadings.formatTag).join(` `)})
+          ]})
+        ]},e.id);
+      })}):(0,A.jsx)(`p`,{children:`No Pack A readings match this tag yet.`})
+    ]})
+  ]});
+}
+function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for this feeling`,showChips:r=!0,onSpeakers:i}={}){
+  let a=mpReadings.tagsForFeeling(t),o=mpReadings.canonicalizeTag(e),[s,c]=(0,_.useState)(o),[l,u]=(0,_.useState)(null);
+  (0,_.useEffect)(()=>{c(o||``)},[o]);
+  let d=s?[s]:a,f={catalog:typeof mpVideoCatalog<`u`?mpVideoCatalog:null,maddy:typeof mpMaddy<`u`?mpMaddy:null,meditations:typeof mpMeditationCatalog<`u`?mpMeditationCatalog:null},p=mpReadings.mediaForTags(f,d,mpReadings.VIDEO_DIRECTORY_LIMIT),m=l&&p.find(e=>e.id===l)||null;
+  return(0,A.jsxs)(`section`,{className:`mp-support-videos`,"aria-label":n,children:[
+    (0,A.jsx)(`h2`,{children:n}),
+    (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`A short tagged set for this feeling — not the speaker directory.`}),
+    r?(0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse videos by tag`,children:mpReadings.TAG_VOCAB.map(e=>{
+      let t=s===e||!s&&a.includes(e);
+      return(0,A.jsx)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${t?` is-active`:``}`,"aria-pressed":t,onClick:()=>{c(t=>t===e?``:e),u(null)},children:mpReadings.formatTag(e)},e);
+    })}):null,
+    (0,A.jsx)(`p`,{className:`muted`,children:d.length?`Top ${p.length} tagged video${p.length===1?``:`s`} for this feeling.`:`Choose a feeling or a tag to see matching videos.`}),
+    p.length?(0,A.jsx)(`ul`,{className:`mp-support-list mp-video-list`,children:p.map(e=>{
+      let t=mpReadings.mediaSourceLabel(e),n=e.source===`youtube`?mpReadings.meditationOpenUrl(e):null;
+      return(0,A.jsxs)(`li`,{className:`mp-video-row`,children:[
+        (0,A.jsxs)(`div`,{className:`mp-support-row-meta`,children:[t,` · `,mpReadings.itemTags(e).map(mpReadings.formatTag).join(` `)]}),
+        (0,A.jsx)(`h3`,{children:e.title}),
+        e.description||e.outline?(0,A.jsx)(`p`,{children:e.description||e.outline}):null,
+        e.source===`maddy`?(0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:typeof Ge==`function`?Ge(e.src):e.src,"aria-label":`${e.title} with Maddy`}):null,
+        (0,A.jsxs)(`div`,{className:`button-row`,children:[
+          e.source===`catalog`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>u(e.id),children:mpReadings.videoCardCta(e)}):null,
+          n?(0,A.jsx)(`a`,{className:`secondary`,href:n,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
+        ]})
+      ]},e.id);
+    })}):(0,A.jsx)(`p`,{children:`No tagged videos for this feeling yet.`}),
+    i?(0,A.jsx)(`p`,{className:`muted mp-speakers-secondary`,children:(0,A.jsxs)(`button`,{className:`text-button`,type:`button`,onClick:i,children:[`Browse signed coaches (optional) `]}) }):null,
+    m&&typeof gi==`function`?(0,A.jsx)(gi,{video:m,onClose:()=>u(null),onHelp:()=>u(null)}):null
+  ]});
+}
+function mpFeelingDirectory({feelingId:e=``,initialTag:t=``,onSpeakers:n}={}){
+  return(0,A.jsxs)(`div`,{className:`mp-feeling-directory`,children:[
+    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:`Readings for this feeling`}),
+    (0,A.jsx)(mpSupportVideos,{feelingId:e,initialTag:t,heading:`Videos for this feeling`,onSpeakers:n})
+  ]});
+}
+function mpExploreFeelingChoice({onSpeakers:e}={}){
+  let[t,n]=(0,_.useState)(``);
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-explore-feeling`,"aria-label":`Explore an emotion or problem`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEELINGS · PROBLEMS`}),
+    (0,A.jsx)(`h2`,{children:`Explore an emotion or problem`}),
+    (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse the tag directory. This is not an assessment and is not saved or sent anywhere.`}),
+    (0,A.jsx)(`label`,{htmlFor:`mp-explore-feeling`,children:`How would you describe this moment? · optional`}),
+    (0,A.jsxs)(`select`,{id:`mp-explore-feeling`,value:t,onChange:e=>n(e.target.value),children:[
+      (0,A.jsx)(`option`,{value:``,children:`Browse without choosing`}),
+      (0,A.jsx)(`option`,{value:`sad`,children:`Sad or low`}),
+      (0,A.jsx)(`option`,{value:`anxious`,children:`Anxious or worried`}),
+      (0,A.jsx)(`option`,{value:`angry`,children:`Angry or frustrated`}),
+      (0,A.jsx)(`option`,{value:`overwhelmed`,children:`Overwhelmed or stressed`}),
+      (0,A.jsx)(`option`,{value:`lonely`,children:`Lonely or disconnected`}),
+      (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
+      (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
+      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`})
+    ]}),
+    (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
+  ]});
+}
+function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
+  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`]];
+  return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
+    (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
+    (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),
+    (0,A.jsx)(`label`,{htmlFor:`feeling-choice`,children:`How would you describe this moment? · optional`}),
+    (0,A.jsxs)(`select`,{ref:u,id:`feeling-choice`,value:a,onChange:e=>{o(e.target.value),c(``)},children:[
+      (0,A.jsx)(`option`,{value:``,children:`Browse without choosing`}),
+      d.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e)),
+      f.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e))
+    ]}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`read`),children:`Read something supportive`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`video`),children:`Videos`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>e(),children:`Open my diary`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>t(),children:`Try a short practice`})
+    ]}),
+    (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation. “One steady detail” is an optional practice you can skip or stop; it is offered to everyone here, not selected as a treatment for your feeling.`}),
+    s&&(0,A.jsxs)(`div`,{children:[
+      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?`Readings for this feeling`:`Videos for this feeling`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
+      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(MpEmotionVideos,{headingRef:l,emotion:a,onBrowseSpeakers:i||r}),
+        (0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
+      ]})
+    ]}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i||r,children:mpReadings.BROWSE_SPEAKERS_LABEL}),
+      i?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i,children:`Browse signed coaches (optional)`}):null,
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{o(``),c(``),n()},children:`Stop and return to Today`})
+    ]}),
+    (0,A.jsx)(`p`,{children:`If this makes things harder, stop. You can take a break or seek human support. “Need support?” lists human-support options independently of this activity. In immediate danger in Australia, call 000. MindPal does not monitor you or contact help for you.`})
+  ]});
 }/*mp-readings-runtime-end*//*mp-bt-start*/function bt({mode:e=`random`,tag:t}){
   if(t){
-    let n=(0,_.useMemo)(()=>_t(t),[t]),r=(0,_.useMemo)(()=>vt(t),[t]),[i,a]=(0,_.useState)(r),[o,s]=(0,_.useState)(!1),[c,l]=(0,_.useState)(``),{listening:u,listenStatus:d,toggle:f,stop:p}=mt();
-    return(0,A.jsxs)(`section`,{className:`activity-detail`,"aria-label":`Daily reading`,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[`DAILY READING · DAY `,i.day,` · ABOUT `,i.minutes,` MIN · `,n.length,` IN `,`TOPIC`,gt?` · ${gt}`:``]}),(0,A.jsx)(`h3`,{children:i.title}),i.body.split(`
-
-`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,i.practice]}),(0,A.jsx)(`p`,{className:`muted`,children:`Original MindPal reading · supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>f({id:i.id,text:yt(i)}),children:u?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(yt(i)+`
-
-— MindPal daily reading`);l(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>l(``),2e3)},children:`Copy`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await pt(yt(i)+`
-
-— MindPal daily reading`,i.title||`MindPal reading`);e!==`cancelled`&&(l(e===`shared`?`Shared.`:e===`copied`?`Copied for sharing.`:`Could not share.`),setTimeout(()=>l(``),2e3))},children:`Share`}),(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{s(!0)},children:o?`Marked for today`:`I read this`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{p(),ut(),s(!1),l(``),a(vt(t,i.id))},children:`Another random reading`})]}),c||d?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:c||d}):null,o&&(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:`Nice work. You can leave this here or draw another reading.`}),null]});
+    return(0,A.jsx)(mpSupportReadings,{initialTag:t,heading:`Readings for this feeling`,showChips:!1});
   }
   let[n,r]=(0,_.useState)(()=>mpReadings.loadProgress()),i=mpReadings.packAComplete(n),a=mpReadings.orderedReadings(i?mpPackB:mpPackA),o=i?mpPackB:mpPackA,[s,c]=(0,_.useState)(null),[l,u]=(0,_.useState)(i&&!n.packBBannerSeen),[d,f]=(0,_.useState)(!1),[p,m]=(0,_.useState)(``),{listening:h,listenStatus:g,toggle:v,stop:y}=mt();
   (0,_.useEffect)(()=>{r(mpReadings.loadProgress())},[]);
@@ -8488,7 +9627,7 @@ function mpProblemHubList({onOpen:e,variant:t=`explore`}){
     ]},n.id))})
   ]});
 }
-function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i}){
+function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onSpeakers:p}){
   let[a,o]=(0,_.useState)(()=>mpProblems.selectedProblemId());
   (0,_.useEffect)(()=>{function e(){o(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
   let s=mpProblems.findProblem(mpProblemHubs,a);
@@ -8496,9 +9635,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{o(e)}})
   ]});
-  let c=mpProblems.readingsForProblem(mpPackA,s.id),l=mpProblems.maddyForProblem(mpMaddy,s.id),u=mpProblems.videosForProblem(mpVideoCatalog,s.id);
-  let d=(mpMeditationCatalog&&mpReadings.meditationCategories(mpMeditationCatalog)||[]).find(e=>e.id===s.meditationCategoryId);
-  let f=d?mpReadings.entriesForCategory(d).filter(e=>mpReadings.meditationOpenUrl(e)).slice(0,3):[];
+  let c=mpProblems.readingsForProblem(mpPackA,s.id);
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":s.title,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`PROBLEM HUB`}),
     (0,A.jsx)(`h1`,{children:s.title}),
@@ -8513,35 +9650,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
       ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
     ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Videos`}),
-      l.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
-        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:l.map(e=>(0,A.jsxs)(`article`,{className:`maddy-video-card`,children:[
-          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
-          (0,A.jsx)(`p`,{children:e.description}),
-          (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:Ge(e.src),"aria-label":`${e.cardTitle||e.title} with Maddy`})
-        ]},e.id))})
-      ]}):null,
-      u.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Open-draft videos`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-videos`,children:u.map(t=>{
-          let n=mpReadings.videoCardCta?mpReadings.videoCardCta(t):`Open draft`;
-          return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary`,onClick:()=>e&&e(t.id),children:[(0,A.jsx)(`strong`,{children:t.title}),(0,A.jsx)(`span`,{children:n})]})},t.id);
-        })})
-      ]}):null,
-      f.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:d.title||`Voice-guided on YouTube`}),
-        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:f.map(e=>{
-          let t=mpReadings.meditationOpenUrl(e);
-          return(0,A.jsxs)(`li`,{children:[
-            (0,A.jsx)(`strong`,{children:e.title}),
-            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
-          ]},e.id);
-        })})
-      ]}):(s.meditationCategoryId===`sleep`||s.meditationCategoryId===`anxiety`)?(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`}):null
-    ]}),
+    (0,A.jsx)(mpSupportVideos,{initialTag:s.id,heading:`Videos for this feeling`,showChips:!1,onSpeakers:p}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
       (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
@@ -8620,7 +9729,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
     ]},e.id))
   ]});
 }
-function Lr(e=new Date){let t=e.getHours();return t<12?`morning`:t<18?`afternoon`:`evening`}var zr=[{id:`relationships`,label:`Relationships`,teaser:`Set a relationship goal, work through a difficult message or conversation, or read something short on connection.`,intro:`Everyday friction with a partner, family member or friend is common. These practices help you notice what happened, choose a response and set a gentle weekly goal. They do not replace couples counselling, mediation or support services for serious conflict or an unsafe relationship.`,status:`ready`,readingTag:`relationships`,journalPrompt:`Something on my mind about a relationship right now…`},{id:`stress`,label:`Stress`,teaser:`Coming soon. MindPal has readings tagged for stress, but no reviewed stress-specific practice to pair with them yet.`,intro:``,status:`comingSoon`,readingTag:`stress`,journalPrompt:``},{id:`anger`,label:`Anger`,teaser:`Coming soon. MindPal does not yet have reviewed anger-specific practices or readings to offer here.`,intro:``,status:`comingSoon`,journalPrompt:``}];function Br(e){return zr.find(t=>t.id===e)??null}var Vr=JSON.parse(`[{"id":"E01","title":"One steady detail","durationSeconds":60,"durationLabel":"30 sec–2 min","aim":"offer a brief external attention choice during everyday overwhelm.","steps":["You can pause here, or leave this exercise at any time.","If it feels okay, notice one ordinary detail near you. It might be the edge of a table, a colour, a quiet sound, or the feeling of the surface supporting you. Choose something neutral. You do not need to close your eyes.","Describe just one feature to yourself. Perhaps “a straight edge” or “a soft surface”. There is no correct detail to find.","If paying attention this way feels uncomfortable, stop. You can look elsewhere, change position if comfortable, or choose support from a person.","You can finish now. If you want another moment, notice a second neutral detail. You do not need to work through thoughts or feelings in this exercise.","What would be manageable next: resting, one small practical action, or contacting someone you trust? You do not have to choose yet. The “Help me now” section lists options for urgent human support. MindPal does not monitor you or contact help for you."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: offer a brief external attention choice during everyday overwhelm. Duration: 30 seconds–2 minutes. Candidate grounding foundation: [WHO stress guide overview](https://www.who.int/thailand/activities/doing-what-matters-in-times-of-stress) (S03). This short sensory script is untested. Limits: not emergency treatment; sensory attention can be uncomfortable. Alternative: stop, rest or human support; no need to use a particular sense.","sourceIds":["S03"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"8d63f7578006107848e8138a8a9a934306602db286c4a17dc98872c347819422"},{"id":"E02","title":"Let breathing stay comfortable","durationSeconds":120,"durationLabel":"1–2 min","aim":"give a choice of gentle attention to ordinary breathing.","steps":["Breathing exercises are optional. You can choose a non-breathing activity instead.","Find a position that is comfortable enough for you. Keep your breathing at its ordinary depth. There is no need to take a big breath or hold it.","If it feels comfortable, notice one breath coming and going at your own pace.","You do not need to slow your breathing or match a count. If focusing on it brings dizziness, a sense of not getting enough air, pain, discomfort or more panic, stop the exercise. You can notice a neutral detail around you using a comfortable sense, or finish.","If you want to continue, notice another ordinary breath. Let your shoulders be as they are; you do not have to make yourself relax.","You can finish now, whether or not anything feels different. Seek medical advice for new, persistent or concerning physical symptoms. For severe difficulty breathing or another medical emergency in Australia, call triple zero. This exercise cannot tell you what is causing a symptom."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: give a choice of gentle attention to ordinary breathing. Duration: about 1–2 minutes; 30-second alternative is E01, not forced accelerated breathing. Basis: [NHS gentle breathing](https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/) (S02). An original ordinary-breath attention exercise informed by the principle of comfortable, unforced breathing. It is not the NHS breathing protocol, and its effects have not been established. Limits: no holds, rapid breathing, forced depth or fixed respiratory target. Stop with dizziness, air hunger, pain, panic or discomfort. Concerning/new physical symptoms need medical assessment, not an anxiety label.","sourceIds":["S02"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"22844573b8391d0de52c137f786837223667093f811294189c6f15aece0d856e"},{"id":"E03","title":"A word, or “not sure”","durationSeconds":120,"durationLabel":"1–2 min","aim":"support emotional description without diagnosis.","steps":["You do not need a perfect word for how you feel.","If you would like, choose a word that is close enough: worried, sad, frustrated, lonely, tired, mixed, or not sure. You can use your own word, or choose none.","Try a sentence such as “I notice some worry” or “I'm not sure what this is”. A feeling is not a diagnosis, and you do not have to explain why it is here.","Would anything practical help a little right now? Perhaps a quieter space, rest, or speaking with a safe person. Choose only something that fits your situation.","If naming feelings makes things harder, leave the words aside. You could notice an ordinary object nearby, or finish this activity.","You may keep your word private. Nothing needs to be saved or sent to AI. You can end here with no further reflection."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: support emotional description without diagnosis. Duration: 1–2 minutes. Evidence status: candidate emotional-literacy technique; clinical appraisal of this format pending. Limits: do not label a user's emotion automatically or invite trauma retelling. Alternative: name a practical need or skip. No symptom questionnaire/scoring.","sourceIds":[],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"71b42e745a5e45f96a227992f67c8ce6226344f2f3fc1c43d96c33ad7b03cbd3"},{"id":"E04","title":"A kinder, or simply neutral, sentence","durationSeconds":120,"durationLabel":"1–2 min","aim":"reduce harsh self-directed language without forced positivity.","steps":["You do not have to feel positive about a difficult day.","If you notice a harsh sentence about yourself, you may leave it alone. Or try a sentence that puts less pressure on you.","“This is difficult.”","“I can take one thing at a time.”","“I may need some support.”","Choose words that feel believable, or use your own. If kind words feel uncomfortable, a neutral sentence such as ‘I am here, taking a moment’ is enough. If this makes things harder, stop or choose a different activity.","You are not required to excuse harmful behaviour from anyone. If someone is hurting or controlling you, support and safety matter.","Is there one practical way to ease the next few minutes? You might lower a demand, take a rest if possible, or ask for help. You do not need to complete an action to finish this exercise."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: reduce harsh self-directed language without forced positivity. Duration: 1–2 minutes. Candidate self-compassion foundation; evidence review for exact method/digital delivery pending, no branded exercise copied. Limits: warmth/self-compassion can feel unsafe or false; neutral factual language is valid. Not a response to abuse that shifts responsibility to the user.","sourceIds":[],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"c02f7bf1cc07f12c54a001f94cf24a2a45f7f26b61d3450c1199d2449aa9d05f"},{"id":"E05","title":"One manageable action","durationSeconds":120,"durationLabel":"30 sec–3 min","aim":"offer a small chosen activity appropriate to energy and circumstances.","steps":["Think about the next few minutes, rather than the whole day.","Is there one small action that might be useful or meaningful? It could be putting one item where you need it, opening a curtain if comfortable, choosing a piece of music, or preparing a question for someone who supports you. Resting can also be a reasonable choice.","Make the action smaller if that helps. You can choose to prepare for it without doing it now.","If pain, fatigue or your surroundings make the action unsuitable, change it or stop. You do not have to push through symptoms. New or severe symptoms may need medical assessment.","There is no score for finishing. You can ask yourself, “Was that manageable?” The answer can be no. That information can help you choose differently next time, without judging yourself."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: offer a small chosen activity appropriate to energy and circumstances. Duration: 30 seconds–3 minutes. Candidate behavioural-activation foundation: [NICE NG222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) (S01); guided treatment evidence does not validate this isolated activity. Limits: not a treatment schedule; rest and requesting help are acceptable. Never push through new/severe pain or exhaustion.","sourceIds":["S01"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"aa9c4d31d2e2e633f727931309c9644e495bb1abedb535eda24e9b5e00df6988"},{"id":"E06","title":"A small choice that matters to you","durationSeconds":180,"durationLabel":"2–3 min","aim":"link a freely chosen quality to a possible next action.","steps":["You can leave this question for another day if it feels too much.","Is there a quality you would like to bring to one small part of today? It might be care, curiosity, honesty, rest, patience, or something else that matters to you. You do not need to choose from this list.","What could that quality look like in a very small action? Care might mean asking for help. Honesty might mean saying you need a break. Curiosity might mean noticing something ordinary.","Choose an action only if it is safe and manageable. A value does not require you to tolerate mistreatment or take on more than you can manage.","You can act now, make a private note, or do nothing further. The purpose is to make room for your choice, not to judge whether you have lived the right way today."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: link a freely chosen quality to a possible next action. Duration: 2–3 minutes. Candidate ACT-informed values foundation: S03; script itself untested. Limits: values cannot be prescribed, used as productivity pressure or to justify unsafe relationships. Alternative: skip abstract reflection and choose a practical comfort or human support.","sourceIds":["S03"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"87e2fe633a150117dba9d18e0b4c7cc7d9751ea608591beee1f2f1eff2c92b81"}]`);function Hr({initialTopicId:e,onExercise:t,onDiary:n,onHelp:r,onCompanion:i}){let[a,o]=(0,_.useState)(e??`hub`),[s,c]=(0,_.useState)(!1),[l,u]=(0,_.useState)(null),[d,f]=(0,_.useState)(!1),[p,m]=(0,_.useState)(!1),[h,g]=(0,_.useState)(``),v=(0,_.useRef)(null);(0,_.useEffect)(()=>{v.current?.focus()},[a]);let y=a===`hub`||a===`all`?null:Br(a),b=y?.status===`ready`?y:null;function x(e){u(e),g(``),c(!0)}return(0,A.jsxs)(A.Fragment,{children:[a===`hub`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`FOCUS`}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:`What are you dealing with?`}),(0,A.jsx)(`p`,{className:`lede`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsx)(mpMoreStepsCard,{}),(0,A.jsx)(`div`,{className:`three-grid topic-grid`,children:zr.map(e=>(0,A.jsxs)(`button`,{className:`feature-card topic-card${e.status===`comingSoon`?` topic-disabled`:``}`,disabled:e.status===`comingSoon`,"aria-disabled":e.status===`comingSoon`,onClick:()=>o(e.id),children:[(0,A.jsx)(`span`,{className:`card-type`,children:e.status===`comingSoon`?`COMING SOON`:`TOPIC`}),(0,A.jsx)(`h3`,{children:e.label}),(0,A.jsx)(`p`,{children:e.teaser}),e.status===`ready`&&(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open `,e.label,` `,(0,A.jsx)(nn,{size:18})]})]},e.id))}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`all`),children:`Browse all practices`})]}),a===`all`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`hub`),children:`← Back to Focus`}),(0,A.jsx)(`p`,{className:`eyebrow`,children:`FOCUS · ALL PRACTICES`}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:`Browse all practices`}),(0,A.jsx)(`p`,{className:`lede`,children:`Six short self-guided exercises, in one place. Choose what fits; leave what doesn’t.`}),(0,A.jsx)(`div`,{className:`three-grid`,children:Vr.map(e=>(0,A.jsxs)(`button`,{className:`exercise-card`,onClick:()=>t(e.id),children:[(0,A.jsxs)(`span`,{className:`card-type`,children:[e.durationLabel,` · DRAFT PREVIEW`]}),(0,A.jsx)(`h3`,{children:e.title}),(0,A.jsx)(`p`,{children:e.aim}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Explore this exercise `,(0,A.jsx)(B,{size:17})]})]},e.id))})]}),b&&(0,A.jsxs)(`div`,{className:`focus-topic`,children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`hub`),children:`← Back to Focus`}),(0,A.jsxs)(`p`,{className:`eyebrow`,children:[`FOCUS · `,b.label.toUpperCase()]}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:b.label}),(0,A.jsx)(`p`,{className:`lede`,children:b.intro}),(0,A.jsx)(`p`,{className:`muted`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} practices`,children:[(0,A.jsx)(`h2`,{children:`Tagged practices`}),b.id===`relationships`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Kn,{onStart:()=>{g(``),f(!0)}}),(0,A.jsx)(Mn,{onStart:()=>x({sceneId:`message`,quick:!1})})]}):(0,A.jsxs)(`div`,{className:`practice-targets`,children:[(0,A.jsxs)(`button`,{onClick:()=>{g(``),m(!0)},children:[(0,A.jsx)(`strong`,{children:`I keep reaching for my phone`}),(0,A.jsx)(`span`,{children:`Try a quiet pause. Notice an urge without having to follow it.`}),(0,A.jsx)(`em`,{children:`Start a 15–60 second attention practice →`})]}),(0,A.jsxs)(`button`,{onClick:()=>t(`E01`),children:[(0,A.jsx)(`strong`,{children:`One steady detail`}),(0,A.jsx)(`span`,{children:`A brief external-attention pause for everyday overwhelm.`}),(0,A.jsx)(`em`,{children:`Start a 30 second–2 minute exercise →`})]}),(0,A.jsxs)(`button`,{onClick:()=>t(`E05`),children:[(0,A.jsx)(`strong`,{children:`One manageable action`}),(0,A.jsx)(`span`,{children:`Choose one small, doable next step instead of the whole list.`}),(0,A.jsx)(`em`,{children:`Start a 30 second–3 minute exercise →`})]}),(0,A.jsxs)(`button`,{onClick:()=>x({sceneId:`task-start`,quick:!0}),children:[(0,A.jsx)(`strong`,{children:`A task feels too big`}),(0,A.jsx)(`span`,{children:`Separate the task from the judgement and rehearse a manageable start.`}),(0,A.jsx)(`em`,{children:`Start a two-step thought exercise →`})]})]})]}),b.id===`relationships`&&(0,A.jsx)(Dr,{}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} readings`,children:[(0,A.jsx)(`h2`,{children:`Readings`}),(0,A.jsx)(bt,{tag:b.readingTag},b.id)]}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} videos`,children:[(0,A.jsx)(`h2`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Video tagging by topic is not built yet — no MindPal video is claimed to match this topic. You can browse the full coach and script library from Explore.`})]}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} journal prompt`,children:[(0,A.jsx)(`h2`,{children:`Write about it`}),(0,A.jsx)(`p`,{children:b.journalPrompt}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>n(b.journalPrompt),children:[`Open a private note `,(0,A.jsx)(rn,{size:17})]})]}),(0,A.jsxs)(`section`,{className:`simple-panel`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`COMPANION · DEMO`}),(0,A.jsx)(`p`,{children:`A deterministic practice-guide demo is available from here. It is not live AI and does not assess this topic; a safety-reviewed live companion ships as a separate, later release.`}),(0,A.jsxs)(`button`,{className:`secondary`,onClick:i,children:[`Try the companion demo `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})]}),p&&(0,A.jsx)(Rn,{onClose:()=>{m(!1),g(`Quiet practice closed. Choose what deserves your attention next.`)}}),d&&(0,A.jsx)(qn,{onHelp:r,onClose:e=>{f(!1),g(e===`finished`?`Conversation practice finished. Your choices have been cleared.`:`Conversation practice stopped. Your choices have been cleared.`)}}),s&&(0,A.jsx)(Nn,{initialSceneId:l?.sceneId,initialQuick:l?.quick,startImmediately:l!==null,onHelp:r,onClose:e=>{c(!1),g(e===`finished`?`Look again is complete. Your practice choices have been cleared.`:`Look again stopped. Your practice choices have been cleared.`)}}),(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,"aria-atomic":`true`,children:h})]})}var Ur=`mindpal.guestName.v1`;function Wr(){try{let e=localStorage.getItem(Ur);return typeof e==`string`?e:``}catch{return``}}function Gr(e){let t=e.trim();try{return t?localStorage.setItem(Ur,t):localStorage.removeItem(Ur),!0}catch{return!1}}var Kr=`mindpal.ageGateAdult.v1`;function qr(){try{return localStorage.getItem(Kr)===`1`}catch{return!1}}function Jr(e){try{return e?localStorage.setItem(Kr,`1`):localStorage.removeItem(Kr),!0}catch{return!1}}var Yr=[{id:`H01`,title:`Vitamin B12`,point:`Vitamin B12 supports blood and nervous-system health. Deficiency can affect energy and neurological function. Associations with depression do not establish the cause of an individual's low mood. Animal foods and appropriately fortified foods are sources.`,boundary:`Mood alone cannot establish a deficiency. You can ask whether assessment is appropriate; this card does not recommend a dose.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/`]},{id:`H02`,title:`Iron`,point:`Iron helps transport oxygen. Iron-deficiency anaemia can cause fatigue and concentration difficulties. Sources include meat, legumes and fortified foods.`,boundary:`Do not start iron just on the basis of these symptoms. Excess iron can be harmful. A clinician should assess the cause and appropriate management.`,sources:[`https://ods.od.nih.gov/factsheets/Iron-Consumer/`]},{id:`H03`,title:`Vitamin B6`,point:`Vitamin B6 participates in neurotransmitter biosynthesis and other body functions.`,boundary:`This does not mean low mood is caused by low B6 or dopamine. Supplementary B6 can cause peripheral nerve injury, including through combined products. No B-complex or dose is recommended here.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/`,`https://www.tga.gov.au/news/safety-updates/peripheral-neuropathy-supplementary-vitamin-b6-pyridoxine`]},{id:`H04`,title:`Folate / B9`,point:`Folate supports cell division and blood-cell formation. Leafy vegetables, beans and fortified foods are sources.`,boundary:`Avoid unsupervised high-dose folic acid. It can conceal the anaemia associated with B12 deficiency while neurological harm continues. Ask a qualified health professional about your circumstances.`,sources:[`https://ods.od.nih.gov/factsheets/Folate-Consumer/`]},{id:`H05`,title:`Omega-3 fats`,point:`EPA and DHA are fatty acids, not vitamins. Fish oil is one source, not a product everyone needs to buy.`,boundary:`Evidence for omega-3 supplements treating depression remains uncertain. They are not a replacement for care or a dopamine correction.`,sources:[`https://www.nccih.nih.gov/health/omega3-supplements-what-you-need-to-know`]},{id:`H06`,title:`Vitamin D`,point:`Vitamin D has established roles in bone and muscle health.`,boundary:`Observational links with low mood do not establish that supplements treat depression. Routine testing or high doses are not recommended for everyone by this app.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminD-Consumer/`]},{id:`H07`,title:`Something to discuss: acid-reducing medicines`,point:`Some acid-reducing medicines used for reflux, including proton-pump inhibitors, can reduce absorption of vitamin B12 from food. Taking one does not automatically mean you have a deficiency.`,boundary:`If you use one long term, you can ask your doctor or pharmacist whether a B12 review is relevant to you. Keep taking prescribed medicines as directed unless your prescriber advises otherwise. Selecting this topic does not tell MindPal that you have reflux or take a medicine.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/`]}].map(e=>({...e,version:`1.0`,clinicalReview:`DRAFT`,reviewedAt:null})),Xr=[`Could a physical condition, my diet or my medicines be contributing to how I feel?`,`Would any tests be appropriate given my symptoms and history?`,`Is there anything in this report that needs follow-up?`,`If a deficiency is confirmed, what could be causing it and what is the plan?`,`Are my current supplements appropriate with my medicines?`],Zr=`You can keep a copy of a report and prepare questions. MindPal does not check these files for abnormal or urgent results. Arrange review with the clinician who requested the test.`;function Qr(e,t){let n=URL.createObjectURL(new Blob([e],{type:`text/plain;charset=utf-8`})),r=document.createElement(`a`);r.href=n,r.download=t,r.click(),setTimeout(()=>URL.revokeObjectURL(n),1e3)}function $r({active:e,onHelp:t}){let[n,r]=(0,_.useState)(`all`),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)([]),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(``),[f,p]=(0,_.useState)(!1),[m,h]=(0,_.useState)(!1),[g,v]=(0,_.useState)(`Sample appointment document`),[y,b]=(0,_.useState)(``),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),[T,E]=(0,_.useState)(!1);function D(){h(!1),p(!1),v(`Sample appointment document`),b(``),S(``),w(!1),d(`Sample copy and its metadata removed from this session. Previously exported copies are unchanged.`)}function O(e){if(e.trim()){if(o.length>=30&&!c){d(`This notebook has 30 questions. Remove a question before adding another.`);return}s(t=>c?t.map(t=>t.id===c?{...t,text:e.trim()}:t):[...t,{id:Se(),text:e.trim()}]),a(``),l(null),d(`Question saved for this page session only.`)}}return(0,A.jsxs)(`section`,{hidden:!e,className:`health-space`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL LEARNING & APPOINTMENT PREPARATION`}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/food-scene.jpg`),alt:`Two adults sharing a relaxed breakfast outdoors`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(`p`,{className:`lede`,children:`Struggling is not a personal failure. Your physical health and life circumstances deserve attention too. You deserve support whether or not a test finds a physical contributor.`}),(0,A.jsx)(`p`,{className:`notice`,children:`Educational drafts · clinician/dietitian/pharmacist review pending. No diagnosis, supplement prescription or test panel. Browse without entering conditions, medicines or demographic details.`}),(0,A.jsx)(`label`,{htmlFor:`health-topic`,children:`Choose a learning topic · optional`}),(0,A.jsxs)(`select`,{id:`health-topic`,value:n,onChange:e=>r(e.target.value),children:[(0,A.jsx)(`option`,{value:`all`,children:`Browse all cards`}),Yr.map(e=>(0,A.jsx)(`option`,{value:e.id,children:e.title},e.id))]}),(0,A.jsx)(`p`,{className:`muted`,children:`This is a temporary browsing filter, not a health profile. Reset it at any time. Nothing here is shared with the Companion.`}),(0,A.jsx)(`p`,{children:`Food access, appetite, culture, allergies and dietary needs matter. These are examples, not a required diet or shopping list. No supplements, expensive foods or disclosures are required.`}),(0,A.jsx)(`div`,{className:`two-grid`,children:Yr.filter(e=>n===`all`||n===e.id).map(e=>(0,A.jsxs)(`article`,{className:`simple-panel`,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[e.id,` · v`,e.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:e.title}),(0,A.jsx)(`p`,{children:e.point}),(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Keep in mind:`}),` `,e.boundary]}),(0,A.jsx)(`p`,{className:`muted`,children:`Clinical review date: pending. Prepared 6 September 2026.`}),e.sources.map((e,t)=>(0,A.jsx)(`p`,{children:(0,A.jsxs)(`a`,{href:e,target:`_blank`,rel:`noreferrer`,children:[`Source `,t+1,`: `,new URL(e).hostname]})},e))]},e.id))}),(0,A.jsxs)(`section`,{className:`simple-panel`,children:[(0,A.jsx)(`h2`,{children:`Questions for my appointment`}),(0,A.jsx)(`p`,{children:`You can prepare questions without storing any report. Your own text is user-entered and not medically verified. Notes stay in page memory; reload/close clears them. Use sample notes in this local preview.`}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:`Optional conversation starters`}),Xr.map(e=>(0,A.jsx)(`p`,{children:(0,A.jsx)(`button`,{className:`secondary`,disabled:i.length+e.length+2>2e3,onClick:()=>{a(t=>t?`${t}\n\n${e}`:e)},children:e})},e))]}),(0,A.jsxs)(`form`,{onSubmit:e=>{e.preventDefault(),O(i)},children:[(0,A.jsx)(`label`,{htmlFor:`appointment-question`,children:`My question`}),(0,A.jsx)(`textarea`,{id:`appointment-question`,maxLength:2e3,value:i,onChange:e=>a(e.target.value)}),(0,A.jsx)(`button`,{className:`secondary`,disabled:!i.trim(),children:c?`Save question changes`:`Save my question`}),c&&(0,A.jsx)(`button`,{type:`button`,className:`text-button`,onClick:()=>{l(null),a(``)},children:`Cancel question edit`})]}),o.map(e=>(0,A.jsxs)(`article`,{children:[(0,A.jsx)(`p`,{children:e.text}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{l(e.id),a(e.text)},children:`Edit question`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{s(t=>t.filter(t=>t.id!==e.id)),c===e.id&&(l(null),a(``)),d(`Question removed from this session.`)},children:`Remove question`})]})]},e.id)),(0,A.jsx)(`button`,{className:`secondary`,disabled:!o.length&&!i,onClick:()=>Qr([`MindPal appointment notebook — user-entered, not medically verified`,...o.map(e=>e.text),i?`Unsaved question: `+i:``].join(`
+function Lr(e=new Date){let t=e.getHours();return t<12?`morning`:t<18?`afternoon`:`evening`}var zr=[{id:`relationships`,label:`Relationships`,teaser:`Set a relationship goal, work through a difficult message or conversation, or read something short on connection.`,intro:`Everyday friction with a partner, family member or friend is common. These practices help you notice what happened, choose a response and set a gentle weekly goal. They do not replace couples counselling, mediation or support services for serious conflict or an unsafe relationship.`,status:`ready`,readingTag:`relationships`,journalPrompt:`Something on my mind about a relationship right now…`},{id:`stress`,label:`Stress`,teaser:`Coming soon. MindPal has readings tagged for stress, but no reviewed stress-specific practice to pair with them yet.`,intro:``,status:`comingSoon`,readingTag:`stress`,journalPrompt:``},{id:`anger`,label:`Anger`,teaser:`Coming soon. MindPal does not yet have reviewed anger-specific practices or readings to offer here.`,intro:``,status:`comingSoon`,journalPrompt:``}];function Br(e){return zr.find(t=>t.id===e)??null}var Vr=JSON.parse(`[{"id":"E01","title":"One steady detail","durationSeconds":60,"durationLabel":"30 sec–2 min","aim":"offer a brief external attention choice during everyday overwhelm.","steps":["You can pause here, or leave this exercise at any time.","If it feels okay, notice one ordinary detail near you. It might be the edge of a table, a colour, a quiet sound, or the feeling of the surface supporting you. Choose something neutral. You do not need to close your eyes.","Describe just one feature to yourself. Perhaps “a straight edge” or “a soft surface”. There is no correct detail to find.","If paying attention this way feels uncomfortable, stop. You can look elsewhere, change position if comfortable, or choose support from a person.","You can finish now. If you want another moment, notice a second neutral detail. You do not need to work through thoughts or feelings in this exercise.","What would be manageable next: resting, one small practical action, or contacting someone you trust? You do not have to choose yet. The “Help me now” section lists options for urgent human support. MindPal does not monitor you or contact help for you."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: offer a brief external attention choice during everyday overwhelm. Duration: 30 seconds–2 minutes. Candidate grounding foundation: [WHO stress guide overview](https://www.who.int/thailand/activities/doing-what-matters-in-times-of-stress) (S03). This short sensory script is untested. Limits: not emergency treatment; sensory attention can be uncomfortable. Alternative: stop, rest or human support; no need to use a particular sense.","sourceIds":["S03"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"8d63f7578006107848e8138a8a9a934306602db286c4a17dc98872c347819422"},{"id":"E02","title":"Let breathing stay comfortable","durationSeconds":120,"durationLabel":"1–2 min","aim":"give a choice of gentle attention to ordinary breathing.","steps":["Breathing exercises are optional. You can choose a non-breathing activity instead.","Find a position that is comfortable enough for you. Keep your breathing at its ordinary depth. There is no need to take a big breath or hold it.","If it feels comfortable, notice one breath coming and going at your own pace.","You do not need to slow your breathing or match a count. If focusing on it brings dizziness, a sense of not getting enough air, pain, discomfort or more panic, stop the exercise. You can notice a neutral detail around you using a comfortable sense, or finish.","If you want to continue, notice another ordinary breath. Let your shoulders be as they are; you do not have to make yourself relax.","You can finish now, whether or not anything feels different. Seek medical advice for new, persistent or concerning physical symptoms. For severe difficulty breathing or another medical emergency in Australia, call triple zero. This exercise cannot tell you what is causing a symptom."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: give a choice of gentle attention to ordinary breathing. Duration: about 1–2 minutes; 30-second alternative is E01, not forced accelerated breathing. Basis: [NHS gentle breathing](https://www.nhs.uk/mental-health/self-help/guides-tools-and-activities/breathing-exercises-for-stress/) (S02). An original ordinary-breath attention exercise informed by the principle of comfortable, unforced breathing. It is not the NHS breathing protocol, and its effects have not been established. Limits: no holds, rapid breathing, forced depth or fixed respiratory target. Stop with dizziness, air hunger, pain, panic or discomfort. Concerning/new physical symptoms need medical assessment, not an anxiety label.","sourceIds":["S02"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"22844573b8391d0de52c137f786837223667093f811294189c6f15aece0d856e"},{"id":"E03","title":"A word, or “not sure”","durationSeconds":120,"durationLabel":"1–2 min","aim":"support emotional description without diagnosis.","steps":["You do not need a perfect word for how you feel.","If you would like, choose a word that is close enough: worried, sad, frustrated, lonely, tired, mixed, or not sure. You can use your own word, or choose none.","Try a sentence such as “I notice some worry” or “I'm not sure what this is”. A feeling is not a diagnosis, and you do not have to explain why it is here.","Would anything practical help a little right now? Perhaps a quieter space, rest, or speaking with a safe person. Choose only something that fits your situation.","If naming feelings makes things harder, leave the words aside. You could notice an ordinary object nearby, or finish this activity.","You may keep your word private. Nothing needs to be saved or sent to AI. You can end here with no further reflection."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: support emotional description without diagnosis. Duration: 1–2 minutes. Evidence status: candidate emotional-literacy technique; clinical appraisal of this format pending. Limits: do not label a user's emotion automatically or invite trauma retelling. Alternative: name a practical need or skip. No symptom questionnaire/scoring.","sourceIds":[],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"71b42e745a5e45f96a227992f67c8ce6226344f2f3fc1c43d96c33ad7b03cbd3"},{"id":"E04","title":"A kinder, or simply neutral, sentence","durationSeconds":120,"durationLabel":"1–2 min","aim":"reduce harsh self-directed language without forced positivity.","steps":["You do not have to feel positive about a difficult day.","If you notice a harsh sentence about yourself, you may leave it alone. Or try a sentence that puts less pressure on you.","“This is difficult.”","“I can take one thing at a time.”","“I may need some support.”","Choose words that feel believable, or use your own. If kind words feel uncomfortable, a neutral sentence such as ‘I am here, taking a moment’ is enough. If this makes things harder, stop or choose a different activity.","You are not required to excuse harmful behaviour from anyone. If someone is hurting or controlling you, support and safety matter.","Is there one practical way to ease the next few minutes? You might lower a demand, take a rest if possible, or ask for help. You do not need to complete an action to finish this exercise."],"clinicalStatus":"DRAFT","version":"1.1","cautions":"Aim: reduce harsh self-directed language without forced positivity. Duration: 1–2 minutes. Candidate self-compassion foundation; evidence review for exact method/digital delivery pending, no branded exercise copied. Limits: warmth/self-compassion can feel unsafe or false; neutral factual language is valid. Not a response to abuse that shifts responsibility to the user.","sourceIds":[],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"revisionStatus":"PROPOSED_REVIEW_PENDING","scriptHash":"c02f7bf1cc07f12c54a001f94cf24a2a45f7f26b61d3450c1199d2449aa9d05f"},{"id":"E05","title":"One manageable action","durationSeconds":120,"durationLabel":"30 sec–3 min","aim":"offer a small chosen activity appropriate to energy and circumstances.","steps":["Think about the next few minutes, rather than the whole day.","Is there one small action that might be useful or meaningful? It could be putting one item where you need it, opening a curtain if comfortable, choosing a piece of music, or preparing a question for someone who supports you. Resting can also be a reasonable choice.","Make the action smaller if that helps. You can choose to prepare for it without doing it now.","If pain, fatigue or your surroundings make the action unsuitable, change it or stop. You do not have to push through symptoms. New or severe symptoms may need medical assessment.","There is no score for finishing. You can ask yourself, “Was that manageable?” The answer can be no. That information can help you choose differently next time, without judging yourself."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: offer a small chosen activity appropriate to energy and circumstances. Duration: 30 seconds–3 minutes. Candidate behavioural-activation foundation: [NICE NG222](https://www.nice.org.uk/guidance/ng222/chapter/Recommendations) (S01); guided treatment evidence does not validate this isolated activity. Limits: not a treatment schedule; rest and requesting help are acceptable. Never push through new/severe pain or exhaustion.","sourceIds":["S01"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"aa9c4d31d2e2e633f727931309c9644e495bb1abedb535eda24e9b5e00df6988"},{"id":"E06","title":"A small choice that matters to you","durationSeconds":180,"durationLabel":"2–3 min","aim":"link a freely chosen quality to a possible next action.","steps":["You can leave this question for another day if it feels too much.","Is there a quality you would like to bring to one small part of today? It might be care, curiosity, honesty, rest, patience, or something else that matters to you. You do not need to choose from this list.","What could that quality look like in a very small action? Care might mean asking for help. Honesty might mean saying you need a break. Curiosity might mean noticing something ordinary.","Choose an action only if it is safe and manageable. A value does not require you to tolerate mistreatment or take on more than you can manage.","You can act now, make a private note, or do nothing further. The purpose is to make room for your choice, not to judge whether you have lived the right way today."],"clinicalStatus":"DRAFT","version":"1.0","cautions":"Aim: link a freely chosen quality to a possible next action. Duration: 2–3 minutes. Candidate ACT-informed values foundation: S03; script itself untested. Limits: values cannot be prescribed, used as productivity pressure or to justify unsafe relationships. Alternative: skip abstract reflection and choose a practical comfort or human support.","sourceIds":["S03"],"reviewer":null,"approvedAt":null,"reviewDue":"2026-12-05","publicationStatus":"DRAFT","publicEligible":false,"scriptHash":"87e2fe633a150117dba9d18e0b4c7cc7d9751ea608591beee1f2f1eff2c92b81"}]`);function Hr({initialTopicId:e,onExercise:t,onDiary:n,onHelp:r,onCompanion:i}){let[a,o]=(0,_.useState)(e??`hub`),[s,c]=(0,_.useState)(!1),[l,u]=(0,_.useState)(null),[d,f]=(0,_.useState)(!1),[p,m]=(0,_.useState)(!1),[h,g]=(0,_.useState)(``),v=(0,_.useRef)(null);(0,_.useEffect)(()=>{v.current?.focus()},[a]);let y=a===`hub`||a===`all`?null:Br(a),b=y?.status===`ready`?y:null;function x(e){u(e),g(``),c(!0)}return(0,A.jsxs)(A.Fragment,{children:[a===`hub`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`FOCUS`}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:`What are you dealing with?`}),(0,A.jsx)(`p`,{className:`lede`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsx)(mpMoreStepsCard,{}),(0,A.jsx)(`div`,{className:`three-grid topic-grid`,children:zr.map(e=>(0,A.jsxs)(`button`,{className:`feature-card topic-card${e.status===`comingSoon`?` topic-disabled`:``}`,disabled:e.status===`comingSoon`,"aria-disabled":e.status===`comingSoon`,onClick:()=>o(e.id),children:[(0,A.jsx)(`span`,{className:`card-type`,children:e.status===`comingSoon`?`COMING SOON`:`TOPIC`}),(0,A.jsx)(`h3`,{children:e.label}),(0,A.jsx)(`p`,{children:e.teaser}),e.status===`ready`&&(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open `,e.label,` `,(0,A.jsx)(nn,{size:18})]})]},e.id))}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`all`),children:`Browse all practices`})]}),a===`all`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`hub`),children:`← Back to Focus`}),(0,A.jsx)(`p`,{className:`eyebrow`,children:`FOCUS · ALL PRACTICES`}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:`Browse all practices`}),(0,A.jsx)(`p`,{className:`lede`,children:`Six short self-guided exercises, in one place. Choose what fits; leave what doesn’t.`}),(0,A.jsx)(`div`,{className:`three-grid`,children:Vr.map(e=>(0,A.jsxs)(`button`,{className:`exercise-card`,onClick:()=>t(e.id),children:[(0,A.jsxs)(`span`,{className:`card-type`,children:[e.durationLabel,` · DRAFT PREVIEW`]}),(0,A.jsx)(`h3`,{children:e.title}),(0,A.jsx)(`p`,{children:e.aim}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Explore this exercise `,(0,A.jsx)(B,{size:17})]})]},e.id))})]}),b&&(0,A.jsxs)(`div`,{className:`focus-topic`,children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`hub`),children:`← Back to Focus`}),(0,A.jsxs)(`p`,{className:`eyebrow`,children:[`FOCUS · `,b.label.toUpperCase()]}),(0,A.jsx)(`h1`,{ref:v,tabIndex:-1,children:b.label}),(0,A.jsx)(`p`,{className:`lede`,children:b.intro}),(0,A.jsx)(`p`,{className:`muted`,children:`Practices to help you reflect and cope — not a diagnosis, and not a course of treatment.`}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} practices`,children:[(0,A.jsx)(`h2`,{children:`Tagged practices`}),b.id===`relationships`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Kn,{onStart:()=>{g(``),f(!0)}}),(0,A.jsx)(Mn,{onStart:()=>x({sceneId:`message`,quick:!1})})]}):(0,A.jsxs)(`div`,{className:`practice-targets`,children:[(0,A.jsxs)(`button`,{onClick:()=>{g(``),m(!0)},children:[(0,A.jsx)(`strong`,{children:`I keep reaching for my phone`}),(0,A.jsx)(`span`,{children:`Try a quiet pause. Notice an urge without having to follow it.`}),(0,A.jsx)(`em`,{children:`Start a 15–60 second attention practice →`})]}),(0,A.jsxs)(`button`,{onClick:()=>t(`E01`),children:[(0,A.jsx)(`strong`,{children:`One steady detail`}),(0,A.jsx)(`span`,{children:`A brief external-attention pause for everyday overwhelm.`}),(0,A.jsx)(`em`,{children:`Start a 30 second–2 minute exercise →`})]}),(0,A.jsxs)(`button`,{onClick:()=>t(`E05`),children:[(0,A.jsx)(`strong`,{children:`One manageable action`}),(0,A.jsx)(`span`,{children:`Choose one small, doable next step instead of the whole list.`}),(0,A.jsx)(`em`,{children:`Start a 30 second–3 minute exercise →`})]}),(0,A.jsxs)(`button`,{onClick:()=>x({sceneId:`task-start`,quick:!0}),children:[(0,A.jsx)(`strong`,{children:`A task feels too big`}),(0,A.jsx)(`span`,{children:`Separate the task from the judgement and rehearse a manageable start.`}),(0,A.jsx)(`em`,{children:`Start a two-step thought exercise →`})]})]})]}),b.id===`relationships`&&(0,A.jsx)(Dr,{}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} readings`,children:[(0,A.jsx)(`h2`,{children:`Readings`}),(0,A.jsx)(bt,{tag:b.readingTag},b.id)]}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} videos`,children:[(0,A.jsx)(mpSupportVideos,{initialTag:b.readingTag,heading:`Videos for this feeling`,showChips:!1})]}),(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`${b.label} journal prompt`,children:[(0,A.jsx)(`h2`,{children:`Write about it`}),(0,A.jsx)(`p`,{children:b.journalPrompt}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>n(b.journalPrompt),children:[`Open a private note `,(0,A.jsx)(rn,{size:17})]})]}),(0,A.jsxs)(`section`,{className:`simple-panel`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`COMPANION · DEMO`}),(0,A.jsx)(`p`,{children:`A deterministic practice-guide demo is available from here. It is not live AI and does not assess this topic; a safety-reviewed live companion ships as a separate, later release.`}),(0,A.jsxs)(`button`,{className:`secondary`,onClick:i,children:[`Try the companion demo `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})]}),p&&(0,A.jsx)(Rn,{onClose:()=>{m(!1),g(`Quiet practice closed. Choose what deserves your attention next.`)}}),d&&(0,A.jsx)(qn,{onHelp:r,onClose:e=>{f(!1),g(e===`finished`?`Conversation practice finished. Your choices have been cleared.`:`Conversation practice stopped. Your choices have been cleared.`)}}),s&&(0,A.jsx)(Nn,{initialSceneId:l?.sceneId,initialQuick:l?.quick,startImmediately:l!==null,onHelp:r,onClose:e=>{c(!1),g(e===`finished`?`Look again is complete. Your practice choices have been cleared.`:`Look again stopped. Your practice choices have been cleared.`)}}),(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,"aria-atomic":`true`,children:h})]})}var Ur=`mindpal.guestName.v1`;function Wr(){try{let e=localStorage.getItem(Ur);return typeof e==`string`?e:``}catch{return``}}function Gr(e){let t=e.trim();try{return t?localStorage.setItem(Ur,t):localStorage.removeItem(Ur),!0}catch{return!1}}var Kr=`mindpal.ageGateAdult.v1`;function qr(){try{return localStorage.getItem(Kr)===`1`}catch{return!1}}function Jr(e){try{return e?localStorage.setItem(Kr,`1`):localStorage.removeItem(Kr),!0}catch{return!1}}var Yr=[{id:`H01`,title:`Vitamin B12`,point:`Vitamin B12 supports blood and nervous-system health. Deficiency can affect energy and neurological function. Associations with depression do not establish the cause of an individual's low mood. Animal foods and appropriately fortified foods are sources.`,boundary:`Mood alone cannot establish a deficiency. You can ask whether assessment is appropriate; this card does not recommend a dose.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/`]},{id:`H02`,title:`Iron`,point:`Iron helps transport oxygen. Iron-deficiency anaemia can cause fatigue and concentration difficulties. Sources include meat, legumes and fortified foods.`,boundary:`Do not start iron just on the basis of these symptoms. Excess iron can be harmful. A clinician should assess the cause and appropriate management.`,sources:[`https://ods.od.nih.gov/factsheets/Iron-Consumer/`]},{id:`H03`,title:`Vitamin B6`,point:`Vitamin B6 participates in neurotransmitter biosynthesis and other body functions.`,boundary:`This does not mean low mood is caused by low B6 or dopamine. Supplementary B6 can cause peripheral nerve injury, including through combined products. No B-complex or dose is recommended here.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB6-HealthProfessional/`,`https://www.tga.gov.au/news/safety-updates/peripheral-neuropathy-supplementary-vitamin-b6-pyridoxine`]},{id:`H04`,title:`Folate / B9`,point:`Folate supports cell division and blood-cell formation. Leafy vegetables, beans and fortified foods are sources.`,boundary:`Avoid unsupervised high-dose folic acid. It can conceal the anaemia associated with B12 deficiency while neurological harm continues. Ask a qualified health professional about your circumstances.`,sources:[`https://ods.od.nih.gov/factsheets/Folate-Consumer/`]},{id:`H05`,title:`Omega-3 fats`,point:`EPA and DHA are fatty acids, not vitamins. Fish oil is one source, not a product everyone needs to buy.`,boundary:`Evidence for omega-3 supplements treating depression remains uncertain. They are not a replacement for care or a dopamine correction.`,sources:[`https://www.nccih.nih.gov/health/omega3-supplements-what-you-need-to-know`]},{id:`H06`,title:`Vitamin D`,point:`Vitamin D has established roles in bone and muscle health.`,boundary:`Observational links with low mood do not establish that supplements treat depression. Routine testing or high doses are not recommended for everyone by this app.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminD-Consumer/`]},{id:`H07`,title:`Something to discuss: acid-reducing medicines`,point:`Some acid-reducing medicines used for reflux, including proton-pump inhibitors, can reduce absorption of vitamin B12 from food. Taking one does not automatically mean you have a deficiency.`,boundary:`If you use one long term, you can ask your doctor or pharmacist whether a B12 review is relevant to you. Keep taking prescribed medicines as directed unless your prescriber advises otherwise. Selecting this topic does not tell MindPal that you have reflux or take a medicine.`,sources:[`https://ods.od.nih.gov/factsheets/VitaminB12-HealthProfessional/`]}].map(e=>({...e,version:`1.0`,clinicalReview:`DRAFT`,reviewedAt:null})),Xr=[`Could a physical condition, my diet or my medicines be contributing to how I feel?`,`Would any tests be appropriate given my symptoms and history?`,`Is there anything in this report that needs follow-up?`,`If a deficiency is confirmed, what could be causing it and what is the plan?`,`Are my current supplements appropriate with my medicines?`],Zr=`You can keep a copy of a report and prepare questions. MindPal does not check these files for abnormal or urgent results. Arrange review with the clinician who requested the test.`;function Qr(e,t){let n=URL.createObjectURL(new Blob([e],{type:`text/plain;charset=utf-8`})),r=document.createElement(`a`);r.href=n,r.download=t,r.click(),setTimeout(()=>URL.revokeObjectURL(n),1e3)}function $r({active:e,onHelp:t}){let[n,r]=(0,_.useState)(`all`),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)([]),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(``),[f,p]=(0,_.useState)(!1),[m,h]=(0,_.useState)(!1),[g,v]=(0,_.useState)(`Sample appointment document`),[y,b]=(0,_.useState)(``),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),[T,E]=(0,_.useState)(!1);function D(){h(!1),p(!1),v(`Sample appointment document`),b(``),S(``),w(!1),d(`Sample copy and its metadata removed from this session. Previously exported copies are unchanged.`)}function O(e){if(e.trim()){if(o.length>=30&&!c){d(`This notebook has 30 questions. Remove a question before adding another.`);return}s(t=>c?t.map(t=>t.id===c?{...t,text:e.trim()}:t):[...t,{id:Se(),text:e.trim()}]),a(``),l(null),d(`Question saved for this page session only.`)}}return(0,A.jsxs)(`section`,{hidden:!e,className:`health-space`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL LEARNING & APPOINTMENT PREPARATION`}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/food-scene.jpg`),alt:`Two adults sharing a relaxed breakfast outdoors`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(`p`,{className:`lede`,children:`Struggling is not a personal failure. Your physical health and life circumstances deserve attention too. You deserve support whether or not a test finds a physical contributor.`}),(0,A.jsx)(`p`,{className:`notice`,children:`Educational drafts · clinician/dietitian/pharmacist review pending. No diagnosis, supplement prescription or test panel. Browse without entering conditions, medicines or demographic details.`}),(0,A.jsx)(`label`,{htmlFor:`health-topic`,children:`Choose a learning topic · optional`}),(0,A.jsxs)(`select`,{id:`health-topic`,value:n,onChange:e=>r(e.target.value),children:[(0,A.jsx)(`option`,{value:`all`,children:`Browse all cards`}),Yr.map(e=>(0,A.jsx)(`option`,{value:e.id,children:e.title},e.id))]}),(0,A.jsx)(`p`,{className:`muted`,children:`This is a temporary browsing filter, not a health profile. Reset it at any time. Nothing here is shared with the Companion.`}),(0,A.jsx)(`p`,{children:`Food access, appetite, culture, allergies and dietary needs matter. These are examples, not a required diet or shopping list. No supplements, expensive foods or disclosures are required.`}),(0,A.jsx)(`div`,{className:`two-grid`,children:Yr.filter(e=>n===`all`||n===e.id).map(e=>(0,A.jsxs)(`article`,{className:`simple-panel`,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[e.id,` · v`,e.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:e.title}),(0,A.jsx)(`p`,{children:e.point}),(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Keep in mind:`}),` `,e.boundary]}),(0,A.jsx)(`p`,{className:`muted`,children:`Clinical review date: pending. Prepared 6 September 2026.`}),e.sources.map((e,t)=>(0,A.jsx)(`p`,{children:(0,A.jsxs)(`a`,{href:e,target:`_blank`,rel:`noreferrer`,children:[`Source `,t+1,`: `,new URL(e).hostname]})},e))]},e.id))}),(0,A.jsxs)(`section`,{className:`simple-panel`,children:[(0,A.jsx)(`h2`,{children:`Questions for my appointment`}),(0,A.jsx)(`p`,{children:`You can prepare questions without storing any report. Your own text is user-entered and not medically verified. Notes stay in page memory; reload/close clears them. Use sample notes in this local preview.`}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:`Optional conversation starters`}),Xr.map(e=>(0,A.jsx)(`p`,{children:(0,A.jsx)(`button`,{className:`secondary`,disabled:i.length+e.length+2>2e3,onClick:()=>{a(t=>t?`${t}\n\n${e}`:e)},children:e})},e))]}),(0,A.jsxs)(`form`,{onSubmit:e=>{e.preventDefault(),O(i)},children:[(0,A.jsx)(`label`,{htmlFor:`appointment-question`,children:`My question`}),(0,A.jsx)(`textarea`,{id:`appointment-question`,maxLength:2e3,value:i,onChange:e=>a(e.target.value)}),(0,A.jsx)(`button`,{className:`secondary`,disabled:!i.trim(),children:c?`Save question changes`:`Save my question`}),c&&(0,A.jsx)(`button`,{type:`button`,className:`text-button`,onClick:()=>{l(null),a(``)},children:`Cancel question edit`})]}),o.map(e=>(0,A.jsxs)(`article`,{children:[(0,A.jsx)(`p`,{children:e.text}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{l(e.id),a(e.text)},children:`Edit question`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{s(t=>t.filter(t=>t.id!==e.id)),c===e.id&&(l(null),a(``)),d(`Question removed from this session.`)},children:`Remove question`})]})]},e.id)),(0,A.jsx)(`button`,{className:`secondary`,disabled:!o.length&&!i,onClick:()=>Qr([`MindPal appointment notebook — user-entered, not medically verified`,...o.map(e=>e.text),i?`Unsaved question: `+i:``].join(`
 
 `),`mindpal-appointment-questions.txt`),children:`Export my questions`})]}),(0,A.jsxs)(`section`,{className:`simple-panel`,children:[(0,A.jsx)(`h2`,{children:`Report organiser · synthetic demonstration`}),(0,A.jsx)(`p`,{children:Zr}),(0,A.jsx)(`p`,{children:`Real PDF/image imports are disabled until the privacy and security design is verified. This demonstration uses a built-in text fixture with no patient data or results. It does not read or upload your files, perform OCR, or interpret findings.`}),(0,A.jsxs)(`label`,{children:[(0,A.jsx)(`input`,{type:`checkbox`,checked:f,onChange:e=>{e.target.checked?p(!0):D()}}),` `,`Keep a synthetic sample copy in this page session`]}),!m&&(0,A.jsx)(`button`,{className:`secondary`,disabled:!f,onClick:()=>{h(!0),d(`Synthetic sample added in memory only. Nothing uploaded.`)},children:`Add synthetic sample`}),m&&(0,A.jsxs)(`article`,{children:[(0,A.jsx)(`p`,{className:`notice`,children:`You can keep a copy of a report and prepare questions. MindPal does not check these files for abnormal or urgent results. Arrange review with the clinician who requested the test.`}),(0,A.jsx)(`p`,{className:`eyebrow`,children:`USER-ENTERED METADATA · NOT A CLINICIAN REVIEW`}),(0,A.jsx)(`label`,{htmlFor:`report-title`,children:`Sample title`}),(0,A.jsx)(`input`,{id:`report-title`,maxLength:120,value:g,onChange:e=>v(e.target.value)}),(0,A.jsx)(`label`,{htmlFor:`report-date`,children:`Report date · optional, user-entered`}),(0,A.jsx)(`input`,{id:`report-date`,type:`date`,value:y,onChange:e=>b(e.target.value)}),(0,A.jsx)(`label`,{htmlFor:`report-notes`,children:`Appointment notes · optional`}),(0,A.jsx)(`textarea`,{id:`report-notes`,maxLength:3e3,value:x,onChange:e=>S(e.target.value)}),(0,A.jsx)(`h3`,{children:`Original synthetic document preview`}),(0,A.jsx)(`pre`,{className:`report-preview`,children:`MINDPAL SYNTHETIC DOCUMENT
 Demonstration only - not a pathology report.
@@ -8734,7 +9843,7 @@ Several things may contribute to changes in mood or sleep. If low mood, anxiety 
 
 You can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.
 
-This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Problem`,`Explore`,`My diary`,`Focus`,`Companion`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),()=>window.removeEventListener(`mindpal-session-change`,e)},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&!mpAuthed?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`button`,{className:`brand`,onClick:()=>I(`Today`),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&!mpAuthed?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`)}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:()=>I(`Problem`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)}}),t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y}),t===`Women’s wellbeing`&&(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),mpAuthed||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:li.videos.find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
+This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Later`,`Evening`,`Problem`,`Explore`,`My diary`,`Focus`,`Companion`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Readings:`route.readings`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),()=>window.removeEventListener(`mindpal-session-change`,e)},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&!mpAuthed?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`button`,{className:`brand`,onClick:()=>I(`Today`),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&!mpAuthed?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:()=>I(`Problem`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)}}),t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y}),t===`Women’s wellbeing`&&(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),mpAuthed||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:li.videos.find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
   let[e,t]=(0,_.useState)(null);
   let n=(0,_.useId)();
   let r=(0,_.useRef)(null);
@@ -8804,7 +9913,7 @@ function MpWatchWithMaddy(){
     })}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Native MP4 · /mindpal/videos/maddy · Welcome · Daily tip · Timed breath`})
   ]});
-}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=li.videos.filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpProblemHubList,{onOpen:()=>I(`Problem`)}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(Rt,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.showModal(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
+}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=li.videos.filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:()=>I(`Problem`)}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(Rt,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.showModal(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
 
 ---
 

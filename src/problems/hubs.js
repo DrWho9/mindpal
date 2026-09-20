@@ -1,4 +1,4 @@
-import { PROBLEM_TAG_IDS, normalizeProblemTags, readingProblemTags } from "./theme-map.js";
+import { PROBLEM_TAG_IDS, feelingTagsToProblemTags, normalizeProblemTags, readingProblemTags } from "./theme-map.js";
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
@@ -24,6 +24,8 @@ export function readingsForProblem(pack, problemId, limit = 6) {
 export function videoProblemTags(video) {
   const direct = normalizeProblemTags(video?.problemTags || video?.theme_tags);
   if (direct.length) return direct;
+  const fromFeeling = feelingTagsToProblemTags(video?.tags);
+  if (fromFeeling.length) return fromFeeling;
   const blob = [video?.id, video?.title, video?.category, video?.outline, video?.description]
     .filter((part) => typeof part === "string")
     .join(" ")
