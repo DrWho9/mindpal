@@ -1,3 +1,6 @@
+function mpGoHome(navigate){
+  return mpNav.goHome(navigate);
+}
 function mpNotifySession(){
   try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}
 }
@@ -176,6 +179,11 @@ function mpProblemChipClass(item,open){
 }
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
   let n=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}],[r,i]=(0,_.useState)(null);
+  (0,_.useEffect)(()=>{
+    function e(){i(null)}
+    window.addEventListener(mpNav.HOME_EVENT,e);
+    return()=>window.removeEventListener(mpNav.HOME_EVENT,e);
+  },[]);
   function chipsFor(group){return group.problems||[]}
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`SUPPORT & GROWTH`}),

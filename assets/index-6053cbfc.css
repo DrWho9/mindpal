@@ -29,6 +29,31 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .app.mp-signin-shell .sidebar-bottom,
 .app.mp-signin-shell .demo-banner,
 .app.mp-signin-shell .bottom-nav{display:none}
+
+/* Brand stays above sheets so MindPal is always a home control */
+.sidebar{z-index:50}
+.topbar{z-index:51}
+button.brand{
+  cursor:pointer;
+  background:transparent;
+  border:0;
+  font:inherit;
+  color:inherit;
+}
+.mp-top-brand{display:none}
+@media (width<=640px){
+  .mp-top-brand{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin:0;
+    padding:0 4px;
+    font-size:20px;
+    font-weight:650;
+    letter-spacing:-1px;
+  }
+  .mp-top-brand img{width:22px;height:22px}
+}
 .mp-signin-page{max-width:34rem;margin:12px auto 32px;padding:8px 0 24px}
 .mp-signin-page h1{margin:.2em 0 .4em}
 .mp-signin-page input{width:100%;margin:6px 0 14px}

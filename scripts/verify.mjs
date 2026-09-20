@@ -116,6 +116,10 @@ const checks = [
   [js.includes(`"low-mood"`) && js.includes(`"overwhelm"`), "video catalog emotions include low-mood and overwhelm"],
   [!js.includes("Browse the whole video directory"), "generic directory is no longer the Feelings Videos default"],
   [!js.includes("(0,A.jsx)(ge,{initialTopic:"), "Feelings Videos does not mount the speaker picker"],
+  [js.includes("function mpGoHome(") && js.includes("onClick:()=>mpGoHome(I)"), "MindPal brand goes home via mpGoHome"],
+  [js.includes("className:`brand mp-top-brand`"), "mobile topbar exposes a MindPal home control"],
+  [js.includes("mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome}"), "home helper is in the runtime"],
+  [!js.includes("className:`brand`,onClick:()=>I(`Today`)"), "sidebar brand no longer uses the raw Today setter"],
 ];
 
 const maddyFiles = [
@@ -148,6 +152,9 @@ if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")
 }
 if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
   throw new Error("Support/Growth group styles missing");
+}
+if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
+  throw new Error("MindPal brand must stay clickable above sheets");
 }
 
 const extra = readdirSync(join(root, "assets")).filter(

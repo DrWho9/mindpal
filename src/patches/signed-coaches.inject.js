@@ -1,6 +1,11 @@
 function Gt(){
   let e=Vt(),[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(null),a=(0,_.useId)(),o=(0,_.useRef)(null);
   let s=()=>n(null);
+  (0,_.useEffect)(()=>{
+    function e(){s();i(null)}
+    window.addEventListener(mpNav.HOME_EVENT,e);
+    return()=>window.removeEventListener(mpNav.HOME_EVENT,e);
+  },[]);
   let c=t?mpReadings.videosForCoach(t,(mpVideoCatalog&&mpVideoCatalog.videos)||li.videos):[];
   let l=e=>{
     s();
