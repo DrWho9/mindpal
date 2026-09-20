@@ -28,25 +28,31 @@
 
 .mp-today-hub{margin-bottom:18px}
 .mp-civil-date{margin:2px 0 0;font-size:1.15rem;font-weight:650;color:#2f3b2c}
-.mp-coptic-date{margin:2px 0 10px;font-size:.92rem}
+.mp-coptic-date{margin:2px 0 6px;font-size:.92rem}
+.mp-hub-flow{margin:.4em 0 0;max-width:40ch}
 .mp-wins-nudge{margin:0 0 8px;max-width:46ch}
+.mp-wins-count{margin:0 0 8px}
 .mp-wins-panel{background:#f7f4ea;border:1px solid #e3dcc6;border-radius:14px;padding:16px 18px;margin:14px 0 20px}
+.mp-wins-hub{padding:12px 14px;margin:12px 0 16px}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
 .mp-wins-list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #e8e1cc}
 .mp-wins-list time{color:#6d6758;font-size:12px;white-space:nowrap}
 .mp-wins-panel input{width:100%;margin:6px 0 10px}
 
-.mp-day-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.mp-day-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mp-day-step{border-radius:14px;padding:16px 18px;border:1px solid #dfe4d5;background:#fffef9}
-.mp-day-step h2{margin:.15em 0 .25em;font-size:1.25rem}
-.mp-day-step p{margin:0 0 10px}
-.mp-step-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:4px}
-.mp-step-num{font-size:12px;letter-spacing:.04em;text-transform:uppercase;font-weight:700;color:#5c6756}
+.mp-day-step.mp-step-row{padding:10px 12px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px 10px}
+.mp-step-main{appearance:none;background:transparent;border:0;padding:2px 0;margin:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px;text-align:left;cursor:pointer;flex:1 1 14rem;font:inherit;color:inherit}
+.mp-step-actions{display:flex;flex-wrap:wrap;gap:4px 8px}
+.mp-step-num{font-size:13px;letter-spacing:.02em;font-weight:700;color:#2f3b2c;text-transform:none}
 .mp-do-next{background:#2f5a3d;color:#f7f8f2;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:700}
 .mp-step-flag{color:#5c6756;font-size:12px;font-weight:650}
 .mp-day-step.is-next{box-shadow:0 0 0 2px rgba(47,90,61,.18)}
 .mp-day-step.is-done,.mp-day-step.is-skipped{opacity:.82}
+.mp-maddy-teaser{margin:16px 0 0;padding:12px 14px;border:1px solid #dfe4d5;border-radius:14px;background:#f7f8f2}
+.mp-maddy-teaser-label{margin:0 0 4px;font-weight:700}
+.mp-maddy-teaser .muted{margin:0 0 6px}
 .mp-step-readings{background:#eef5ee;border-color:#c9dccb}
 .mp-step-focus{background:#eaf1f7;border-color:#c5d4e4}
 .mp-step-journal{background:#f7eedc;border-color:#e2d2b0}
