@@ -55,7 +55,12 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .mp-problem-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0 0}
 .mp-problem-card{text-align:left;background:#fffef9;border:1px solid #d5dccb;border-radius:12px;padding:12px 14px;min-height:72px;display:flex;flex-direction:column;gap:6px;font:inherit;color:inherit;cursor:pointer}
 .mp-problem-card:hover{border-color:#7c9163}
-.mp-problem-list-today{margin-top:14px}
+.mp-problem-list{margin:8px 0 4px}
+.mp-problem-list-today{margin:4px 0 10px;padding:16px 16px 14px;background:#eef3ea;border:1px solid #c9dccb;border-radius:16px}
+.mp-problem-chips{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0 8px}
+.mp-problem-chip{background:#fffef9;border:2px solid #7c9163;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:650;cursor:pointer;color:#2f3b2c}
+.mp-problem-chip:hover,.mp-problem-chip.is-open{background:#2f5a3d;color:#f7f8f2;border-color:#2f5a3d}
+.mp-problem-expand{background:#fffef9;border:1px solid #d5dccb;border-radius:14px;padding:14px 16px;margin:8px 0 2px}
 .mp-hub-readings,.mp-hub-videos,.mp-hub-yt{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:10px}
 .mp-hub-readings li,.mp-hub-yt li{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .mp-hub-videos button{width:100%;justify-content:space-between}
