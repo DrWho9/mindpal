@@ -41,7 +41,7 @@ function MpLibraryHost(){
       (0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})
     ]}),
     (0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[
-      (0,A.jsx)(`h3`,{children:e.video.transcriptText?s?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),
+      (0,A.jsx)(`h3`,{children:s?`About this clip`:e.video.transcriptText?`Script transcript · draft`:`Production outline · draft`}),
       (0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.video.transcriptText||e.video.outline||e.video.description||`A full script and reviewed video will be added after content and production review.`}),
       s?null:(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})
     ]})

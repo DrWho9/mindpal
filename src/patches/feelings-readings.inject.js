@@ -52,6 +52,7 @@ function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for t
   (0,_.useEffect)(()=>{c(o||``)},[o]);
   let d=s?[s]:a,f={catalog:typeof mpVideoCatalog<`u`?mpVideoCatalog:null,maddy:typeof mpMaddy<`u`?mpMaddy:null,meditations:typeof mpMeditationCatalog<`u`?mpMeditationCatalog:null},p=mpReadings.mediaForTags(f,d,mpReadings.VIDEO_DIRECTORY_LIMIT),m=l&&p.find(e=>e.id===l)||null;
   return(0,A.jsxs)(`section`,{className:`mp-support-videos`,"aria-label":n,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`h2`,{children:n}),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
     (0,A.jsx)(`p`,{className:`muted`,children:`A short tagged set for this feeling — not the speaker directory.`}),
@@ -66,9 +67,8 @@ function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for t
         (0,A.jsxs)(`div`,{className:`mp-support-row-meta`,children:[t,` · `,mpReadings.itemTags(e).map(mpReadings.formatTag).join(` `)]}),
         (0,A.jsx)(`h3`,{children:e.title}),
         e.description||e.outline?(0,A.jsx)(`p`,{children:e.description||e.outline}):null,
-        e.source===`maddy`?(0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:typeof Ge==`function`?Ge(e.src):e.src,"aria-label":`${e.title} with Maddy`}):null,
         (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          e.source===`catalog`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>u(e.id),children:mpReadings.videoCardCta(e)}):null,
+          e.source===`maddy`||e.source===`catalog`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:e.source===`maddy`?`Maddy`:e.person,kind:e.source===`maddy`?`maddy`:e.kind,src:e.src||e.publishedSrc,videoUrl:e.videoUrl||e.src}),children:e.source===`maddy`?`Play`:mpReadings.videoCardCta(e)}):null,
           n?(0,A.jsx)(`a`,{className:`secondary`,href:n,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
         ]})
       ]},e.id);

@@ -1,5 +1,5 @@
 import { isVideoPlayable, videoCardAriaLabel, videoCardCta } from "./playback.js";
-import { isMaddyCompanionPlayable, maddyPublishedSrc } from "./maddy.js";
+import { hasMaddyMediaUrl, isMaddyCompanionPlayable, maddyPublishedSrc } from "./maddy.js";
 
 export const LIBRARY_OPEN_EVENT = "mindpal-open-library-video";
 
@@ -22,6 +22,20 @@ export function libraryCardModel(video, now = new Date()) {
       src: "",
       id: "",
       title: "MindPal video",
+    };
+  }
+
+  if (video.kind === "maddy" && hasMaddyMediaUrl(video.src || video.publishedSrc || video.videoUrl)) {
+    const src = video.publishedSrc || maddyPublishedSrc(video.src || video.videoUrl);
+    return {
+      kind: "maddy-play",
+      cta: "Play",
+      ariaLabel: `${titleOf(video)} · Play`,
+      playable: true,
+      opens: "player",
+      src,
+      id: video.id || "",
+      title: titleOf(video),
     };
   }
 
