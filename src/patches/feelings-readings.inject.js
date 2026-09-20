@@ -104,39 +104,36 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
     (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
   ]});
 }
-function ve({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
-  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null);
+function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
+  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`]];
   return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
     (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),
     (0,A.jsx)(`label`,{htmlFor:`feeling-choice`,children:`How would you describe this moment? · optional`}),
     (0,A.jsxs)(`select`,{ref:u,id:`feeling-choice`,value:a,onChange:e=>{o(e.target.value),c(``)},children:[
       (0,A.jsx)(`option`,{value:``,children:`Browse without choosing`}),
-      (0,A.jsx)(`option`,{value:`sad`,children:`Sad or low`}),
-      (0,A.jsx)(`option`,{value:`anxious`,children:`Anxious or worried`}),
-      (0,A.jsx)(`option`,{value:`angry`,children:`Angry or frustrated`}),
-      (0,A.jsx)(`option`,{value:`overwhelmed`,children:`Overwhelmed or stressed`}),
-      (0,A.jsx)(`option`,{value:`lonely`,children:`Lonely or disconnected`}),
-      (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
-      (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
-      (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`})
+      d.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e)),
+      f.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e))
     ]}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`secondary`,onClick:()=>c(`read`),children:`Read something supportive`}),
-      (0,A.jsx)(`button`,{className:`secondary`,onClick:()=>c(`video`),children:`Browse videos`}),
-      (0,A.jsx)(`button`,{className:`secondary`,onClick:()=>e(),children:`Open my diary`}),
-      (0,A.jsx)(`button`,{className:`secondary`,onClick:()=>t(),children:`Try a short practice`})
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`read`),children:`Read something supportive`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`video`),children:`Videos`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>e(),children:`Open my diary`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>t(),children:`Try a short practice`})
     ]}),
     (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation. “One steady detail” is an optional practice you can skip or stop; it is offered to everyone here, not selected as a treatment for your feeling.`}),
     s&&(0,A.jsxs)(`div`,{children:[
       (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?`Readings for this feeling`:`Videos for this feeling`}),
-      (0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
-      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:`Readings for this feeling`}):(0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
+      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(MpEmotionVideos,{headingRef:l,emotion:a,onBrowseSpeakers:i||r}),
+        (0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
+      ]})
     ]}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`text-button`,onClick:r,children:`Browse the whole video directory (optional)`}),
-      i?(0,A.jsx)(`button`,{className:`text-button`,onClick:i,children:`Browse signed coaches (optional)`}):null,
-      (0,A.jsx)(`button`,{className:`text-button`,onClick:()=>{o(``),c(``),n()},children:`Stop and return to Today`})
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i||r,children:mpReadings.BROWSE_SPEAKERS_LABEL}),
+      i?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i,children:`Browse signed coaches (optional)`}):null,
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{o(``),c(``),n()},children:`Stop and return to Today`})
     ]}),
     (0,A.jsx)(`p`,{children:`If this makes things harder, stop. You can take a break or seek human support. “Need support?” lists human-support options independently of this activity. In immediate danger in Australia, call 000. MindPal does not monitor you or contact help for you.`})
   ]});

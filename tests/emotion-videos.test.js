@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
+import { TAG_VOCAB } from "../src/readings/tags.js";
 import {
   BROWSE_SPEAKERS_LABEL,
   CURATED_VIDEO_LIMIT,
@@ -57,19 +58,34 @@ describe("emotion vocabulary", () => {
 
 describe("catalog tags and emotions", () => {
   it("tags every Maddy clip, HeyGen draft and meditation ref", () => {
+    const allowedTag = (tag) => EMOTION_IDS.includes(tag) || TAG_VOCAB.includes(tag);
+    const emotionsAreDirectory = (id, emotions, tags) => {
+      assert.ok(Array.isArray(emotions) && emotions.length, `${id} needs emotions`);
+      assert.ok(Array.isArray(tags) && tags.length, `${id} needs tags`);
+      for (const emotion of emotions) {
+        assert.ok(EMOTION_IDS.includes(emotion), `${id} ${emotion}`);
+        assert.ok(tags.includes(emotion), `${id} tags should keep emotion ${emotion}`);
+      }
+      for (const tag of tags) assert.ok(allowedTag(tag), `${id} extra tag ${tag}`);
+    };
     for (const video of [...maddy.videos, ...videos.videos]) {
       const tags = entryEmotions(video);
       assert.ok(tags.length, `${video.id} needs tags/emotions`);
-      assert.deepEqual(video.tags, video.emotions);
+      emotionsAreDirectory(video.id, video.emotions, video.tags);
       for (const tag of tags) assert.ok(EMOTION_IDS.includes(tag), `${video.id} ${tag}`);
     }
     for (const category of meditations.categories) {
       const inherited = entryEmotions(category);
       assert.ok(inherited.length, `${category.id} category needs tags`);
-      assert.deepEqual(category.tags, category.emotions);
+      emotionsAreDirectory(category.id, category.emotions, category.tags);
       for (const entry of category.entries) {
-        assert.deepEqual(entryEmotions(entry, inherited), inherited);
-        assert.deepEqual(entry.tags, entry.emotions);
+        const resolved = entryEmotions(entry, inherited);
+        for (const emotion of inherited) {
+          assert.ok(resolved.includes(emotion), `${entry.id} should keep ${emotion}`);
+        }
+        if (Array.isArray(entry.emotions) || Array.isArray(entry.tags)) {
+          emotionsAreDirectory(entry.id, entry.emotions || inherited, entry.tags || inherited);
+        }
       }
     }
   });

@@ -446,6 +446,9 @@ function patchJs(source) {
   if (!next.includes("mpSupportVideos") || !next.includes("Browse signed coaches (optional)")) {
     throw new Error("tagged video directory or secondary speaker browse missing");
   }
+  if (!next.includes("function mpFeelingsPage(") || !next.includes("return mpFeelingsPage(props)")) {
+    throw new Error("Feelings page delegate missing");
+  }
   if (next.includes("Video tagging by topic is not built yet")) {
     throw new Error("Focus still bounces videos to the generic library");
   }
@@ -609,6 +612,13 @@ function patchOwnerUx(source) {
     "(t===`Today`||ne)&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})",
     "ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)})",
     "hide-today-youth-teaser",
+  );
+
+  next = replaceOnce(
+    next,
+    "function ve({onDiary:e,onPractice:t,onLeave:n,onDirectory:r}){",
+    "function ve(props){return mpFeelingsPage(props)}function mpFeelingsLegacy({onDiary:e,onPractice:t,onLeave:n,onDirectory:r}){",
+    "feelings-page-delegate",
   );
 
   next = replaceOnce(

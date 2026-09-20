@@ -63,6 +63,14 @@ export const FEELING_TO_TAGS = {
   guilty: ["self-compassion"],
   numb: ["low-mood"],
   unsure: ["calm", "self-compassion"],
+  sleep: ["sleep", "calm"],
+  anxiety: ["anxiety", "worry"],
+  stress: ["stress", "overwhelm"],
+  "low-mood": ["low-mood", "grief"],
+  anger: ["anger"],
+  motivation: ["motivation"],
+  faith: ["faith"],
+  overwhelm: ["overwhelm", "stress"],
 };
 
 /**
@@ -199,7 +207,10 @@ export function tagsForThemeLabel(label) {
 
 export function tagsForFeeling(feelingId) {
   if (typeof feelingId !== "string" || !feelingId.trim()) return [];
-  return normalizeTags(FEELING_TO_TAGS[feelingId.trim()] || []);
+  const key = feelingId.trim();
+  if (FEELING_TO_TAGS[key]) return normalizeTags(FEELING_TO_TAGS[key]);
+  const asTag = canonicalizeTag(key);
+  return asTag ? [asTag] : [];
 }
 
 export function readingTags(reading) {

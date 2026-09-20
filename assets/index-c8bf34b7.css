@@ -148,4 +148,20 @@ button.coach-card .card-link{margin-top:8px}
 .mp-emotion-video .primary{align-self:flex-start;margin-top:4px}
 .mp-emotion-video video{background:#182d47;border-radius:12px;width:100%;aspect-ratio:16/9;display:block}
 .mp-emotion-draft{background:#fffef9;border:1px solid #e3dcc6;border-radius:12px;padding:12px 14px}
-.mp-emotion-speakers{margin:8px 0 4px}/*mp-styles-end*/
+.mp-emotion-speakers{margin:8px 0 4px}
+.mp-support-disclaimer{background:#f3f1e7;border-left:3px solid #a38b5a;padding:10px 14px;font-size:13px;line-height:1.5;max-width:62ch}
+.mp-tag-chips{flex-wrap:wrap;gap:8px;margin:8px 0 16px;display:flex}
+.mp-tag-chip{background:#fff;border:1px solid #cdd6c5;border-radius:999px;min-height:40px;padding:8px 14px;font-size:12px}
+.mp-tag-chip.is-active{color:#254c36;background:#e7f0e1;border-color:#304e3b;font-weight:650}
+.mp-support-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
+.mp-support-row,.mp-video-row{width:100%;text-align:left;background:#f7f8f2;border:1px solid #dfe4d5;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
+.mp-support-row-meta{color:#55604f;font-size:12px;font-weight:650}
+.mp-support-row-tags{color:#5c6756;font-size:12px}
+.mp-support-gate{background:#eef5ee;border-radius:10px;padding:10px 12px;font-size:13px}
+.mp-support-article{margin-top:12px}
+.mp-video-row h3{margin:0;font-size:1.15rem}
+.mp-video-row video{background:#182d47;border-radius:12px;width:100%;aspect-ratio:16/9;display:block}
+.mp-speakers-secondary{margin-top:14px}
+.mp-explore-feeling select{min-height:40px;margin:6px 0 14px;display:block;width:min(100%,22rem)}
+.mp-feeling-directory{display:grid;gap:22px;margin-top:12px}/*mp-styles-end*/
