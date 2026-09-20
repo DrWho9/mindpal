@@ -1,0 +1,45 @@
+{
+  "pack_id": "mindpal-videos-maddy-v1",
+  "title": "Watch with Maddy",
+  "version": "1.0.0",
+  "person": "Maddy",
+  "heygenDraftGate": false,
+  "videos": [
+    {
+      "id": "maddy-welcome",
+      "title": "Welcome",
+      "cardTitle": "Welcome",
+      "person": "Maddy",
+      "kind": "companion",
+      "look": "Meditation FIT (seated, fitness wear, coastal)",
+      "durationSec": 32,
+      "src": "/videos/maddy/welcome.mp4",
+      "description": "Soft introduction to MindPal companionship.",
+      "heygenDraft": false
+    },
+    {
+      "id": "maddy-tip",
+      "title": "Daily tip",
+      "cardTitle": "Daily tip",
+      "person": "Maddy",
+      "kind": "companion",
+      "look": "Meditation FIT (seated, fitness wear, coastal)",
+      "durationSec": 29,
+      "src": "/videos/maddy/tip.mp4",
+      "description": "A calm tip for using daily readings without pressure.",
+      "heygenDraft": false
+    },
+    {
+      "id": "maddy-timed-breath",
+      "title": "Timed breath",
+      "cardTitle": "Timed breath",
+      "person": "Maddy",
+      "kind": "companion",
+      "look": "Meditation FIT (seated, fitness wear, coastal)",
+      "durationSec": 101,
+      "src": "/videos/maddy/timed-breath.mp4",
+      "description": "Follow-along breath: inhale 4 / hold 4 / exhale 6 with ~1.5s per count.",
+      "heygenDraft": false
+    }
+  ]
+}

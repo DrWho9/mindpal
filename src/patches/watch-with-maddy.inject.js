@@ -1,0 +1,4 @@
+function MpWatchWithMaddy(){
+  let e=mpReadings.maddyCompanionVideos(mpMaddy);
+  return(0,A.jsxs)(`section`,{className:`simple-panel watch-with-maddy`,"aria-label":`Watch with Maddy`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`COMPANION · READY TO PLAY`}),(0,A.jsx)(`h2`,{children:`Watch with Maddy`}),(0,A.jsx)(`p`,{children:`Welcome, Daily tip and Timed breath — finished companion clips. Press play here; these are not HeyGen drafts.`}),(0,A.jsx)(`div`,{className:`maddy-video-grid`,children:e.map(t=>(0,A.jsxs)(`article`,{className:`maddy-video-card`,children:[(0,A.jsx)(`h3`,{children:t.cardTitle}),(0,A.jsx)(`p`,{children:t.description}),(0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:Ge(t.src),"aria-label":`${t.cardTitle} with Maddy`}),(0,A.jsx)(`p`,{className:`muted`,children:t.durationLabel})]},t.id))})]});
+}

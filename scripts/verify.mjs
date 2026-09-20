@@ -1,4 +1,5 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,7 +9,9 @@ const sw = readFileSync(join(root, "sw.js"), "utf8");
 const jsName = html.match(/assets\/(index-[^"]+\.js)/)?.[1];
 const cssName = html.match(/assets\/(index-[^"]+\.css)/)?.[1];
 if (!jsName || !cssName) throw new Error("index.html missing hashed assets");
-const js = readFileSync(join(root, "assets", jsName), "utf8");
+const jsPath = join(root, "assets", jsName);
+execFileSync("node", ["--check", jsPath], { cwd: root });
+const js = readFileSync(jsPath, "utf8");
 const checks = [
   [html.includes('src="/mindpal/assets/'), "index.html keeps /mindpal/ JS path"],
   [html.includes('href="/mindpal/assets/'), "index.html keeps /mindpal/ CSS path"],
@@ -23,8 +26,24 @@ const checks = [
   [js.includes("HeyGen not rendered yet"), "draft modal copy is present"],
   [!js.includes("HeyGen production planned"), "old HeyGen placeholder copy removed"],
   [((js.match(/publicEligible:!1/g) || []).length >= 12), "catalog drafts stay publicEligible false"],
+  [js.includes("Watch with Maddy"), "Watch with Maddy section is in the bundle"],
+  [js.includes("/videos/maddy/welcome.mp4") && js.includes("/videos/maddy/tip.mp4") && js.includes("/videos/maddy/timed-breath.mp4"), "Maddy MP4 srcs are in the bundle"],
+  [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
+  [js.includes(`"heygenDraftGate": false`), "Maddy catalog skips the HeyGen draft gate"],
+  [!sw.includes("videos/maddy"), "service worker does not precache Maddy MP4s"],
+  [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
 ];
+
+const maddyFiles = [
+  ["videos/maddy/welcome.mp4", 2163855],
+  ["videos/maddy/tip.mp4", 1946389],
+  ["videos/maddy/timed-breath.mp4", 6126749],
+];
+for (const [rel, size] of maddyFiles) {
+  const path = join(root, rel);
+  checks.push([existsSync(path) && statSync(path).size === size, `published ${rel}`]);
+}
 
 const failed = checks.filter(([ok]) => !ok);
 if (failed.length) {
