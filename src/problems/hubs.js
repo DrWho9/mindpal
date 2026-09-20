@@ -6,6 +6,11 @@ import {
   normalizeProblemTags,
   readingProblemTags,
 } from "./theme-map.js";
+import {
+  featuredOwnerReadings,
+  isOwnerReading,
+  ownerCompanionOpener,
+} from "../readings/owner.js";
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
@@ -47,10 +52,12 @@ export function readingsForProblem(pack, problemId, limit) {
       : problemId === AOD_PROBLEM_ID
         ? AOD_READING_LIMIT
         : 6;
+  const featured = featuredOwnerReadings(problemId);
+  const featuredIds = new Set(featured.map((item) => item.id));
   const tagged = readings
-    .filter((item) => readingProblemTags(item).includes(problemId))
+    .filter((item) => !featuredIds.has(item.id) && readingProblemTags(item).includes(problemId))
     .sort((a, b) => Number(a.day) - Number(b.day));
-  return tagged.slice(0, cap);
+  return [...featured, ...tagged.slice(0, cap)];
 }
 
 export function motherSupportTags(reading) {

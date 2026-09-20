@@ -74,6 +74,7 @@ export function nextIncomplete(readings, completedIds) {
 
 export function canMarkDone(readings, completedIds, reading) {
   if (!reading?.id) return false;
+  if (reading.gate === false || reading.pack === "owner") return false;
   if (completedIds.includes(reading.id)) return false;
   return isDayUnlocked(readings, completedIds, reading.day);
 }

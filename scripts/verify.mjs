@@ -50,6 +50,8 @@ const checks = [
   [js.includes("One small win amid caring for others"), "mothers journal prompt is present"],
   [js.includes("No speaker library dump here."), "mothers videos skip the speaker-dump default"],
   [js.includes("Drugs & alcohol") && js.includes("mpAodHubPage"), "AOD hub is present"],
+  [js.includes("dna-dopamine-loop-v1") && js.includes("mp-hub-featured"), "AOD featured talk-through is present"],
+  [js.includes("puppy-and-treat loop") && js.includes("not genetics"), "AOD talk-through spells DNA as drugs and alcohol, not genetics"],
   [js.includes("mpAodFeelingsChip"), "AOD Feelings entry is present"],
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],

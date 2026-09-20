@@ -16,6 +16,7 @@ import {
   tagsForThemeLabel,
   usedTags,
 } from "../src/readings/tags.js";
+import { isOwnerReading } from "../src/readings/owner.js";
 import {
   canMarkDone,
   emptyProgress,
@@ -25,7 +26,9 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 const packA = JSON.parse(readFileSync(join(root, "../src/data/pack-a.json"), "utf8"));
+const ownerReadings = JSON.parse(readFileSync(join(root, "../src/data/owner-readings.json"), "utf8"));
 const readings = packA.readings;
+globalThis.mpOwnerReadings = ownerReadings;
 
 describe("Pack A controlled tags", () => {
   it("stores hashtag-style tags without # in the pack JSON", () => {
@@ -51,7 +54,10 @@ describe("Pack A controlled tags", () => {
   });
 
   it("covers the published feeling vocab", () => {
-    const used = new Set(readings.flatMap((item) => item.tags));
+    const used = new Set([
+      ...readings.flatMap((item) => item.tags),
+      ...ownerReadings.readings.flatMap((item) => item.tags || []),
+    ]);
     for (const tag of TAG_VOCAB) {
       assert.ok(used.has(tag), `vocab tag unused: ${tag}`);
     }
@@ -72,14 +78,18 @@ describe("Pack A controlled tags", () => {
     assert.ok(anxious.some((item) => item.id === "catch-the-worry-snowball"));
 
     const aodTags = tagsForFeeling("aod");
-    assert.deepEqual(aodTags, ["drugs", "alcohol", "craving", "recovery-shame"]);
+    assert.deepEqual(aodTags, ["drugs", "alcohol", "craving", "recovery-shame", "learning-loop"]);
     const aod = readingsForTags(packA, aodTags);
-    assert.ok(aod.length >= 8 && aod.length <= 20, `aod list has ${aod.length}`);
+    assert.ok(aod.length >= 8 && aod.length <= 21, `aod list has ${aod.length}`);
     assert.ok(aod.every((item) => item.tags.some((tag) => aodTags.includes(tag))));
+    assert.equal(aod[0].id, "dna-dopamine-loop-v1");
+    assert.ok(isOwnerReading(aod[0]));
     assert.ok(aod.some((item) => item.id === "thank-your-past-coping"));
     assert.ok(aod.some((item) => item.id === "begin-again-without-drama"));
     assert.ok(aod.some((item) => item.tags.includes("craving")));
     assert.ok(aod.some((item) => item.tags.includes("recovery-shame")));
+    assert.match(supportUnlockMessage(aod[0], aod, []), /always open/);
+    assert.equal(canMarkDone(aod, [], aod[0]), false);
   });
 
   it("keeps the sequential Done gate independent of Feelings support reads", () => {

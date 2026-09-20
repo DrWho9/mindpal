@@ -6053,6 +6053,46 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "practice": "Before sleep, list three things you did not lose today. Keep them simple. Let that be the last mental list."
     }
   ]
+};var mpOwnerReadings={
+  "version": "1.0.0",
+  "author": "MindPal (original)",
+  "license_note": "Original MindPal educational content. Not medical advice.",
+  "disclaimer": "Supportive wellbeing reading, not clinical therapy, detox, or crisis care. AU urgent help: 000 / Lifeline 13 11 14. Need support in the app lists human help.",
+  "readings": [
+    {
+      "id": "dna-dopamine-loop-v1",
+      "title": "Drugs and alcohol: the puppy-and-treat loop",
+      "minutes": 4,
+      "day": 0,
+      "theme_label": "learning-loop",
+      "featured": true,
+      "featuredProblem": "aod",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "Drugs and alcohol can spike reward and train a loop: feel down → use → brief relief → come-down → more use — like rewarding a puppy for messing the couch. Literacy, not a detox plan.",
+      "body": "This talk-through is about drugs and alcohol. Later we may use the nickname DNA for that same phrase — drugs and alcohol, not genetics, not your genes.\n\nIt is literacy, not a diagnosis, not therapy, and not a detox plan. If you are in danger in Australia, call 000. Need support in the app lists human help already, including Lifeline. We do not invent extra numbers here.\n\nImagine a puppy that messes the couch. If you hand it a treat right then, the puppy does not hear a lecture about furniture. It learns a simpler lesson: that behaviour got a reward. Next time the urge rises, it looks for the treat.\n\nYour brain is not a puppy, but it can learn in a similar way. A reward that arrives quickly after a feeling can train a loop — often without a conscious decision. That learning can sit under the story you tell yourself.\n\nDrugs and alcohol can spike the brain's reward system. The dopamine talk you hear is a plain way of saying this felt briefly bigger than the mood I was in. A common pattern looks like this:\n\nYou feel down. You have a drink, or a line, or another hit. For a short window the mood lifts, or at least goes quiet. Then the come-down arrives — often flatter, shakier, or more ashamed than before. The low mood is still there, and sometimes it is louder.\n\nThat sequence is not a moral verdict. It is a learning loop: feel down → use → brief relief → come-down → more use.\n\nRepeat the pairing and the brain starts to reach for the hit when the low mood shows up, the way a puppy looks for the treat. Ordinary rewards — a walk, a text, a cup of tea, a small win — can feel quieter beside a chemical spike. That quietness is part of the training, not proof that you are broken.\n\nThis is subconscious learning more than a single bad choice. A spiral can grow from many small pairings, not from one dramatic night.\n\nOne use does not “ruin you”. This page is not saying you are damaged, and it is not a DIY detox. Coming off substances, especially alcohol or other drugs after heavy or daily use, can be medically unsafe without proper care. If stopping feels urgent or shaky, use human help — Need support, local alcohol and other drug care, or 000 if you are in danger.\n\nLiteracy, not a protocol. You do not have to do this. If you want a picture of how retraining can look, it is the same puppy logic in reverse: pair the low-mood moment with something that is not the spike.\n\nExamples people sometimes try, when they are safe to do so: a glass of water; a short walk or a step outside; a text to someone kind; a one-line win note — I stayed with the feeling for two minutes.\n\nThese are not a treatment plan, a detox, or a substitute for alcohol and other drug care. They are a way of seeing that the brain can learn other pairings, slowly, if and when you and your supports choose that.\n\nIf drugs and alcohol — DNA, if you like the nickname — have been training a loop, noticing the pattern is already a kind of company. You do not have to fix it from this page.",
+      "practice": "If you are safe to do so, pair the next low-mood moment with one small alternative — water, a short walk, a kind text, or a one-line win note. That is literacy, not a protocol. Skip if it does not fit. This is not detox.",
+      "companionOpener": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "theme_tags": [
+        "aod",
+        "alcohol",
+        "drugs",
+        "craving",
+        "shame",
+        "low-mood",
+        "learning-loop"
+      ],
+      "tags": [
+        "alcohol",
+        "drugs",
+        "craving",
+        "recovery-shame",
+        "low-mood",
+        "learning-loop"
+      ]
+    }
+  ]
 };var mpMaddy={
   "pack_id": "mindpal-videos-maddy-v1",
   "title": "Watch with Maddy",
@@ -6983,7 +7023,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "intro": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is optional company: a few readings, a quiet clip, or one honest sentence. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
       "meditationCategoryId": "self-compassion",
       "meditationCategoryIds": ["self-compassion", "anxiety", "stress"],
-      "companionPrompt": "I'm finding drink or other substances hard — craving, shame, or starting again. Please stay educational and peer-like: one small, non-shame next step. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
       "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
     }
   ]
@@ -7063,6 +7103,7 @@ function nextIncomplete(readings, completedIds) {
 
 function canMarkDone(readings, completedIds, reading) {
   if (!reading?.id) return false;
+  if (reading.gate === false || reading.pack === "owner") return false;
   if (completedIds.includes(reading.id)) return false;
   return isDayUnlocked(readings, completedIds, reading.day);
 }
@@ -7124,6 +7165,63 @@ function pickRandom(readings, excludeId) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
+/** MindPal original support readings — not Pack A sequential days. */
+
+const AOD_FEATURED_READING_ID = "dna-dopamine-loop-v1";
+
+function ownerReadingsCatalog(override) {
+  if (Array.isArray(override?.readings)) return override;
+  if (Array.isArray(override)) return { readings: override };
+  if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
+    return globalThis.mpOwnerReadings;
+  }
+  return { readings: [] };
+}
+
+function isOwnerReading(reading) {
+  if (!reading || typeof reading !== "object") return false;
+  return (
+    reading.gate === false ||
+    reading.pack === "owner" ||
+    reading.source === "mindpal_original_owner"
+  );
+}
+
+function listOwnerReadings(override) {
+  const readings = ownerReadingsCatalog(override).readings;
+  return readings.filter((item) => item && typeof item.id === "string" && item.id.trim());
+}
+
+function findOwnerReading(id, override) {
+  if (typeof id !== "string" || !id.trim()) return null;
+  return listOwnerReadings(override).find((item) => item.id === id) || null;
+}
+
+function featuredOwnerReadings(problemId, override) {
+  if (typeof problemId !== "string" || !problemId.trim()) return [];
+  return listOwnerReadings(override).filter((item) => {
+    if (item.featured === false) return false;
+    if (item.featuredProblem === problemId) return true;
+    const tags = Array.isArray(item.theme_tags) ? item.theme_tags : [];
+    return item.featured === true && tags.includes(problemId);
+  });
+}
+
+function mergeOwnerReadings(pack, override) {
+  const packList = Array.isArray(pack?.readings) ? pack.readings.slice() : [];
+  const seen = new Set(packList.map((item) => item.id));
+  const owner = listOwnerReadings(override).filter((item) => !seen.has(item.id));
+  return [...owner, ...packList];
+}
+
+function ownerCompanionOpener(problemId, fallback, override) {
+  const featured = featuredOwnerReadings(problemId, override)[0];
+  const opener = typeof featured?.companionOpener === "string" ? featured.companionOpener.trim() : "";
+  if (opener) return opener;
+  return typeof fallback === "string" ? fallback : "";
+}
+
+
 /** Controlled Pack A feeling/problem tags. Stored without #; UI may show #tag. */
 
 const TAG_VOCAB = [
@@ -7146,6 +7244,7 @@ const TAG_VOCAB = [
   "alcohol",
   "craving",
   "recovery-shame",
+  "learning-loop",
 ];
 
 const TAG_LABELS = {
@@ -7168,6 +7267,7 @@ const TAG_LABELS = {
   alcohol: "Alcohol",
   craving: "Craving",
   "recovery-shame": "Recovery shame",
+  "learning-loop": "Learning loop",
 };
 
 /**
@@ -7184,7 +7284,7 @@ const PROBLEM_HUB_TAGS = [
   "aod",
 ];
 
-const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame"];
+const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame", "learning-loop"];
 
 const TAG_ALIASES = {
   mood: "low-mood",
@@ -7324,6 +7424,7 @@ const THEME_LABEL_TO_TAGS = {
   closures: ["sleep", "grief", "calm"],
   "ordinary life": ["faith", "gratitude", "calm"],
   "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame"],
+  "learning-loop": ["alcohol", "drugs", "craving", "recovery-shame", "low-mood", "learning-loop"],
 };
 
 const SUPPORT_DISCLAIMER =
@@ -7374,17 +7475,21 @@ function readingHasAnyTag(reading, tags) {
 }
 
 function readingsForTags(pack, tags) {
-  const readings = Array.isArray(pack?.readings) ? pack.readings.slice() : [];
+  const readings = mergeOwnerReadings(pack);
   const wanted = normalizeTags(tags);
   const filtered = wanted.length
     ? readings.filter((item) => readingHasAnyTag(item, wanted))
     : readings;
-  return filtered.sort((a, b) => Number(a.day) - Number(b.day));
+  return filtered.sort((a, b) => {
+    const ownerDelta = Number(isOwnerReading(b)) - Number(isOwnerReading(a));
+    if (ownerDelta) return ownerDelta;
+    return Number(a.day) - Number(b.day);
+  });
 }
 
 function usedTags(pack) {
   const counts = new Map(TAG_VOCAB.map((tag) => [tag, 0]));
-  const readings = Array.isArray(pack?.readings) ? pack.readings : [];
+  const readings = mergeOwnerReadings(pack);
   for (const item of readings) {
     for (const tag of readingTags(item)) {
       counts.set(tag, (counts.get(tag) || 0) + 1);
@@ -7399,6 +7504,9 @@ function usedTags(pack) {
 }
 
 function supportUnlockMessage(reading, readings, completedIds) {
+  if (isOwnerReading(reading)) {
+    return "MindPal original support reading — always open. It is not a Pack A morning day, and opening here does not mark Done.";
+  }
   const day = Number(reading?.day);
   if (!reading?.id || !Number.isFinite(day)) {
     return "You can read this as support. Marking Done still follows the morning pathway, one day at a time.";
@@ -8639,7 +8747,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -9132,6 +9240,8 @@ const AOD_SUPPORT_TAGS = [
   "shame",
   "self-compassion",
   "stress",
+  "low-mood",
+  "learning-loop",
 ];
 
 const THEME_LABEL_TO_TAGS = {
@@ -9256,6 +9366,15 @@ const THEME_LABEL_TO_TAGS = {
   closures: ["sleep", "mood"],
   "ordinary life": ["faith"],
   "fresh start": ["motivation", "aod", "recovery-adjacent", "alcohol", "drugs"],
+  "learning-loop": [
+    "aod",
+    "alcohol",
+    "drugs",
+    "craving",
+    "shame",
+    "low-mood",
+    "learning-loop",
+  ],
 };
 
 const ALLOWED_TAGS = new Set([
@@ -9297,6 +9416,8 @@ const FEELING_TO_PROBLEM = {
   "recovery-shame": "aod",
   "recovery-adjacent": "aod",
   shame: "aod",
+  "low-mood": "mood",
+  "learning-loop": "aod",
 };
 
 function feelingTagsToProblemTags(raw) {
@@ -9311,6 +9432,63 @@ function readingProblemTags(reading) {
   if (fromFeeling.length) return fromFeeling;
   return tagsForThemeLabel(reading?.theme_label);
 }
+
+/** MindPal original support readings — not Pack A sequential days. */
+
+const AOD_FEATURED_READING_ID = "dna-dopamine-loop-v1";
+
+function ownerReadingsCatalog(override) {
+  if (Array.isArray(override?.readings)) return override;
+  if (Array.isArray(override)) return { readings: override };
+  if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
+    return globalThis.mpOwnerReadings;
+  }
+  return { readings: [] };
+}
+
+function isOwnerReading(reading) {
+  if (!reading || typeof reading !== "object") return false;
+  return (
+    reading.gate === false ||
+    reading.pack === "owner" ||
+    reading.source === "mindpal_original_owner"
+  );
+}
+
+function listOwnerReadings(override) {
+  const readings = ownerReadingsCatalog(override).readings;
+  return readings.filter((item) => item && typeof item.id === "string" && item.id.trim());
+}
+
+function findOwnerReading(id, override) {
+  if (typeof id !== "string" || !id.trim()) return null;
+  return listOwnerReadings(override).find((item) => item.id === id) || null;
+}
+
+function featuredOwnerReadings(problemId, override) {
+  if (typeof problemId !== "string" || !problemId.trim()) return [];
+  return listOwnerReadings(override).filter((item) => {
+    if (item.featured === false) return false;
+    if (item.featuredProblem === problemId) return true;
+    const tags = Array.isArray(item.theme_tags) ? item.theme_tags : [];
+    return item.featured === true && tags.includes(problemId);
+  });
+}
+
+function mergeOwnerReadings(pack, override) {
+  const packList = Array.isArray(pack?.readings) ? pack.readings.slice() : [];
+  const seen = new Set(packList.map((item) => item.id));
+  const owner = listOwnerReadings(override).filter((item) => !seen.has(item.id));
+  return [...owner, ...packList];
+}
+
+function ownerCompanionOpener(problemId, fallback, override) {
+  const featured = featuredOwnerReadings(problemId, override)[0];
+  const opener = typeof featured?.companionOpener === "string" ? featured.companionOpener.trim() : "";
+  if (opener) return opener;
+  return typeof fallback === "string" ? fallback : "";
+}
+
 
 
 const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
@@ -9353,10 +9531,12 @@ function readingsForProblem(pack, problemId, limit) {
       : problemId === AOD_PROBLEM_ID
         ? AOD_READING_LIMIT
         : 6;
+  const featured = featuredOwnerReadings(problemId);
+  const featuredIds = new Set(featured.map((item) => item.id));
   const tagged = readings
-    .filter((item) => readingProblemTags(item).includes(problemId))
+    .filter((item) => !featuredIds.has(item.id) && readingProblemTags(item).includes(problemId))
     .sort((a, b) => Number(a.day) - Number(b.day));
-  return tagged.slice(0, cap);
+  return [...featured, ...tagged.slice(0, cap)];
 }
 
 function motherSupportTags(reading) {
@@ -9454,7 +9634,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -9533,7 +9713,7 @@ function mpMaddyListenButtons(){
   let i=mpReadings.tagsForFeeling(t),a=e&&mpReadings.TAG_VOCAB.includes(e)?e:``,[o,s]=(0,_.useState)(a),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(()=>mpReadings.loadProgress());
   (0,_.useEffect)(()=>{d(mpReadings.loadProgress())},[]);
   (0,_.useEffect)(()=>{s(a||``)},[a]);
-  let f=mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1;
+  let f=mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1,yOwner=g&&(mpReadings.isOwnerReading?mpReadings.isOwnerReading(g):g.pack===`owner`);
   function y(){
     if(!v||!g)return;
     let e=mpReadings.markReadingDone(u,g,f);
@@ -9551,16 +9731,16 @@ function mpMaddyListenButtons(){
     ]}):null,
     g?(0,A.jsxs)(`article`,{className:`mp-support-article`,"aria-label":g.title,children:[
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>l(null),children:`← Back to readings list`}),
-      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[`SUPPORT READING · DAY `,g.day,` · `,g.theme_label]}),
+      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[yOwner?`SUPPORT READING · MINDPAL ORIGINAL`:`SUPPORT READING · DAY ${g.day}`,g.theme_label?` · ${g.theme_label}`:``]}),
       (0,A.jsx)(`h3`,{children:g.title}),
       g.body.split(`
 
 `).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
       (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,g.practice]}),
       (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage(g,f,u.completedIds)}),
-      (0,A.jsx)(`p`,{className:`muted`,children:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:yOwner?`This MindPal original is always open as support. It is not a Pack A morning day.`:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
+        yOwner?null:(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
         (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l(null),children:`Back to list`})
       ]})
     ]}):(0,A.jsxs)(A.Fragment,{children:[
@@ -9569,7 +9749,7 @@ function mpMaddyListenButtons(){
         let t=mpReadings.isDayUnlocked(f,u.completedIds,e.day),n=u.completedIds.includes(e.id);
         return(0,A.jsxs)(`li`,{children:[
           (0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row`,onClick:()=>l(e.id),children:[
-            (0,A.jsxs)(`span`,{className:`mp-support-row-meta`,children:[`Day `,e.day,n?` · Done`:t?` · Unlocked`:` · Locked on morning path`]}),
+            (0,A.jsx)(`span`,{className:`mp-support-row-meta`,children:e.pack===`owner`||e.gate===!1?`MindPal original · always open`:`Day ${e.day}${n?` · Done`:t?` · Unlocked`:` · Locked on morning path`}`}),
             (0,A.jsx)(`strong`,{children:e.title}),
             (0,A.jsx)(`span`,{className:`mp-support-row-tags`,children:mpReadings.readingTags(e).map(mpReadings.formatTag).join(` `)})
           ]})
@@ -10040,9 +10220,13 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
 }
 function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
   (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
+  let[f,p]=(0,_.useState)(!1);
   let o=mpProblems.findProblem(mpProblemHubs,`aod`);
   if(!o)return(0,A.jsx)(`p`,{children:`The drugs & alcohol space is not loaded yet.`});
   let s=mpProblems.readingsForProblem(mpPackA,`aod`),c=mpProblems.maddyForProblem(mpMaddy,`aod`),l=mpMotherYtEntries(o);
+  let u=s[0]||null,d=u?s.slice(1):s;
+  let opener=mpProblems.ownerCompanionOpener?mpProblems.ownerCompanionOpener(`aod`,o.companionPrompt):o.companionPrompt;
+  let featuredTags=u&&mpProblems.aodSupportTags?mpProblems.aodSupportTags(u):[];
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-aod`,"aria-label":`Drugs & alcohol`,children:[
     (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`DRUGS & ALCOHOL · OPTIONAL SUPPORT`}),
@@ -10051,15 +10235,30 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     (0,A.jsx)(`p`,{className:`muted`,children:`Not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Soft pointers only.`}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
-      (0,A.jsx)(`p`,{children:`Support excerpts tagged for alcohol, drugs, craving, recovery-adjacent themes, shame, self-compassion and stress. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
-      s.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:s.map(e=>{
+      (0,A.jsx)(`p`,{children:`Start with the MindPal original talk-through on drugs and alcohol — DNA is only a nickname for that phrase, not genetics. Tagged support excerpts sit underneath. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
+      u?(0,A.jsxs)(`article`,{className:`mp-hub-featured`,"aria-label":`Featured talk-through`,children:[
+        (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEATURED · MINDPAL ORIGINAL`}),
+        (0,A.jsx)(`h3`,{children:u.title}),
+        (0,A.jsx)(`p`,{children:u.excerpt||(u.body||``).split(`\n\n`)[0]}),
+        featuredTags.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:featuredTags.join(` · `)}):null,
+        f?(0,A.jsxs)(`div`,{className:`mp-hub-featured-body`,children:[
+          (u.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+          u.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,u.practice]}):null,
+          (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage?mpReadings.supportUnlockMessage(u,s,[]):`MindPal original support reading — always open.`})
+        ]}):null,
+        (0,A.jsxs)(`div`,{className:`button-row`,children:[
+          (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p(e=>!e),children:f?`Hide the talk-through`:`Read the talk-through`}),
+          e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
+        ]})
+      ]}):null,
+      d.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:d.map(e=>{
         let t=mpProblems.aodSupportTags?mpProblems.aodSupportTags(e):[];
         return(0,A.jsxs)(`li`,{children:[
           (0,A.jsx)(`strong`,{children:e.title}),
           (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]}),
           t.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:t.join(` · `)}):null
         ]},e.id);
-      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
+      })}):u?null:(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
       n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
@@ -10088,8 +10287,8 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion with an educational, peer-like prompt. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
-      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
+      (0,A.jsx)(`p`,{children:`Opens Companion on the drugs and alcohol talk-through — the puppy-and-treat loop. DNA is only a nickname for drugs and alcohol, not genetics. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Journal / wins`}),

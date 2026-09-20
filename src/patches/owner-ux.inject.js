@@ -296,9 +296,13 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
 }
 function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
   (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
+  let[f,p]=(0,_.useState)(!1);
   let o=mpProblems.findProblem(mpProblemHubs,`aod`);
   if(!o)return(0,A.jsx)(`p`,{children:`The drugs & alcohol space is not loaded yet.`});
   let s=mpProblems.readingsForProblem(mpPackA,`aod`),c=mpProblems.maddyForProblem(mpMaddy,`aod`),l=mpMotherYtEntries(o);
+  let u=s[0]||null,d=u?s.slice(1):s;
+  let opener=mpProblems.ownerCompanionOpener?mpProblems.ownerCompanionOpener(`aod`,o.companionPrompt):o.companionPrompt;
+  let featuredTags=u&&mpProblems.aodSupportTags?mpProblems.aodSupportTags(u):[];
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-aod`,"aria-label":`Drugs & alcohol`,children:[
     (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`DRUGS & ALCOHOL · OPTIONAL SUPPORT`}),
@@ -307,15 +311,30 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     (0,A.jsx)(`p`,{className:`muted`,children:`Not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Soft pointers only.`}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
-      (0,A.jsx)(`p`,{children:`Support excerpts tagged for alcohol, drugs, craving, recovery-adjacent themes, shame, self-compassion and stress. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
-      s.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:s.map(e=>{
+      (0,A.jsx)(`p`,{children:`Start with the MindPal original talk-through on drugs and alcohol — DNA is only a nickname for that phrase, not genetics. Tagged support excerpts sit underneath. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
+      u?(0,A.jsxs)(`article`,{className:`mp-hub-featured`,"aria-label":`Featured talk-through`,children:[
+        (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEATURED · MINDPAL ORIGINAL`}),
+        (0,A.jsx)(`h3`,{children:u.title}),
+        (0,A.jsx)(`p`,{children:u.excerpt||(u.body||``).split(`\n\n`)[0]}),
+        featuredTags.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:featuredTags.join(` · `)}):null,
+        f?(0,A.jsxs)(`div`,{className:`mp-hub-featured-body`,children:[
+          (u.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+          u.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,u.practice]}):null,
+          (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage?mpReadings.supportUnlockMessage(u,s,[]):`MindPal original support reading — always open.`})
+        ]}):null,
+        (0,A.jsxs)(`div`,{className:`button-row`,children:[
+          (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p(e=>!e),children:f?`Hide the talk-through`:`Read the talk-through`}),
+          e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
+        ]})
+      ]}):null,
+      d.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:d.map(e=>{
         let t=mpProblems.aodSupportTags?mpProblems.aodSupportTags(e):[];
         return(0,A.jsxs)(`li`,{children:[
           (0,A.jsx)(`strong`,{children:e.title}),
           (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]}),
           t.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:t.join(` · `)}):null
         ]},e.id);
-      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
+      })}):u?null:(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
       n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
@@ -344,8 +363,8 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion with an educational, peer-like prompt. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
-      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
+      (0,A.jsx)(`p`,{children:`Opens Companion on the drugs and alcohol talk-through — the puppy-and-treat loop. DNA is only a nickname for drugs and alcohol, not genetics. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Journal / wins`}),
