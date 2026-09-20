@@ -292,7 +292,10 @@
       "tags": [
         "relationships",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "alcohol",
+        "drugs",
+        "recovery-shame"
       ]
     },
     {
@@ -736,7 +739,10 @@
       "tags": [
         "self-compassion",
         "grief",
-        "faith"
+        "faith",
+        "recovery-shame",
+        "alcohol",
+        "drugs"
       ]
     },
     {
@@ -859,7 +865,8 @@
       "tags": [
         "self-compassion",
         "low-mood",
-        "motivation"
+        "motivation",
+        "recovery-shame"
       ]
     },
     {
@@ -903,7 +910,8 @@
       "tags": [
         "self-compassion",
         "low-mood",
-        "anxiety"
+        "anxiety",
+        "recovery-shame"
       ]
     },
     {
@@ -1027,7 +1035,8 @@
       "tags": [
         "sleep",
         "self-compassion",
-        "low-mood"
+        "low-mood",
+        "recovery-shame"
       ]
     },
     {
@@ -1091,7 +1100,8 @@
       "tags": [
         "sleep",
         "stress",
-        "calm"
+        "calm",
+        "craving"
       ]
     },
     {
@@ -1314,7 +1324,8 @@
       "tags": [
         "calm",
         "faith",
-        "grief"
+        "grief",
+        "recovery-shame"
       ]
     },
     {
@@ -1375,7 +1386,8 @@
       "tags": [
         "grief",
         "self-compassion",
-        "calm"
+        "calm",
+        "recovery-shame"
       ]
     },
     {
@@ -1633,7 +1645,8 @@
       "tags": [
         "boundaries",
         "overwhelm",
-        "self-compassion"
+        "self-compassion",
+        "recovery-shame"
       ]
     },
     {
@@ -1928,7 +1941,8 @@
       "tags": [
         "low-mood",
         "anger",
-        "grief"
+        "grief",
+        "craving"
       ]
     },
     {
@@ -1971,7 +1985,11 @@
       "tags": [
         "self-compassion",
         "grief",
-        "motivation"
+        "motivation",
+        "alcohol",
+        "drugs",
+        "craving",
+        "recovery-shame"
       ]
     },
     {
@@ -2033,7 +2051,10 @@
       "tags": [
         "motivation",
         "self-compassion",
-        "calm"
+        "calm",
+        "alcohol",
+        "drugs",
+        "recovery-shame"
       ]
     }
   ]

@@ -28,6 +28,7 @@ export const AOD_SUPPORT_TAGS = [
   "drugs",
   "craving",
   "recovery-adjacent",
+  "recovery-shame",
   "shame",
   "self-compassion",
   "stress",
@@ -192,6 +193,10 @@ const FEELING_TO_PROBLEM = {
   aod: "aod",
   alcohol: "aod",
   drugs: "aod",
+  craving: "aod",
+  "recovery-shame": "aod",
+  "recovery-adjacent": "aod",
+  shame: "aod",
 };
 
 export function feelingTagsToProblemTags(raw) {

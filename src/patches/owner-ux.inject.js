@@ -211,6 +211,7 @@ function mpAodFeelingsChip({onOpen:e}){
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL SUPPORT · NOT TREATMENT`}),
     (0,A.jsx)(`h2`,{children:`Drugs & alcohol`}),
     (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet directory here. Optional company, not detox and not a replacement for AOD treatment.`}),
+    (0,A.jsx)(mpSupportReadings,{feelingId:`aod`,heading:`Readings for drugs & alcohol`,showChips:!1}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the drugs & alcohol space`}):null
   ]});
 }

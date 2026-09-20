@@ -16,6 +16,10 @@ export const TAG_VOCAB = [
   "gratitude",
   "boundaries",
   "calm",
+  "drugs",
+  "alcohol",
+  "craving",
+  "recovery-shame",
 ];
 
 export const TAG_LABELS = {
@@ -34,10 +38,14 @@ export const TAG_LABELS = {
   gratitude: "Gratitude",
   boundaries: "Boundaries",
   calm: "Calm",
+  drugs: "Drugs",
+  alcohol: "Alcohol",
+  craving: "Craving",
+  "recovery-shame": "Recovery shame",
 };
 
 /**
- * PR #8 problem-hub ids. `mood` aliases to `low-mood` in this vocab so
+ * PR #8 / #16 problem-hub ids. `mood` aliases to `low-mood` in this vocab so
  * Morning/Day/Night hubs and Feelings chips can share catalogs.
  */
 export const PROBLEM_HUB_TAGS = [
@@ -47,10 +55,15 @@ export const PROBLEM_HUB_TAGS = [
   "mood",
   "motivation",
   "faith",
+  "aod",
 ];
+
+export const AOD_FEELING_TAGS = ["drugs", "alcohol", "craving", "recovery-shame"];
 
 export const TAG_ALIASES = {
   mood: "low-mood",
+  "recovery-adjacent": "recovery-shame",
+  shame: "recovery-shame",
 };
 
 /** Feelings dropdown ids → controlled tags (any-match). */
@@ -60,7 +73,7 @@ export const FEELING_TO_TAGS = {
   angry: ["anger"],
   overwhelmed: ["overwhelm", "stress"],
   lonely: ["relationships", "low-mood"],
-  guilty: ["self-compassion"],
+  guilty: ["self-compassion", "recovery-shame"],
   numb: ["low-mood"],
   unsure: ["calm", "self-compassion"],
   sleep: ["sleep", "calm"],
@@ -72,7 +85,11 @@ export const FEELING_TO_TAGS = {
   faith: ["faith"],
   overwhelm: ["overwhelm", "stress"],
   mothers: ["self-compassion", "overwhelm", "faith"],
-  aod: ["self-compassion", "stress", "overwhelm"],
+  aod: AOD_FEELING_TAGS,
+  drugs: ["drugs", "alcohol", "craving"],
+  alcohol: ["alcohol", "craving", "recovery-shame"],
+  craving: ["craving"],
+  "recovery-shame": ["recovery-shame"],
 };
 
 /**
@@ -94,7 +111,7 @@ export const THEME_LABEL_TO_TAGS = {
   "over-identification with tasks": ["stress", "motivation", "overwhelm"],
   "uncertainty tolerance": ["anxiety", "worry", "calm"],
   comparison: ["low-mood", "self-compassion", "motivation"],
-  "receiving support": ["relationships", "self-compassion", "low-mood"],
+  "receiving support": ["relationships", "self-compassion", "low-mood", "alcohol", "drugs", "recovery-shame"],
   "single-tasking": ["overwhelm", "stress", "motivation"],
   "need to be right": ["relationships", "anger", "boundaries"],
   "holding grudges": ["anger", "grief", "relationships"],
@@ -116,24 +133,24 @@ export const THEME_LABEL_TO_TAGS = {
   "emotional patience": ["low-mood", "grief", "calm"],
   recognition: ["relationships", "gratitude", "motivation"],
   "embodied reset": ["anxiety", "worry", "calm"],
-  "self-forgiveness": ["self-compassion", "grief", "faith"],
+  "self-forgiveness": ["self-compassion", "grief", "faith", "recovery-shame", "alcohol", "drugs"],
   "mind-reading": ["anxiety", "worry", "relationships"],
   "domestic perfection": ["stress", "self-compassion", "overwhelm"],
   "relational priority": ["relationships", "anger", "calm"],
   grounding: ["anxiety", "overwhelm", "calm"],
   "load shedding": ["overwhelm", "stress", "boundaries"],
-  "self-talk": ["self-compassion", "low-mood", "motivation"],
+  "self-talk": ["self-compassion", "low-mood", "motivation", "recovery-shame"],
   "plans changing": ["anxiety", "stress", "motivation"],
-  "inner critic": ["self-compassion", "low-mood", "anxiety"],
+  "inner critic": ["self-compassion", "low-mood", "anxiety", "recovery-shame"],
   "over-scheduling": ["overwhelm", "stress", "boundaries"],
   "mood awareness": ["low-mood", "calm", "self-compassion"],
   "comfortable quiet": ["relationships", "calm", "anxiety"],
   "emotional labour": ["boundaries", "relationships", "overwhelm"],
   joy: ["gratitude", "calm", "motivation"],
-  "self-judgement at night": ["sleep", "self-compassion", "low-mood"],
+  "self-judgement at night": ["sleep", "self-compassion", "low-mood", "recovery-shame"],
   play: ["motivation", "calm", "relationships"],
   "expectation load": ["stress", "overwhelm", "self-compassion"],
-  "body cues": ["sleep", "stress", "calm"],
+  "body cues": ["sleep", "stress", "calm", "craving"],
   "image management": ["anxiety", "self-compassion", "stress"],
   "impatience with delays": ["anger", "stress", "calm"],
   appreciation: ["gratitude", "relationships", "faith"],
@@ -144,10 +161,10 @@ export const THEME_LABEL_TO_TAGS = {
   "after conflict": ["relationships", "anger", "grief"],
   "evening overload": ["sleep", "overwhelm", "stress"],
   overwhelm: ["overwhelm", "stress", "motivation"],
-  acceptance: ["calm", "faith", "grief"],
+  acceptance: ["calm", "faith", "grief", "recovery-shame"],
   "soft boundaries": ["boundaries", "relationships", "stress"],
   "tunnel vision": ["anxiety", "overwhelm", "calm"],
-  "healing/patience": ["grief", "self-compassion", "calm"],
+  "healing/patience": ["grief", "self-compassion", "calm", "recovery-shame"],
   ego: ["relationships", "self-compassion", "motivation"],
   waiting: ["anxiety", "stress", "calm"],
   interruptions: ["stress", "relationships", "anger"],
@@ -160,7 +177,7 @@ export const THEME_LABEL_TO_TAGS = {
   catastrophising: ["anxiety", "worry", "overwhelm"],
   "asking/delegation": ["overwhelm", "relationships", "boundaries"],
   lightness: ["calm", "gratitude", "low-mood"],
-  limits: ["boundaries", "overwhelm", "self-compassion"],
+  limits: ["boundaries", "overwhelm", "self-compassion", "recovery-shame"],
   reset: ["calm", "stress", "motivation"],
   process: ["motivation", "self-compassion", "stress"],
   receiving: ["relationships", "self-compassion", "low-mood"],
@@ -175,12 +192,12 @@ export const THEME_LABEL_TO_TAGS = {
   priorities: ["motivation", "relationships", "stress"],
   overstimulation: ["overwhelm", "sleep", "stress"],
   "productivity myths": ["motivation", "stress", "self-compassion"],
-  "emotions passing": ["low-mood", "anger", "grief"],
+  "emotions passing": ["low-mood", "anger", "grief", "craving"],
   "pressure to perform": ["anxiety", "stress", "self-compassion"],
-  "old strategies": ["self-compassion", "grief", "motivation"],
+  "old strategies": ["self-compassion", "grief", "motivation", "alcohol", "drugs", "craving", "recovery-shame"],
   closures: ["sleep", "grief", "calm"],
   "ordinary life": ["faith", "gratitude", "calm"],
-  "fresh start": ["motivation", "self-compassion", "calm"],
+  "fresh start": ["motivation", "self-compassion", "calm", "alcohol", "drugs", "recovery-shame"],
 };
 
 export const SUPPORT_DISCLAIMER =
