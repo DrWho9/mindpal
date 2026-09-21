@@ -504,6 +504,15 @@ function mpDedicatedProblemRoute(id){
   if(id===`mens-health`)return mpProblems.MENS_HEALTH_ROUTE||`Mens health`;
   return`Problem`;
 }
+function mpAppointmentCompanionCard({onCompanion:e}){
+  let t=mpProblems.appointmentCompanionPrompt?mpProblems.appointmentCompanionPrompt():mpProblems.APPOINTMENT_COMPANION_PROMPT;
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-appointment-companion`,"aria-label":`Appointment companion`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`APPOINTMENT · COMPANION`}),
+    (0,A.jsx)(`h2`,{children:`Talk the appointment through`}),
+    (0,A.jsx)(`p`,{children:`Opens Companion with a short educational prompt for preparing questions. It is software, not a clinician, and it cannot interpret reports. Notes on this page stay here — they are not copied automatically.`}),
+    e&&t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,"data-mp-cta":`appointment-companion`,onClick:()=>{mpProblems.saveCompanionPrompt(t);e(t)},children:`Talk this appointment through with Companion`}):null
+  ]});
+}
 function mpOpenProblem(id,onOpen){
   mpProblems.selectProblem(id);
   try{window.dispatchEvent(new Event(`mindpal-problem-change`))}catch{}

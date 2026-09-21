@@ -26,6 +26,8 @@ import {
   mensSupportTags,
   motherSupportTags,
   readingsForProblem,
+  APPOINTMENT_COMPANION_PROMPT,
+  appointmentCompanionPrompt,
   saveCompanionPrompt,
   takeCompanionPrompt,
   videoTagForProblem,
@@ -199,6 +201,13 @@ describe("problem hubs", () => {
     saveCompanionPrompt(sleep.companionPrompt, storage);
     assert.match(takeCompanionPrompt(storage), /restless night/);
     assert.equal(takeCompanionPrompt(storage), "");
+  });
+
+  it("offers a non-clinical appointment companion prompt", () => {
+    assert.match(appointmentCompanionPrompt(), /health appointment/);
+    assert.equal(appointmentCompanionPrompt(), APPOINTMENT_COMPANION_PROMPT);
+    assert.match(inject, /mpAppointmentCompanionCard/);
+    assert.match(inject, /Talk this appointment through with Companion/);
   });
 
   it("keeps Today sign-in off the mid-page and verse collapsed", () => {
