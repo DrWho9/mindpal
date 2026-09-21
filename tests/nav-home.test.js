@@ -112,5 +112,7 @@ describe("brand home wiring", () => {
     assert.match(build, /sidebar-brand-home/);
     assert.match(build, /topbar-brand-home/);
     assert.match(build, /replaceAll\("\.showModal\(\)", "\.show\(\)"\)/);
+    assert.match(build, /mpProfileButton/);
+    assert.match(build, /onClick:\(\)=>mpGoHome\(I\).*mpProfileButton/);
   });
 });

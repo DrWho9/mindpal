@@ -192,8 +192,10 @@ function wrapRuntime() {
     moduleSource("src/today/wins.js"),
     moduleSource("src/today/team-ritual.js"),
     moduleSource("src/nav/home.js"),
+    moduleSource("src/profile/store.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
+  const speakersCatalog = readFileSync(join(root, "src/data/speakers-catalog.json"), "utf8");
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpSpeakersCatalog=${speakersCatalog.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpProfile;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
@@ -201,6 +203,7 @@ mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,n
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenReading,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
+mpProfile={PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 })();${ytSection}${sidebarShare}${voicePicker}${feelingsUi}`;
 }
 
@@ -544,7 +547,10 @@ function patchFeelingsVideos(source, feelingsUi) {
 }
 
 function patchOwnerUx(source) {
-  const ux = readFileSync(join(root, "src/patches/owner-ux.inject.js"), "utf8").trim();
+  const ux = [
+    readFileSync(join(root, "src/patches/owner-ux.inject.js"), "utf8").trim(),
+    readFileSync(join(root, "src/patches/profile.inject.js"), "utf8").trim(),
+  ].join("\n");
   const oldRr =
     "function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r}){let i=Lr();return(0,A.jsxs)(`section`,{className:`today-shortcuts`,\"aria-label\":`Today shortcuts`,children:[(0,A.jsxs)(`div`,{className:`today-greeting`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),(0,A.jsx)(`h1`,{children:e?`Good ${i}, ${e}.`:`Good ${i}.`}),e&&(0,A.jsxs)(`span`,{className:`tag device-tag`,children:[e,` · on this device`]})]}),(0,A.jsxs)(`div`,{className:`today-shortcut-grid`,children:[(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:t,children:[(0,A.jsx)(Sn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`TODAY’S VERSE`}),(0,A.jsx)(`strong`,{children:`Read today’s verse`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:n,children:[(0,A.jsx)(sn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`FOCUS`}),(0,A.jsx)(`strong`,{children:`What’s on your mind today?`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open Focus `,(0,A.jsx)(nn,{size:16})]})]}),(0,A.jsxs)(`button`,{className:`shortcut-card`,onClick:r,children:[(0,A.jsx)(rn,{size:20,\"aria-hidden\":`true`}),(0,A.jsx)(`span`,{className:`card-type`,children:`JOURNAL`}),(0,A.jsx)(`strong`,{children:`Write a quick note`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Open Journal `,(0,A.jsx)(nn,{size:16})]})]})]})]})}";
 
@@ -589,19 +595,19 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     `"route.today":\`Today\`,"route.explore":\`Explore\``,
-    `"route.today":\`Today\`,"route.readings":\`Readings\`,"route.teamMorning":\`Team morning settle\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.aod":\`Drugs & alcohol\`,"route.explore":\`Explore\``,
+    `"route.today":\`Today\`,"route.profile":\`Profile\`,"route.readings":\`Readings\`,"route.teamMorning":\`Team morning settle\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.aod":\`Drugs & alcohol\`,"route.explore":\`Explore\``,
     "i18n-routes",
   );
   next = replaceOnce(
     next,
     "Ii=[`Feelings`,`YouTube directory`,`Today`,`Explore`,`My diary`,`Focus`,`Companion`,",
-    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Explore`,`My diary`,`Focus`,`Companion`,",
     "hash-routes",
   );
   next = replaceOnce(
     next,
     "Li={Today:`route.today`,Explore:`route.explore`,",
-    "Li={Today:`route.today`,Readings:`route.readings`,\"Team morning\":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,\"Drugs & alcohol\":`route.aod`,Explore:`route.explore`,",
+    "Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,\"Team morning\":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,\"Drugs & alcohol\":`route.aod`,Explore:`route.explore`,",
     "breadcrumb-routes",
   );
 
@@ -667,7 +673,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "t===`Focus`&&(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)}),t===`My diary`&&(0,A.jsx)(Yi,{",
-    "t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{",
+    "t===`Profile`&&(0,A.jsx)(mpProfilePage,{}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{",
     "lane-pages",
   );
   next = replaceOnce(
@@ -805,13 +811,13 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "(0,A.jsxs)(`button`,{className:`brand`,onClick:()=>I(`Today`),\"aria-label\":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]})",
-    "(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),\"aria-label\":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]})",
+    "(0,A.jsxs)(`div`,{className:`mp-brand-row`,children:[(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),\"aria-label\":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`sidebar`,onOpen:()=>I(`Profile`)})]})",
     "sidebar-brand-home",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`mobile-menu`,\"aria-expanded\":r,\"aria-controls\":`primary-navigation`,onClick:()=>i(!r),\"aria-label\":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`span`,{className:`breadcrumb`",
-    "(0,A.jsx)(`button`,{className:`mobile-menu`,\"aria-expanded\":r,\"aria-controls\":`primary-navigation`,onClick:()=>i(!r),\"aria-label\":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),\"aria-label\":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsxs)(`span`,{className:`breadcrumb`",
+    "(0,A.jsx)(`button`,{className:`mobile-menu`,\"aria-expanded\":r,\"aria-controls\":`primary-navigation`,onClick:()=>i(!r),\"aria-label\":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),\"aria-label\":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`topbar`,onOpen:()=>I(`Profile`)}),(0,A.jsxs)(`span`,{className:`breadcrumb`",
     "topbar-brand-home",
   );
 
@@ -931,6 +937,24 @@ function patchOwnerUx(source) {
   }
   if (next.includes("showModal")) {
     throw new Error("showModal remains after brand-home patch");
+  }
+  if (!next.includes("function mpProfilePage(") || !next.includes("function mpProfileButton(")) {
+    throw new Error("profile page or chrome button missing from bundle");
+  }
+  if (!next.includes("t===`Profile`&&(0,A.jsx)(mpProfilePage,{})")) {
+    throw new Error("Profile route is not mounted");
+  }
+  if (!next.includes("className:`mp-brand-row`") || !next.includes("onOpen:()=>I(`Profile`)")) {
+    throw new Error("profile control missing beside the MindPal brand");
+  }
+  if (!next.includes("mindpal.profile.v1") || !next.includes("mp-profile-acc")) {
+    throw new Error("profile persistence or accordion missing from bundle");
+  }
+  if (!next.includes("mpProfile={PROFILE_STORAGE_KEY") || !next.includes("mpSpeakersCatalog=")) {
+    throw new Error("profile runtime or speaker catalog missing from bundle");
+  }
+  if (next.includes("className:`brand`,onClick:()=>I(`Profile`)")) {
+    throw new Error("MindPal brand must not open Profile");
   }
   return next;
 }

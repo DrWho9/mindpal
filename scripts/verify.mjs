@@ -127,6 +127,12 @@ const checks = [
   [js.includes("maddy-timed-breath") && js.includes("/videos/maddy/timed-breath.mp4"), "team ritual reuses Maddy timed breath"],
   [js.includes("does not mark a Pack A") && js.includes("mindpal.teamMorningRitual.v1"), "team ritual reading stays off the Pack A Done gate"],
   [js.includes("onOpenTeamRitual:()=>I(`Team morning`)"), "Today Morning card opens the team ritual"],
+  [js.includes("function mpProfilePage(") && js.includes("function mpProfileButton("), "profile page and chrome button are present"],
+  [js.includes("t===`Profile`&&(0,A.jsx)(mpProfilePage,{})"), "Profile hash route is mounted"],
+  [js.includes("className:`mp-brand-row`") && js.includes("onOpen:()=>I(`Profile`)"), "profile control sits beside the brand"],
+  [js.includes("mindpal.profile.v1") && js.includes("mp-profile-acc"), "profile persists and uses accordions"],
+  [js.includes("Your MindPal profile") && js.includes("Plans and goals"), "profile page uses MindPal chrome copy"],
+  [!js.includes("className:`brand`,onClick:()=>I(`Profile`)"), "MindPal brand does not open Profile"],
 ];
 
 const maddyFiles = [
@@ -165,6 +171,9 @@ if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-cloc
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
+}
+if (!css.includes(".mp-brand-row") || !css.includes(".mp-profile-btn") || !css.includes(".mp-profile-acc")) {
+  throw new Error("profile chrome and accordion styles missing");
 }
 if (!css.includes("dialog[open]") || !css.includes(".app:has(dialog[open]) .workspace::before")) {
   throw new Error("modeless dialogs must stay centered and leave the brand undimmed");
