@@ -944,6 +944,9 @@ function patchOwnerUx(source) {
   if (!next.includes("function mpNeedsFaithSetup(") || !next.includes("mpShowSignInGate()")) {
     throw new Error("first-setup faith gate is not holding the sign-in shell");
   }
+  if (!next.includes("setFaithAsk(mpNeedsFaithSetup())") || !next.includes("if(faithAsk)")) {
+    throw new Error("Today first-setup faith overlay is missing");
+  }
   if (!next.includes("function mpGoHome(") || !next.includes("onClick:()=>mpGoHome(I)")) {
     throw new Error("MindPal brand is not wired to go home");
   }

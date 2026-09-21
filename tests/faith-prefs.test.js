@@ -257,6 +257,8 @@ describe("faith preference surfaces", () => {
     assert.match(inject, /function mpNeedsFaithSetup/);
     assert.match(inject, /function mpShowSignInGate/);
     assert.match(inject, /function mpFaithPrefQuestions/);
+    assert.match(inject, /setFaithAsk\(mpNeedsFaithSetup\(\)\)/);
+    assert.match(inject, /if\(faithAsk\)/);
     assert.match(inject, /I have a faith \/ religion/);
     assert.match(inject, /No religion \/ prefer secular/);
     assert.match(inject, /So we can relate to you — what’s your religion\?/);

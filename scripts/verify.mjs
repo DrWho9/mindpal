@@ -135,6 +135,7 @@ const checks = [
   [js.includes("faithStance:``,tradition:``,traditionId:``"), "new local profiles do not default to Christianity"],
   [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
   [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
+  [js.includes("setFaithAsk(mpNeedsFaithSetup())") && js.includes("if(faithAsk)"), "Today shows faith questions when preference is missing"],
 ];
 
 const maddyFiles = [
