@@ -184,6 +184,10 @@ const checks = [
   [js.includes("not a psychologist") && js.includes("Lifeline 13 11 14"), "Reflect prompt and crisis copy stay non-clinical"],
   [js.includes("Clear reflection & finish") && js.includes("mindpal.reflect.thread.v1"), "Reflect thread can be cleared and persisted"],
   [js.includes("GitHub Pages cannot host the live proxy") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion API base"],
+  [js.includes("function mpAppointmentChat(") && js.includes("Questions for my appointment"), "Appointment Questions page mounts medical companion chat"],
+  [js.includes("appointment_health_literacy") && js.includes("mindpal.appointment.thread.v1"), "Appointment chat uses the health-literacy lane and persists a day thread"],
+  [js.includes("Clear appointment chat") && js.includes("mp-appoint-input"), "Appointment chat has Send/Enter composer and a clear control"],
+  [!/\btrycloudflare\.com\b/.test(js), "companion base is not hard-coded to a tunnel host"],
 ];
 
 const maddyFiles = [

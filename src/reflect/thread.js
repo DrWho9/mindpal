@@ -56,35 +56,48 @@ export function parseThreadJson(text, today = new Date()) {
   }
 }
 
-function readStorage(storage) {
+function readStorage(storage, key = THREAD_STORAGE_KEY) {
   if (!storage || typeof storage.getItem !== "function") return "";
   try {
-    return storage.getItem(THREAD_STORAGE_KEY) || "";
+    return storage.getItem(key) || "";
   } catch {
     return "";
   }
 }
 
-export function loadThread(storage = globalThis.localStorage, today = new Date()) {
-  return parseThreadJson(readStorage(storage), today);
+export function loadThread(
+  storage = globalThis.localStorage,
+  today = new Date(),
+  key = THREAD_STORAGE_KEY,
+) {
+  return parseThreadJson(readStorage(storage, key), today);
 }
 
-export function saveThread(thread, storage = globalThis.localStorage, today = new Date()) {
+export function saveThread(
+  thread,
+  storage = globalThis.localStorage,
+  today = new Date(),
+  key = THREAD_STORAGE_KEY,
+) {
   const next = normalizeThread(thread, today);
   if (!storage || typeof storage.setItem !== "function") return next;
   try {
-    storage.setItem(THREAD_STORAGE_KEY, JSON.stringify(next));
+    storage.setItem(key, JSON.stringify(next));
   } catch {
     /* quota / private mode */
   }
   return next;
 }
 
-export function clearThread(storage = globalThis.localStorage, today = new Date()) {
+export function clearThread(
+  storage = globalThis.localStorage,
+  today = new Date(),
+  key = THREAD_STORAGE_KEY,
+) {
   const next = emptyThread(today);
   if (storage && typeof storage.removeItem === "function") {
     try {
-      storage.removeItem(THREAD_STORAGE_KEY);
+      storage.removeItem(key);
     } catch {
       /* ignore */
     }
@@ -92,19 +105,25 @@ export function clearThread(storage = globalThis.localStorage, today = new Date(
   return next;
 }
 
-export function appendMessage(thread, raw, storage = globalThis.localStorage, today = new Date()) {
+export function appendMessage(
+  thread,
+  raw,
+  storage = globalThis.localStorage,
+  today = new Date(),
+  key = THREAD_STORAGE_KEY,
+) {
   const message = normalizeMessage(raw, today);
   if (!message) return normalizeThread(thread, today);
   const current = normalizeThread(thread, today);
   current.messages = [...current.messages, message].slice(-MAX_MESSAGES);
   if (raw && raw.kind === "crisis") current.crisis = true;
-  return saveThread(current, storage, today);
+  return saveThread(current, storage, today, key);
 }
 
-export function downloadableTranscript(thread) {
+export function downloadableTranscript(thread, title = "MindPal reflection — user-entered, not assessed") {
   const current = normalizeThread(thread);
   const lines = [
-    "MindPal reflection — user-entered, not assessed",
+    title,
     `Date: ${current.date}`,
     "",
     ...current.messages.map((item) => {

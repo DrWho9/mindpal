@@ -451,3 +451,5 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 .mp-reflect-composer textarea{width:100%;min-height:7rem;margin:6px 0 10px}
 .mp-reflect-crisis .button-row{margin-top:8px}
 .mp-reflect-crisis a.primary,.mp-reflect-crisis a.secondary{text-decoration:none;display:inline-flex;align-items:center}
+.mp-appoint-chat{margin:18px 0 22px;padding:16px;border:1px solid #d5dccb;border-radius:18px;background:#fbfaf3}
+.mp-appoint-chat h3{margin:0 0 6px}

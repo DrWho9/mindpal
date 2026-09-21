@@ -56,6 +56,7 @@ export function parseCompanionStatus(raw) {
   return {
     available: raw.available === true,
     model: typeof raw.model === "string" && raw.model.trim() ? raw.model.trim() : null,
+    medicalKey: raw.medicalKey === true,
   };
 }
 

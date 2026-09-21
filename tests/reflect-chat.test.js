@@ -76,7 +76,9 @@ describe("companion client", () => {
     assert.deepEqual(parseCompanionStatus({ available: true, model: "grok" }), {
       available: true,
       model: "grok",
+      medicalKey: false,
     });
+    assert.equal(parseCompanionStatus({ available: true, medicalKey: true }).medicalKey, true);
     assert.equal(parseCompanionStatus({ available: "yes" }).available, false);
     assert.equal(parseCompanionStatus(null).available, false);
     assert.equal(LIVE_LABEL, "Live");
