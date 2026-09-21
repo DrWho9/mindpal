@@ -9093,6 +9093,67 @@ const COPTIC_PREF_KEY = "mindpal.prefs.copticDate.v1";
 const WELCOME_IMAGE_PREF_KEY = "mindpal.prefs.welcomeImage.v1";
 const ACCOUNTS_KEY = "mindpal.localAccounts.v1";
 const SESSION_KEY = "mindpal.sessionUser.v1";
+const FAITH_CHANGE_EVENT = "mindpal-faith-change";
+
+const FAITH_STANCE_RELIGIOUS = "religious";
+const FAITH_STANCE_SECULAR = "secular";
+
+const PRIMARY_TRADITIONS = [
+  { id: "christianity", label: "Christianity" },
+  { id: "islam", label: "Islam" },
+  { id: "buddhism", label: "Buddhism" },
+  { id: "hinduism", label: "Hinduism" },
+];
+
+const OTHER_TRADITIONS = [
+  { id: "judaism", label: "Judaism" },
+  { id: "sikhism", label: "Sikhism" },
+  { id: "bahai", label: "Bahá’í" },
+  { id: "orthodox", label: "Orthodox Christianity" },
+  { id: "coptic", label: "Coptic Orthodox" },
+  { id: "aboriginal", label: "Aboriginal and Torres Strait Islander spirituality" },
+  { id: "jainism", label: "Jainism" },
+  { id: "spiritual", label: "Spiritual but not listed" },
+  { id: "prefer_not", label: "Prefer not to say" },
+];
+
+const ALL_TRADITIONS = [...PRIMARY_TRADITIONS, ...OTHER_TRADITIONS];
+
+const TRADITION_LANES = {
+  christianity: ["christian"],
+  islam: ["islamic"],
+  buddhism: ["buddhist"],
+  hinduism: [],
+  judaism: ["jewish"],
+  sikhism: [],
+  bahai: [],
+  orthodox: ["christian"],
+  coptic: ["christian"],
+  aboriginal: [],
+  jainism: [],
+  spiritual: [],
+  prefer_not: [],
+};
+
+const UNIVERSAL_FALLBACK = {
+  id: "universal-reflection",
+  date: null,
+  lane: "universal",
+  fallback: true,
+  verse: {
+    text: "A quiet, honest moment is enough. You do not need a perfect day to take one kind next step.",
+    reference: "A gentle reflection",
+    source_note:
+      "A MindPal reflection — not a sacred text. When a tradition’s own words are thin here, we do not invent scripture or borrow another faith’s.",
+    url: null,
+  },
+  reflection:
+    "Rest here without needing a verse from another tradition. The diary, a short reading, or a pause are still available.",
+  practice: {
+    minutes: 1,
+    text: "Sit for one minute. Notice one ordinary thing already holding you up.",
+  },
+};
 
 function readStorage(storage, key) {
   if (!storage) return null;
@@ -9125,6 +9186,22 @@ function readAccounts(storage) {
   }
 }
 
+function writeAccounts(storage, parsed, accounts) {
+  return writeStorage(
+    storage,
+    ACCOUNTS_KEY,
+    JSON.stringify({ ...(parsed || { version: 1 }), accounts }),
+  );
+}
+
+function notifyFaithChange() {
+  try {
+    globalThis.dispatchEvent?.(new Event(FAITH_CHANGE_EVENT));
+  } catch {
+    /* ignore */
+  }
+}
+
 function sessionPreferences(storage = globalThis.localStorage) {
   const username = readStorage(storage, SESSION_KEY);
   if (!username) return null;
@@ -9132,6 +9209,175 @@ function sessionPreferences(storage = globalThis.localStorage) {
   return account?.preferences && typeof account.preferences === "object"
     ? account.preferences
     : null;
+}
+
+function findTradition(idOrLabel) {
+  const raw = typeof idOrLabel === "string" ? idOrLabel.trim() : "";
+  if (!raw) return null;
+  const lower = raw.toLowerCase();
+  return (
+    ALL_TRADITIONS.find(
+      (item) =>
+        item.id === lower ||
+        item.label.toLowerCase() === lower ||
+        item.id.replace(/_/g, " ") === lower,
+    ) || null
+  );
+}
+
+function traditionIdFromPrefs(prefs) {
+  if (!prefs || typeof prefs !== "object") return "";
+  const fromId = findTradition(prefs.traditionId);
+  if (fromId) return fromId.id;
+  const fromLabel = findTradition(prefs.tradition);
+  if (fromLabel) return fromLabel.id;
+  const tradition = typeof prefs.tradition === "string" ? prefs.tradition : "";
+  if (/coptic/i.test(tradition)) return "coptic";
+  if (/orthodox/i.test(tradition)) return "orthodox";
+  if (/christian/i.test(tradition)) return "christianity";
+  if (/islam|muslim/i.test(tradition)) return "islam";
+  if (/buddh/i.test(tradition)) return "buddhism";
+  if (/hindu/i.test(tradition)) return "hinduism";
+  if (/jew/i.test(tradition)) return "judaism";
+  if (/sikh/i.test(tradition)) return "sikhism";
+  if (/bah[aá]['’]?[ií]/i.test(tradition)) return "bahai";
+  return "";
+}
+
+function traditionLabel(idOrLabel) {
+  return findTradition(idOrLabel)?.label || (typeof idOrLabel === "string" ? idOrLabel.trim() : "");
+}
+
+function isChristianTradition(idOrPrefs) {
+  const id =
+    idOrPrefs && typeof idOrPrefs === "object"
+      ? traditionIdFromPrefs(idOrPrefs)
+      : traditionIdFromPrefs({ traditionId: idOrPrefs, tradition: idOrPrefs });
+  return id === "christianity" || id === "orthodox" || id === "coptic";
+}
+
+function hasFaithPreference(prefs) {
+  if (!prefs || typeof prefs !== "object") return false;
+  if (prefs.faithStance === FAITH_STANCE_RELIGIOUS || prefs.faithStance === FAITH_STANCE_SECULAR) {
+    return true;
+  }
+  return typeof prefs.tradition === "string" && prefs.tradition.trim().length > 0;
+}
+
+function isSecularPrefs(prefs) {
+  if (!prefs || typeof prefs !== "object") return false;
+  if (prefs.faithStance === FAITH_STANCE_SECULAR) return true;
+  if (prefs.morningVerseEnabled === false && prefs.faithStance !== FAITH_STANCE_RELIGIOUS) {
+    const tradition = typeof prefs.tradition === "string" ? prefs.tradition.trim() : "";
+    return !tradition || /no religion|secular|prefer secular/i.test(tradition);
+  }
+  return false;
+}
+
+function shouldShowFaithModules(prefs) {
+  if (!prefs || typeof prefs !== "object") return false;
+  if (isSecularPrefs(prefs)) return false;
+  if (prefs.morningVerseEnabled === false) return false;
+  if (prefs.faithStance === FAITH_STANCE_RELIGIOUS) return true;
+  return typeof prefs.tradition === "string" && prefs.tradition.trim().length > 0;
+}
+
+function shouldShowMorningPrayer(prefs) {
+  if (!shouldShowFaithModules(prefs)) return false;
+  if (prefs?.morningPrayerEnabled === false) return false;
+  return isChristianTradition(prefs);
+}
+
+function prefsFromChoice({ stance, traditionId } = {}) {
+  if (stance === FAITH_STANCE_SECULAR) {
+    return {
+      faithStance: FAITH_STANCE_SECULAR,
+      tradition: "",
+      traditionId: "",
+      morningVerseEnabled: false,
+      morningPrayerEnabled: false,
+    };
+  }
+  const found = findTradition(traditionId);
+  const id = found?.id || "";
+  const label = found?.label || "";
+  return {
+    faithStance: FAITH_STANCE_RELIGIOUS,
+    tradition: label,
+    traditionId: id,
+    morningVerseEnabled: true,
+    morningPrayerEnabled: isChristianTradition(id),
+  };
+}
+
+function faithSummary(prefs) {
+  if (isSecularPrefs(prefs) || prefs?.faithStance === FAITH_STANCE_SECULAR) {
+    return "No religion / secular";
+  }
+  const label = traditionLabel(prefs?.traditionId || prefs?.tradition);
+  return label || "Faith preference saved";
+}
+
+function updateSessionPreferences(patch, storage = globalThis.localStorage) {
+  const username = readStorage(storage, SESSION_KEY);
+  if (!username) return null;
+  const raw = readStorage(storage, ACCOUNTS_KEY);
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw);
+    const accounts = Array.isArray(parsed?.accounts) ? parsed.accounts : [];
+    let nextPrefs = null;
+    const next = accounts.map((item) => {
+      if (item?.username !== username) return item;
+      nextPrefs = { ...(item.preferences || {}), ...(patch || {}) };
+      return { ...item, preferences: nextPrefs };
+    });
+    writeAccounts(storage, parsed, next);
+    notifyFaithChange();
+    return nextPrefs;
+  } catch {
+    return null;
+  }
+}
+
+function setSessionFaithPrefs(choice, storage = globalThis.localStorage) {
+  const next = prefsFromChoice(choice);
+  return updateSessionPreferences(next, storage) || next;
+}
+
+function lanesForTradition(idOrPrefs) {
+  const id =
+    idOrPrefs && typeof idOrPrefs === "object"
+      ? traditionIdFromPrefs(idOrPrefs)
+      : String(idOrPrefs || "").trim();
+  return Array.isArray(TRADITION_LANES[id]) ? TRADITION_LANES[id] : [];
+}
+
+function verseEyebrow(entry) {
+  if (!entry || entry.fallback || entry.lane === "universal") return "A QUIET REFLECTION";
+  if (entry.lane === "christian") return "VERSE FOR THE DAY · WEB";
+  if (entry.lane === "jewish") return "FAITH READING · WEB";
+  return "FAITH READING";
+}
+
+function pickMorningVerse(catalog, prefs, now = new Date()) {
+  if (!shouldShowFaithModules(prefs)) return null;
+  const lanes = lanesForTradition(prefs);
+  const entries = (catalog?.entries || []).filter(
+    (item) => item && lanes.includes(item.lane),
+  );
+  const dateKey =
+    typeof now?.toLocaleDateString === "function" ? now.toLocaleDateString("en-CA") : "";
+  const dated = dateKey ? entries.find((item) => item.date === dateKey) : null;
+  if (dated) return dated;
+  if (entries.length) {
+    const seed = Number.isFinite(now?.getTime?.()) ? now.getTime() : Date.now();
+    return entries[Math.floor(seed / 864e5) % entries.length];
+  }
+  if (lanes.includes("christian") && catalog?.default?.lane === "christian") {
+    return catalog.default;
+  }
+  return { ...UNIVERSAL_FALLBACK };
 }
 
 function traditionWantsCoptic(prefs) {
@@ -10273,7 +10519,7 @@ function selectProblem(id, storage = globalThis.sessionStorage) {
 }
 
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
-mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,sessionPreferences,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
+mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
@@ -10508,7 +10754,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
 
 `).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,b.practice]}),i? (0,A.jsx)(`p`,{className:`muted`,children:`Original MindPal reading · supportive wellness, not clinical therapy. AU urgent help: 000 / Lifeline 13 11 14.`}):(0,A.jsx)(`p`,{className:`mindpal-reading-credit`,children:mpReadings.PACK_A_CREDIT}),(0,A.jsxs)(`div`,{className:`button-row`,children:[i?null:(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!S,onClick:C,children:n.completedIds.includes(b.id)?`Done`:`Done for today`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>v({id:b.id,text:yt(b)}),children:h?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(yt(b)+`
 
-— MindPal daily reading`);m(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>m(``),2e3)},children:`Copy`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>f(!d),children:`Choose another morning practice`}),i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{y(),ut(),m(``),c(mpReadings.pickRandom(a,b.id))},children:`Another random reading`}):null]}),d?(0,A.jsxs)(`p`,{className:`muted mindpal-other-practice`,children:[`Verse, videos and other Explore cards stay available. Homemade Pack B is not the daily default until 100/100 Done. Opening, Listen or Copy does not mark a reading Done.`] }):null,p||g?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:p||g}):null]})}/*mp-bt-end*/var xt={version:1,note:`Local MindPal demo accounts only. Not production auth. Do not reuse passwords elsewhere.`,accounts:[{username:`Mo1`,passwordSha256:`532eaabd9574880dbf76b9b8cc00832c20a6ec113d682299550d7a6e0f345e25`,displayName:`Mo`,createdAt:`2026-09-17T14:00:00+12:00`,preferences:{morningVerseEnabled:!0,morningPrayerEnabled:!0,tradition:`Christianity`}}]},St=`mindpal.localAccounts.v1`,Ct=`mindpal.sessionUser.v1`;async function wt(e){let t=new TextEncoder().encode(e),n=await crypto.subtle.digest(`SHA-256`,t);return Array.from(new Uint8Array(n)).map(e=>e.toString(16).padStart(2,`0`)).join(``)}function Tt(){try{let e=localStorage.getItem(St);if(e)return JSON.parse(e).accounts}catch{}let e=xt.accounts;return localStorage.setItem(St,JSON.stringify({version:1,accounts:e})),e.map(e=>({...e}))}function Et(e){localStorage.setItem(St,JSON.stringify({version:1,accounts:e}))}function Dt(){return localStorage.getItem(Ct)}function Ot(){localStorage.removeItem(Ct);try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}}async function kt(){Tt()}async function At(e,t,n){let r=Tt();if(r.some(t=>t.username.toLowerCase()===e.toLowerCase()))throw Error(`That username is already taken.`);if(!e.trim()||t.length<4)throw Error(`Choose a username and a password of at least 4 characters.`);let i=await wt(t),a={username:e.trim(),passwordSha256:i,displayName:n?.trim()||e.trim(),createdAt:new Date().toISOString(),preferences:{morningVerseEnabled:!0,morningPrayerEnabled:!0,tradition:`Christianity`}};return r.push(a),Et(r),localStorage.setItem(Ct,a.username),window.dispatchEvent(new Event(`mindpal-session-change`)),a}async function jt(e,t){let n=Tt().find(t=>t.username.toLowerCase()===e.toLowerCase());if(!n)throw Error(`Account not found.`);if(await wt(t)!==n.passwordSha256)throw Error(`Password does not match.`);return localStorage.setItem(Ct,n.username),window.dispatchEvent(new Event(`mindpal-session-change`)),n}function Mt(e){return e&&Tt().find(t=>t.username===e)||null}function Nt(){let[e,t]=(0,_.useState)(null),[n,r]=(0,_.useState)(`Mo1`),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[c,l]=(0,_.useState)(!1);(0,_.useEffect)(()=>{kt().then(()=>t(Dt()))},[]);let u=Mt(e);async function d(){l(!0),s(``);try{let e=await jt(n,i);t(e.username),a(``),s(`Signed in as ${e.username}.`)}catch(e){s(e instanceof Error?e.message:`Sign-in failed.`)}finally{l(!1)}}async function f(){l(!0),s(``);try{let e=await At(n,i);t(e.username),a(``),s(`Account ${e.username} ready.`)}catch(e){try{let e=await jt(n,i);t(e.username),a(``),s(`Welcome back, ${e.username}.`)}catch{s(e instanceof Error?e.message:`Could not create account.`)}}finally{l(!1)}}return e?(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`Local account`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`LOCAL ACCOUNT`}),(0,A.jsxs)(`h3`,{children:[`Signed in as `,u?.displayName||e]}),(0,A.jsx)(`p`,{children:`Demo local login only — stays on this device. Not cloud auth.`}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{Ot(),t(null),s(`Signed out.`)},children:`Sign out`}),(0,A.jsx)(`p`,{role:`status`,children:o})]}):(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`Local account sign in`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`LOCAL ACCOUNT`}),(0,A.jsx)(`h3`,{children:`Sign in for your morning space`}),(0,A.jsx)(`p`,{children:`Demo only on this device. Use a throwaway password — do not reuse a real one.`}),(0,A.jsx)(`label`,{htmlFor:`mp-user`,children:`Username`}),(0,A.jsx)(`input`,{id:`mp-user`,value:n,onChange:e=>r(e.target.value),autoComplete:`username`}),(0,A.jsx)(`label`,{htmlFor:`mp-pass`,children:`Password`}),(0,A.jsx)(`input`,{id:`mp-pass`,type:`password`,value:i,onChange:e=>a(e.target.value),autoComplete:`current-password`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`primary`,disabled:c,onClick:d,children:`Sign in`}),(0,A.jsx)(`button`,{className:`secondary`,disabled:c,onClick:f,children:`Create account`})]}),(0,A.jsx)(`p`,{role:`status`,children:o})]})}var Pt={version:`1.0.0`,dateKeyRule:`local-calendar-YYYY-MM-DD`,entries:{default:{verse:{text:`This is the day which the Lord hath made; we will rejoice and be glad in it.`,reference:`Psalm 118:24 · KJV`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV`},prayer:{text:`God, thank you for this morning. Help me notice what is already good, meet people with patience, and take one kind next step. Amen.`,note:`Original MindPal optional prayer. Adapt to your beliefs or skip.`}},"2026-09-17":{verse:{text:`This is the day which the Lord hath made; we will rejoice and be glad in it.`,reference:`Psalm 118:24 · KJV`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV`},prayer:{text:`God, thank you for this morning. Help me notice what is already good, meet people with patience, and take one kind next step. Amen.`,note:`Original MindPal optional prayer. Adapt to your beliefs or skip.`}}}},Ft={pack_id:`mindpal-verse-of-day-v1`,title:`MindPal — Verse for the Day`,version:`1.1.0`,modular:!0,feature:`verse_of_the_day`,active_lanes:[`christian`],active_lanes_note:'Owner update, 19 Sep 2026: the daily rotation is Christian-scripture-only for now (see MorningOfTheDay.tsx\'s resolveVerse, which filters entries to `active_lanes` and always falls back to `default`, itself lane "christian"). The buddhist/islamic/stoic/jewish/wisdom/science_of_mind entries below are kept, not deleted, so multi-faith can reopen later by widening this array.',consumers:[`mindpal`,`live-face-ai`,`denyse`],timezone_hint:`Pacific/Fiji`,date_key_rule:`YYYY-MM-DD in the user's local calendar (client resolves today)`,disclaimer:`Supportive wellness reading. Not clinical therapy or religious instruction. Christian/Hebrew Bible quotations use modern public-domain English (World English Bible / WEB) for readable contemporary wording (NKJV-like clarity). NKJV and other modern commercial translations are copyrighted — for study, open your licensed Bible or BibleGateway NKJV. Other lanes use clear modern English renderings. Reflections are original MindPal. AU urgent help: 000 / Lifeline 13 11 14.`,schema:{entry:{id:`string`,date:`YYYY-MM-DD or null for default`,lane:`christian | buddhist | islamic | jewish | stoic | wisdom | science_of_mind`,verse:{text:`string — the teaching/verse`,reference:`string — accurate citation`,source_note:`string — how to treat the quote`,url:`string|null — optional reputable link`},reflection:`string|null — short calm MindPal reflection`,practice:{minutes:1,text:`string — optional 1-minute closer`},audio_url:`string|null`}},default:{id:`default`,date:null,lane:`christian`,verse:{text:`This is the day that Yahweh has made. We will rejoice and be glad in it!`,reference:`Psalm 118:24 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=NKJV`},reflection:`Begin by noticing that this day is already given. Joy here is a choice of attention, not a demand that everything feel easy.`,practice:{minutes:1,text:`Place a hand on your chest. Breathe out slowly for six counts. Softly say: this day is enough to begin.`},audio_url:null},entries:[{id:`votd-2026-09-18`,date:`2026-09-18`,lane:`christian`,verse:{text:`Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful.`,reference:`John 14:27 · WEB`,source_note:`Modern public-domain English (World English Bible). Prefer NKJV for personal study if you use that edition.`,url:`https://www.biblegateway.com/passage/?search=John+14%3A27&version=NKJV`},reflection:`Christ’s peace is offered as an inner steadiness, different from circumstances going your way. You can receive calm without pretending hard things are gone.`,practice:{minutes:1,text:`Sit quietly for one minute. On each out-breath, release one tense place in your body. Whisper: peace, here.`},audio_url:null},{id:`votd-2026-09-19`,date:`2026-09-19`,lane:`buddhist`,verse:{text:`Hatred is never ended by hatred in this world. By non-hatred alone is hatred ended. This is an eternal law.`,reference:`Dhammapada 1:5 (Yamaka Vagga)`,source_note:`Classical Pali Canon teaching (Dhammapada); clear modern English rendering of a well-attested verse.`,url:`https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.01.budd.html`},reflection:`Meeting irritation with more irritation feeds the loop. Softening does not mean approving harm — it means choosing a response that does not multiply heat.`,practice:{minutes:1,text:`For one minute, notice any irritation as warmth in the body. Name it ‘heat.’ Breathe out and let the shoulders drop.`},audio_url:null},{id:`votd-2026-09-20`,date:`2026-09-20`,lane:`islamic`,verse:{text:`Truly, with hardship comes ease. Truly, with hardship comes ease.`,reference:`Qur’an 94:5–6`,source_note:`Qur’an 94:5–6 (Surah Ash-Sharh); clear modern English rendering of the paired ease-after-hardship lines. Use a trusted translation for study.`,url:`https://quran.com/94`},reflection:`Hardship and ease are spoken as companions, not as a denial of pain. Today’s difficulty does not cancel the possibility of relief beside it.`,practice:{minutes:1,text:`One minute: breathe in for four, out for six. On the out-breath, silently add: ease is allowed here too.`},audio_url:null},{id:`votd-2026-09-21`,date:`2026-09-21`,lane:`stoic`,verse:{text:`You have power over your mind — not outside events. Realize this, and you will find strength.`,reference:`Marcus Aurelius, Meditations (common English rendering)`,source_note:`Stoic classic; wording follows a widely used modern English sense of the teaching. Not a verse of scripture.`,url:null},reflection:`Strength here is not control of everything — only ownership of your next inner move: attention, judgment, response.`,practice:{minutes:1,text:`For one minute, pick one worry. Label it ‘outside’ or ‘mine to choose.’ If outside, return to one breath.`},audio_url:null},{id:`votd-2026-09-22`,date:`2026-09-22`,lane:`science_of_mind`,verse:{text:`A longer out-breath helps the body shift toward calm: slower exhalation supports parasympathetic settling and can soften stress arousal.`,reference:`Science-of-mind lane (general established physiology)`,source_note:`General, widely taught breath–nervous-system relationship. Not a citation of a specific paper — do not invent study titles.`,url:null},reflection:`You do not need perfect meditation. One honest longer out-breath is a portable practice your nervous system can use today.`,practice:{minutes:1,text:`Breathe in gently for four counts. Breathe out for six to eight. Repeat for one minute without forcing.`},audio_url:null},{id:`votd-2026-09-23`,date:`2026-09-23`,lane:`jewish`,verse:{text:`Yahweh is my shepherd; I shall lack nothing. He makes me lie down in green pastures. He leads me beside still waters.`,reference:`Psalm 23:1–2 · WEB`,source_note:`Modern public-domain English (World English Bible) of the Hebrew Bible. For NKJV study text, use a licensed edition.`,url:`https://www.biblegateway.com/passage/?search=Psalm+23%3A1-2&version=NKJV`},reflection:`Still waters are an image of guided rest. You can seek a quieter pace without earning it first.`,practice:{minutes:1,text:`One minute of quiet. Imagine still water. Let the jaw unclench on each out-breath.`},audio_url:null},{id:`votd-2026-09-24`,date:`2026-09-24`,lane:`wisdom`,verse:{text:`Be kind whenever possible. It is always possible.`,reference:`Attributed to the Dalai Lama (widely circulated teaching)`,source_note:`Popular attribution to the 14th Dalai Lama in public talks/writings tradition. Treat as a living wisdom teaching, not scripture.`,url:null},reflection:`Kindness is not weakness. It is a trainable choice that steadies your own mind while softening how you meet others.`,practice:{minutes:1,text:`For one minute, bring one person to mind. Silently wish them one kind thing. Then include yourself.`},audio_url:null},{id:`votd-christian-philippians-4-6-7`,date:null,lane:`christian`,verse:{text:`In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.`,reference:`Philippians 4:6–7 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Philippians+4%3A6-7&version=NKJV`},reflection:`Naming a worry to God, in a sentence, is already a small act of trust. Peace here is described as a guard, not a guarantee that the situation changes.`,practice:{minutes:1,text:`Name one worry in a short sentence. Add one thing you are thankful for today, even something small.`},audio_url:null},{id:`votd-christian-psalm-46-1`,date:null,lane:`christian`,verse:{text:`God is our refuge and strength, a very present help in trouble.`,reference:`Psalm 46:1 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Psalm+46%3A1&version=NKJV`},reflection:`A refuge is somewhere you go, not a feeling you have to manufacture first. You can turn toward it exactly as you are.`,practice:{minutes:1,text:`Sit for one minute with a hand open, palm up, as a small sign of turning toward help rather than carrying it alone.`},audio_url:null},{id:`votd-christian-matthew-11-28`,date:null,lane:`christian`,verse:{text:`Come to me, all you who labor and are heavily burdened, and I will give you rest.`,reference:`Matthew 11:28 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Matthew+11%3A28&version=NKJV`},reflection:`Rest is offered here as an invitation, not something you have to finish every task to deserve.`,practice:{minutes:1,text:`Let your shoulders drop for one slow breath. Silently say: I can bring this as it is.`},audio_url:null},{id:`votd-christian-isaiah-41-10`,date:null,lane:`christian`,verse:{text:`Don’t be afraid, for I am with you. Don’t be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.`,reference:`Isaiah 41:10 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Isaiah+41%3A10&version=NKJV`},reflection:`Fear and presence are named together here — the verse doesn’t ask you to stop feeling afraid before help counts.`,practice:{minutes:1,text:`Breathe out slowly and name one small thing you feel steady enough to do next.`},audio_url:null},{id:`votd-christian-proverbs-3-5-6`,date:null,lane:`christian`,verse:{text:`Trust in Yahweh with all your heart, and don’t lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.`,reference:`Proverbs 3:5–6 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Proverbs+3%3A5-6&version=NKJV`},reflection:`Not leaning on your own understanding doesn’t mean switching your mind off — it means you don’t have to have the whole path worked out before taking the next step.`,practice:{minutes:1,text:`Choose one small, honest next step for today, without needing to see the whole path first.`},audio_url:null}],translation_policy:{bible_english:`WEB (World English Bible) — modern public-domain English; not KJV`,preferred_study_link:`NKJV on BibleGateway when user wants that edition`,other_lanes:`clear modern English`}};function It(){return new Date().toLocaleDateString(`en-CA`)}function Lt(){let e=Ft,t=e.active_lanes,n=(e.entries||[]).filter(e=>!t||!t.length||!!e.lane&&t.includes(e.lane)),r=It();return n.find(e=>e.date===r)||(n.length?n[Math.floor(Date.now()/864e5)%n.length]:e.default)}function Rt(){let e=(0,_.useMemo)(()=>Lt(),[]),t=Pt.entries,n=t[It()]||t.default,[r,i]=(0,_.useState)(``),{listening:a,listenStatus:o,toggle:s}=mt(),c=[e.verse.reference,e.verse.text,e.reflection,e.practice?.text?`1-min practice. ${e.practice.text}`:``,n?.prayer?.text?`Prayer. ${n.prayer.text}`:``].filter(Boolean).join(`
+— MindPal daily reading`);m(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>m(``),2e3)},children:`Copy`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>f(!d),children:`Choose another morning practice`}),i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{y(),ut(),m(``),c(mpReadings.pickRandom(a,b.id))},children:`Another random reading`}):null]}),d?(0,A.jsxs)(`p`,{className:`muted mindpal-other-practice`,children:[`Verse, videos and other Explore cards stay available. Homemade Pack B is not the daily default until 100/100 Done. Opening, Listen or Copy does not mark a reading Done.`] }):null,p||g?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:p||g}):null]})}/*mp-bt-end*/var xt={version:1,note:`Local MindPal demo accounts only. Not production auth. Do not reuse passwords elsewhere.`,accounts:[{username:`Mo1`,passwordSha256:`532eaabd9574880dbf76b9b8cc00832c20a6ec113d682299550d7a6e0f345e25`,displayName:`Mo`,createdAt:`2026-09-17T14:00:00+12:00`,preferences:{morningVerseEnabled:!0,morningPrayerEnabled:!0,tradition:`Christianity`}}]},St=`mindpal.localAccounts.v1`,Ct=`mindpal.sessionUser.v1`;async function wt(e){let t=new TextEncoder().encode(e),n=await crypto.subtle.digest(`SHA-256`,t);return Array.from(new Uint8Array(n)).map(e=>e.toString(16).padStart(2,`0`)).join(``)}function Tt(){try{let e=localStorage.getItem(St);if(e)return JSON.parse(e).accounts}catch{}let e=xt.accounts;return localStorage.setItem(St,JSON.stringify({version:1,accounts:e})),e.map(e=>({...e}))}function Et(e){localStorage.setItem(St,JSON.stringify({version:1,accounts:e}))}function Dt(){return localStorage.getItem(Ct)}function Ot(){localStorage.removeItem(Ct);try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}}async function kt(){Tt()}async function At(e,t,n){let r=Tt();if(r.some(t=>t.username.toLowerCase()===e.toLowerCase()))throw Error(`That username is already taken.`);if(!e.trim()||t.length<4)throw Error(`Choose a username and a password of at least 4 characters.`);let i=await wt(t),a={username:e.trim(),passwordSha256:i,displayName:n?.trim()||e.trim(),createdAt:new Date().toISOString(),preferences:{morningVerseEnabled:!1,morningPrayerEnabled:!1,faithStance:``,tradition:``,traditionId:``}};return r.push(a),Et(r),localStorage.setItem(Ct,a.username),window.dispatchEvent(new Event(`mindpal-session-change`)),a}async function jt(e,t){let n=Tt().find(t=>t.username.toLowerCase()===e.toLowerCase());if(!n)throw Error(`Account not found.`);if(await wt(t)!==n.passwordSha256)throw Error(`Password does not match.`);return localStorage.setItem(Ct,n.username),window.dispatchEvent(new Event(`mindpal-session-change`)),n}function Mt(e){return e&&Tt().find(t=>t.username===e)||null}function Nt(){let[e,t]=(0,_.useState)(null),[n,r]=(0,_.useState)(`Mo1`),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[c,l]=(0,_.useState)(!1);(0,_.useEffect)(()=>{kt().then(()=>t(Dt()))},[]);let u=Mt(e);async function d(){l(!0),s(``);try{let e=await jt(n,i);t(e.username),a(``),s(`Signed in as ${e.username}.`)}catch(e){s(e instanceof Error?e.message:`Sign-in failed.`)}finally{l(!1)}}async function f(){l(!0),s(``);try{let e=await At(n,i);t(e.username),a(``),s(`Account ${e.username} ready.`)}catch(e){try{let e=await jt(n,i);t(e.username),a(``),s(`Welcome back, ${e.username}.`)}catch{s(e instanceof Error?e.message:`Could not create account.`)}}finally{l(!1)}}return e?(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`Local account`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`LOCAL ACCOUNT`}),(0,A.jsxs)(`h3`,{children:[`Signed in as `,u?.displayName||e]}),(0,A.jsx)(`p`,{children:`Demo local login only — stays on this device. Not cloud auth.`}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{Ot(),t(null),s(`Signed out.`)},children:`Sign out`}),(0,A.jsx)(`p`,{role:`status`,children:o})]}):(0,A.jsxs)(`section`,{className:`simple-panel`,"aria-label":`Local account sign in`,children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`LOCAL ACCOUNT`}),(0,A.jsx)(`h3`,{children:`Sign in for your morning space`}),(0,A.jsx)(`p`,{children:`Demo only on this device. Use a throwaway password — do not reuse a real one.`}),(0,A.jsx)(`label`,{htmlFor:`mp-user`,children:`Username`}),(0,A.jsx)(`input`,{id:`mp-user`,value:n,onChange:e=>r(e.target.value),autoComplete:`username`}),(0,A.jsx)(`label`,{htmlFor:`mp-pass`,children:`Password`}),(0,A.jsx)(`input`,{id:`mp-pass`,type:`password`,value:i,onChange:e=>a(e.target.value),autoComplete:`current-password`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`primary`,disabled:c,onClick:d,children:`Sign in`}),(0,A.jsx)(`button`,{className:`secondary`,disabled:c,onClick:f,children:`Create account`})]}),(0,A.jsx)(`p`,{role:`status`,children:o})]})}var Pt={version:`1.0.0`,dateKeyRule:`local-calendar-YYYY-MM-DD`,entries:{default:{verse:{text:`This is the day which the Lord hath made; we will rejoice and be glad in it.`,reference:`Psalm 118:24 · KJV`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV`},prayer:{text:`God, thank you for this morning. Help me notice what is already good, meet people with patience, and take one kind next step. Amen.`,note:`Original MindPal optional prayer. Adapt to your beliefs or skip.`}},"2026-09-17":{verse:{text:`This is the day which the Lord hath made; we will rejoice and be glad in it.`,reference:`Psalm 118:24 · KJV`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=KJV`},prayer:{text:`God, thank you for this morning. Help me notice what is already good, meet people with patience, and take one kind next step. Amen.`,note:`Original MindPal optional prayer. Adapt to your beliefs or skip.`}}}},Ft={pack_id:`mindpal-verse-of-day-v1`,title:`MindPal — Verse for the Day`,version:`1.1.0`,modular:!0,feature:`verse_of_the_day`,active_lanes:[`christian`],active_lanes_note:'Owner update, 19 Sep 2026: the daily rotation is Christian-scripture-only for now (see MorningOfTheDay.tsx\'s resolveVerse, which filters entries to `active_lanes` and always falls back to `default`, itself lane "christian"). The buddhist/islamic/stoic/jewish/wisdom/science_of_mind entries below are kept, not deleted, so multi-faith can reopen later by widening this array.',consumers:[`mindpal`,`live-face-ai`,`denyse`],timezone_hint:`Pacific/Fiji`,date_key_rule:`YYYY-MM-DD in the user's local calendar (client resolves today)`,disclaimer:`Supportive wellness reading. Not clinical therapy or religious instruction. Christian/Hebrew Bible quotations use modern public-domain English (World English Bible / WEB) for readable contemporary wording (NKJV-like clarity). NKJV and other modern commercial translations are copyrighted — for study, open your licensed Bible or BibleGateway NKJV. Other lanes use clear modern English renderings. Reflections are original MindPal. AU urgent help: 000 / Lifeline 13 11 14.`,schema:{entry:{id:`string`,date:`YYYY-MM-DD or null for default`,lane:`christian | buddhist | islamic | jewish | stoic | wisdom | science_of_mind`,verse:{text:`string — the teaching/verse`,reference:`string — accurate citation`,source_note:`string — how to treat the quote`,url:`string|null — optional reputable link`},reflection:`string|null — short calm MindPal reflection`,practice:{minutes:1,text:`string — optional 1-minute closer`},audio_url:`string|null`}},default:{id:`default`,date:null,lane:`christian`,verse:{text:`This is the day that Yahweh has made. We will rejoice and be glad in it!`,reference:`Psalm 118:24 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=NKJV`},reflection:`Begin by noticing that this day is already given. Joy here is a choice of attention, not a demand that everything feel easy.`,practice:{minutes:1,text:`Place a hand on your chest. Breathe out slowly for six counts. Softly say: this day is enough to begin.`},audio_url:null},entries:[{id:`votd-2026-09-18`,date:`2026-09-18`,lane:`christian`,verse:{text:`Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful.`,reference:`John 14:27 · WEB`,source_note:`Modern public-domain English (World English Bible). Prefer NKJV for personal study if you use that edition.`,url:`https://www.biblegateway.com/passage/?search=John+14%3A27&version=NKJV`},reflection:`Christ’s peace is offered as an inner steadiness, different from circumstances going your way. You can receive calm without pretending hard things are gone.`,practice:{minutes:1,text:`Sit quietly for one minute. On each out-breath, release one tense place in your body. Whisper: peace, here.`},audio_url:null},{id:`votd-2026-09-19`,date:`2026-09-19`,lane:`buddhist`,verse:{text:`Hatred is never ended by hatred in this world. By non-hatred alone is hatred ended. This is an eternal law.`,reference:`Dhammapada 1:5 (Yamaka Vagga)`,source_note:`Classical Pali Canon teaching (Dhammapada); clear modern English rendering of a well-attested verse.`,url:`https://www.accesstoinsight.org/tipitaka/kn/dhp/dhp.01.budd.html`},reflection:`Meeting irritation with more irritation feeds the loop. Softening does not mean approving harm — it means choosing a response that does not multiply heat.`,practice:{minutes:1,text:`For one minute, notice any irritation as warmth in the body. Name it ‘heat.’ Breathe out and let the shoulders drop.`},audio_url:null},{id:`votd-2026-09-20`,date:`2026-09-20`,lane:`islamic`,verse:{text:`Truly, with hardship comes ease. Truly, with hardship comes ease.`,reference:`Qur’an 94:5–6`,source_note:`Qur’an 94:5–6 (Surah Ash-Sharh); clear modern English rendering of the paired ease-after-hardship lines. Use a trusted translation for study.`,url:`https://quran.com/94`},reflection:`Hardship and ease are spoken as companions, not as a denial of pain. Today’s difficulty does not cancel the possibility of relief beside it.`,practice:{minutes:1,text:`One minute: breathe in for four, out for six. On the out-breath, silently add: ease is allowed here too.`},audio_url:null},{id:`votd-2026-09-21`,date:`2026-09-21`,lane:`stoic`,verse:{text:`You have power over your mind — not outside events. Realize this, and you will find strength.`,reference:`Marcus Aurelius, Meditations (common English rendering)`,source_note:`Stoic classic; wording follows a widely used modern English sense of the teaching. Not a verse of scripture.`,url:null},reflection:`Strength here is not control of everything — only ownership of your next inner move: attention, judgment, response.`,practice:{minutes:1,text:`For one minute, pick one worry. Label it ‘outside’ or ‘mine to choose.’ If outside, return to one breath.`},audio_url:null},{id:`votd-2026-09-22`,date:`2026-09-22`,lane:`science_of_mind`,verse:{text:`A longer out-breath helps the body shift toward calm: slower exhalation supports parasympathetic settling and can soften stress arousal.`,reference:`Science-of-mind lane (general established physiology)`,source_note:`General, widely taught breath–nervous-system relationship. Not a citation of a specific paper — do not invent study titles.`,url:null},reflection:`You do not need perfect meditation. One honest longer out-breath is a portable practice your nervous system can use today.`,practice:{minutes:1,text:`Breathe in gently for four counts. Breathe out for six to eight. Repeat for one minute without forcing.`},audio_url:null},{id:`votd-2026-09-23`,date:`2026-09-23`,lane:`jewish`,verse:{text:`Yahweh is my shepherd; I shall lack nothing. He makes me lie down in green pastures. He leads me beside still waters.`,reference:`Psalm 23:1–2 · WEB`,source_note:`Modern public-domain English (World English Bible) of the Hebrew Bible. For NKJV study text, use a licensed edition.`,url:`https://www.biblegateway.com/passage/?search=Psalm+23%3A1-2&version=NKJV`},reflection:`Still waters are an image of guided rest. You can seek a quieter pace without earning it first.`,practice:{minutes:1,text:`One minute of quiet. Imagine still water. Let the jaw unclench on each out-breath.`},audio_url:null},{id:`votd-2026-09-24`,date:`2026-09-24`,lane:`wisdom`,verse:{text:`Be kind whenever possible. It is always possible.`,reference:`Attributed to the Dalai Lama (widely circulated teaching)`,source_note:`Popular attribution to the 14th Dalai Lama in public talks/writings tradition. Treat as a living wisdom teaching, not scripture.`,url:null},reflection:`Kindness is not weakness. It is a trainable choice that steadies your own mind while softening how you meet others.`,practice:{minutes:1,text:`For one minute, bring one person to mind. Silently wish them one kind thing. Then include yourself.`},audio_url:null},{id:`votd-christian-philippians-4-6-7`,date:null,lane:`christian`,verse:{text:`In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.`,reference:`Philippians 4:6–7 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Philippians+4%3A6-7&version=NKJV`},reflection:`Naming a worry to God, in a sentence, is already a small act of trust. Peace here is described as a guard, not a guarantee that the situation changes.`,practice:{minutes:1,text:`Name one worry in a short sentence. Add one thing you are thankful for today, even something small.`},audio_url:null},{id:`votd-christian-psalm-46-1`,date:null,lane:`christian`,verse:{text:`God is our refuge and strength, a very present help in trouble.`,reference:`Psalm 46:1 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Psalm+46%3A1&version=NKJV`},reflection:`A refuge is somewhere you go, not a feeling you have to manufacture first. You can turn toward it exactly as you are.`,practice:{minutes:1,text:`Sit for one minute with a hand open, palm up, as a small sign of turning toward help rather than carrying it alone.`},audio_url:null},{id:`votd-christian-matthew-11-28`,date:null,lane:`christian`,verse:{text:`Come to me, all you who labor and are heavily burdened, and I will give you rest.`,reference:`Matthew 11:28 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Matthew+11%3A28&version=NKJV`},reflection:`Rest is offered here as an invitation, not something you have to finish every task to deserve.`,practice:{minutes:1,text:`Let your shoulders drop for one slow breath. Silently say: I can bring this as it is.`},audio_url:null},{id:`votd-christian-isaiah-41-10`,date:null,lane:`christian`,verse:{text:`Don’t be afraid, for I am with you. Don’t be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.`,reference:`Isaiah 41:10 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Isaiah+41%3A10&version=NKJV`},reflection:`Fear and presence are named together here — the verse doesn’t ask you to stop feeling afraid before help counts.`,practice:{minutes:1,text:`Breathe out slowly and name one small thing you feel steady enough to do next.`},audio_url:null},{id:`votd-christian-proverbs-3-5-6`,date:null,lane:`christian`,verse:{text:`Trust in Yahweh with all your heart, and don’t lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.`,reference:`Proverbs 3:5–6 · WEB`,source_note:`Modern public-domain English (World English Bible). For NKJV wording, open your licensed Bible or BibleGateway NKJV.`,url:`https://www.biblegateway.com/passage/?search=Proverbs+3%3A5-6&version=NKJV`},reflection:`Not leaning on your own understanding doesn’t mean switching your mind off — it means you don’t have to have the whole path worked out before taking the next step.`,practice:{minutes:1,text:`Choose one small, honest next step for today, without needing to see the whole path first.`},audio_url:null}],translation_policy:{bible_english:`WEB (World English Bible) — modern public-domain English; not KJV`,preferred_study_link:`NKJV on BibleGateway when user wants that edition`,other_lanes:`clear modern English`}};function It(){return new Date().toLocaleDateString(`en-CA`)}function Lt(){let e=Ft,t=e.active_lanes,n=(e.entries||[]).filter(e=>!t||!t.length||!!e.lane&&t.includes(e.lane)),r=It();return n.find(e=>e.date===r)||(n.length?n[Math.floor(Date.now()/864e5)%n.length]:e.default)}function Rt(){let e=(0,_.useMemo)(()=>Lt(),[]),t=Pt.entries,n=t[It()]||t.default,[r,i]=(0,_.useState)(``),{listening:a,listenStatus:o,toggle:s}=mt(),c=[e.verse.reference,e.verse.text,e.reflection,e.practice?.text?`1-min practice. ${e.practice.text}`:``,n?.prayer?.text?`Prayer. ${n.prayer.text}`:``].filter(Boolean).join(`
 
 `);return(0,A.jsxs)(`section`,{id:`today-verse`,className:`simple-panel`,"aria-label":`Morning verse and prayer`,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[`VERSE FOR THE DAY · WEB`,e.lane?` · ${String(e.lane).replace(/_/g,` `)}`:``]}),(0,A.jsx)(`h3`,{children:e.verse.reference||`Today's verse`}),(0,A.jsxs)(`p`,{children:[`“`,e.verse.text,`”`]}),e.verse.url?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`a`,{href:e.verse.url,target:`_blank`,rel:`noreferrer`,children:`Open passage`}),e.verse.source_note?` · ${e.verse.source_note}`:``]}):e.verse.source_note?(0,A.jsx)(`p`,{children:e.verse.source_note}):null,e.reflection?(0,A.jsx)(`p`,{children:e.reflection}):null,e.practice?.text?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`1-min practice:`}),` `,e.practice.text]}):null,n?.prayer?.text?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h3`,{children:`Prayer`}),(0,A.jsx)(`p`,{children:n.prayer.text}),n.prayer.note?(0,A.jsx)(`p`,{children:n.prayer.note}):null]}):null,(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(c+`
 
@@ -10583,20 +10829,90 @@ function mpSignedInName(fallback){
     return (e&&e.displayName||e&&e.username||fallback||``).trim();
   }catch{return (fallback||``).trim()}
 }
+function mpFaithCatalog(){
+  try{return typeof Ft<`u`?Ft:null}catch{return null}
+}
+function mpFaithChoice(stance,traditionId){
+  return mpFaith.prefsFromChoice({stance,traditionId});
+}
+function mpSaveFaithChoice(stance,traditionId){
+  return mpFaith.setSessionFaithPrefs({stance,traditionId});
+}
+function mpFaithPrefQuestions({mode:e=`setup`,onDone:t}){
+  let n=mpFaith.sessionPreferences()||{};
+  let[r,i]=(0,_.useState)(()=>mpFaith.isSecularPrefs(n)?`secular`:n.faithStance===`religious`||mpFaith.hasFaithPreference(n)?`religious`:``);
+  let[a,o]=(0,_.useState)(()=>mpFaith.traditionIdFromPrefs(n)||``);
+  let[s,c]=(0,_.useState)(()=>mpFaith.OTHER_TRADITIONS.some(e=>e.id===(mpFaith.traditionIdFromPrefs(n)||``)));
+  let[l,u]=(0,_.useState)(``);
+  function d(){
+    if(r===`secular`){
+      mpSaveFaithChoice(`secular`);
+      t&&t(mpFaithChoice(`secular`));
+      return;
+    }
+    if(r!==`religious`||!a){
+      u(`Pick a religion, or choose Other if yours is not in the first four.`);
+      return;
+    }
+    mpSaveFaithChoice(`religious`,a);
+    t&&t(mpFaithChoice(`religious`,a));
+  }
+  function f(e){
+    o(e);
+    c(mpFaith.OTHER_TRADITIONS.some(t=>t.id===e));
+    u(``);
+  }
+  return(0,A.jsxs)(`section`,{className:`mp-faith-pref`,"aria-label":`Faith preference`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:e===`edit`?`YOUR SPACE`:`A QUIET QUESTION`}),
+    (0,A.jsx)(`h2`,{children:e===`edit`?`Faith preference`:`How should mornings meet you?`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:`A short preference so we can keep scripture optional and kind. Nothing preachy — just so Today can relate to you.`}),
+    (0,A.jsx)(`p`,{children:`Would you like faith-aware words, or a secular space?`}),
+    (0,A.jsxs)(`div`,{className:`mp-faith-chips`,"aria-label":`Religious or not`,children:[
+      (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${r===`religious`?` is-open`:``}`,"aria-pressed":r===`religious`,onClick:()=>{i(`religious`);u(``)},children:`I have a faith / religion`}),
+      (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${r===`secular`?` is-open`:``}`,"aria-pressed":r===`secular`,onClick:()=>{i(`secular`);o(``);c(!1);u(``)},children:`No religion / prefer secular`})
+    ]}),
+    r===`religious`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{children:`So we can relate to you — what’s your religion?`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Four common choices first. Other opens a fuller list. One selection is enough.`}),
+      (0,A.jsxs)(`div`,{className:`mp-faith-chips`,"aria-label":`Religion`,children:[
+        mpFaith.PRIMARY_TRADITIONS.map(e=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${a===e.id?` is-open`:``}`,"aria-pressed":a===e.id,onClick:()=>f(e.id),children:e.label},e.id)),
+        (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${s?` is-open`:``}`,"aria-pressed":s,onClick:()=>{c(e=>!e);if(mpFaith.PRIMARY_TRADITIONS.some(e=>e.id===a)){o(``)}},children:`Other`})
+      ]}),
+      s?(0,A.jsx)(`div`,{className:`mp-faith-chips mp-faith-chips-other`,"aria-label":`Other traditions`,children:mpFaith.OTHER_TRADITIONS.map(e=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${a===e.id?` is-open`:``}`,"aria-pressed":a===e.id,onClick:()=>f(e.id),children:e.label},e.id))}):null
+    ]}):null,
+    (0,A.jsx)(`p`,{className:`muted`,children:`Saved on this device with your local profile. You can change it later in Account.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:d,children:e===`edit`?`Save preference`:r===`secular`?`Continue with a secular space`:`Continue`})
+    ]}),
+    l?(0,A.jsx)(`p`,{role:`status`,children:l}):null
+  ]});
+}
 function mpSignInPage({onSignedIn:e}){
-  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}});
-  async function p(m){
+  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(!1);
+  function h(g){
+    mpNotifySession();
+    if(!mpFaith.hasFaithPreference(g&&g.preferences)){
+      m(!0);
+      return;
+    }
+    e&&e(g);
+  }
+  async function g(v){
     u(!0),c(``);
     try{
-      let h=m===`create`?await At(t,r,a):await jt(t,r);
-      mpNotifySession();
-      e&&e(h);
-    }catch(h){
-      if(m===`create`){
-        try{let g=await jt(t,r);mpNotifySession();e&&e(g);return}catch{}
+      let y=v===`create`?await At(t,r,a):await jt(t,r);
+      h(y);
+    }catch(y){
+      if(v===`create`){
+        try{let b=await jt(t,r);h(b);return}catch{}
       }
-      c(h instanceof Error?h.message:`Could not sign in.`);
+      c(y instanceof Error?y.message:`Could not sign in.`);
     }finally{u(!1)}
+  }
+  if(p){
+    return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Faith preference`,children:[
+      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>e&&e(mpFaith.sessionPreferences())})
+    ]});
   }
   return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Sign in`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR SPACE`}),
@@ -10605,17 +10921,17 @@ function mpSignInPage({onSignedIn:e}){
     (0,A.jsx)(`p`,{className:`muted`,children:`Demo login only — use a throwaway password. Nothing is sent to the cloud.`}),
     d.length?(0,A.jsxs)(`div`,{className:`mp-profile-chips`,"aria-label":`Profiles on this device`,children:[
       (0,A.jsx)(`p`,{className:`muted`,children:`On this device:`}),
-      d.map(m=>(0,A.jsx)(`button`,{type:`button`,className:`secondary small-button`,onClick:()=>{n(m.username),o(m.displayName||``)},children:m.displayName||m.username},m.username))
+      d.map(v=>(0,A.jsx)(`button`,{type:`button`,className:`secondary small-button`,onClick:()=>{n(v.username),o(v.displayName||``)},children:v.displayName||v.username},v.username))
     ]}):null,
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-name`,children:`What should we call you?`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-name`,value:a,onChange:m=>o(m.target.value),autoComplete:`nickname`,placeholder:`A first name is enough`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-name`,value:a,onChange:v=>o(v.target.value),autoComplete:`nickname`,placeholder:`A first name is enough`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-user`,children:`Username`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-user`,value:t,onChange:m=>n(m.target.value),autoComplete:`username`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-user`,value:t,onChange:v=>n(v.target.value),autoComplete:`username`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-pass`,children:`Password`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-pass`,type:`password`,value:r,onChange:m=>i(m.target.value),autoComplete:`current-password`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-pass`,type:`password`,value:r,onChange:v=>i(v.target.value),autoComplete:`current-password`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:l,onClick:()=>p(`in`),children:`Sign in`}),
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:l,onClick:()=>p(`create`),children:`Create local profile`})
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:l,onClick:()=>g(`in`),children:`Sign in`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:l,onClick:()=>g(`create`),children:`Create local profile`})
     ]}),
     s?(0,A.jsx)(`p`,{role:`status`,children:s}):null
   ]});
@@ -10666,18 +10982,61 @@ function mpMaddyTeaser({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
   ]});
 }
+function mpMorningVerse(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  if(!mpFaith.shouldShowFaithModules(e))return null;
+  let n=mpFaith.pickMorningVerse(mpFaithCatalog(),e);
+  if(!n||!n.verse)return null;
+  let r=mpFaith.shouldShowMorningPrayer(e);
+  let i=typeof Pt<`u`?Pt.entries:null;
+  let a=r&&i?(i[(typeof It==`function`?It():``)]||i.default):null;
+  let[o,s]=(0,_.useState)(``);
+  let{listening:c,listenStatus:l,toggle:u}=mt();
+  let d=[n.verse.reference,n.verse.text,n.reflection,n.practice?.text?`1-min practice. ${n.practice.text}`:``,a?.prayer?.text?`Prayer. ${a.prayer.text}`:``].filter(Boolean).join(`
+
+`);
+  return(0,A.jsxs)(`section`,{id:`today-verse`,className:`simple-panel mp-morning-verse`,"aria-label":n.fallback?`Quiet reflection`:`Morning faith reading`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpFaith.verseEyebrow(n)}),
+    (0,A.jsx)(`h3`,{children:n.verse.reference||`Today’s reading`}),
+    (0,A.jsxs)(`p`,{children:[`“`,n.verse.text,`”`]}),
+    n.verse.url?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`a`,{href:n.verse.url,target:`_blank`,rel:`noreferrer`,children:`Open passage`}),n.verse.source_note?` · ${n.verse.source_note}`:``]}):n.verse.source_note?(0,A.jsx)(`p`,{children:n.verse.source_note}):null,
+    n.reflection?(0,A.jsx)(`p`,{children:n.reflection}):null,
+    n.practice?.text?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`1-min practice:`}),` `,n.practice.text]}):null,
+    a?.prayer?.text?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Prayer`}),
+      (0,A.jsx)(`p`,{children:a.prayer.text}),
+      a.prayer.note?(0,A.jsx)(`p`,{children:a.prayer.note}):null
+    ]}):null,
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>u(d),children:c?`Pause`:`Listen`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(d+`
+
+— MindPal faith reading`);s(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>s(``),2e3)},children:`Copy`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await pt(d+`
+
+— MindPal faith reading`,`MindPal faith reading`);e!==`cancelled`&&(s(e===`shared`?`Shared.`:e===`copied`?`Copied for sharing.`:`Could not share.`),setTimeout(()=>s(``),2e3))},children:`Share`})
+    ]}),
+    o||l?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:o||l}):null
+  ]});
+}
 function mpCollapsedVerse(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}));
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  if(!e)return null;
   return(0,A.jsxs)(`details`,{className:`mp-verse-collapse`,children:[
     (0,A.jsx)(`summary`,{children:`Today’s verse — tap to expand`}),
-    (0,A.jsx)(Rt,{})
+    (0,A.jsx)(mpMorningVerse,{})
   ]});
 }
 function mpReadingsPage(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}));
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings`,"aria-label":`Readings`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`READINGS`}),
     (0,A.jsx)(`h1`,{children:`Today’s readings`}),
-    (0,A.jsx)(`p`,{className:`lede`,children:`A verse, an optional prayer, and the pack reading for this morning. Take what helps; leave the rest.`}),
-    (0,A.jsx)(Rt,{}),
+    (0,A.jsx)(`p`,{className:`lede`,children:e?`A verse or faith reading, an optional prayer when it fits, and the pack reading for this morning. Take what helps; leave the rest.`:`Today’s pack reading. Faith words stay tucked away unless you choose them in Account.`}),
+    e?(0,A.jsx)(mpMorningVerse,{}):null,
     (0,A.jsx)(bt,{})
   ]});
 }
@@ -10728,12 +11087,23 @@ function mpFaithSettings(){
     (0,A.jsx)(`p`,{className:`muted`,children:`Kept here so the morning page stays tidy.`})
   ]});
 }
+function mpAccountFaithCard(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
+  let[n,r]=(0,_.useState)(!1);
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  return(0,A.jsxs)(`div`,{className:`mp-account-faith`,children:[
+    (0,A.jsx)(`p`,{children:`Faith preference: ${mpFaith.faithSummary(e)}`}),
+    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,"aria-expanded":n,onClick:()=>r(e=>!e),children:n?`Close`:`Edit`}),
+    n?(0,A.jsx)(mpFaithPrefQuestions,{mode:`edit`,onDone:()=>{t(mpFaith.sessionPreferences()||{});r(!1)}}):null
+  ]});
+}
 function mpAccountFooter(){
   let e=mpSignedInName(``);
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-account-footer`,"aria-label":`Account`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`ACCOUNT`}),
     (0,A.jsx)(`h2`,{children:e?`Signed in as ${e}`:`Local account`}),
     (0,A.jsx)(`p`,{children:`Demo login only — this profile stays on this device. Nothing is sent to the cloud.`}),
+    (0,A.jsx)(mpAccountFaithCard,{}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Wins, photos and friends stay on this device. Sharing them with other people needs a future backend — nothing is uploaded today.`})
@@ -10750,12 +11120,20 @@ function mpProblemChipClass(item,open){
     :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:``;
   return `mp-problem-chip${open?` is-open`:``}${extra}`;
 }
+function mpVisibleProblemGroups(){
+  let e=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}];
+  if(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))return e;
+  return e.map(t=>({...t,problems:(t.problems||[]).filter(t=>t.id!==`faith`)})).filter(t=>(t.problems||[]).length);
+}
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
-  let n=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}],[r,i]=(0,_.useState)(null);
+  let[n,o]=(0,_.useState)(()=>mpVisibleProblemGroups()),[r,i]=(0,_.useState)(null);
   (0,_.useEffect)(()=>{
     function e(){i(null)}
+    function t(){o(mpVisibleProblemGroups())}
     window.addEventListener(mpNav.HOME_EVENT,e);
-    return()=>window.removeEventListener(mpNav.HOME_EVENT,e);
+    window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,t);
+    window.addEventListener(`mindpal-session-change`,t);
+    return()=>{window.removeEventListener(mpNav.HOME_EVENT,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,t);window.removeEventListener(`mindpal-session-change`,t)};
   },[]);
   function chipsFor(group){return group.problems||[]}
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
@@ -11423,7 +11801,7 @@ function MpWatchWithMaddy(){
     })}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Native MP4 · /mindpal/videos/maddy · Welcome · Daily tip · Timed breath`})
   ]});
-}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=li.videos.filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:()=>I(`Problem`)}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(Rt,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.show(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
+}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=li.videos.filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:()=>I(`Problem`)}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(mpMorningVerse,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.show(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
 
 ---
 
