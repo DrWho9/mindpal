@@ -177,6 +177,20 @@ const checks = [
   [js.includes("mindpal.profile.v1") && js.includes("mp-profile-acc"), "profile persists and uses accordions"],
   [js.includes("Your MindPal profile") && js.includes("Plans and goals"), "profile page uses MindPal chrome copy"],
   [!js.includes("className:`brand`,onClick:()=>I(`Profile`)"), "MindPal brand does not open Profile"],
+  [js.includes("function ti(props){return mpReflectPage(props)}") && js.includes("function mpReflectPage("), "Reflect mounts the MindPal chat page"],
+  [js.includes("Talk with MindPal") && js.includes("Enter sends"), "Reflect chat is named Talk with MindPal and documents Enter"],
+  [js.includes('"route.reflect":`Talk with MindPal`'), "Reflect breadcrumb names Talk with MindPal"],
+  [js.includes("api/companion/") && js.includes("COMPANION_POLICY_VERSION") && js.includes("/mindpal/"), "Reflect uses the existing companion API path"],
+  [js.includes("not a psychologist") && js.includes("Lifeline 13 11 14"), "Reflect prompt and crisis copy stay non-clinical"],
+  [js.includes("Clear reflection & finish") && js.includes("mindpal.reflect.thread.v1"), "Reflect thread can be cleared and persisted"],
+  [js.includes("GitHub Pages cannot host the live proxy") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion API base"],
+  [js.includes("function mpAppointmentChat(") && js.includes("Questions for my appointment"), "Appointment Questions page mounts medical companion chat"],
+  [js.includes("appointment_health_literacy") && js.includes("mindpal.appointment.thread.v1"), "Appointment chat uses the health-literacy lane and persists a day thread"],
+  [js.includes("Clear appointment chat") && js.includes("mp-appoint-input"), "Appointment chat has Send/Enter composer and a clear control"],
+  [js.includes("function mpCompanionBaseCard(") && js.includes("persistCompanionBase"), "Companion base can be pasted into localStorage"],
+  [!/\btrycloudflare\.com\b/.test(js) && !js.includes("127.0.0.1:8787"), "companion base is not hard-coded to a tunnel or local port"],
+  [html.includes("http://127.0.0.1:*") && html.includes("http://localhost:*") && html.includes("http://[::1]:*"), "CSP allows a pasted loopback companion"],
+  [!html.includes("trycloudflare.com") && !html.includes("127.0.0.1:8787"), "index.html does not bake a Live URL"],
 ];
 
 const maddyFiles = [
@@ -228,6 +242,12 @@ if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
 }
 if (!css.includes(".mp-yt-dir-search") || !css.includes(".mp-yt-dir-results")) {
   throw new Error("YouTube directory search styles missing");
+}
+if (!css.includes(".mp-reflect-thread") || !css.includes(".mp-reflect-composer") || !css.includes(".mp-reflect-pill")) {
+  throw new Error("Reflect chat conversation styles missing");
+}
+if (!css.includes(".mp-appoint-chat") || !css.includes(".mp-companion-base")) {
+  throw new Error("appointment chat or companion-base paste field styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
