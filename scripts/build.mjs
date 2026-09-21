@@ -53,6 +53,28 @@ function replaceOnce(haystack, needle, replacement, label) {
   return haystack.replace(needle, replacement);
 }
 
+function exciseVendorReflectPreview(source) {
+  const startNeedle = "function ti({active:e,onHelp:t,onDiary:n}){";
+  const endNeedle = "var ni=Ue,ri=[`Put away one item`";
+  const start = source.indexOf(startNeedle);
+  const end = source.indexOf(endNeedle, start);
+  if (start < 0 || end <= start) {
+    throw new Error("vendor Reflect preview function is missing");
+  }
+  if (!source.slice(start, end).includes("This page cannot understand your words")) {
+    throw new Error("vendor Reflect preview copy was not at the expected anchor");
+  }
+  const next = `${source.slice(0, start)}function ti(props){return mpReflectPage(props)}${source.slice(end)}`;
+  if (
+    next.includes("function mpReflectLegacy") ||
+    next.includes("This page cannot understand your words") ||
+    next.includes("Self-guided preview · no live listener")
+  ) {
+    throw new Error("dead-end Reflect preview was not excised");
+  }
+  return next;
+}
+
 function replaceMarkedOrOnce(haystack, start, end, replacement, fallbackNeedle, label) {
   const marked = `${start}${haystack.split(start)[1] || ""}${end}`;
   if (haystack.includes(start) && haystack.includes(end)) {
@@ -717,7 +739,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     `"route.today":\`Today\`,"route.explore":\`Explore\``,
-    `"route.today":\`Today\`,"route.profile":\`Profile\`,"route.readings":\`Readings\`,"route.teamMorning":\`Team morning settle\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.aod":\`Drugs & alcohol\`,"route.mensHealth":\`Men's Health\`,"route.explore":\`Explore\``,
+    `"route.today":\`Today\`,"route.profile":\`Profile\`,"route.readings":\`Readings\`,"route.teamMorning":\`Team morning settle\`,"route.later":\`Later\`,"route.evening":\`Before you sleep\`,"route.problem":\`Help with this\`,"route.mothers":\`Struggling mothers\`,"route.aod":\`Drugs & alcohol\`,"route.mensHealth":\`Men's Health\`,"route.appointment":\`Appointment Questions\`,"route.explore":\`Explore\``,
     "i18n-routes",
   );
   next = replaceOnce(
@@ -729,20 +751,20 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "Ii=[`Feelings`,`YouTube directory`,`Today`,`Explore`,`My diary`,`Focus`,`Companion`,",
-    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,",
+    "Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,`Appointment Questions`,",
     "hash-routes",
   );
   next = replaceOnce(
     next,
     "Li={Today:`route.today`,Explore:`route.explore`,",
-    "Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,\"Team morning\":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,\"Drugs & alcohol\":`route.aod`,\"Mens health\":`route.mensHealth`,Explore:`route.explore`,",
+    "Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,\"Team morning\":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,\"Struggling mothers\":`route.mothers`,\"Drugs & alcohol\":`route.aod`,\"Mens health\":`route.mensHealth`,\"Appointment Questions\":`route.appointment`,Explore:`route.explore`,",
     "breadcrumb-routes",
   );
 
   next = replaceOnce(
     next,
     "onOpenVerse:()=>requestAnimationFrame(()=>document.getElementById(`today-verse`)?.scrollIntoView({behavior:`smooth`,block:`start`})),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)}",
-    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`)",
+    "onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`),onOpenReflect:()=>I(`Reflect`),onOpenAppointment:()=>I(`Appointment Questions`)",
     "today-hub-links",
   );
   next = replaceOnce(
@@ -764,12 +786,7 @@ function patchOwnerUx(source) {
     "function ve(props){return mpFeelingsPage(props)}function mpFeelingsLegacy({onDiary:e,onPractice:t,onLeave:n,onDirectory:r}){",
     "feelings-page-delegate",
   );
-  next = replaceOnce(
-    next,
-    "function ti({active:e,onHelp:t,onDiary:n}){",
-    "function ti(props){return mpReflectPage(props)}function mpReflectLegacy({active:e,onHelp:t,onDiary:n}){",
-    "reflect-page-delegate",
-  );
+  next = exciseVendorReflectPreview(next);
 
   next = replaceOnce(
     next,
@@ -913,8 +930,14 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "{name:`Women’s wellbeing`,icon:fn}]",
-    "{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn}]",
+    "{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn},{name:`Appointment Questions`,icon:fn}]",
     "sidebar-mothers-nav",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)})",
+    "(0,A.jsx)($r,{active:t===`Body, food and wellbeing`||t===`Appointment Questions`,onHelp:()=>I(`Get support`)})",
+    "appointment-route-alias",
   );
   next = replaceOnce(
     next,
@@ -924,9 +947,15 @@ function patchOwnerUx(source) {
   );
   next = replaceOnce(
     next,
+    "(0,A.jsx)(`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(`p`,{className:`lede`,children:`Struggling is not a personal failure.",
+    "(0,A.jsx)(`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(mpAppointmentChat,{onHelp:t}),(0,A.jsx)(`p`,{className:`lede`,children:`Struggling is not a personal failure.",
+    "appointment-chat-top",
+  );
+  next = replaceOnce(
+    next,
     "(0,A.jsx)(`h2`,{children:`Questions for my appointment`}),(0,A.jsx)(`p`,{children:`You can prepare questions without storing any report. Your own text is user-entered and not medically verified. Notes stay in page memory; reload/close clears them. Use sample notes in this local preview.`}),",
-    "(0,A.jsx)(`h2`,{children:`Questions for my appointment`}),(0,A.jsx)(mpAppointmentChat,{onHelp:t}),(0,A.jsx)(`p`,{children:`You can also keep a list of questions without storing any report. Your own text is user-entered and not medically verified. Notes stay in page memory; reload/close clears them. Use sample notes in this local preview.`}),",
-    "appointment-questions-chat",
+    "(0,A.jsx)(`h2`,{children:`Questions for my appointment`}),(0,A.jsx)(`p`,{children:`You can also keep a list of questions under the medical companion chat. Your own text is user-entered and not medically verified. Notes stay in page memory; reload/close clears them. Use sample notes in this local preview.`}),",
+    "appointment-questions-list",
   );
 
   next = replaceOnce(
@@ -1147,8 +1176,17 @@ function patchOwnerUx(source) {
   if (!next.includes("function ti(props){return mpReflectPage(props)}") || !next.includes("function mpReflectPage(")) {
     throw new Error("Reflect page is not the MindPal chat conversation");
   }
+  if (next.includes("function mpReflectLegacy") || next.includes("This page cannot understand your words") || next.includes("Self-guided preview · no live listener")) {
+    throw new Error("dead-end Reflect preview must be excised from the tip bundle");
+  }
   if (!next.includes("Talk with MindPal") || !next.includes("Enter sends")) {
     throw new Error("Reflect chat chrome is missing");
+  }
+  if (!next.includes("function mpTodayTalkRow(") || !next.includes("onOpenReflect:()=>I(`Reflect`)") || !next.includes("onOpenAppointment:()=>I(`Appointment Questions`)")) {
+    throw new Error("Today is missing Talk about my day / Appointment Questions openers");
+  }
+  if (!next.includes("t===`Body, food and wellbeing`||t===`Appointment Questions`")) {
+    throw new Error("Appointment Questions hash is not aliased to the medical chat page");
   }
   if (!next.includes("api/companion/") || !next.includes("COMPANION_POLICY_VERSION") || !next.includes("DEFAULT_PAGES_BASE")) {
     throw new Error("companion chat path is missing from the runtime");
@@ -1177,7 +1215,7 @@ function patchOwnerUx(source) {
   if (!next.includes("mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome}")) {
     throw new Error("mpNav home helper missing from bundle");
   }
-  if (!next.includes("function mpAppointmentChat(") || !next.includes("mpAppointmentChat,{onHelp:t}")) {
+  if (!next.includes("function mpAppointmentChat(") || !next.includes("`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(mpAppointmentChat,{onHelp:t})")) {
     throw new Error("appointment Questions page is still list-only");
   }
   if (!next.includes("appointment_health_literacy") || !next.includes("MINDPAL_COMPANION_BASE")) {
@@ -1254,9 +1292,15 @@ function updateServiceWorker(jsFile, cssFile, html, js, css) {
   let sw = readFileSync(path, "utf8");
   sw = sw.replace(/assets\/index-[A-Za-z0-9_-]+\.js/g, `assets/${jsFile}`);
   sw = sw.replace(/assets\/index-[A-Za-z0-9_-]+\.css/g, `assets/${cssFile}`);
+  sw = sw.replace(/prefix:"mindpal-shell-v\d+"/, `prefix:"mindpal-shell-v3"`);
   sw = sw.replace(
     /\{url:"index.html",revision:"[a-f0-9]+"\}/,
     `{url:"index.html",revision:"${md5(html)}"}`,
+  );
+  const registerSw = readFileSync(join(root, "registerSW.js"), "utf8");
+  sw = sw.replace(
+    /\{url:"registerSW.js",revision:"[a-f0-9]+"\}/,
+    `{url:"registerSW.js",revision:"${md5(registerSw)}"}`,
   );
   const nav = 'e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))';
   const navDeny =

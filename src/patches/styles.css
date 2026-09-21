@@ -432,6 +432,8 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
   .mp-top-brand{margin-right:0}
 }
 
+.mp-today-talk{background:#fbfaf3;border:1px solid #d5dccb;border-radius:18px;padding:16px 16px 14px;margin:0 0 16px;display:flex;flex-direction:column;gap:8px}
+.mp-today-talk .button-row{margin-top:4px}
 .mp-reflect-chat{display:flex;flex-direction:column;gap:12px}
 .mp-reflect-disclaimer{margin:0 0 4px}
 .mp-reflect-status{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 4px}

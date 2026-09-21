@@ -68,7 +68,9 @@ describe("appointment medical companion", () => {
     assert.match(inject, /appointment_health_literacy|APPOINTMENT_LANE/);
     assert.match(inject, /mpCompanionBaseCard/);
     assert.doesNotMatch(inject, /trycloudflare\.com|127\.0\.0\.1:8787/);
-    assert.match(build, /appointment-questions-chat/);
+    assert.match(build, /appointment-chat-top/);
     assert.match(build, /mpAppointmentChat,\{onHelp:t\}/);
+    assert.match(build, /onOpenAppointment:\(\)=>I\(`Appointment Questions`\)/);
+    assert.match(build, /t===`Body, food and wellbeing`\|\|t===`Appointment Questions`/);
   });
 });
