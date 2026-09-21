@@ -177,6 +177,13 @@ const checks = [
   [js.includes("mindpal.profile.v1") && js.includes("mp-profile-acc"), "profile persists and uses accordions"],
   [js.includes("Your MindPal profile") && js.includes("Plans and goals"), "profile page uses MindPal chrome copy"],
   [!js.includes("className:`brand`,onClick:()=>I(`Profile`)"), "MindPal brand does not open Profile"],
+  [js.includes("function ti(props){return mpReflectPage(props)}") && js.includes("function mpReflectPage("), "Reflect mounts the MindPal chat page"],
+  [js.includes("Talk with MindPal") && js.includes("Enter sends"), "Reflect chat is named Talk with MindPal and documents Enter"],
+  [js.includes('"route.reflect":`Talk with MindPal`'), "Reflect breadcrumb names Talk with MindPal"],
+  [js.includes("/mindpal/api/companion/") && js.includes("COMPANION_POLICY_VERSION"), "Reflect uses the existing companion API path"],
+  [js.includes("not a psychologist") && js.includes("Lifeline 13 11 14"), "Reflect prompt and crisis copy stay non-clinical"],
+  [js.includes("Clear reflection & finish") && js.includes("mindpal.reflect.thread.v1"), "Reflect thread can be cleared and persisted"],
+  [js.includes("GitHub Pages cannot host the live proxy") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion API base"],
 ];
 
 const maddyFiles = [
@@ -228,6 +235,9 @@ if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
 }
 if (!css.includes(".mp-yt-dir-search") || !css.includes(".mp-yt-dir-results")) {
   throw new Error("YouTube directory search styles missing");
+}
+if (!css.includes(".mp-reflect-thread") || !css.includes(".mp-reflect-composer") || !css.includes(".mp-reflect-pill")) {
+  throw new Error("Reflect chat conversation styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
