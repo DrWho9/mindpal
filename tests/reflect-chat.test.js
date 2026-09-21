@@ -290,6 +290,7 @@ describe("Pages tip hash", () => {
     const html = readFileSync(join(root, "../index.html"), "utf8");
     const verify = readFileSync(join(root, "../scripts/verify.mjs"), "utf8");
     assert.doesNotMatch(html, /index-3cb5ea74\.js/);
+    assert.doesNotMatch(html, /index-293ac69a\.js/);
     assert.match(html, /assets\/index-[a-z0-9]+\.js/);
     assert.match(html, /http:\/\/127\.0\.0\.1:\*/);
     assert.doesNotMatch(html, /trycloudflare\.com|127\.0\.0\.1:8787/);

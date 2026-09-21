@@ -1292,9 +1292,15 @@ function updateServiceWorker(jsFile, cssFile, html, js, css) {
   let sw = readFileSync(path, "utf8");
   sw = sw.replace(/assets\/index-[A-Za-z0-9_-]+\.js/g, `assets/${jsFile}`);
   sw = sw.replace(/assets\/index-[A-Za-z0-9_-]+\.css/g, `assets/${cssFile}`);
+  sw = sw.replace(/prefix:"mindpal-shell-v\d+"/, `prefix:"mindpal-shell-v3"`);
   sw = sw.replace(
     /\{url:"index.html",revision:"[a-f0-9]+"\}/,
     `{url:"index.html",revision:"${md5(html)}"}`,
+  );
+  const registerSw = readFileSync(join(root, "registerSW.js"), "utf8");
+  sw = sw.replace(
+    /\{url:"registerSW.js",revision:"[a-f0-9]+"\}/,
+    `{url:"registerSW.js",revision:"${md5(registerSw)}"}`,
   );
   const nav = 'e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html")))';
   const navDeny =
