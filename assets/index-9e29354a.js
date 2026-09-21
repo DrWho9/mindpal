@@ -11169,7 +11169,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[
         (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:D,children:o?`Pause`:`Start the breath`}),
-        y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`breathe`,`done`),children:`That’s enough`}):null,
+        y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`breathe`,`done`),children:`I’m done`}):null,
         y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`skipped`),children:`Skip this breath`}):null,
         y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`todo`),children:`Undo breath`}):null
       ]}),

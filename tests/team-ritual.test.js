@@ -195,6 +195,10 @@ describe("work team morning ritual", () => {
     assert.match(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpTeamRitualCard/);
     assert.match(inject, /onOpenTeamRitual/);
     assert.match(inject, /mpTeamRitual\.canOpenReading/);
+    assert.match(inject, /onClick:\(\)=>E\(`breathe`,`done`\),children:`I’m done`/);
+    assert.match(inject, /Skip this breath/);
+    assert.doesNotMatch(inject, /onClick:\(\)=>E\(`breathe`,`done`\),children:`That’s enough`/);
+    assert.match(inject, /That’s enough for this morning/);
     assert.doesNotMatch(inject, /hustle|crush the morning|standup/i);
     assert.match(build, /src\/today\/team-ritual\.js/);
     assert.match(build, /mpTeamRitual=/);
