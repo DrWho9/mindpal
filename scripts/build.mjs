@@ -759,7 +759,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     'unsure:`Not knowing how to describe this is an acceptable answer.`',
-    'unsure:`Not knowing how to describe this is an acceptable answer.`,mothers:`You can be a loving mother and still need a quiet corner. This is not a diagnosis.`,aod:`Craving or shame around drink or other substances can sit here. This is not detox and not a diagnosis.`,\"mens-health\":`There\\'s nothing wrong with being your best self. This is optional company, not a diagnosis.`',
+    "unsure:`Not knowing how to describe this is an acceptable answer.`,mothers:`You can be a loving mother and still need a quiet corner. This is not a diagnosis.`,aod:`Craving or shame around drink or other substances can sit here. This is not detox and not a diagnosis.`,\"mens-health\":`There's nothing wrong with being your best self. This is optional company, not a diagnosis.`",
     "feelings-mothers-quote",
   );
   next = replaceOnce(
