@@ -20,7 +20,7 @@ const vendor = readFileSync(join(root, "vendor/daystart-8f78bb0/index-BiA2yEms.j
 
 function allowlistFromBuild() {
   const match = build.match(
-    /Ii=\[`Feelings`,`YouTube directory`,`Today`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Explore`,`My diary`,`Focus`,`Companion`,/,
+    /Ii=\[`Feelings`,`YouTube directory`,`Today`,.*?`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,.*?`Explore`,`My diary`,`Focus`,`Companion`,/,
   );
   assert.ok(match, "build.mjs must patch the hash allowlist");
   const vendorList = vendor.match(/Ii=\[([^\]]+)\]/);
@@ -114,10 +114,8 @@ describe("primary CTA wiring (does not no-op)", () => {
   it("YouTube directory search is visible and filters", () => {
     assert.match(vendor, /id:`youtube-search`/);
     assert.match(vendor, /Search titles, creators and descriptions/);
-    assert.match(
-      build,
-      /function _e\(\{initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i\}\).*\[u,d]=\(0,_\.useState\)\(!0\)/,
-    );
+    assert.match(build, /patchYtDirectory/);
+    assert.match(build, /yt-directory\.inject\.js/);
   });
 
   it("Reflect composer appears after a mode", () => {

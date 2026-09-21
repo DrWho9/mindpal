@@ -973,12 +973,6 @@ function patchOwnerUx(source) {
   );
   next = replaceOnce(
     next,
-    "function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){let{state:a}=I(),[o,s]=(0,_.useState)(!1),[c,l]=(0,_.useState)(``),[u,d]=(0,_.useState)(!1)",
-    "function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){let{state:a}=I(),[o,s]=(0,_.useState)(!1),[c,l]=(0,_.useState)(``),[u,d]=(0,_.useState)(!0)",
-    "youtube-search-open",
-  );
-  next = replaceOnce(
-    next,
     "(0,A.jsx)(`textarea`,{id:`companion-message`,value:o,maxLength:2e3,onChange:e=>s(e.target.value),placeholder:x?`Type a message for the AI companion, or leave blank for the demo…`:`Use sample text only…`})",
     "(0,A.jsx)(`textarea`,{id:`companion-message`,\"data-mp-cta\":`companion-message`,value:o,maxLength:2e3,onChange:e=>s(e.target.value),onKeyDown:e=>{(e.key===`Enter`&&(e.metaKey||e.ctrlKey))&&(e.preventDefault(),D())},placeholder:x?`Type a message for the AI companion, or leave blank for the demo…`:`Use sample text only…`})",
     "companion-send-enter",
@@ -1274,8 +1268,8 @@ function patchOwnerUx(source) {
   if (!next.includes("mpAppointmentCompanionCard") || !next.includes("Talk this appointment through with Companion")) {
     throw new Error("appointment companion entry is missing");
   }
-  if (!next.includes("function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){let{state:a}=I(),[o,s]=(0,_.useState)(!1),[c,l]=(0,_.useState)(``),[u,d]=(0,_.useState)(!0)")) {
-    throw new Error("YouTube directory search must open with the full directory");
+  if (!next.includes("id:`youtube-search`") || !next.includes("applySearch")) {
+    throw new Error("YouTube directory search must be visible and have an apply handler");
   }
   if (!next.includes("onKeyDown:e=>{(e.key===`Enter`&&(e.metaKey||e.ctrlKey))&&(e.preventDefault(),D())}")) {
     throw new Error("Companion Ctrl/Cmd+Enter send is missing");

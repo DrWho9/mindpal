@@ -36,6 +36,14 @@ describe("route smoke (Playwright + system Chrome)", { skip: !browserEnabled }, 
     });
     page = await context.newPage();
     page.setDefaultTimeout(20000);
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem("mindpal.ageGateAdult.v1", "1");
+      } catch {
+        /* private mode */
+      }
+    });
+    page._mindpalOrigin = host.origin;
     await signInLocal(page, host.origin);
   });
 
@@ -47,10 +55,7 @@ describe("route smoke (Playwright + system Chrome)", { skip: !browserEnabled }, 
   it("opens every adult hash route without an empty workspace", async () => {
     const adult = HASH_ROUTES.filter((item) => !item.adultHidden);
     for (const item of adult) {
-      await page.goto(`${host.origin}${encodeRouteHash(item.route)}`, {
-        waitUntil: "domcontentloaded",
-      });
-      await page.waitForFunction(() => document.querySelector("#root")?.innerText?.trim().length > 20);
+      await goHash(page, item.route);
       const text = await page.locator("#root").innerText();
       assert.ok(text.length > 40, `${item.route} rendered almost nothing`);
       assert.doesNotMatch(text, /Sign in to begin/);
@@ -58,66 +63,67 @@ describe("route smoke (Playwright + system Chrome)", { skip: !browserEnabled }, 
   });
 
   it("Companion choices are not no-ops", async () => {
-    await page.goto(`${host.origin}${encodeRouteHash("Companion")}`, {
-      waitUntil: "domcontentloaded",
-    });
+    await goHash(page, "Companion");
+    await page.getByRole("heading", { name: "At your pace." }).waitFor({ state: "visible" });
     const start = page.getByRole("button", { name: /Try the local practice guide/i });
     if (await start.count()) await start.click();
     const chip = page.getByRole("button", { name: "A small exercise" });
     await chip.click();
-    await assert.ok(await chip.evaluate((el) => /selected/.test(el.className)));
+    assert.ok(await chip.evaluate((el) => /selected/.test(el.className)));
     await page.getByRole("button", { name: /Show practice choices/i }).click();
-    const response = page.locator(".chat-response");
-    await response.waitFor({ state: "visible" });
-    const copy = (await response.innerText()).trim();
+    const practiceGrid = page.locator(".mp-practice-grid");
+    await practiceGrid.waitFor({ state: "visible" });
+    const copy = (await practiceGrid.innerText()).trim();
     assert.ok(copy.length > 12, "Show practice choices returned no copy");
     assert.match(await page.locator("body").innerText(), /DETERMINISTIC DEMO|LIVE AI COMPANION/);
   });
 
   it("YouTube Search filters the directory", async () => {
-    await page.goto(`${host.origin}${encodeRouteHash("YouTube directory")}`, {
-      waitUntil: "domcontentloaded",
+    await goHash(page, "YouTube directory");
+    await page.getByRole("heading", { name: /Browse external videos|YouTube video directory/i }).first().waitFor({
+      state: "visible",
     });
     const search = page.locator("#youtube-search");
     await search.waitFor({ state: "visible" });
     const status = page.getByLabel("Directory entries");
     await search.fill("");
+    await search.press("Enter");
     const before = ((await status.textContent()) || "").trim();
     await search.fill("zzzz-no-such-mindpal-video");
+    await search.press("Enter");
     await page.waitForFunction(() => {
       const el = document.querySelector("[aria-label='Directory entries']");
-      return el && /No matching entries/i.test(el.textContent || "");
+      return el && /No matching/i.test(el.textContent || "");
     });
     await search.fill("the");
+    await search.press("Enter");
     await page.waitForFunction(() => {
       const el = document.querySelector("[aria-label='Directory entries']");
-      return el && /\d+ directory entries/i.test(el.textContent || "");
+      return el && /\d+ director/i.test(el.textContent || "");
     });
     const after = ((await status.textContent()) || "").trim();
-    assert.match(before + after, /directory entries/i);
+    assert.match(before + after, /director/i);
   });
 
   it("Reflect composer appears after a mode", async () => {
-    await page.goto(`${host.origin}${encodeRouteHash("Reflect")}`, {
-      waitUntil: "domcontentloaded",
-    });
-    await page.getByRole("button", { name: "Write without prompts" }).click();
-    const composer = page.locator("#reflection-text");
+    await goHash(page, "Reflect");
+    await page.getByRole("heading", { name: "Talk with MindPal" }).waitFor({ state: "visible" });
+    const composer = page.locator("#mp-reflect-input");
     await composer.waitFor({ state: "visible" });
     await composer.fill("A sample sentence for QA.");
     assert.equal(await composer.inputValue(), "A sample sentence for QA.");
   });
 
   it("Appointment companion entry opens Companion with a prompt", async () => {
-    await page.goto(`${host.origin}${encodeRouteHash("Body, food and wellbeing")}`, {
-      waitUntil: "domcontentloaded",
-    });
+    await goHash(page, "Body, food and wellbeing");
+    await page.getByRole("heading", { name: "Body, food and wellbeing" }).waitFor({ state: "visible" });
     const cta = page.getByRole("button", {
       name: "Talk this appointment through with Companion",
     });
     await cta.waitFor({ state: "visible" });
     await cta.click();
     await page.waitForFunction(() => decodeURIComponent(location.hash.slice(1)) === "Companion");
+    await page.getByRole("heading", { name: "At your pace." }).waitFor({ state: "visible" });
     const start = page.getByRole("button", { name: /Try the local practice guide/i });
     if (await start.count()) await start.click();
     const box = page.locator("#companion-message");
@@ -137,8 +143,28 @@ if (!browserEnabled) {
   });
 }
 
+async function goHash(page, route) {
+  const origin = page._mindpalOrigin;
+  const nonce = `n=${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  await page.goto(`${origin}?${nonce}${encodeRouteHash(route)}`, {
+    waitUntil: "domcontentloaded",
+  });
+  await page.waitForFunction((next) => {
+    const hash = decodeURIComponent(location.hash.slice(1) || "Today");
+    const root = document.querySelector("#root");
+    return hash === next && (root?.innerText || "").trim().length > 20;
+  }, route);
+}
+
 async function signInLocal(page, origin) {
   await page.goto(`${origin}#Today`, { waitUntil: "domcontentloaded" });
+  const adult = page.getByRole("button", { name: /Continue · adult preview/i });
+  try {
+    await adult.waitFor({ state: "visible", timeout: 8000 });
+    await adult.click();
+  } catch {
+    /* already in the adult shell */
+  }
   const user = `qa${Date.now().toString(36)}`;
   const signIn = page.getByRole("heading", { name: "Sign in to begin" });
   try {
@@ -152,8 +178,8 @@ async function signInLocal(page, origin) {
   await page.getByRole("button", { name: "Create local profile" }).click();
   await page.getByRole("button", { name: /No religion \/ prefer secular/i }).click();
   await page.getByRole("button", { name: /Continue with a secular space/i }).click();
-  await page.getByRole("button", { name: "40–49" }).click();
-  await page.getByRole("button", { name: "Man" }).click();
-  await page.getByRole("button", { name: "Continue" }).click();
+  await page.getByRole("button", { name: "40–49", exact: true }).click();
+  await page.getByRole("button", { name: "Man", exact: true }).click();
+  await page.getByRole("button", { name: "Continue", exact: true }).click();
   await page.waitForFunction(() => !document.body.innerText.includes("Sign in to begin"));
 }

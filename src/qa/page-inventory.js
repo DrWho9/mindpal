@@ -120,7 +120,7 @@ export const HASH_ROUTES = [
     title: "Reflect",
     blueprint: "reflect.md",
     nav: ["sidebar"],
-    heading: /Talk about my day/i,
+    heading: /Talk with MindPal/i,
     primaryCtas: ["Write without prompts", "Download a copy of my reflection"],
     smoke: "reflect-composer",
   },
