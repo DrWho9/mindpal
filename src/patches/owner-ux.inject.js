@@ -1164,7 +1164,17 @@ function mpDayStep({id:e,day:t,isNext:n,onOpen:r,onMark:i,extra:a}){
     ]})
   ]});
 }
-function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s,onOpenProblem:v,onOpenTeamRitual:w}){
+function mpTodayTalkRow({onReflect:e,onAppointment:t}){
+  return(0,A.jsxs)(`section`,{className:`mp-today-talk`,"aria-label":`Talk with MindPal`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`TALK WITH MINDPAL`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`A conversation about your day, or questions for an appointment. Companion stays a separate Demo chat.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Talk about my day`}):null,
+      t?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Appointment Questions`}):null
+    ]})
+  ]});
+}
+function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s,onOpenProblem:v,onOpenTeamRitual:w,onOpenReflect:R,onOpenAppointment:Q}){
   let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay()),[faithAsk,setFaithAsk]=(0,_.useState)(()=>mpNeedsFaithSetup()),[profileAsk,setProfileAsk]=(0,_.useState)(()=>mpNeedsProfileSetup());
   (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}function n(){setFaithAsk(mpNeedsFaithSetup());setProfileAsk(mpNeedsProfileSetup())}window.addEventListener(`visibilitychange`,e);window.addEventListener(`mindpal-session-change`,n);window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n);e();n();return()=>{window.removeEventListener(`visibilitychange`,e);window.removeEventListener(`mindpal-session-change`,n);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n)}},[]);
   if(faithAsk){
@@ -1196,6 +1206,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
     (0,A.jsx)(mpIndividualGrowthCard,{onOpenJournal:o||r,onOpenReadings:t}),
+    (0,A.jsx)(mpTodayTalkRow,{onReflect:R,onAppointment:Q}),
     (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),
     (0,A.jsxs)(`section`,{className:`mp-day-band mp-band-team`,"aria-label":`Team Growth`,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`TEAM GROWTH`}),

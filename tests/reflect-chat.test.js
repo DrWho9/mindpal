@@ -279,5 +279,8 @@ describe("Reflect chat inject", () => {
     assert.match(inject, /mpCompanionBaseCard/);
     assert.doesNotMatch(inject, /127\.0\.0\.1:8787|trycloudflare\.com/);
     assert.match(build, /function ti\(props\)\{return mpReflectPage\(props\)\}/);
+    assert.match(build, /function exciseVendorReflectPreview/);
+    assert.doesNotMatch(build, /function mpReflectLegacy/);
+    assert.match(build, /onOpenReflect:\(\)=>I\(`Reflect`\)/);
   });
 });

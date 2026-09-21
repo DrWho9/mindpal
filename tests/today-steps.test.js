@@ -42,6 +42,17 @@ describe("today steps pathway", () => {
     assert.equal(hubStepCaption("evening"), "Step 4 · Before you sleep");
   });
 
+  it("opens Reflect and Appointment Questions from Today", () => {
+    assert.match(inject, /function mpTodayTalkRow\(/);
+    assert.match(inject, /children:`Talk about my day`/);
+    assert.match(inject, /children:`Appointment Questions`/);
+    assert.match(inject, /mpTodayTalkRow,\{onReflect:R,onAppointment:Q\}/);
+    const growth = inject.indexOf("mpIndividualGrowthCard,{onOpenJournal");
+    const talk = inject.indexOf("mpTodayTalkRow,{onReflect:R,onAppointment:Q}");
+    const chips = inject.indexOf("mpProblemHubList,{variant:`today`");
+    assert.ok(growth > 0 && talk > growth && chips > talk);
+  });
+
   it("keeps a Night journal band at the bottom of Today", () => {
     assert.match(inject, /function mpNightBand\(/);
     assert.match(inject, /Open Journal/);
