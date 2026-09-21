@@ -477,3 +477,49 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 .mp-kit-guides{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:10px}
 .mp-kit-guides li{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .mp-kit-safety{margin-top:8px}
+
+.mp-companion-page .mp-companion-panel{
+  background:#eef2e7;
+  border-left:3px solid #91a27a;
+  border-radius:0 8px 8px 0;
+  margin:16px 0 8px;
+  padding:14px 16px;
+}
+.mp-companion-page .mp-companion-panel h3{margin:.1em 0 .35em;font-size:1.15rem}
+.mp-companion-page .mp-companion-panel-crisis{
+  background:#f5e6d8;
+  border-left-color:#c4895a;
+}
+.mp-practice-grid{
+  display:grid;
+  gap:12px;
+  margin:16px 0 8px;
+}
+.mp-practice-card{
+  background:#fffef9;
+  border:1px solid #d5dccb;
+  border-radius:14px;
+  padding:14px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  align-items:flex-start;
+}
+.mp-practice-card h3{margin:0;font-size:1.15rem}
+.mp-practice-card p{margin:0}
+.mp-practice-card.is-open{box-shadow:0 0 0 2px rgba(47,90,61,.18)}
+.mp-practice-expand{background:#eef5ee;border-radius:10px;padding:10px 12px}
+.mp-companion-live-chat{
+  background:#eef3ea;
+  border:1px solid #c9dccb;
+  border-radius:14px;
+  padding:14px 16px;
+  margin:14px 0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.mp-chat-line{margin:0}
+.mp-companion-setup{margin:16px 0 0}
+.mp-companion-setup summary{cursor:pointer;min-height:40px;font-weight:650}
+.mp-crisis-panel .button-row{flex-wrap:wrap}

@@ -71,8 +71,19 @@ describe("companion client", () => {
       resolveCompanionBase({ MINDPAL_COMPANION_BASE: "https://api.example.com/mindpal" }),
       "https://api.example.com/mindpal/",
     );
+    assert.equal(
+      resolveCompanionBase({ location: { search: "?companionBase=https://from-query.example/mindpal" } }),
+      "https://from-query.example/mindpal/",
+    );
     const storage = memoryStorage({ [BASE_STORAGE_KEY]: "https://live.example/" });
     assert.equal(resolveCompanionBase({ localStorage: storage }), "https://live.example/");
+    assert.equal(
+      resolveCompanionBase({
+        location: { search: "?companionBase=https://q.example" },
+        localStorage: storage,
+      }),
+      "https://q.example/",
+    );
     assert.equal(resolveCompanionBase({}), DEFAULT_PAGES_BASE);
     assert.doesNotMatch(DEFAULT_PAGES_BASE, /8787|trycloudflare/);
     const blank = memoryStorage();

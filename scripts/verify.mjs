@@ -18,7 +18,8 @@ const checks = [
   [jsName !== "index-3cb5ea74.js" && !html.includes("index-3cb5ea74.js") && !sw.includes("index-3cb5ea74.js"), "index.html/sw do not still load the pre-chat index-3cb5ea74.js hash"],
   [jsName !== "index-293ac69a.js" && !html.includes("index-293ac69a.js") && !sw.includes("index-293ac69a.js"), "index.html/sw do not still load the pre-fix #31 hash index-293ac69a.js"],
   [jsName !== "index-c020c8c9.js" && !html.includes("index-c020c8c9.js") && !sw.includes("index-c020c8c9.js"), "index.html/sw do not still load the #36 tip-fix hash index-c020c8c9.js"],
-  [sw.includes('prefix:"mindpal-shell-v4"'), "service worker cache prefix was bumped so stale tip shells drop"],
+  [jsName !== "index-2046b1c4.js" && !html.includes("index-2046b1c4.js") && !sw.includes("index-2046b1c4.js"), "index.html/sw do not still load the #35 tip hash index-2046b1c4.js"],
+  [sw.includes('prefix:"mindpal-shell-v5"'), "service worker cache prefix was bumped so stale tip shells drop"],
   [readFileSync(join(root, "registerSW.js"), "utf8").includes("reg.update()"), "registerSW forces an update so old hashed bundles are not kept"],
   [html.includes("/mindpal/registerSW.js") || html.includes("vite-plugin-pwa"), "PWA register path unchanged"],
   [sw.includes(`assets/${jsName}`), "service worker lists new JS"],
@@ -210,6 +211,12 @@ const checks = [
   [!/\btrycloudflare\.com\b/.test(js) && !js.includes("127.0.0.1:8787"), "companion base is not hard-coded to a tunnel or local port"],
   [html.includes("http://127.0.0.1:*") && html.includes("http://localhost:*") && html.includes("http://[::1]:*"), "CSP allows a pasted loopback companion"],
   [!html.includes("trycloudflare.com") && !html.includes("127.0.0.1:8787"), "index.html does not bake a Live URL"],
+  [js.includes("function mpCompanionPage(") && js.includes("mp-practice-card"), "interactive Companion demo is present"],
+  [js.includes("t===`Companion`&&(0,A.jsx)(mpCompanionPage,{onHelp:()=>I(`Get support`),onExercise:y,onReflect:()=>I(`Reflect`)}"), "Companion route mounts the interactive demo"],
+  [!js.includes("t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y})"), "vendor Companion no-op is no longer the live route"],
+  [js.includes("DETERMINISTIC DEMO · NO LIVE AI") && js.includes("mpCompanionDemo"), "Companion keeps the DEMO banner until Live"],
+  [js.includes("Lifeline on 13 11 14") && js.includes("Call 000"), "Companion crisis paths list Lifeline and 000"],
+  [js.includes("does not invent a public tunnel") && js.includes("companionBase"), "Companion base URL is configurable without a tunnel"],
 ];
 
 const maddyFiles = [
@@ -270,6 +277,9 @@ if (!css.includes(".mp-reflect-thread") || !css.includes(".mp-reflect-composer")
 }
 if (!css.includes(".mp-appoint-chat") || !css.includes(".mp-companion-base")) {
   throw new Error("appointment chat or companion-base paste field styles missing");
+}
+if (!css.includes(".mp-practice-card") || !css.includes(".mp-companion-panel")) {
+  throw new Error("Companion practice-card styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
