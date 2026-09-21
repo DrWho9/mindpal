@@ -10,8 +10,14 @@ function mpNeedsFaithSetup(){
     return !mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{});
   }catch{return !1}
 }
+function mpNeedsProfileSetup(){
+  try{
+    if(typeof Dt==`function`&&!Dt())return !1;
+    return !mpProfile.hasProfileDemographics(mpFaith.sessionPreferences()||{});
+  }catch{return !1}
+}
 function mpShowSignInGate(){
-  try{return typeof Dt==`function`?!Dt()||mpNeedsFaithSetup():!0}catch{return !0}
+  try{return typeof Dt==`function`?!Dt()||mpNeedsFaithSetup()||mpNeedsProfileSetup():!0}catch{return !0}
 }
 function mpSignedInName(fallback){
   try{
@@ -77,12 +83,70 @@ function mpFaithPrefQuestions({mode:e=`setup`,onDone:t}){
     l?(0,A.jsx)(`p`,{role:`status`,children:l}):null
   ]});
 }
+function mpSaveProfileChoice(ageBand,gender){
+  return mpProfile.setSessionProfilePrefs({ageBand,gender});
+}
+function mpMindPalFactsCard({facts:e,youth:t=!1}){
+  if(!e||e.length!==2)return null;
+  return(0,A.jsxs)(`section`,{className:`mp-facts-card`,"aria-label":`MindPal facts`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MINDPAL FACTS`}),
+    (0,A.jsx)(`h3`,{children:t?`Two gentle things worth knowing`:`Two things worth knowing`}),
+    (0,A.jsx)(`ol`,{className:`mp-facts-list`,children:e.map((n,r)=>(0,A.jsxs)(`li`,{children:[
+      (0,A.jsx)(`p`,{children:n.body}),
+      (0,A.jsxs)(`p`,{className:`mp-fact-action`,children:[(0,A.jsx)(`strong`,{children:`A hopeful next step.`}),` `,n.action]})
+    ]},n.id||r))}),
+    (0,A.jsx)(`p`,{className:`muted mp-facts-disclaimer`,children:mpProfile.FACTS_DISCLAIMER})
+  ]});
+}
+function mpProfilePrefQuestions({mode:e=`setup`,onDone:t}){
+  let n=mpFaith.sessionPreferences()||{};
+  let[r,i]=(0,_.useState)(()=>mpProfile.normalizeAgeBand(n.ageBand)||``);
+  let[a,o]=(0,_.useState)(()=>mpProfile.normalizeGender(n.gender)||``);
+  let[s,c]=(0,_.useState)(``);
+  let l=mpProfile.isYouthBand(r);
+  let u=r&&a?mpProfile.factsForProfile(r,a):[];
+  function d(){
+    if(!r){c(`Pick an age band so MindPal can keep the next facts useful.`);return}
+    if(!a){c(`Pick a gender option — Prefer not to say is fine.`);return}
+    mpSaveProfileChoice(r,a);
+    t&&t(mpProfile.prefsFromProfileChoice({ageBand:r,gender:a}));
+  }
+  return(0,A.jsxs)(`section`,{className:`mp-faith-pref mp-profile-pref`,"aria-label":`Age and gender`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:e===`edit`?`YOUR SPACE`:`A QUIET QUESTION`}),
+    (0,A.jsx)(`h2`,{children:e===`edit`?`Age and gender`:`A little about you`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:`Two short choices so MindPal can offer two useful facts. Saved on this device with your local profile — not a diagnosis.`}),
+    (0,A.jsxs)(`details`,{className:`mp-setup-step`,open:!r||e===`edit`,children:[
+      (0,A.jsx)(`summary`,{children:`Step 1 · Age`}),
+      (0,A.jsx)(`p`,{children:`Which age band fits you?`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Bands only — no birthdate.`}),
+      (0,A.jsx)(`div`,{className:`mp-faith-chips`,"aria-label":`Age band`,children:mpProfile.AGE_BANDS.map(t=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${r===t.id?` is-open`:``}`,"aria-pressed":r===t.id,onClick:()=>{i(t.id);c(``)},children:t.label},t.id))})
+    ]}),
+    (0,A.jsxs)(`details`,{className:`mp-setup-step`,open:!!r&&(!a||e===`edit`),children:[
+      (0,A.jsx)(`summary`,{children:`Step 2 · Gender`}),
+      (0,A.jsx)(`p`,{children:`How should MindPal speak with you?`}),
+      (0,A.jsx)(`div`,{className:`mp-faith-chips`,"aria-label":`Gender`,children:mpProfile.GENDERS.map(t=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${a===t.id?` is-open`:``}`,"aria-pressed":a===t.id,onClick:()=>{o(t.id);c(``)},children:t.label},t.id))})
+    ]}),
+    u.length===2?(0,A.jsxs)(`details`,{className:`mp-setup-step mp-setup-facts`,open:!0,children:[
+      (0,A.jsx)(`summary`,{children:`Step 3 · MindPal facts`}),
+      (0,A.jsx)(mpMindPalFactsCard,{facts:u,youth:l})
+    ]}):null,
+    (0,A.jsx)(`p`,{className:`muted`,children:`Saved on this device with your local profile. You can change it later in Account.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:d,children:e===`edit`?`Save preference`:`Continue`})
+    ]}),
+    s?(0,A.jsx)(`p`,{role:`status`,children:s}):null
+  ]});
+}
 function mpSignInPage({onSignedIn:e}){
-  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(()=>mpNeedsFaithSetup());
+  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(()=>mpNeedsFaithSetup()),[profileAsk,setProfileAsk]=(0,_.useState)(()=>!mpNeedsFaithSetup()&&mpNeedsProfileSetup());
   function h(g){
     mpNotifySession();
     if(!mpFaith.hasFaithPreference(g&&g.preferences)&&!mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{})){
       m(!0);
+      return;
+    }
+    if(!mpProfile.hasProfileDemographics(g&&g.preferences)&&!mpProfile.hasProfileDemographics(mpFaith.sessionPreferences()||{})){
+      setProfileAsk(!0);
       return;
     }
     e&&e(g);
@@ -101,7 +165,15 @@ function mpSignInPage({onSignedIn:e}){
   }
   if(p){
     return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Faith preference`,children:[
-      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>e&&e(mpFaith.sessionPreferences())})
+      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>{
+        if(mpNeedsProfileSetup()){m(!1);setProfileAsk(!0);return}
+        e&&e(mpFaith.sessionPreferences());
+      }})
+    ]});
+  }
+  if(profileAsk){
+    return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Age and gender`,children:[
+      (0,A.jsx)(mpProfilePrefQuestions,{mode:`setup`,onDone:()=>e&&e(mpFaith.sessionPreferences())})
     ]});
   }
   return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Sign in`,children:[
@@ -287,6 +359,16 @@ function mpAccountFaithCard(){
     n?(0,A.jsx)(mpFaithPrefQuestions,{mode:`edit`,onDone:()=>{t(mpFaith.sessionPreferences()||{});r(!1)}}):null
   ]});
 }
+function mpAccountProfileCard(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
+  let[n,r]=(0,_.useState)(!1);
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  return(0,A.jsxs)(`div`,{className:`mp-account-faith mp-account-profile`,children:[
+    (0,A.jsx)(`p`,{children:`Age and gender: ${mpProfile.profileSummary(e)}`}),
+    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,"aria-expanded":n,onClick:()=>r(e=>!e),children:n?`Close`:`Edit`}),
+    n?(0,A.jsx)(mpProfilePrefQuestions,{mode:`edit`,onDone:()=>{t(mpFaith.sessionPreferences()||{});r(!1)}}):null
+  ]});
+}
 function mpAccountFooter(){
   let e=mpSignedInName(``);
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-account-footer`,"aria-label":`Account`,children:[
@@ -294,6 +376,7 @@ function mpAccountFooter(){
     (0,A.jsx)(`h2`,{children:e?`Signed in as ${e}`:`Local account`}),
     (0,A.jsx)(`p`,{children:`Demo login only — this profile stays on this device. Nothing is sent to the cloud.`}),
     (0,A.jsx)(mpAccountFaithCard,{}),
+    (0,A.jsx)(mpAccountProfileCard,{}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Wins, photos and friends stay on this device. Sharing them with other people needs a future backend — nothing is uploaded today.`})
@@ -759,11 +842,16 @@ function mpDayStep({id:e,day:t,isNext:n,onOpen:r,onMark:i,extra:a}){
   ]});
 }
 function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s,onOpenProblem:v,onOpenTeamRitual:w}){
-  let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay()),[faithAsk,setFaithAsk]=(0,_.useState)(()=>mpNeedsFaithSetup());
-  (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}function n(){setFaithAsk(mpNeedsFaithSetup())}window.addEventListener(`visibilitychange`,e);window.addEventListener(`mindpal-session-change`,n);window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n);e();n();return()=>{window.removeEventListener(`visibilitychange`,e);window.removeEventListener(`mindpal-session-change`,n);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n)}},[]);
+  let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay()),[faithAsk,setFaithAsk]=(0,_.useState)(()=>mpNeedsFaithSetup()),[profileAsk,setProfileAsk]=(0,_.useState)(()=>mpNeedsProfileSetup());
+  (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}function n(){setFaithAsk(mpNeedsFaithSetup());setProfileAsk(mpNeedsProfileSetup())}window.addEventListener(`visibilitychange`,e);window.addEventListener(`mindpal-session-change`,n);window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n);e();n();return()=>{window.removeEventListener(`visibilitychange`,e);window.removeEventListener(`mindpal-session-change`,n);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n)}},[]);
   if(faithAsk){
     return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub mp-signin-page`,"aria-label":`Faith preference`,children:[
-      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>setFaithAsk(!1)})
+      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>{setFaithAsk(!1);setProfileAsk(mpNeedsProfileSetup())}})
+    ]});
+  }
+  if(profileAsk){
+    return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub mp-signin-page`,"aria-label":`Age and gender`,children:[
+      (0,A.jsx)(mpProfilePrefQuestions,{mode:`setup`,onDone:()=>setProfileAsk(!1)})
     ]});
   }
   let f=mpTodaySteps.nextStepId(u),p=mpFaith.isCopticDateEnabled();
