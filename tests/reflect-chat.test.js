@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   BASE_STORAGE_KEY,
   COMPANION_POLICY_VERSION,
+  DEFAULT_PAGES_BASE,
   DEMO_LABEL,
   LIVE_LABEL,
   UNAVAILABLE_NOTE,
@@ -14,8 +15,10 @@ import {
   fetchCompanionStatus,
   parseCompanionReply,
   parseCompanionStatus,
+  persistCompanionBase,
   resolveCompanionBase,
   sendCompanionChat,
+  storedCompanionBase,
 } from "../src/companion/client.js";
 import {
   canSendText,
@@ -70,6 +73,13 @@ describe("companion client", () => {
     );
     const storage = memoryStorage({ [BASE_STORAGE_KEY]: "https://live.example/" });
     assert.equal(resolveCompanionBase({ localStorage: storage }), "https://live.example/");
+    assert.equal(resolveCompanionBase({}), DEFAULT_PAGES_BASE);
+    assert.doesNotMatch(DEFAULT_PAGES_BASE, /8787|trycloudflare/);
+    const blank = memoryStorage();
+    assert.equal(persistCompanionBase("https://proxy.example/mindpal", { localStorage: blank }), "https://proxy.example/mindpal/");
+    assert.equal(storedCompanionBase({ localStorage: blank }), "https://proxy.example/mindpal/");
+    assert.equal(persistCompanionBase("  ", { localStorage: blank }), "");
+    assert.equal(storedCompanionBase({ localStorage: blank }), "");
   });
 
   it("treats only available:true as Live", () => {
@@ -266,6 +276,8 @@ describe("Reflect chat inject", () => {
     assert.match(inject, /Help me now/);
     assert.doesNotMatch(inject, /This page cannot understand your words/);
     assert.doesNotMatch(inject, /Self-guided preview/);
+    assert.match(inject, /mpCompanionBaseCard/);
+    assert.doesNotMatch(inject, /127\.0\.0\.1:8787|trycloudflare\.com/);
     assert.match(build, /function ti\(props\)\{return mpReflectPage\(props\)\}/);
   });
 });

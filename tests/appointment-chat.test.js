@@ -66,8 +66,8 @@ describe("appointment medical companion", () => {
     assert.match(inject, /shouldSendOnKey/);
     assert.match(inject, /children:l\?`Sending…`:`Send`/);
     assert.match(inject, /appointment_health_literacy|APPOINTMENT_LANE/);
-    assert.match(inject, /MINDPAL_COMPANION_BASE/);
-    assert.doesNotMatch(inject, /trycloudflare\.com/);
+    assert.match(inject, /mpCompanionBaseCard/);
+    assert.doesNotMatch(inject, /trycloudflare\.com|127\.0\.0\.1:8787/);
     assert.match(build, /appointment-questions-chat/);
     assert.match(build, /mpAppointmentChat,\{onHelp:t\}/);
   });

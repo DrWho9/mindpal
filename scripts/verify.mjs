@@ -187,7 +187,8 @@ const checks = [
   [js.includes("function mpAppointmentChat(") && js.includes("Questions for my appointment"), "Appointment Questions page mounts medical companion chat"],
   [js.includes("appointment_health_literacy") && js.includes("mindpal.appointment.thread.v1"), "Appointment chat uses the health-literacy lane and persists a day thread"],
   [js.includes("Clear appointment chat") && js.includes("mp-appoint-input"), "Appointment chat has Send/Enter composer and a clear control"],
-  [!/\btrycloudflare\.com\b/.test(js), "companion base is not hard-coded to a tunnel host"],
+  [js.includes("function mpCompanionBaseCard(") && js.includes("persistCompanionBase"), "Companion base can be pasted into localStorage"],
+  [!/\btrycloudflare\.com\b/.test(js) && !js.includes("127.0.0.1:8787"), "companion base is not hard-coded to a tunnel or local port"],
 ];
 
 const maddyFiles = [

@@ -4,13 +4,14 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
   let[s,c]=(0,_.useState)({available:!1,model:null,reason:`pending`});
   let[l,u]=(0,_.useState)(!1);
   let[d,f]=(0,_.useState)(``);
+  let[k,j]=(0,_.useState)(0);
   let p=(0,_.useRef)(null);
   let m=s.available===!0;
   (0,_.useEffect)(()=>{
     let n=!1;
     mpCompanion.fetchCompanionStatus().then(e=>{if(!n)c(e)});
     return()=>{n=!0};
-  },[]);
+  },[k]);
   (0,_.useEffect)(()=>{
     if(p.current)p.current.scrollTop=p.current.scrollHeight;
   },[r.messages.length,l]);
@@ -98,9 +99,10 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
         ?(0,A.jsx)(`span`,{children:s.model?` Companion connected · ${s.model}.`:` Companion connected. Your message is sent only when you press Send.`} )
         :(0,A.jsx)(`span`,{children:` GitHub Pages cannot host the live proxy. Set a companion API base to enable replies — this screen will not invent them.`})
     ]}),
-    m?null:(0,A.jsxs)(`details`,{className:`mp-reflect-setup`,children:[
-      (0,A.jsx)(`summary`,{children:`How to turn Live on`}),
-      (0,A.jsx)(`p`,{children:`Live needs GET {base}api/companion/status ({"available":true}) and POST {base}api/companion/chat — the same companion path as the Companion page. Default base is /mindpal/. On GitHub Pages, set window.MINDPAL_COMPANION_BASE or localStorage mindpal.companion.base to your proxy origin (include a trailing path if the API lives under /mindpal/).`})
+    (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
+      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
+      (0,A.jsx)(`p`,{children:`Live needs GET {base}api/companion/status ({"available":true}) and POST {base}api/companion/chat. Default base is /mindpal/. Paste a public proxy URL when Bryan marks it UP — do not bake a dead tunnel into the app.`})
     ]}),
     (0,A.jsxs)(`details`,{children:[
       (0,A.jsx)(`summary`,{children:`A thought to reflect on`}),

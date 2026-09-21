@@ -4,13 +4,14 @@ function mpAppointmentChat({onHelp:t}){
   let[s,c]=(0,_.useState)({available:!1,model:null,medicalKey:!1,reason:`pending`});
   let[l,u]=(0,_.useState)(!1);
   let[d,f]=(0,_.useState)(``);
+  let[k,j]=(0,_.useState)(0);
   let p=(0,_.useRef)(null);
   let m=s.available===!0;
   (0,_.useEffect)(()=>{
     let n=!1;
     mpCompanion.fetchCompanionStatus().then(e=>{if(!n)c(e)});
     return()=>{n=!0};
-  },[]);
+  },[k]);
   (0,_.useEffect)(()=>{
     if(p.current)p.current.scrollTop=p.current.scrollHeight;
   },[r.messages.length,l]);
@@ -86,11 +87,12 @@ function mpAppointmentChat({onHelp:t}){
       (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:m?mpCompanion.LIVE_LABEL:mpCompanion.DEMO_LABEL}),
       m
         ?(0,A.jsx)(`span`,{children:s.medicalKey?` Medical literacy companion connected${s.model?` · ${s.model}`:``}.`:` Companion connected${s.model?` · ${s.model}`:``}. Your message is sent only when you press Send.`} )
-        :(0,A.jsx)(`span`,{children:` Offline or Demo until a companion API base is set. This screen will not invent medical replies. Paste a base in localStorage mindpal.companion.base or window.MINDPAL_COMPANION_BASE — do not hard-code a tunnel URL.`})
+        :(0,A.jsx)(`span`,{children:` Offline or Demo until a companion API base is set. This screen will not invent medical replies.`})
     ]}),
-    m?null:(0,A.jsxs)(`details`,{className:`mp-reflect-setup`,children:[
-      (0,A.jsx)(`summary`,{children:`How to turn Live on`}),
-      (0,A.jsx)(`p`,{children:`Same companion path as Reflect: GET {base}api/companion/status ({"available":true}) and POST {base}api/companion/chat. Default base is /mindpal/. On GitHub Pages set window.MINDPAL_COMPANION_BASE or localStorage mindpal.companion.base to your proxy origin. A local companion (for example on a loopback port) works when that origin is reachable and allowed by connect-src. Do not bake a trycloudflare or other public tunnel into the app.`})
+    (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
+      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
+      (0,A.jsx)(`p`,{children:`Same companion path as Reflect. Paste a public URL when it is UP. A local loopback companion works only on this machine and is not baked into Pages.`})
     ]}),
     r.crisis?(0,A.jsxs)(`div`,{className:`urgent-box mp-reflect-crisis`,role:`alert`,children:[
       (0,A.jsx)(`strong`,{children:mpReflect.CRISIS_COPY.title}),

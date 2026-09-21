@@ -10,6 +10,35 @@ export const DEMO_LABEL = "Demo · companion API not connected";
 export const UNAVAILABLE_NOTE =
   "Not sent — MindPal is not live on this page, so no reply was generated. Messages stay on this device.";
 
+export function normalizeCompanionBase(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  return raw.endsWith("/") ? raw : `${raw}/`;
+}
+
+export function storedCompanionBase(source = globalThis) {
+  try {
+    const storage = source?.localStorage;
+    if (!storage || typeof storage.getItem !== "function") return "";
+    return normalizeCompanionBase(storage.getItem(BASE_STORAGE_KEY) || "");
+  } catch {
+    return "";
+  }
+}
+
+export function persistCompanionBase(value, source = globalThis) {
+  const next = normalizeCompanionBase(value);
+  try {
+    const storage = source?.localStorage;
+    if (!storage) return next;
+    if (!next) storage.removeItem(BASE_STORAGE_KEY);
+    else storage.setItem(BASE_STORAGE_KEY, next);
+  } catch {
+    /* private mode */
+  }
+  return next;
+}
+
 export function joinCompanionUrl(base, path) {
   const root = String(base || DEFAULT_PAGES_BASE);
   const prefix = root.endsWith("/") ? root : `${root}/`;
@@ -51,7 +80,7 @@ export function companionUrl(kind, base = DEFAULT_PAGES_BASE) {
 
 export function parseCompanionStatus(raw) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
-    return { available: false, model: null };
+    return { available: false, model: null, medicalKey: false };
   }
   return {
     available: raw.available === true,
