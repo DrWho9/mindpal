@@ -152,5 +152,8 @@ export function mediaForFeeling(sources, feelingId, limit = VIDEO_DIRECTORY_LIMI
 export function mediaSourceLabel(item) {
   if (item?.source === "maddy") return "Watch with Maddy";
   if (item?.source === "youtube") return "YouTube meditation";
+  if (item?.publicationStatus === "PUBLISHED" || item?.publicEligible === true) {
+    return "MindPal video";
+  }
   return "MindPal draft";
 }

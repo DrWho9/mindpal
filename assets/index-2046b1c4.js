@@ -6639,9 +6639,15 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "id": "V02",
       "assetIdentifier": "MP-V02-en-AU-v1.1b",
       "title": "A gentle start to a difficult morning",
+      "cardTitle": "A gentle start to a difficult morning",
+      "presenter": "Denyse",
       "category": "Understanding & reflection",
       "outline": "Make room for a difficult morning. Offer rest, one manageable action or finishing here without a positive-thinking requirement.",
-      "placeholderLabel": "HeyGen Wave A · ready to play",
+      "description": "A short, kind clip for a morning that already feels heavy. No cheerful-up required.",
+      "durationLabel": "About 45 seconds",
+      "placeholderLabel": "Ready to play",
+      "captionsAvailable": false,
+      "captionsDisclosure": "Captions are not on this clip yet. The words are underneath the player.",
       "transcriptText": "A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.\n\nIf it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.\n\nYou might make one task smaller, or leave it for later. What is manageable depends on your circumstances, your energy and your surroundings.\n\nIf these words do not fit today, you can leave them aside. MindPal offers choices, not a test of how well you cope. You can seek human support. The ‘Help me now’ section lists urgent-support options.",
       "targetDurationSeconds": 45,
       "actualDurationSeconds": 45,
@@ -9195,14 +9201,57 @@ function isVideoPlayable(video, now = new Date()) {
   return true;
 }
 
+function videoDisplayTitle(video) {
+  const title = String(video?.cardTitle || video?.title || "").trim();
+  return title || "MindPal video";
+}
+
+function videoPresenterName(video) {
+  const name = String(video?.presenter || video?.person || "").trim();
+  if (!name) return "";
+  if (/^maddy$/i.test(name)) return "Maddy";
+  return name;
+}
+
+function videoDurationLabel(video) {
+  if (typeof video?.durationLabel === "string" && video.durationLabel.trim()) {
+    return video.durationLabel.trim();
+  }
+  const seconds = Number(video?.actualDurationSeconds || video?.targetDurationSeconds || 0);
+  if (!seconds) return "";
+  if (seconds < 90) return `About ${Math.round(seconds)} seconds`;
+  const mins = Math.round(seconds / 30) / 2;
+  return `${mins} min`;
+}
+
+function captionsAvailable(video) {
+  return typeof video?.captionUrl === "string" && /\.(vtt|srt)$/i.test(video.captionUrl.trim());
+}
+
+function captionsDisclosure(video) {
+  if (typeof video?.captionsDisclosure === "string" && video.captionsDisclosure.trim()) {
+    return video.captionsDisclosure.trim();
+  }
+  if (captionsAvailable(video)) {
+    return "Captions are on this clip. Turn them on from the player if you want them.";
+  }
+  if (isVideoPlayable(video)) {
+    return "Captions are not on this clip yet. The words are underneath the player.";
+  }
+  return "";
+}
+
+function featuredPlayableVideo(catalog) {
+  const list = Array.isArray(catalog?.videos) ? catalog.videos : [];
+  return list.find((item) => item?.id === "V02" && isVideoPlayable(item)) || null;
+}
+
 function videoCardCta(video, now = new Date()) {
   return isVideoPlayable(video, now) ? "Play" : "Open draft";
 }
 
 function videoCardAriaLabel(video, now = new Date()) {
-  const title = video?.title || "MindPal video";
-  const id = video?.id || "";
-  return `${id} ${title} · ${videoCardCta(video, now)}`.trim();
+  return `${videoDisplayTitle(video)} · ${videoCardCta(video, now)}`;
 }
 
 const MADDY_PACK_ID = "mindpal-videos-maddy-v1";
@@ -9257,7 +9306,7 @@ function maddyCompanionVideos(catalog) {
 const LIBRARY_OPEN_EVENT = "mindpal-open-library-video";
 
 function titleOf(video) {
-  return video?.cardTitle || video?.title || "MindPal video";
+  return videoDisplayTitle(video);
 }
 
 function resolveCatalogVideo(video, catalog) {
@@ -9297,6 +9346,11 @@ function libraryCardModel(video, now = new Date(), catalog) {
       src,
       id: video.id || "",
       title: titleOf(video),
+      presenter: "Maddy",
+      durationLabel: videoDurationLabel(video),
+      captionsNote: "",
+      eyebrow: "Watch with Maddy",
+      cardType: "WITH MADDY",
     };
   }
 
@@ -9311,11 +9365,17 @@ function libraryCardModel(video, now = new Date(), catalog) {
       src,
       id: video.id || "",
       title: titleOf(video),
+      presenter: "Maddy",
+      durationLabel: videoDurationLabel(video),
+      captionsNote: "",
+      eyebrow: "Watch with Maddy",
+      cardType: "WITH MADDY",
     };
   }
 
   const playable = isVideoPlayable(video, now);
   const src = playable ? publishedLibrarySrc(video.videoUrl || video.src) : "";
+  const presenter = videoPresenterName(video);
   return {
     kind: playable ? "library-play" : "open-draft",
     cta: videoCardCta(video, now),
@@ -9325,6 +9385,21 @@ function libraryCardModel(video, now = new Date(), catalog) {
     src,
     id: video.id || "",
     title: titleOf(video),
+    presenter,
+    durationLabel: videoDurationLabel(video),
+    captionsNote: playable ? captionsDisclosure(video) : "",
+    eyebrow: playable
+      ? presenter
+        ? `With ${presenter}`
+        : "Ready to play"
+      : "Open draft",
+    cardType: playable
+      ? presenter
+        ? `WITH ${presenter.toUpperCase()}`
+        : "READY TO PLAY"
+      : video.specialistReviewRequired
+        ? "SPECIALIST REVIEW REQUIRED"
+        : "OPEN DRAFT",
   };
 }
 
@@ -9463,10 +9538,12 @@ function textLeaksInternalCoachData(text, look) {
   const raw = String(text ?? "");
   if (/look_id\s*·/i.test(raw)) return true;
   if (/coach-look-id/i.test(raw)) return true;
+  if (/data-look-id/i.test(raw)) return true;
   if (/drive\.google\.com/i.test(raw)) return true;
   if (/group_id/i.test(raw)) return true;
   if (look?.look_id && raw.includes(String(look.look_id))) return true;
   if (look?.group_id && raw.includes(String(look.group_id))) return true;
+  if (/[a-f0-9]{32}/i.test(raw) && /look/i.test(raw)) return true;
   return false;
 }
 
@@ -9876,17 +9953,19 @@ function mindpalItem(video, now = new Date()) {
   const playable = isVideoPlayable(video, now);
   return {
     id: video.id,
-    title: video.title,
-    description: video.outline || "",
+    title: videoDisplayTitle(video),
+    description: video.description || video.outline || "",
     kind: playable ? "mindpal-playable" : "mindpal-draft",
-    source: "MindPal",
+    source: playable ? "MindPal" : "MindPal draft",
     cta: videoCardCta(video, now),
     playable,
     src: playable ? publishedLibrarySrc(video.videoUrl || video.src) : "",
     publishedSrc: playable ? publishedLibrarySrc(video.videoUrl || video.src) : "",
-    durationLabel: video.targetDurationSeconds
-      ? `${Math.round(video.targetDurationSeconds / 30) / 2} min target`
-      : "",
+    durationLabel: playable
+      ? videoDurationLabel(video)
+      : video.targetDurationSeconds
+        ? `${Math.round(video.targetDurationSeconds / 30) / 2} min target`
+        : "",
     outline: video.outline || "",
     transcriptText: video.transcriptText || "",
     openUrl: null,
@@ -10147,6 +10226,9 @@ function mediaForFeeling(sources, feelingId, limit = VIDEO_DIRECTORY_LIMIT) {
 function mediaSourceLabel(item) {
   if (item?.source === "maddy") return "Watch with Maddy";
   if (item?.source === "youtube") return "YouTube meditation";
+  if (item?.publicationStatus === "PUBLISHED" || item?.publicEligible === true) {
+    return "MindPal video";
+  }
   return "MindPal draft";
 }
 
@@ -10425,9 +10507,16 @@ function isEnglishVoice(voice) {
   return /^en([-_]|$)/.test(lang) || /(english|en-au|en-gb|en-us|en-uk)/.test(name);
 }
 
-function isHighQualityVoice(voice) {
-  return /neural|natural|google|enhanced|premium|wavenet|studio|neural2/.test(
+function isNeuralOrNatural(voice) {
+  return /neural|natural|online \(natural\)|neural2|wavenet|studio/.test(
     norm(voice?.name),
+  );
+}
+
+function isHighQualityVoice(voice) {
+  return (
+    isNeuralOrNatural(voice) ||
+    /google|enhanced|premium/.test(norm(voice?.name))
   );
 }
 
@@ -10458,7 +10547,8 @@ function voiceScore(voice) {
   const loc = localeTier(voice);
   if (loc < 0) return -1000;
   let score = loc * 100;
-  if (isHighQualityVoice(voice)) score += 80;
+  if (isNeuralOrNatural(voice)) score += 120;
+  else if (isHighQualityVoice(voice)) score += 45;
   if (/premium|studio|neural2|online \(natural\)|wavenet/.test(norm(voice.name))) {
     score += 15;
   }
@@ -10507,24 +10597,31 @@ function listPickerVoices(voices = []) {
 }
 
 /**
- * Prefer high-quality en-AU, then warm en-GB/US Neural/Natural/Google/Enhanced.
- * Never fall through to voices[0] when a better English neural/natural/google voice exists.
+ * Prefer warmer Neural/Natural en-AU, then the best Natural, then other
+ * English Neural/Google/Enhanced. Never fall through to voices[0] when a
+ * Neural/Natural option exists.
  */
 function pickVoice(voices = [], preferredURI = loadSavedVoiceURI()) {
   const list = Array.isArray(voices) ? voices.filter(Boolean) : [];
   if (!list.length) return null;
 
-  if (preferredURI && !/^maddy\b/i.test(preferredURI)) {
+  if (preferredURI && !/^maddy\b/i.test(preferredURI) && preferredURI !== "auto") {
     const saved = list.find(
       (voice) => voice.voiceURI === preferredURI || voice.name === preferredURI,
     );
-    if (saved) return saved;
+    if (saved && !isLowQualityVoice(saved)) return saved;
   }
 
   const english = list.filter(isEnglishVoice);
-  const hqEnglish = english.filter(isHighQualityVoice);
-  const ranked = (hqEnglish.length ? hqEnglish : english)
-    .filter((voice) => hqEnglish.length || !isLowQualityVoice(voice))
+  const neural = english.filter(
+    (voice) => isNeuralOrNatural(voice) && !isLowQualityVoice(voice),
+  );
+  const hqEnglish = english.filter(
+    (voice) => isHighQualityVoice(voice) && !isLowQualityVoice(voice),
+  );
+  const pool = neural.length ? neural : hqEnglish.length ? hqEnglish : english;
+  const ranked = pool
+    .filter((voice) => neural.length || hqEnglish.length || !isLowQualityVoice(voice))
     .sort((a, b) => voiceScore(b) - voiceScore(a));
 
   if (ranked.length) return ranked[0];
@@ -10532,6 +10629,15 @@ function pickVoice(voices = [], preferredURI = loadSavedVoiceURI()) {
     return english.slice().sort((a, b) => voiceScore(b) - voiceScore(a))[0];
   }
   return null;
+}
+
+function warmSpeechVoices(synth = typeof window !== "undefined" ? window.speechSynthesis : null) {
+  try {
+    synth?.getVoices?.();
+  } catch {
+    /* ignore */
+  }
+  return synth;
 }
 
 function pickBrowserVoice(voices) {
@@ -10602,6 +10708,7 @@ function speakBrowser(text, onEnd, deps = {}) {
 
   const start = () => {
     if (cancelled) return;
+    warmSpeechVoices(synth);
     if ((synth.getVoices?.() || []).length) speakNext();
     else if (typeof synth.addEventListener === "function") {
       synth.addEventListener("voiceschanged", speakNext, { once: true });
@@ -10790,7 +10897,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,videoDisplayTitle,videoDurationLabel,videoPresenterName,captionsDisclosure,captionsAvailable,featuredPlayableVideo,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,isNeuralOrNatural,warmSpeechVoices,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -14030,6 +14137,7 @@ mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCL
       let a=typeof window<`u`&&window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
       r(mpReadings.listPickerVoices(a));
     };
+    mpReadings.warmSpeechVoices?.(window.speechSynthesis);
     i();
     if(typeof window<`u`&&window.speechSynthesis){
       window.speechSynthesis.addEventListener(`voiceschanged`,i);
@@ -14044,7 +14152,7 @@ mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCL
       mpReadings.saveVoiceURI(r);
     },children:[
       (0,A.jsx)(`option`,{value:mpReadings.MADDY_PREF_URI,children:mpReadings.MADDY_PREF_LABEL}),
-      (0,A.jsx)(`option`,{value:``,children:`Auto (best English)`}),
+      (0,A.jsx)(`option`,{value:``,children:`Auto (warmest English)`}),
       n.map(e=>(0,A.jsx)(`option`,{value:e.voiceURI,children:e.label},e.voiceURI))
     ]}),
     (0,A.jsx)(`span`,{className:`muted mindpal-voice-note`,children:`Maddy’s recorded clips play for her companion videos. Other text uses a calmer device voice until a Maddy voice ID is available.`})
@@ -14654,13 +14762,13 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`COACHES · SIGNED PRO`}),
     (0,A.jsx)(`h2`,{children:`Meet the signed MindPal coaches`}),
     (0,A.jsx)(`p`,{children:`Choose a signed DayStart coach to see their look and related Explore videos.`}),
-    (0,A.jsx)(`div`,{className:`coach-grid`,children:e.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`coach-card`,"data-look-id":e.look_id,"data-coach-slug":e.slug,"aria-haspopup":`dialog`,"aria-label":`Open ${e.person}, signed DayStart coach`,onClick:()=>mpReadings.activateCoachCard(e,n),onKeyDown:t=>{(t.key===`Enter`||t.key===` `)&&(t.preventDefault(),mpReadings.activateCoachCard(e,n))},children:[
+    (0,A.jsx)(`div`,{className:`coach-grid`,children:e.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`coach-card`,"data-coach-slug":e.slug,"aria-haspopup":`dialog`,"aria-label":`Open ${e.person}, signed DayStart coach`,onClick:()=>mpReadings.activateCoachCard(e,n),onKeyDown:t=>{(t.key===`Enter`||t.key===` `)&&(t.preventDefault(),mpReadings.activateCoachCard(e,n))},children:[
       (0,A.jsx)(Wt,{look:e}),
       (0,A.jsx)(`p`,{className:`eyebrow coach-pro-badge`,children:e.kind||`PRO`}),
       (0,A.jsx)(`h3`,{children:e.person}),
       (0,A.jsx)(`p`,{children:e.blurb}),
       (0,A.jsxs)(`span`,{className:`card-link`,children:[`Meet `,e.person,` `,(0,A.jsx)(nn,{size:16})]})
-    ]},e.look_id||e.slug))}),
+    ]},e.slug||e.person))}),
     (0,A.jsx)(`p`,{className:`muted coach-hold`,children:`More coaches are on hold for now.`}),
     t?(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&s()},children:(0,A.jsxs)(`div`,{className:`modal coach-modal`,ref:o,role:`dialog`,"aria-modal":`true`,"aria-labelledby":a,onKeyDown:e=>{
       if(e.key===`Escape`&&(e.stopPropagation(),s()),e.key===`Tab`){
@@ -14677,11 +14785,12 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
       (0,A.jsx)(`p`,{className:`eyebrow coach-pro-badge`,children:t.kind||`PRO`}),
       (0,A.jsx)(`p`,{children:t.blurb}),
       (0,A.jsx)(`p`,{className:`muted`,children:`This is a signed DayStart coach look.`}),
-      (0,A.jsx)(`h3`,{children:`Related Explore videos`}),
+      (0,A.jsx)(`h3`,{children:`Related drafts`}),
       c.length?(0,A.jsx)(`ul`,{className:`coach-related-videos`,children:c.map(e=>{
         let t=mpReadings.videoCardCta(e);
-        return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary coach-related-video`,"aria-label":mpReadings.videoCardAriaLabel(e),onClick:()=>l(e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),l(e))},children:[(0,A.jsx)(`strong`,{children:e.title}),(0,A.jsx)(`span`,{children:t})] })},e.id);
-      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No related Explore videos for this coach yet.`})
+        let n=mpReadings.videoDisplayTitle?mpReadings.videoDisplayTitle(e):e.title;
+        return(0,A.jsx)(`li`,{children:(0,A.jsxs)(`button`,{type:`button`,className:`secondary coach-related-video`,"aria-label":`${n} · ${t}`,onClick:()=>l(e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),l(e))},children:[(0,A.jsx)(`strong`,{children:n}),(0,A.jsx)(`span`,{children:t})] })},e.id);
+      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No related drafts for this coach yet.`})
     ]})}):null,
     r?(0,A.jsx)(gi,{video:r,onClose:()=>i(null),onHelp:()=>i(null)}):null
   ]});
@@ -14933,6 +15042,19 @@ function mpMaddyTeaser({onOpen:e}){
     (0,A.jsx)(`p`,{className:`mp-maddy-teaser-label`,children:`Watch with Maddy`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Welcome, Daily tip and Timed breath — open the clips on Explore.`}),
     e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
+  ]});
+}
+function mpV02Teaser(){
+  let e=mpReadings.featuredPlayableVideo(typeof mpVideoCatalog<`u`?mpVideoCatalog:null);
+  if(!e)return null;
+  let t=mpReadings.libraryCardModel(e);
+  return(0,A.jsxs)(`aside`,{className:`mp-v02-teaser`,"aria-label":t.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:t.eyebrow||`Ready to play`}),
+    (0,A.jsx)(`h3`,{children:t.title}),
+    (0,A.jsx)(`p`,{className:`muted`,children:e.description||e.outline||``}),
+    t.durationLabel?(0,A.jsx)(`p`,{className:`muted`,children:t.durationLabel}):null,
+    t.captionsNote?(0,A.jsx)(`p`,{className:`muted mp-captions-note`,children:t.captionsNote}):null,
+    (0,A.jsx)(`button`,{className:`primary`,type:`button`,"aria-label":t.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(e),children:t.cta})
   ]});
 }
 function mpMorningVerse(){
@@ -15919,6 +16041,8 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
           ]})
         ]},t)
       })}),
+      e.id===`day`?(0,A.jsx)(MpLibraryHost,{}):null,
+      e.id===`day`?(0,A.jsx)(mpV02Teaser,{}):null,
       e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
     ]},e.id))
   ]});
@@ -16081,7 +16205,7 @@ Writing is optional. Before saving personal information, check the privacy infor
 
 Any automated guide in MindPal is software, not a person or a therapist. MindPal cannot diagnose you, advise on medication, or monitor emergencies. Human support matters, and you can use MindPal alongside professional care.
 
-The “Help me now” section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.`,revisionStatus:`PROPOSED_REVIEW_PENDING`},{id:`V02`,assetIdentifier:`MP-V02-en-AU-v1.1b`,title:`A gentle start to a difficult morning`,language:`en-AU`,scriptVersion:`1.1`,targetDurationSeconds:45,actualDurationSeconds:45,clinicalStatus:`APPROVED`,reviewer:null,approvedAt:null,reviewDue:`2026-12-05`,rightsStatus:`CLEARED`,presenterRightsRef:null,publicationStatus:`PUBLISHED`,sourceAssetId:null,scriptHash:`ea5a12ded6601da7179043b43c944cf9591af641433819671f80839b1e8de607`,assetHash:null,videoUrl:`/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4`,captionUrl:null,transcriptUrl:`/transcripts/MP-V02-en-AU-v1.1.txt`,scriptPackagePath:`production/V02/production-brief.md`,scriptReadiness:`COMPLETE_DRAFT`,specialistReviewRequired:!1,aiPresenterDisclosureRequired:!0,placeholderLabel:`HeyGen Wave A · ready to play`,fallbackContentId:null,publicEligible:!0,outline:`Make room for a difficult morning. Offer rest, one manageable action or finishing here without a positive-thinking requirement.`,category:`Understanding & reflection`,transcriptText:`A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.
+The “Help me now” section lists urgent human-support options. MindPal does not contact those services for you. For now, you can choose a practice, read a guide, or finish here.`,revisionStatus:`PROPOSED_REVIEW_PENDING`},{id:`V02`,assetIdentifier:`MP-V02-en-AU-v1.1b`,title:`A gentle start to a difficult morning`,language:`en-AU`,scriptVersion:`1.1`,targetDurationSeconds:45,actualDurationSeconds:45,clinicalStatus:`APPROVED`,reviewer:null,approvedAt:null,reviewDue:`2026-12-05`,rightsStatus:`CLEARED`,presenterRightsRef:null,publicationStatus:`PUBLISHED`,sourceAssetId:null,scriptHash:`ea5a12ded6601da7179043b43c944cf9591af641433819671f80839b1e8de607`,assetHash:null,videoUrl:`/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4`,captionUrl:null,transcriptUrl:`/transcripts/MP-V02-en-AU-v1.1.txt`,scriptPackagePath:`production/V02/production-brief.md`,scriptReadiness:`COMPLETE_DRAFT`,specialistReviewRequired:!1,aiPresenterDisclosureRequired:!0,placeholderLabel:`Ready to play`,presenter:`Denyse`,fallbackContentId:null,publicEligible:!0,outline:`Make room for a difficult morning. Offer rest, one manageable action or finishing here without a positive-thinking requirement.`,category:`Understanding & reflection`,transcriptText:`A difficult morning does not need a cheerful beginning. You can take this moment as you are, or finish here.
 
 If it is useful, think only about the next few minutes. Is there something practical you need: a little quiet, rest, or help from someone? There is no requirement to choose an activity.
 
@@ -16215,17 +16339,21 @@ This pathway is optional, and you can leave it at any time. If writing or watchi
     }
   },children:[
     (0,A.jsxs)(`div`,{className:`modal-top`,children:[
-      (0,A.jsx)(`span`,{className:`eyebrow`,children:o.kind===`maddy-play`?`Watch with Maddy`:o.playable?`MindPal video`:`Open draft`}),
+      (0,A.jsx)(`span`,{className:`eyebrow`,children:o.eyebrow||(o.kind===`maddy-play`?`Watch with Maddy`:o.playable?`Ready to play`:`Open draft`)}),
       (0,A.jsx)(`button`,{className:`icon-button`,type:`button`,"aria-label":`Close video`,onClick:a,children:(0,A.jsx)(On,{size:20})})
     ]}),
     (0,A.jsx)(`h2`,{id:n,children:o.title}),
-    s?(0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:o.src,ref:i,"aria-label":`${o.title} with Maddy`,autoPlay:!0}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[
+    o.durationLabel?(0,A.jsx)(`p`,{className:`muted mp-clip-meta`,children:o.durationLabel}):null,
+    s?(0,A.jsxs)(`div`,{className:`mp-clip-player`,children:[
+      (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:o.src,ref:i,"aria-label":o.presenter?`${o.title} with ${o.presenter}`:o.title,autoPlay:!0}),
+      o.captionsNote?(0,A.jsx)(`p`,{className:`muted mp-captions-note`,children:o.captionsNote}):null
+    ]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[
       (0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),
       (0,A.jsx)(`p`,{children:`This card opens the script. Play appears only when a real mp4 or webm file exists.`}),
       (0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})
     ]}),
     (0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[
-      (0,A.jsx)(`h3`,{children:s?`About this clip`:e.video.transcriptText?`Script transcript · draft`:`Production outline · draft`}),
+      (0,A.jsx)(`h3`,{children:s?`Words from this clip`:e.video.transcriptText?`Script transcript · draft`:`Production outline · draft`}),
       (0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.video.transcriptText||e.video.outline||e.video.description||`A full script and reviewed video will be added after content and production review.`}),
       s?null:(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})
     ]})
@@ -16252,7 +16380,7 @@ function MpWatchWithMaddy(){
     })}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Native MP4 · /mindpal/videos/maddy · Welcome · Daily tip · Timed breath`})
   ]});
-}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:e=>I(mpDedicatedProblemRoute(e))}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(mpMorningVerse,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsxs)(`span`,{className:`duration`,children:[Math.round(t.targetDurationSeconds/30)/2,` min target`]})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`HEYGEN · OPEN DRAFT`}),(0,A.jsx)(`h3`,{children:t.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.show(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
+}/*mp-maddy-ui-end*/function Ki({openVideo:e}){let[t,n]=(0,_.useState)(null),[r,i]=(0,_.useState)(``),a=mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).filter(e=>e.title.toLowerCase().includes(r.toLowerCase()));return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR TOOLKIT, ON YOUR TERMS`}),(0,A.jsx)(`h1`,{children:`A little something for today.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:e=>I(mpDedicatedProblemRoute(e))}),(0,A.jsx)(MpWatchWithMaddy,{}),(0,A.jsxs)(`div`,{className:`three-grid explore-cards`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage${t===`verse`?` active`:``}`,"aria-expanded":t===`verse`,onClick:()=>n(t===`verse`?null:`verse`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(Sn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`READINGS`}),(0,A.jsx)(`h3`,{children:`Readings`}),(0,A.jsx)(`p`,{children:`A verse, prayer and today’s pack reading.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`verse`?`Hide verse`:`Open verse`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach${t===`reading`?` active`:``}`,"aria-expanded":t===`reading`,onClick:()=>n(t===`reading`?null:`reading`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`DAILY READING`}),(0,A.jsx)(`h3`,{children:`Reading`}),(0,A.jsx)(`p`,{children:`Pack A sequential mornings. Mark Done to unlock the next day — open is not Done.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`reading`?`Hide reading`:`Open reading`,` `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender${t===`videos`?` active`:``}`,"aria-expanded":t===`videos`,onClick:()=>n(t===`videos`?null:`videos`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(vn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`COACHES & VIDEO LIBRARY`}),(0,A.jsx)(`h3`,{children:`Videos`}),(0,A.jsx)(`p`,{children:`Signed coaches plus V01–V12 drafts. Play finished Maddy clips in Watch with Maddy.`}),(0,A.jsxs)(`span`,{className:`card-link`,children:[t===`videos`?`Hide videos`:`Open videos`,` `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsx)(mpYtMeditationsSection,{}),t===`verse`&&(0,A.jsx)(mpMorningVerse,{}),t===`reading`&&(0,A.jsx)(bt,{}),t===`videos`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Gt,{}),(0,A.jsxs)(`h2`,{className:`section-heading`,children:[`The HeyGen video library `,(0,A.jsx)(`span`,{children:`12 short films in preparation`})]}),(0,A.jsx)(`p`,{className:`muted`,children:`AI-presented educational videos are separate from the interactive companion. Open draft shows the script. Play appears only when an mp4/webm file exists and publication gates pass. Illustrations are not video stills.`}),(0,A.jsx)(`div`,{className:`filter-bar`,children:(0,A.jsxs)(`label`,{className:`search`,children:[(0,A.jsx)(yn,{size:17}),(0,A.jsx)(`input`,{"aria-label":`Search library`,placeholder:`Find a short video…`,value:r,onChange:e=>i(e.target.value)})]})}),(0,A.jsx)(`div`,{className:`three-grid`,children:a.map((t,n)=>{let o=mpReadings.libraryCardModel(t);return(0,A.jsxs)(`button`,{type:`button`,className:`video-card${o.playable?``:` is-draft`}`,"aria-label":o.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(t,e),onKeyDown:n=>{(n.key===`Enter`||n.key===` `)&&(n.preventDefault(),mpReadings.activateLibraryVideo(t,e))},children:[(0,A.jsxs)(`div`,{className:`video-cover tone-${n%3}`,children:[o.playable?null:(0,A.jsx)(`span`,{className:`video-number`,children:t.id}),(0,A.jsx)(`img`,{className:`cover-photo`,src:[Ge(`/journal-scene.jpg`),Ge(`/welcome-hike-640.webp`),Ge(`/friends-scene.jpg`),Ge(`/food-scene.jpg`)][n%4],alt:``,loading:`lazy`}),o.playable?(0,A.jsx)(`span`,{className:`play-dot`,children:(0,A.jsx)(rn,{size:18})}):null,(0,A.jsx)(`span`,{className:`duration`,children:o.durationLabel||`${Math.round(t.targetDurationSeconds/30)/2} min target`})]}),(0,A.jsxs)(`div`,{className:`video-copy`,children:[(0,A.jsx)(`span`,{className:`card-type`,children:o.cardType||(o.playable?`READY TO PLAY`:t.specialistReviewRequired?`SPECIALIST REVIEW REQUIRED`:`OPEN DRAFT`)}),(0,A.jsx)(`h3`,{children:o.title}),(0,A.jsxs)(`span`,{className:`card-link${o.playable?``:` open-draft`}`,children:[o.cta,` `,(0,A.jsx)(nn,{size:16})]})]})]},t.id)})}),!a.length&&(0,A.jsx)(`p`,{role:`status`,children:`No matches. Try a different word.`})]})]})}function qi({title:e,children:t,onClose:n,onHelp:r}){let i=(0,_.useRef)(null);return(0,_.useEffect)(()=>{let e=document.activeElement;return i.current?.show(),()=>e?.focus()},[]),(0,A.jsxs)(`dialog`,{ref:i,onCancel:e=>{e.preventDefault(),n()},"aria-label":e,children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(Wi,{children:`YOUR PACE, YOUR CHOICE`}),(0,A.jsx)(`button`,{"aria-label":`Close`,onClick:n,children:(0,A.jsx)(On,{})})]}),t,(0,A.jsx)(`div`,{className:`modal-help`,children:(0,A.jsxs)(`button`,{className:`text-button`,onClick:r,children:[(0,A.jsx)(mn,{size:16}),`Get support now`]})})]})}function Ji({id:e,onClose:t,onHelp:n,onFinish:r,onAlternative:i}){let a=Vr.find(t=>t.id===e),[o,s]=(0,_.useState)(0),[c,l]=(0,_.useState)(!1);return(0,A.jsxs)(qi,{title:a.title,onClose:t,onHelp:n,children:[(0,A.jsxs)(`p`,{className:`eyebrow`,children:[a.durationLabel,` · VERSION `,a.version,` · DRAFT`]}),(0,A.jsx)(`h2`,{children:c?`That can be enough.`:a.title}),c?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:`You can leave it here, or put a thought into your diary. There’s no score and nothing to catch up on.`}),(0,A.jsxs)(`button`,{className:`primary`,onClick:r,children:[`Optional reflection `,(0,A.jsx)(rn,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:t,children:`Finish here`})]}):(0,A.jsxs)(A.Fragment,{children:[o===0&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{children:a.aim.charAt(0).toUpperCase()+a.aim.slice(1)}),(0,A.jsxs)(`details`,{className:`exercise-cautions`,children:[(0,A.jsx)(`summary`,{children:`Before you begin · limits and alternatives`}),(0,A.jsx)(`p`,{children:a.cautions.replace(/\[([^\]]+)\]\([^)]+\)/g,`$1`)})]}),e===`E02`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:i,children:`Choose a non-breathing pause`})]}),(0,A.jsx)(`div`,{className:`step-track`,"aria-label":`Step ${o+1} of ${a.steps.length}`,children:a.steps.map((e,t)=>(0,A.jsx)(`span`,{className:t<=o?`filled`:``},t))}),(0,A.jsxs)(`div`,{className:`exercise-step`,children:[(0,A.jsxs)(`span`,{children:[`0`,o+1]}),(0,A.jsx)(`p`,{children:a.steps[o]})]}),(0,A.jsx)(`p`,{className:`muted`,children:`You can stop or skip any part. If this feels uncomfortable, look at something neutral around you and finish.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>o===a.steps.length-1?l(!0):s(o+1),children:[o===a.steps.length-1?`Finish this pause`:`Next, if you’d like`,(0,A.jsx)(B,{size:17})]}),o>0&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>s(o-1),children:`Back`}),(0,A.jsx)(`button`,{className:`text-button`,onClick:t,children:`Stop exercise`})]})]})]})}function Yi({initialPrompt:e,onHelp:t,body:n,setBody:r,editing:i,setEditing:a,busy:o,setBusy:s,mode:c,setMode:l}){let[u,d]=(0,_.useState)([]),[f,p]=(0,_.useState)(``),[m,h]=(0,_.useState)(``),[g,v]=(0,_.useState)(null),[y,b]=(0,_.useState)(null),[x,S]=(0,_.useState)(``),[C,w]=(0,_.useState)(!1),T=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=!0;return Pi.list().then(t=>{e&&d(t)}).catch(()=>{e&&p(e=>e.startsWith(`Saved`)?e+` The note list could not refresh.`:`Unable to read this device. Your unsaved input is retained.`)}),()=>{e=!1}},[c]);async function E(e){s(!0);let t=Pi.mode;try{await Pi.setMode(e);let t=await Pi.list();l(e),d(t),a(null),p(e===`device`?`Device storage selected. Existing session notes have not been copied.`:`Session storage selected. Device notes remain on this browser until you delete them.`)}catch{await Pi.setMode(t),p(`Storage unavailable. No storage setting was changed.`)}finally{s(!1)}}async function D(){if(n.trim()){s(!0);try{let e=await Pi.save({body:n,id:i?.id,expectedRevision:i?.revision});d(t=>[e,...t.filter(t=>t.id!==e.id)]),r(``),a(null),p(c===`device`?`Saved on this device.`:`Saved for this session only.`)}catch{p(`Not saved. Storage is unavailable or this entry changed elsewhere. Your text is still below; copy or export it before leaving.`)}finally{s(!1)}}}return(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A PAGE THAT BELONGS TO YOU`}),(0,A.jsx)(Fr,{onHelp:t,onReturnToWriting:()=>T.current?.focus(),onSelectedDiaryText:()=>{let e=T.current;return e?n.slice(e.selectionStart,e.selectionEnd):``},onSaveConversation:async e=>{try{let t=await Pi.save({body:e});return d(e=>[t,...e]),!0}catch{return!1}}}),(0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),(0,A.jsx)(`h1`,{children:`Let a little of it out.`}),(0,A.jsx)(`p`,{className:`lede`,children:`Express how you feel, explore a thought, or simply let your words out.`}),(0,A.jsxs)(`section`,{className:`storage-choice`,children:[(0,A.jsx)(xn,{size:24}),(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`h3`,{children:c===`session`?`Here for this session`:`Saved on this browser`}),(0,A.jsx)(`p`,{children:c===`session`?`Notes disappear when this page is reloaded or closed. Saving to your device is optional.`:`Device storage is not encrypted by MindPal. Anyone using this browser may see these notes. Clearing browser data can remove them.`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsx)(`button`,{disabled:o,className:c===`session`?`primary small-button`:`secondary small-button`,onClick:()=>E(`session`),children:`Session only`}),(0,A.jsx)(`button`,{disabled:o,className:c===`device`?`primary small-button`:`secondary small-button`,onClick:()=>E(`device`),children:`Save on this device`})]})]})]}),(0,A.jsxs)(`div`,{className:`diary-layout`,children:[(0,A.jsxs)(`section`,{className:`diary-editor`,children:[(0,A.jsxs)(`div`,{className:`editor-heading`,children:[(0,A.jsx)(Wi,{children:i?`EDITING A NOTE`:`A FRESH PAGE`}),(0,A.jsx)(`span`,{children:new Date().toLocaleDateString(`en-AU`,{day:`numeric`,month:`long`})})]}),(0,A.jsx)(`label`,{htmlFor:`diary-body`,children:(0,A.jsx)(`h2`,{children:i?`Your words, with room to change.`:e||`What’s taking up space today?`})}),(0,A.jsxs)(`details`,{className:`diary-reflection`,children:[(0,A.jsx)(`summary`,{children:`Optional prompts · feelings and thoughts`}),(0,A.jsx)(`p`,{children:`You can write freely or use any of these prompts in your note. Skip anything that doesn’t fit.`}),(0,A.jsxs)(`ol`,{children:[(0,A.jsx)(`li`,{children:`What happened, and how am I feeling?`}),(0,A.jsx)(`li`,{children:`What thought is showing up for me?`}),(0,A.jsx)(`li`,{children:`What facts support that thought? What facts suggest another view?`}),(0,A.jsx)(`li`,{children:`What might be a balanced, compassionate way to understand this?`}),(0,A.jsx)(`li`,{children:`What support or small next step would feel useful?`})]}),(0,A.jsx)(`p`,{children:`You don’t have to force a positive thought or question every feeling. If this feels more upsetting or repetitive, pause; you can return later or reach human support.`}),(0,A.jsx)(`p`,{className:`muted`,children:`Draft prompts · awaiting clinical review. Your note is not sent to an AI or reviewed by a person.`})]}),(0,A.jsx)(`textarea`,{ref:T,id:`diary-body`,dir:`auto`,readOnly:o,maxLength:2e4,value:n,placeholder:`Start anywhere…`,onChange:e=>r(e.target.value)}),(0,A.jsxs)(`div`,{className:`editor-footer`,children:[(0,A.jsxs)(`span`,{children:[n.length.toLocaleString(),` / 20,000 · sample notes only`]}),(0,A.jsxs)(`button`,{className:`primary`,disabled:!n.trim()||o,onClick:D,children:[(0,A.jsx)(an,{size:16}),`Save note`]})]}),i&&(0,A.jsx)(`button`,{disabled:o,className:`text-button`,onClick:()=>{a(null),r(``)},children:`Cancel edit`}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!n,onClick:()=>Hi(`mindpal-unsaved-note.txt`,n),children:[(0,A.jsx)(cn,{size:15}),`Export current text`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!n,onClick:()=>{let e=T.current,t=n.slice(e.selectionStart,e.selectionEnd);S(t),w(!0)},children:`Preview selected text for AI`})]}),(0,A.jsx)(`p`,{role:`status`,"aria-label":`Diary saving status`,className:`status-message`,children:f})]}),(0,A.jsxs)(`aside`,{className:`diary-aside`,children:[(0,A.jsx)(pn,{size:24}),(0,A.jsx)(`h3`,{children:`One sentence is enough.`}),(0,A.jsx)(`p`,{children:`You could try “Today I noticed…” or leave the page blank. Rest counts too.`}),(0,A.jsx)(`hr`,{}),(0,A.jsx)(`h4`,{children:`Private by default`}),(0,A.jsx)(`p`,{children:`No account. No cloud sync. No automatic AI access to your diary.`}),(0,A.jsx)(`p`,{children:`Exports are ordinary readable files. Store and share them carefully.`})]})]}),(0,A.jsxs)(`div`,{className:`section-title`,children:[(0,A.jsxs)(`h2`,{children:[`Your notes `,(0,A.jsx)(`span`,{className:`count`,children:u.length})]}),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.json`,JSON.stringify({version:1,exportedAt:new Date().toISOString(),entries:u},null,2),`application/json`),children:[(0,A.jsx)(cn,{size:16}),`Export JSON`]}),(0,A.jsx)(`button`,{className:`text-button`,disabled:!u.length,onClick:()=>Hi(`mindpal-diary.txt`,u.map(e=>`${e.updatedAt}\n${e.body}`).join(`
 
 ---
 

@@ -13,9 +13,16 @@ export function isEnglishVoice(voice) {
   return /^en([-_]|$)/.test(lang) || /(english|en-au|en-gb|en-us|en-uk)/.test(name);
 }
 
-export function isHighQualityVoice(voice) {
-  return /neural|natural|google|enhanced|premium|wavenet|studio|neural2/.test(
+export function isNeuralOrNatural(voice) {
+  return /neural|natural|online \(natural\)|neural2|wavenet|studio/.test(
     norm(voice?.name),
+  );
+}
+
+export function isHighQualityVoice(voice) {
+  return (
+    isNeuralOrNatural(voice) ||
+    /google|enhanced|premium/.test(norm(voice?.name))
   );
 }
 
@@ -46,7 +53,8 @@ export function voiceScore(voice) {
   const loc = localeTier(voice);
   if (loc < 0) return -1000;
   let score = loc * 100;
-  if (isHighQualityVoice(voice)) score += 80;
+  if (isNeuralOrNatural(voice)) score += 120;
+  else if (isHighQualityVoice(voice)) score += 45;
   if (/premium|studio|neural2|online \(natural\)|wavenet/.test(norm(voice.name))) {
     score += 15;
   }
@@ -95,24 +103,31 @@ export function listPickerVoices(voices = []) {
 }
 
 /**
- * Prefer high-quality en-AU, then warm en-GB/US Neural/Natural/Google/Enhanced.
- * Never fall through to voices[0] when a better English neural/natural/google voice exists.
+ * Prefer warmer Neural/Natural en-AU, then the best Natural, then other
+ * English Neural/Google/Enhanced. Never fall through to voices[0] when a
+ * Neural/Natural option exists.
  */
 export function pickVoice(voices = [], preferredURI = loadSavedVoiceURI()) {
   const list = Array.isArray(voices) ? voices.filter(Boolean) : [];
   if (!list.length) return null;
 
-  if (preferredURI && !/^maddy\b/i.test(preferredURI)) {
+  if (preferredURI && !/^maddy\b/i.test(preferredURI) && preferredURI !== "auto") {
     const saved = list.find(
       (voice) => voice.voiceURI === preferredURI || voice.name === preferredURI,
     );
-    if (saved) return saved;
+    if (saved && !isLowQualityVoice(saved)) return saved;
   }
 
   const english = list.filter(isEnglishVoice);
-  const hqEnglish = english.filter(isHighQualityVoice);
-  const ranked = (hqEnglish.length ? hqEnglish : english)
-    .filter((voice) => hqEnglish.length || !isLowQualityVoice(voice))
+  const neural = english.filter(
+    (voice) => isNeuralOrNatural(voice) && !isLowQualityVoice(voice),
+  );
+  const hqEnglish = english.filter(
+    (voice) => isHighQualityVoice(voice) && !isLowQualityVoice(voice),
+  );
+  const pool = neural.length ? neural : hqEnglish.length ? hqEnglish : english;
+  const ranked = pool
+    .filter((voice) => neural.length || hqEnglish.length || !isLowQualityVoice(voice))
     .sort((a, b) => voiceScore(b) - voiceScore(a));
 
   if (ranked.length) return ranked[0];
@@ -120,6 +135,15 @@ export function pickVoice(voices = [], preferredURI = loadSavedVoiceURI()) {
     return english.slice().sort((a, b) => voiceScore(b) - voiceScore(a))[0];
   }
   return null;
+}
+
+export function warmSpeechVoices(synth = typeof window !== "undefined" ? window.speechSynthesis : null) {
+  try {
+    synth?.getVoices?.();
+  } catch {
+    /* ignore */
+  }
+  return synth;
 }
 
 export function pickBrowserVoice(voices) {
@@ -190,6 +214,7 @@ export function speakBrowser(text, onEnd, deps = {}) {
 
   const start = () => {
     if (cancelled) return;
+    warmSpeechVoices(synth);
     if ((synth.getVoices?.() || []).length) speakNext();
     else if (typeof synth.addEventListener === "function") {
       synth.addEventListener("voiceschanged", speakNext, { once: true });

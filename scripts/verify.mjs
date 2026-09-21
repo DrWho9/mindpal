@@ -17,7 +17,8 @@ const checks = [
   [html.includes('href="/mindpal/assets/'), "index.html keeps /mindpal/ CSS path"],
   [jsName !== "index-3cb5ea74.js" && !html.includes("index-3cb5ea74.js") && !sw.includes("index-3cb5ea74.js"), "index.html/sw do not still load the pre-chat index-3cb5ea74.js hash"],
   [jsName !== "index-293ac69a.js" && !html.includes("index-293ac69a.js") && !sw.includes("index-293ac69a.js"), "index.html/sw do not still load the pre-fix #31 hash index-293ac69a.js"],
-  [sw.includes('prefix:"mindpal-shell-v3"'), "service worker cache prefix was bumped so stale tip shells drop"],
+  [jsName !== "index-c020c8c9.js" && !html.includes("index-c020c8c9.js") && !sw.includes("index-c020c8c9.js"), "index.html/sw do not still load the #36 tip-fix hash index-c020c8c9.js"],
+  [sw.includes('prefix:"mindpal-shell-v4"'), "service worker cache prefix was bumped so stale tip shells drop"],
   [readFileSync(join(root, "registerSW.js"), "utf8").includes("reg.update()"), "registerSW forces an update so old hashed bundles are not kept"],
   [html.includes("/mindpal/registerSW.js") || html.includes("vite-plugin-pwa"), "PWA register path unchanged"],
   [sw.includes(`assets/${jsName}`), "service worker lists new JS"],
@@ -100,8 +101,8 @@ const checks = [
   [!js.includes("Optional faith content. Skip anytime."), "Prayer WEB footer removed"],
   [js.includes(`type:\`button\`,className:\`coach-card\``), "coach cards are buttons"],
   [js.includes("This is a signed DayStart coach look."), "signed look note is present"],
-  [js.includes("Related Explore videos"), "coach modal lists related videos"],
-  [!js.includes("look_id ·") && !js.includes("className:`coach-look-id`"), "look_id hex is not shown"],
+  [js.includes("Related drafts"), "coach modal lists related drafts"],
+  [!js.includes("look_id ·") && !js.includes("className:`coach-look-id`") && !js.includes(`"data-look-id"`), "look_id hex is not shown"],
   [!js.includes("Preview stills load from"), "technical preview path is not in UI copy"],
   [!js.includes("No BFL or HeyGen spend from this section."), "spend language is not in the coach footer"],
   [js.includes("More coaches are on hold for now."), "short hold line is present"],
@@ -118,6 +119,9 @@ const checks = [
   [js.includes('"brand.author":`— Marcus Aurelius`'), "Marcus Aurelius attribution remains"],
   [!js.includes("“The happiness of your life") && !js.includes('"The happiness of your life'), "decorative quotation marks removed from sidebar quote"],
   [js.includes("mpSidebarShare") && js.includes("Share MindPal"), "sidebar Share button is present"],
+  [js.includes("Captions are not on this clip yet") && js.includes("mpV02Teaser"), "V02 captions disclosure and Today teaser are present"],
+  [js.includes("Words from this clip") && js.includes(`"presenter": "Denyse"`), "V02 player uses a user-facing title chrome"],
+  [js.includes("isNeuralOrNatural") && js.includes("Auto (warmest English)"), "Listen prefers Neural/Natural voices"],
   [js.includes("pickBrowserVoice") && js.includes("mpVoicePicker"), "Listen voice picker is present"],
   [js.includes("mindpal.tts.voice.v1"), "Listen voice choice is persisted"],
   [js.includes("speakBrowser") && !js.includes("n.rate=.92"), "softer browser speech replaces 0.92 rate"],
@@ -251,6 +255,9 @@ if (!css.includes(".mp-lane-mens") || !css.includes(".mp-hub-acc-toggle") || !cs
 }
 if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
   throw new Error("Individual Growth / Team Growth band styles missing");
+}
+if (!css.includes(".mp-v02-teaser") || !css.includes(".mp-captions-note")) {
+  throw new Error("V02 Today teaser or captions note styles missing");
 }
 if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
   throw new Error("faith preference chip styles missing");

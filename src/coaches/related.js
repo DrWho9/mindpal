@@ -87,9 +87,11 @@ export function textLeaksInternalCoachData(text, look) {
   const raw = String(text ?? "");
   if (/look_id\s*·/i.test(raw)) return true;
   if (/coach-look-id/i.test(raw)) return true;
+  if (/data-look-id/i.test(raw)) return true;
   if (/drive\.google\.com/i.test(raw)) return true;
   if (/group_id/i.test(raw)) return true;
   if (look?.look_id && raw.includes(String(look.look_id))) return true;
   if (look?.group_id && raw.includes(String(look.group_id))) return true;
+  if (/[a-f0-9]{32}/i.test(raw) && /look/i.test(raw)) return true;
   return false;
 }

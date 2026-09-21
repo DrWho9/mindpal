@@ -94,10 +94,11 @@ describe("coach UI must not leak catalog internals", () => {
 
   it("coach modal inject is a button card with no visible hex", () => {
     assert.match(inject, /type:`button`,className:`coach-card`/);
-    assert.match(inject, /data-look-id/);
+    assert.match(inject, /data-coach-slug/);
     assert.match(inject, /This is a signed DayStart coach look/);
-    assert.match(inject, /Related Explore videos/);
+    assert.match(inject, /Related drafts/);
     assert.match(inject, /Open draft|videoCardCta/);
+    assert.doesNotMatch(inject, /data-look-id/);
     assert.doesNotMatch(inject, /look_id ·/);
     assert.doesNotMatch(inject, /className:`coach-look-id`/);
     assert.doesNotMatch(inject, /drive\.google\.com/);

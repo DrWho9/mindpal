@@ -90,7 +90,10 @@ describe("Men's Health hub catalog", () => {
       ],
     );
     assert.doesNotMatch(JSON.stringify(catalog), /HeyGen/);
-    const page = inject.slice(inject.indexOf("function mpMensHealthHubPage"));
+    const start = inject.indexOf("function mpMensHealthHubPage");
+    const rest = inject.slice(start);
+    const end = rest.indexOf("\nfunction ", 1);
+    const page = end === -1 ? rest : rest.slice(0, end);
     assert.match(page, /No HeyGen render in this hub/);
     assert.doesNotMatch(page, /heygenDraftGate|V0[0-9]|publicEligible/);
   });
