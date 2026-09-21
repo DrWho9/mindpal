@@ -113,6 +113,21 @@ dialog[open]>*{pointer-events:auto}
 .mp-band-night{background:linear-gradient(#ebe6de,#fffef9 90px)}
 .mp-day-band > .eyebrow{margin:0 0 2px}
 .mp-day-band > .muted{margin:0 0 10px}
+.mp-team-ritual-card{background:#fffef9;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:0 0 12px}
+.mp-team-ritual-card h2{margin:.1em 0 .35em}
+.mp-team-ritual-card > p{margin:0 0 8px;max-width:48ch}
+.mp-team-ritual-steps{list-style:none;margin:8px 0 12px;padding:0;display:grid;gap:8px}
+.mp-team-ritual-steps li{background:#eef5ee;border:1px solid #d5dccb;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
+.mp-team-ritual-steps li.is-next{box-shadow:0 0 0 2px rgba(47,90,61,.18)}
+.mp-team-ritual-path{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
+.mp-team-ritual-path .mp-day-step{padding:12px 14px}
+.mp-team-breath-clock{font-size:2.1rem;font-weight:700;letter-spacing:.04em;margin:8px 0 4px;color:#2f3b2c}
+.mp-team-breath-cue{font-size:1.15rem;margin:0 0 12px;max-width:40ch}
+.mp-team-breath-video{margin:8px 0 14px}
+.mp-team-breath-video video{background:#182d47;border-radius:14px;width:100%;aspect-ratio:16/9;display:block}
+.mp-team-next{background:#eef5ee;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:14px 0 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.mp-team-reading-body{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
+.mp-lane-team-ritual{--mp-lane:#2f5a3d}
 .mp-verse-collapse{background:#fffef9;border:1px solid #c9dccb;border-radius:12px;padding:10px 14px;margin:0 0 12px}
 .mp-verse-collapse summary{cursor:pointer;font-weight:650;min-height:40px;display:flex;align-items:center}
 .mp-wins-nudge{margin:0 0 8px;max-width:46ch}
