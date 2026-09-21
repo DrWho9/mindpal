@@ -136,6 +136,7 @@ const checks = [
   [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
   [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
   [js.includes("setFaithAsk(mpNeedsFaithSetup())") && js.includes("if(faithAsk)"), "Today shows faith questions when preference is missing"],
+  [js.includes("mpSetGateTick(e=>e+1)"), "faith-change re-renders the sign-in gate"],
 ];
 
 const maddyFiles = [

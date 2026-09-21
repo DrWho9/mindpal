@@ -786,7 +786,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "F=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
-    "F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
+    "F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());let[mpGateTick,mpSetGateTick]=(0,_.useState)(0);(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt());mpSetGateTick(e=>e+1)}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
     "session-state",
   );
   next = replaceOnce(
@@ -946,6 +946,9 @@ function patchOwnerUx(source) {
   }
   if (!next.includes("setFaithAsk(mpNeedsFaithSetup())") || !next.includes("if(faithAsk)")) {
     throw new Error("Today first-setup faith overlay is missing");
+  }
+  if (!next.includes("mpSetGateTick(e=>e+1)")) {
+    throw new Error("faith-change must re-render the sign-in gate");
   }
   if (!next.includes("function mpGoHome(") || !next.includes("onClick:()=>mpGoHome(I)")) {
     throw new Error("MindPal brand is not wired to go home");
