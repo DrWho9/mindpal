@@ -1,4 +1,10 @@
-import { isVideoPlayable, videoCardAriaLabel, videoCardCta } from "./playback.js";
+import {
+  isVideoPlayable,
+  overlayCatalogVideo,
+  publishedLibrarySrc,
+  videoCardAriaLabel,
+  videoCardCta,
+} from "./playback.js";
 import { hasMaddyMediaUrl, isMaddyCompanionPlayable, maddyPublishedSrc } from "./maddy.js";
 
 export const LIBRARY_OPEN_EVENT = "mindpal-open-library-video";
@@ -7,11 +13,19 @@ function titleOf(video) {
   return video?.cardTitle || video?.title || "MindPal video";
 }
 
+function resolveCatalogVideo(video, catalog) {
+  const published =
+    catalog ||
+    (typeof globalThis !== "undefined" ? globalThis.mpVideoCatalog : null);
+  return overlayCatalogVideo(video, published);
+}
+
 /**
  * One model for every video card. Cards are always activatable:
  * Maddy / real media → player; HeyGen drafts → script modal.
  */
-export function libraryCardModel(video, now = new Date()) {
+export function libraryCardModel(video, now = new Date(), catalog) {
+  video = resolveCatalogVideo(video, catalog);
   if (!video || typeof video !== "object") {
     return {
       kind: "invalid",
@@ -54,7 +68,7 @@ export function libraryCardModel(video, now = new Date()) {
   }
 
   const playable = isVideoPlayable(video, now);
-  const src = playable && typeof video.videoUrl === "string" ? video.videoUrl.trim() : "";
+  const src = playable ? publishedLibrarySrc(video.videoUrl || video.src) : "";
   return {
     kind: playable ? "library-play" : "open-draft",
     cta: videoCardCta(video, now),
@@ -73,7 +87,7 @@ export function dispatchLibraryVideo(video, model = libraryCardModel(video)) {
   }
   try {
     window.dispatchEvent(
-      new CustomEvent(LIBRARY_OPEN_EVENT, { detail: { video, model } }),
+      new CustomEvent(LIBRARY_OPEN_EVENT, { detail: { video: resolveCatalogVideo(video), model } }),
     );
     return true;
   } catch {
@@ -87,12 +101,13 @@ export function dispatchLibraryVideo(video, model = libraryCardModel(video)) {
  * vendor openVideo(id) setter so the existing modal still appears.
  */
 export function activateLibraryVideo(video, openVideo, deps = {}) {
-  const model = libraryCardModel(video);
-  const dispatched = (deps.dispatch || dispatchLibraryVideo)(video, model);
+  const resolved = resolveCatalogVideo(video, deps.catalog);
+  const model = libraryCardModel(resolved, undefined, deps.catalog);
+  const dispatched = (deps.dispatch || dispatchLibraryVideo)(resolved, model);
   const hostMounted =
     typeof globalThis !== "undefined" && globalThis.__mpLibraryHostMounted === true;
-  if (!hostMounted && typeof openVideo === "function" && video?.id) {
-    openVideo(video.id);
+  if (!hostMounted && typeof openVideo === "function" && resolved?.id) {
+    openVideo(resolved.id);
   }
   return {
     fired: model.kind !== "invalid",
