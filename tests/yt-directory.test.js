@@ -150,6 +150,7 @@ describe("YouTube directory page chrome", () => {
   it("has a Search submit control, Enter-capable form, and outbound CTA", () => {
     assert.match(inject, /role:`search`/);
     assert.match(inject, /onSubmit:applySearch/);
+    assert.match(inject, /onChange:onSearchChange/);
     assert.match(inject, /type:`submit`/);
     assert.match(inject, /children:`Search`/);
     assert.match(inject, /youtube-speaker-filter/);

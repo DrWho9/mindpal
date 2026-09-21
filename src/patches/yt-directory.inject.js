@@ -7,7 +7,6 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
   let[m,h]=(0,_.useState)(``);
   let[b,x]=(0,_.useState)(()=>({...se,topic:e}));
   let S=(0,_.useRef)(null);
-  let R=(0,_.useRef)(null);
   let te=mpReadings.directorySpeakerOptions(t,E);
   let M={...b,favouriteIds:a.ids};
   let speakerIds=J?[]:(M.speakerMode===`discover`?[]:a.ids);
@@ -24,13 +23,16 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
     if(e&&e.preventDefault)e.preventDefault();
     z(c.trim());
     h(``);
-    requestAnimationFrame(()=>R.current?.focus());
+  }
+  function onSearchChange(e){
+    let next=e.target.value;
+    l(next);
+    if(!next.trim())z(``);
   }
   function onSpeakerFilter(e){
     X(e.target.value);
     z(c.trim());
     h(``);
-    requestAnimationFrame(()=>R.current?.focus());
   }
   let re=(entry)=>(0,A.jsxs)(`article`,{className:`activity-detail mp-yt-dir-card`,"aria-label":entry.title,children:[
     (0,A.jsx)(`h3`,{children:entry.title}),
@@ -60,7 +62,7 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
     (0,A.jsxs)(`form`,{className:`mp-yt-dir-search`,role:`search`,"aria-label":`Search the YouTube directory`,onSubmit:applySearch,children:[
       (0,A.jsxs)(`div`,{className:`mp-yt-dir-field`,children:[
         (0,A.jsx)(`label`,{htmlFor:`youtube-search`,children:`Search titles, creators and descriptions`}),
-        (0,A.jsx)(`input`,{id:`youtube-search`,type:`search`,value:c,onChange:e=>l(e.target.value),autoComplete:`off`})
+        (0,A.jsx)(`input`,{id:`youtube-search`,type:`search`,value:c,onChange:onSearchChange,autoComplete:`off`})
       ]}),
       (0,A.jsxs)(`div`,{className:`mp-yt-dir-field`,children:[
         (0,A.jsx)(`label`,{htmlFor:`youtube-speaker-filter`,children:`Choose a speaker`}),
@@ -71,7 +73,7 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
       ]}),
       (0,A.jsx)(`button`,{className:`primary`,type:`submit`,children:`Search`})
     ]}),
-    (0,A.jsx)(`p`,{ref:R,tabIndex:-1,role:`status`,"aria-label":`Directory entries`,children:ne.length?`${ne.length} director${ne.length===1?`y entry`:`y entries`}`:mpReadings.directoryEmptyCopy({query:Y,speakerId:J,speakerIds})}),
+    (0,A.jsx)(`p`,{role:`status`,"aria-label":`Directory entries`,children:ne.length?`${ne.length} director${ne.length===1?`y entry`:`y entries`}`:mpReadings.directoryEmptyCopy({query:Y,speakerId:J,speakerIds})}),
     ne.length
       ?(0,A.jsx)(`div`,{className:`mp-yt-dir-results`,children:ne.map(entry=>re(entry))})
       :(0,A.jsx)(`p`,{className:`muted`,children:mpReadings.directoryEmptyCopy({query:Y,speakerId:J,speakerIds})}),
