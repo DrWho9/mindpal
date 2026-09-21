@@ -14,7 +14,7 @@ if ("serviceWorker" in navigator) {
       refreshed = true;
       const url = new URL(location.href);
       if (!url.searchParams.has("cb")) {
-        url.searchParams.set("cb", "shell-v4");
+        url.searchParams.set("cb", "shell-v5");
         location.replace(url.href);
         return;
       }

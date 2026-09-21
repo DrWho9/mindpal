@@ -45,7 +45,18 @@ export function joinCompanionUrl(base, path) {
   return `${prefix}${String(path || "").replace(/^\//, "")}`;
 }
 
+export function companionBaseFromSearch(search = "") {
+  const query = String(search || "");
+  const params = new URLSearchParams(query.startsWith("?") ? query.slice(1) : query);
+  const fromQuery = params.get("companionBase");
+  if (!fromQuery) return "";
+  return normalizeCompanionBase(fromQuery);
+}
+
 export function resolveCompanionBase(source = globalThis) {
+  const fromQuery = companionBaseFromSearch(source?.location?.search || "");
+  if (fromQuery) return fromQuery;
+
   const fromWindow =
     source && typeof source[BASE_WINDOW_KEY] === "string"
       ? source[BASE_WINDOW_KEY].trim()
