@@ -284,3 +284,15 @@ describe("Reflect chat inject", () => {
     assert.match(build, /onOpenReflect:\(\)=>I\(`Reflect`\)/);
   });
 });
+
+describe("Pages tip hash", () => {
+  it("does not keep Hands’ failed pre-chat index-3cb5ea74.js", () => {
+    const html = readFileSync(join(root, "../index.html"), "utf8");
+    const verify = readFileSync(join(root, "../scripts/verify.mjs"), "utf8");
+    assert.doesNotMatch(html, /index-3cb5ea74\.js/);
+    assert.match(html, /assets\/index-[a-z0-9]+\.js/);
+    assert.match(html, /http:\/\/127\.0\.0\.1:\*/);
+    assert.doesNotMatch(html, /trycloudflare\.com|127\.0\.0\.1:8787/);
+    assert.match(verify, /index-3cb5ea74/);
+  });
+});

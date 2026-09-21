@@ -15,6 +15,7 @@ const js = readFileSync(jsPath, "utf8");
 const checks = [
   [html.includes('src="/mindpal/assets/'), "index.html keeps /mindpal/ JS path"],
   [html.includes('href="/mindpal/assets/'), "index.html keeps /mindpal/ CSS path"],
+  [jsName !== "index-3cb5ea74.js" && !html.includes("index-3cb5ea74.js") && !sw.includes("index-3cb5ea74.js"), "index.html/sw do not still load the pre-chat index-3cb5ea74.js hash"],
   [html.includes("/mindpal/registerSW.js") || html.includes("vite-plugin-pwa"), "PWA register path unchanged"],
   [sw.includes(`assets/${jsName}`), "service worker lists new JS"],
   [sw.includes(`assets/${cssName}`), "service worker lists new CSS"],
