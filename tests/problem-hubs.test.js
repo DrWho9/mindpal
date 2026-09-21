@@ -186,8 +186,9 @@ describe("problem hubs", () => {
   });
 
   it("keeps Today sign-in off the mid-page and verse collapsed", () => {
-    assert.match(inject, /mpTodaySteps\.HUB_FLOW_LINE|Follow today’s steps/);
-    assert.match(inject, /Today’s verse — tap to expand/);
+    assert.match(inject, /mpTodaySteps\.HUB_FLOW_LINE|Individual Growth/);
+    assert.match(inject, /mpIndividualGrowthCard/);
+    assert.match(inject, /Verse of the day|GROWTH_CHAPTER_SUMMARY|Today’s verse/);
     assert.match(inject, /mp-account-footer/);
     assert.match(inject, /What do you need help with\?/);
     assert.match(inject, /mp-problem-chip/);
@@ -244,6 +245,13 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /No speaker library dump here/);
     assert.match(inject, /Need support/);
+    assert.match(inject, /mpFoldSection/);
+    assert.match(inject, /id:`readings`/);
+    assert.match(inject, /id:`videos`/);
+    assert.match(inject, /id:`companion`/);
+    assert.match(inject, /id:`journal`/);
+    assert.match(inject, /id:`safety`/);
+    assert.match(inject, /one at a time/);
   });
 
   it("wires a dedicated drugs & alcohol hub with safety copy", () => {

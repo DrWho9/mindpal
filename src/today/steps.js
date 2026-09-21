@@ -4,7 +4,8 @@ export const STEPS_STORAGE_KEY = "mindpal.todaySteps.v1";
 
 export const STEP_IDS = ["readings", "focus", "later", "evening"];
 
-export const HUB_FLOW_LINE = "Follow today’s steps — Morning, Day, then Night.";
+export const HUB_FLOW_LINE =
+  "Start with Individual Growth — four personal steps. Support and Team sit below if you want them.";
 
 export const STEP_META = {
   readings: {
