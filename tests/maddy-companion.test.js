@@ -83,11 +83,16 @@ describe("Maddy play gate is not the HeyGen draft gate", () => {
     }
   });
 
-  it("does not treat HeyGen V01–V12 drafts as companion clips", () => {
+  it("does not treat HeyGen V01–V12 rows as companion clips", () => {
     for (const video of heygenCatalog.videos) {
       assert.equal(isMaddyCompanionPlayable(video), false);
-      assert.equal(isVideoPlayable(video), false);
-      assert.equal(videoCardCta(video), "Open draft");
+      if (video.id === "V02") {
+        assert.equal(isVideoPlayable(video), true);
+        assert.equal(videoCardCta(video), "Play");
+      } else {
+        assert.equal(isVideoPlayable(video), false);
+        assert.equal(videoCardCta(video), "Open draft");
+      }
     }
   });
 

@@ -110,7 +110,18 @@ dialog[open]>*{pointer-events:auto}
 .mp-faith-chip{background:#fffef9;border:2px solid #7c9163;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:650;cursor:pointer;color:#2f3b2c}
 .mp-faith-chip:hover,.mp-faith-chip.is-open{background:#2f5a3d;color:#f7f8f2;border-color:#2f5a3d}
 .mp-faith-chips-other{padding-top:4px}
+.mp-setup-step{background:#fffef9;border:1px solid #c9dccb;border-radius:12px;padding:10px 14px}
+.mp-setup-step summary{cursor:pointer;font-weight:650;min-height:40px;display:flex;align-items:center}
+.mp-setup-step[open] summary{margin-bottom:8px}
+.mp-facts-card{background:#eef3ea;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.mp-facts-card h3{margin:.1em 0 .2em}
+.mp-facts-list{margin:4px 0 0;padding:0 0 0 1.2em;display:grid;gap:12px}
+.mp-facts-list li{padding-left:2px}
+.mp-facts-list p{margin:0 0 6px}
+.mp-fact-action{margin:0}
+.mp-facts-disclaimer{margin:4px 0 0;max-width:48ch}
 .mp-account-faith{margin:10px 0 14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.mp-account-profile{margin-top:0}
 .mp-morning-verse{margin:0 0 12px}
 
 .mp-today-hub{margin-bottom:18px;display:flex;flex-direction:column;gap:18px}
@@ -121,20 +132,36 @@ dialog[open]>*{pointer-events:auto}
 .mp-band-morning{background:linear-gradient(#e7efe6,#fffef9 90px)}
 .mp-band-day{background:linear-gradient(#e4eef6,#fffef9 90px)}
 .mp-band-night{background:linear-gradient(#ebe6de,#fffef9 90px)}
+.mp-band-team{background:linear-gradient(#eef3ea,#fffef9 90px)}
+.mp-individual-growth{padding:16px 16px 18px}
+.mp-individual-growth > h2{margin:.1em 0 .35em}
+.mp-individual-growth > p{margin:0 0 8px;max-width:48ch}
 .mp-day-band > .eyebrow{margin:0 0 2px}
 .mp-day-band > .muted{margin:0 0 10px}
 .mp-team-ritual-card{background:#fffef9;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:0 0 12px}
 .mp-team-ritual-card h2{margin:.1em 0 .35em}
 .mp-team-ritual-card > p{margin:0 0 8px;max-width:48ch}
+.mp-team-ritual-open{font-size:1.12rem;font-weight:650;color:#2f5a3d;max-width:46ch;margin:0 0 10px}
 .mp-team-ritual-steps{list-style:none;margin:8px 0 12px;padding:0;display:grid;gap:8px}
 .mp-team-ritual-steps li{background:#eef5ee;border:1px solid #d5dccb;border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:4px}
 .mp-team-ritual-steps li.is-next{box-shadow:0 0 0 2px rgba(47,90,61,.18)}
 .mp-team-ritual-path{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
 .mp-team-ritual-path .mp-day-step{padding:12px 14px}
-.mp-team-breath-clock{font-size:2.1rem;font-weight:700;letter-spacing:.04em;margin:8px 0 4px;color:#2f3b2c}
+.mp-team-ritual-path .mp-step-main{width:100%}
+.mp-team-ritual-path .mp-day-step.is-locked{opacity:.78}
+.mp-team-step-body{margin:12px 0 2px;padding-top:8px;border-top:1px solid #dfe4d5}
+.mp-team-verse-body,.mp-team-chapter{display:flex;flex-direction:column;gap:10px;margin:8px 0 12px}
+.mp-fold .mp-fold-head{appearance:none;background:transparent;border:0;padding:0;margin:0;width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:44px}
+.mp-fold .mp-fold-head h2{margin:0;flex:1 1 12rem}
+.mp-fold-caret{font-size:13px;font-weight:650;color:#2f5a3d}
+.mp-fold-body{margin-top:10px}
+.mp-team-breath-clock{font-size:1.35rem;font-weight:700;letter-spacing:.04em;margin:8px 0 2px;color:#5c6756}
+.mp-team-breath-count{font-size:4rem;font-weight:750;line-height:.95;letter-spacing:.02em;margin:2px 0 4px;color:#2f5a3d;font-variant-numeric:tabular-nums}
 .mp-team-breath-cue{font-size:1.15rem;margin:0 0 12px;max-width:40ch}
 .mp-team-breath-video{margin:8px 0 14px}
+.mp-team-breath-frame{position:relative}
 .mp-team-breath-video video{background:#182d47;border-radius:14px;width:100%;aspect-ratio:16/9;display:block}
+.mp-team-breath-overlay{position:absolute;right:12px;top:12px;min-width:2.4rem;padding:6px 12px;border-radius:12px;background:#182d478f;color:#fffef9;font-size:2rem;font-weight:750;line-height:1;text-align:center;pointer-events:none;font-variant-numeric:tabular-nums}
 .mp-team-next{background:#eef5ee;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:14px 0 0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .mp-team-reading-body{display:flex;flex-direction:column;gap:10px;margin:10px 0 14px}
 .mp-lane-team-ritual{--mp-lane:#2f5a3d}
@@ -174,28 +201,11 @@ dialog[open]>*{pointer-events:auto}
 .mp-hub-tags{color:#6a5a3a;font-size:12px}
 .mp-problem-chip-mothers{border-color:#9a6934}
 .mp-problem-chip-aod{border-color:#8a9bb0}
-.mp-problem-chip-mens{border-color:#3d5470}
-.mp-problem-chip-mens:hover,.mp-problem-chip-mens.is-open{background:#2a4a62;color:#f7f8f2;border-color:#2a4a62}
-.mp-mothers-feelings,.mp-mothers-women,.mp-aod-feelings,.mp-mens-feelings{margin:0 0 18px}
+.mp-mothers-feelings,.mp-mothers-women,.mp-aod-feelings{margin:0 0 18px}
 .mp-lane-mothers{--mp-lane:#7a5a28}
 .mp-lane-aod{--mp-lane:#3d5470}
-.mp-lane-mens{--mp-lane:#2a4a62;background:linear-gradient(#e4eaf1,#f7f8f2 140px)}
 .mp-mothers-safety{border-color:#e2d2b0}
 .mp-aod-safety{border-color:#c5d0dc}
-.mp-mens-hero{font-weight:650;max-width:40ch}
-.mp-mens-compare{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
-.mp-mens-stat{background:#f4f7fb;border:1px solid #c5d0dc;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
-.mp-mens-stat h3{margin:0}
-.mp-mens-bridge{background:#eef3ea;border-left:3px solid #2f5a3d;padding:12px 14px;margin:12px 0 0;max-width:62ch}
-.mp-hub-acc{padding-top:12px}
-.mp-hub-acc-toggle{appearance:none;background:transparent;border:0;padding:0;margin:0 0 8px;width:100%;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:44px}
-.mp-hub-acc-toggle h2{margin:0}
-.mp-hub-acc-flag{color:#5c6756;font-size:13px;font-weight:650}
-.mp-hub-acc-body{display:flex;flex-direction:column;gap:10px;margin-top:4px}
-.mp-mens-phone{font-weight:750;letter-spacing:.02em;font-size:1.15rem}
-.mp-mens-queue{margin:8px 0 0;padding-left:1.2em;display:grid;gap:8px}
-.mp-mens-featured-help{background:#e8eef6}
-@media (width<=800px){.mp-mens-compare{grid-template-columns:1fr}}
 @media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
