@@ -136,6 +136,16 @@ const checks = [
   [js.includes("maddy-timed-breath") && js.includes("/videos/maddy/timed-breath.mp4"), "team ritual reuses Maddy timed breath"],
   [js.includes("does not mark a Pack A") && js.includes("mindpal.teamMorningRitual.v1"), "team ritual reading stays off the Pack A Done gate"],
   [js.includes("onOpenTeamRitual:()=>I(`Team morning`)"), "Today Morning card opens the team ritual"],
+  [js.includes("I have a faith / religion") && js.includes("No religion / prefer secular"), "sign-in faith stance choices are present"],
+  [js.includes("So we can relate to you — what’s your religion?"), "religion follow-up copy is present"],
+  [js.includes("mpFaithPrefQuestions") && js.includes("mpAccountFaithCard"), "faith setup and Account edit are present"],
+  [js.includes("pickMorningVerse") && js.includes("function mpMorningVerse("), "tradition-targeted morning verse is present"],
+  [js.includes("t===`verse`&&(0,A.jsx)(mpMorningVerse,{})"), "Explore verse uses the targeted card"],
+  [js.includes("faithStance:``,tradition:``,traditionId:``"), "new local profiles do not default to Christianity"],
+  [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
+  [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
+  [js.includes("setFaithAsk(mpNeedsFaithSetup())") && js.includes("if(faithAsk)"), "Today shows faith questions when preference is missing"],
+  [js.includes("mpSetGateTick(e=>e+1)"), "faith-change re-renders the sign-in gate"],
 ];
 
 const maddyFiles = [
@@ -174,6 +184,9 @@ if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-cloc
 }
 if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
   throw new Error("Individual Growth / Team Growth band styles missing");
+}
+if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
+  throw new Error("faith preference chip styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
