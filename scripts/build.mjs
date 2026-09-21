@@ -786,25 +786,25 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "F=(0,_.useRef)(null);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
-    "F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),()=>window.removeEventListener(`mindpal-session-change`,e)},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
+    "F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt())}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);",
     "session-state",
   );
   next = replaceOnce(
     next,
     "className:`app`,children:[(0,A.jsx)(`a`,{className:`skip`",
-    "className:`app${a===`adult`&&!mpAuthed?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`",
+    "className:`app${a===`adult`&&mpShowSignInGate()?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`",
     "signin-shell-class",
   );
   next = replaceOnce(
     next,
     "try`)})]}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`",
-    "try`)})]}):a===`adult`&&!mpAuthed?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`",
+    "try`)})]}):a===`adult`&&mpShowSignInGate()?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`",
     "signin-gate",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I})",
-    "mpAuthed||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null",
+    "!mpShowSignInGate()||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null",
     "hide-tabs-until-signin",
   );
 
@@ -940,6 +940,9 @@ function patchOwnerUx(source) {
   }
   if (!next.includes("faithStance:``,tradition:``,traditionId:``")) {
     throw new Error("new local profiles still default to a religion");
+  }
+  if (!next.includes("function mpNeedsFaithSetup(") || !next.includes("mpShowSignInGate()")) {
+    throw new Error("first-setup faith gate is not holding the sign-in shell");
   }
   if (!next.includes("function mpGoHome(") || !next.includes("onClick:()=>mpGoHome(I)")) {
     throw new Error("MindPal brand is not wired to go home");

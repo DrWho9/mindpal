@@ -4,6 +4,15 @@ function mpGoHome(navigate){
 function mpNotifySession(){
   try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}
 }
+function mpNeedsFaithSetup(){
+  try{
+    if(typeof Dt==`function`&&!Dt())return !1;
+    return !mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{});
+  }catch{return !1}
+}
+function mpShowSignInGate(){
+  try{return typeof Dt==`function`?!Dt()||mpNeedsFaithSetup():!0}catch{return !0}
+}
 function mpSignedInName(fallback){
   try{
     let e=typeof Mt==`function`?Mt(Dt()):null;
@@ -69,10 +78,10 @@ function mpFaithPrefQuestions({mode:e=`setup`,onDone:t}){
   ]});
 }
 function mpSignInPage({onSignedIn:e}){
-  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(!1);
+  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(()=>mpNeedsFaithSetup());
   function h(g){
     mpNotifySession();
-    if(!mpFaith.hasFaithPreference(g&&g.preferences)){
+    if(!mpFaith.hasFaithPreference(g&&g.preferences)&&!mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{})){
       m(!0);
       return;
     }

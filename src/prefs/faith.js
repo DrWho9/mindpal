@@ -176,11 +176,9 @@ export function hasFaithPreference(prefs) {
 export function isSecularPrefs(prefs) {
   if (!prefs || typeof prefs !== "object") return false;
   if (prefs.faithStance === FAITH_STANCE_SECULAR) return true;
-  if (prefs.morningVerseEnabled === false && prefs.faithStance !== FAITH_STANCE_RELIGIOUS) {
-    const tradition = typeof prefs.tradition === "string" ? prefs.tradition.trim() : "";
-    return !tradition || /no religion|secular|prefer secular/i.test(tradition);
-  }
-  return false;
+  if (prefs.faithStance === FAITH_STANCE_RELIGIOUS) return false;
+  const tradition = typeof prefs.tradition === "string" ? prefs.tradition.trim() : "";
+  return /no religion|secular|prefer secular/i.test(tradition);
 }
 
 export function shouldShowFaithModules(prefs) {
@@ -224,7 +222,9 @@ export function faithSummary(prefs) {
     return "No religion / secular";
   }
   const label = traditionLabel(prefs?.traditionId || prefs?.tradition);
-  return label || "Faith preference saved";
+  if (label) return label;
+  if (hasFaithPreference(prefs)) return "Faith preference saved";
+  return "Not set yet";
 }
 
 export function updateSessionPreferences(patch, storage = globalThis.localStorage) {

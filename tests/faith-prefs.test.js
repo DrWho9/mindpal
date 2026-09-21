@@ -180,6 +180,20 @@ describe("sign-in faith preference", () => {
     assert.equal(shouldShowMorningPrayer({ tradition: "Christianity" }), true);
     assert.equal(hasFaithPreference({}), false);
   });
+
+  it("does not treat an unanswered new profile as already secular", () => {
+    const unanswered = {
+      faithStance: "",
+      tradition: "",
+      traditionId: "",
+      morningVerseEnabled: false,
+      morningPrayerEnabled: false,
+    };
+    assert.equal(hasFaithPreference(unanswered), false);
+    assert.equal(isSecularPrefs(unanswered), false);
+    assert.equal(shouldShowFaithModules(unanswered), false);
+    assert.equal(faithSummary(unanswered), "Not set yet");
+  });
 });
 
 describe("scripture targeting", () => {
@@ -240,6 +254,8 @@ describe("scripture targeting", () => {
 
 describe("faith preference surfaces", () => {
   it("asks once at sign-in and can be edited on the Local account card", () => {
+    assert.match(inject, /function mpNeedsFaithSetup/);
+    assert.match(inject, /function mpShowSignInGate/);
     assert.match(inject, /function mpFaithPrefQuestions/);
     assert.match(inject, /I have a faith \/ religion/);
     assert.match(inject, /No religion \/ prefer secular/);
@@ -257,5 +273,6 @@ describe("faith preference surfaces", () => {
       /faithStance:``,tradition:``,traditionId:``/,
     );
     assert.match(build, /t===`verse`&&\(0,A\.jsx\)\(mpMorningVerse,\{\}\)/);
+    assert.match(build, /mpShowSignInGate\(\)/);
   });
 });

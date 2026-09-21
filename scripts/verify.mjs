@@ -134,6 +134,7 @@ const checks = [
   [js.includes("t===`verse`&&(0,A.jsx)(mpMorningVerse,{})"), "Explore verse uses the targeted card"],
   [js.includes("faithStance:``,tradition:``,traditionId:``"), "new local profiles do not default to Christianity"],
   [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
+  [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
 ];
 
 const maddyFiles = [
