@@ -261,11 +261,12 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /function mpBookReader\(/);
     assert.match(inject, /mpFoldSection/);
-    assert.match(kitUi, /No speaker library dump here/);
-    assert.match(kitUi, /Need support/);
-    assert.match(kitUi, /Evidence & guidance/);
-    assert.match(kitUi, /Open the reading/);
-    assert.match(kitUi, /mpKitReadingArticle/);
+    assert.match(inject, /mpHubAccordion/);
+    assert.match(inject, /Evidence & guidance/);
+    assert.match(inject, /mpHubOpenableReadings/);
+    assert.match(inject, /Full Pack A chapters/);
+    assert.match(inject, /No speaker library dump here/);
+    assert.match(inject, /Need support/);
   });
 
   it("wires a dedicated drugs & alcohol hub with safety copy", () => {
