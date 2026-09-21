@@ -9454,13 +9454,17 @@ function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
 const TEAM_RITUAL_STORAGE_KEY = "mindpal.teamMorningRitual.v1";
 const TEAM_RITUAL_CHANGE_EVENT = "mindpal-team-ritual-change";
 
-const TEAM_RITUAL_TITLE = "Work team morning ritual";
-const TEAM_RITUAL_SHORT = "Team morning settle";
-const TEAM_RITUAL_EYEBROW = "OPTIONAL · WORK TEAM";
+const TEAM_RITUAL_TITLE = "MindPal work team morning ritual";
+const TEAM_RITUAL_SHORT = "MindPal team morning settle";
+const TEAM_RITUAL_EYEBROW = "MINDPAL · OPTIONAL · WORK TEAM";
+const TEAM_RITUAL_OPEN =
+  "MindPal is glad you’re here — let’s settle in together before the day gets loud.";
 const TEAM_RITUAL_LEDE =
-  "Arrive, then start. Three quiet minutes for the body, then one peaceful reading. Optional — nobody is keeping score.";
+  "Arrive with MindPal, then start. Three quiet minutes for the body, then one peaceful reading. Optional — nobody is keeping score.";
 const TEAM_RITUAL_HINT =
   "Tap to expand. Breath first, so the words can land.";
+const TEAM_RITUAL_BREATH_HERO =
+  "About three minutes. Follow Maddy if you’d like company — inhale 4, hold 4, exhale 6. MindPal counts down each phase. The clock keeps going after the clip ends.";
 
 const TEAM_RITUAL_BREATH_ID = "maddy-timed-breath";
 const TEAM_RITUAL_BREATH_SRC = "/videos/maddy/timed-breath.mp4";
@@ -9473,7 +9477,7 @@ const RITUAL_STEPS = {
     number: 1,
     title: "Breathe",
     rowLabel: "Breathe (~3 min)",
-    blurb: "Settle the body first. Follow Maddy’s timed breath, or the quiet cues here.",
+    blurb: "Settle the body first with MindPal. Follow Maddy’s timed breath, or the quiet countdown cues here.",
   },
   reading: {
     id: "reading",
@@ -9570,20 +9574,43 @@ function formatBreathClock(remainingSec) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+function remainingPhaseCount(phaseElapsedSec, totalCounts) {
+  const total = Math.max(1, Number(totalCounts) || 1);
+  const elapsed = Math.max(0, Number(phaseElapsedSec) || 0);
+  const used = Math.floor(elapsed / BREATH_COUNT_SEC);
+  return Math.max(1, total - used);
+}
+
 function breathCueAt(elapsedSec) {
   const elapsed = Math.max(0, Number(elapsedSec) || 0);
   if (elapsed >= BREATH_DURATION_SEC) {
-    return { phase: "done", label: "That’s enough. Let the next breath be ordinary." };
+    return { phase: "done", count: null, label: "That’s enough. Let the next breath be ordinary." };
   }
   if (elapsed < BREATH_SETTLE_SEC) {
-    return { phase: "settle", label: "Settle in. Soften the jaw and drop the shoulders." };
+    return { phase: "settle", count: null, label: "Settle in. Soften the jaw and drop the shoulders." };
   }
   const t = (elapsed - BREATH_SETTLE_SEC) % BREATH_CYCLE_SEC;
   const inhale = BREATH_INHALE_COUNTS * BREATH_COUNT_SEC;
   const hold = inhale + BREATH_HOLD_COUNTS * BREATH_COUNT_SEC;
-  if (t < inhale) return { phase: "inhale", label: "Inhale gently…" };
-  if (t < hold) return { phase: "hold", label: "Hold softly…" };
-  return { phase: "exhale", label: "Exhale, unhurried…" };
+  if (t < inhale) {
+    return {
+      phase: "inhale",
+      count: remainingPhaseCount(t, BREATH_INHALE_COUNTS),
+      label: "Inhale gently…",
+    };
+  }
+  if (t < hold) {
+    return {
+      phase: "hold",
+      count: remainingPhaseCount(t - inhale, BREATH_HOLD_COUNTS),
+      label: "Hold softly…",
+    };
+  }
+  return {
+    phase: "exhale",
+    count: remainingPhaseCount(t - hold, BREATH_EXHALE_COUNTS),
+    label: "Exhale, unhurried…",
+  };
 }
 
 function asStatus(value) {
@@ -10278,7 +10305,7 @@ mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
-mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenReading,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
+mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenReading,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -11037,6 +11064,7 @@ function mpTeamRitualCard({onOpen:e}){
   let a=mpTeamRitual.ritualStepStatus(t,`breathe`),o=mpTeamRitual.ritualStepStatus(t,`reading`),s=mpTeamRitual.nextRitualStep(t);
   let c=s===`reading`?`Continue to the reading`:s?`Start the settle`:`Open the ritual again`;
   return(0,A.jsxs)(`section`,{className:`mp-team-ritual-card`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
     (0,A.jsx)(`h2`,{children:mpTeamRitual.TEAM_RITUAL_TITLE}),
     (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_LEDE}),
@@ -11077,7 +11105,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
   let C=mpTeamRitual.breathCueAt(c);
   let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
   (0,_.useEffect)(()=>{function e(){r(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
-  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+1;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}return mpTeamRitual.BREATH_DURATION_SEC}return n})},1e3);return()=>clearInterval(e)},[o]);
+  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
   (0,_.useEffect)(()=>()=>{m&&m()},[m]);
   function E(e,t){
     let i=mpSaveRitual(mpTeamRitual.markRitual(n,e,t));
@@ -11102,6 +11130,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
     a(`reading`);
   }
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings mp-lane-team-ritual`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
     (0,A.jsx)(`h1`,{children:mpTeamRitual.TEAM_RITUAL_SHORT}),
     (0,A.jsx)(`p`,{className:`lede`,children:mpTeamRitual.TEAM_RITUAL_LEDE}),
@@ -11125,12 +11154,17 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       ]})
     ]}),
     i===`breathe`?(0,A.jsxs)(`section`,{className:`simple-panel mp-team-breath`,"aria-label":`Step 1 Breathe`,children:[
+      (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
       (0,A.jsx)(`h2`,{children:`Step 1 · Breathe`}),
-      (0,A.jsx)(`p`,{children:`About three minutes. Follow Maddy’s timed breath if you’d like company — inhale 4, hold 4, exhale 6. The clock keeps going after the clip ends.`}),
+      (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_BREATH_HERO}),
       (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
+      C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-count`,"aria-live":`polite`,children:C.count}):null,
       (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
       h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
-        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+        (0,A.jsxs)(`div`,{className:`mp-team-breath-frame`,children:[
+          (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+          C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-overlay`,"aria-hidden":!0,children:C.count}):null
+        ]}),
         (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
       ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[

@@ -3,13 +3,17 @@ import { civilDateKey } from "../calendar/civil.js";
 export const TEAM_RITUAL_STORAGE_KEY = "mindpal.teamMorningRitual.v1";
 export const TEAM_RITUAL_CHANGE_EVENT = "mindpal-team-ritual-change";
 
-export const TEAM_RITUAL_TITLE = "Work team morning ritual";
-export const TEAM_RITUAL_SHORT = "Team morning settle";
-export const TEAM_RITUAL_EYEBROW = "OPTIONAL · WORK TEAM";
+export const TEAM_RITUAL_TITLE = "MindPal work team morning ritual";
+export const TEAM_RITUAL_SHORT = "MindPal team morning settle";
+export const TEAM_RITUAL_EYEBROW = "MINDPAL · OPTIONAL · WORK TEAM";
+export const TEAM_RITUAL_OPEN =
+  "MindPal is glad you’re here — let’s settle in together before the day gets loud.";
 export const TEAM_RITUAL_LEDE =
-  "Arrive, then start. Three quiet minutes for the body, then one peaceful reading. Optional — nobody is keeping score.";
+  "Arrive with MindPal, then start. Three quiet minutes for the body, then one peaceful reading. Optional — nobody is keeping score.";
 export const TEAM_RITUAL_HINT =
   "Tap to expand. Breath first, so the words can land.";
+export const TEAM_RITUAL_BREATH_HERO =
+  "About three minutes. Follow Maddy if you’d like company — inhale 4, hold 4, exhale 6. MindPal counts down each phase. The clock keeps going after the clip ends.";
 
 export const TEAM_RITUAL_BREATH_ID = "maddy-timed-breath";
 export const TEAM_RITUAL_BREATH_SRC = "/videos/maddy/timed-breath.mp4";
@@ -22,7 +26,7 @@ export const RITUAL_STEPS = {
     number: 1,
     title: "Breathe",
     rowLabel: "Breathe (~3 min)",
-    blurb: "Settle the body first. Follow Maddy’s timed breath, or the quiet cues here.",
+    blurb: "Settle the body first with MindPal. Follow Maddy’s timed breath, or the quiet countdown cues here.",
   },
   reading: {
     id: "reading",
@@ -119,20 +123,43 @@ export function formatBreathClock(remainingSec) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+function remainingPhaseCount(phaseElapsedSec, totalCounts) {
+  const total = Math.max(1, Number(totalCounts) || 1);
+  const elapsed = Math.max(0, Number(phaseElapsedSec) || 0);
+  const used = Math.floor(elapsed / BREATH_COUNT_SEC);
+  return Math.max(1, total - used);
+}
+
 export function breathCueAt(elapsedSec) {
   const elapsed = Math.max(0, Number(elapsedSec) || 0);
   if (elapsed >= BREATH_DURATION_SEC) {
-    return { phase: "done", label: "That’s enough. Let the next breath be ordinary." };
+    return { phase: "done", count: null, label: "That’s enough. Let the next breath be ordinary." };
   }
   if (elapsed < BREATH_SETTLE_SEC) {
-    return { phase: "settle", label: "Settle in. Soften the jaw and drop the shoulders." };
+    return { phase: "settle", count: null, label: "Settle in. Soften the jaw and drop the shoulders." };
   }
   const t = (elapsed - BREATH_SETTLE_SEC) % BREATH_CYCLE_SEC;
   const inhale = BREATH_INHALE_COUNTS * BREATH_COUNT_SEC;
   const hold = inhale + BREATH_HOLD_COUNTS * BREATH_COUNT_SEC;
-  if (t < inhale) return { phase: "inhale", label: "Inhale gently…" };
-  if (t < hold) return { phase: "hold", label: "Hold softly…" };
-  return { phase: "exhale", label: "Exhale, unhurried…" };
+  if (t < inhale) {
+    return {
+      phase: "inhale",
+      count: remainingPhaseCount(t, BREATH_INHALE_COUNTS),
+      label: "Inhale gently…",
+    };
+  }
+  if (t < hold) {
+    return {
+      phase: "hold",
+      count: remainingPhaseCount(t - inhale, BREATH_HOLD_COUNTS),
+      label: "Hold softly…",
+    };
+  }
+  return {
+    phase: "exhale",
+    count: remainingPhaseCount(t - hold, BREATH_EXHALE_COUNTS),
+    label: "Exhale, unhurried…",
+  };
 }
 
 function asStatus(value) {

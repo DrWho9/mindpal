@@ -13,8 +13,10 @@ import {
   RITUAL_STEPS,
   TEAM_RITUAL_BREATH_ID,
   TEAM_RITUAL_BREATH_SRC,
+  TEAM_RITUAL_BREATH_HERO,
   TEAM_RITUAL_EYEBROW,
   TEAM_RITUAL_LEDE,
+  TEAM_RITUAL_OPEN,
   TEAM_RITUAL_SHORT,
   TEAM_RITUAL_STORAGE_KEY,
   TEAM_RITUAL_TITLE,
@@ -62,11 +64,19 @@ describe("work team morning ritual", () => {
   });
 
   it("uses warm team-settle copy, not hustle language", () => {
-    assert.equal(TEAM_RITUAL_TITLE, "Work team morning ritual");
-    assert.equal(TEAM_RITUAL_SHORT, "Team morning settle");
-    assert.equal(TEAM_RITUAL_EYEBROW, "OPTIONAL · WORK TEAM");
+    assert.equal(TEAM_RITUAL_TITLE, "MindPal work team morning ritual");
+    assert.equal(TEAM_RITUAL_SHORT, "MindPal team morning settle");
+    assert.equal(TEAM_RITUAL_EYEBROW, "MINDPAL · OPTIONAL · WORK TEAM");
+    assert.equal(
+      TEAM_RITUAL_OPEN,
+      "MindPal is glad you’re here — let’s settle in together before the day gets loud.",
+    );
+    assert.match(TEAM_RITUAL_LEDE, /MindPal/);
     assert.match(TEAM_RITUAL_LEDE, /optional/i);
     assert.match(TEAM_RITUAL_LEDE, /peaceful reading/i);
+    assert.match(RITUAL_STEPS.breathe.blurb, /MindPal/);
+    assert.match(TEAM_RITUAL_BREATH_HERO, /MindPal/);
+    assert.match(TEAM_RITUAL_BREATH_HERO, /counts down/i);
     assert.doesNotMatch(TEAM_RITUAL_LEDE, /hustle|crush|unlock potential|standup/i);
     assert.equal(RITUAL_STEPS.breathe.rowLabel, "Breathe (~3 min)");
     assert.equal(RITUAL_STEPS.reading.title, "Peaceful reading");
@@ -127,11 +137,26 @@ describe("work team morning ritual", () => {
     assert.equal(formatBreathClock(180), "3:00");
     assert.equal(formatBreathClock(9), "0:09");
     assert.equal(breathCueAt(2).phase, "settle");
+    assert.equal(breathCueAt(2).count, null);
     assert.equal(breathCueAt(8).phase, "inhale");
+    assert.deepEqual(
+      [0, 1.4, 1.5, 3, 4.5, 5.9].map((offset) => breathCueAt(8 + offset).count),
+      [4, 4, 3, 2, 1, 1],
+    );
     assert.equal(breathCueAt(8 + 4 * 1.5).phase, "hold");
+    assert.deepEqual(
+      [0, 1.5, 3, 4.5].map((offset) => breathCueAt(8 + 4 * 1.5 + offset).count),
+      [4, 3, 2, 1],
+    );
     assert.equal(breathCueAt(8 + 8 * 1.5).phase, "exhale");
+    assert.deepEqual(
+      [0, 1.5, 3, 4.5, 6, 7.5].map((offset) => breathCueAt(8 + 8 * 1.5 + offset).count),
+      [6, 5, 4, 3, 2, 1],
+    );
     assert.equal(breathCueAt(8 + BREATH_CYCLE_SEC).phase, "inhale");
+    assert.equal(breathCueAt(8 + BREATH_CYCLE_SEC).count, 4);
     assert.equal(breathCueAt(180).phase, "done");
+    assert.equal(breathCueAt(180).count, null);
   });
 
   it("persists on mindpal.teamMorningRitual.v1 for the civil day", () => {
@@ -156,6 +181,11 @@ describe("work team morning ritual", () => {
     assert.match(inject, /function mpTeamRitualCard\(/);
     assert.match(inject, /function mpTeamRitualPage\(/);
     assert.match(inject, /Work team morning ritual/);
+    assert.match(inject, /TEAM_RITUAL_OPEN/);
+    assert.match(inject, /TEAM_RITUAL_BREATH_HERO/);
+    assert.match(inject, /mp-team-ritual-open/);
+    assert.match(inject, /mp-team-breath-count/);
+    assert.match(inject, /mp-team-breath-overlay/);
     assert.match(inject, /TEAM_RITUAL_SHORT|Team morning settle/);
     assert.match(inject, /Step 1 · Breathe/);
     assert.match(inject, /Step 2 · Peaceful reading/);
@@ -168,6 +198,7 @@ describe("work team morning ritual", () => {
     assert.doesNotMatch(inject, /hustle|crush the morning|standup/i);
     assert.match(build, /src\/today\/team-ritual\.js/);
     assert.match(build, /mpTeamRitual=/);
+    assert.match(build, /TEAM_RITUAL_OPEN/);
     assert.match(build, /t===`Team morning`/);
     assert.match(build, /onOpenTeamRitual:\(\)=>I\(`Team morning`\)/);
   });

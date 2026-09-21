@@ -464,6 +464,7 @@ function mpTeamRitualCard({onOpen:e}){
   let a=mpTeamRitual.ritualStepStatus(t,`breathe`),o=mpTeamRitual.ritualStepStatus(t,`reading`),s=mpTeamRitual.nextRitualStep(t);
   let c=s===`reading`?`Continue to the reading`:s?`Start the settle`:`Open the ritual again`;
   return(0,A.jsxs)(`section`,{className:`mp-team-ritual-card`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
     (0,A.jsx)(`h2`,{children:mpTeamRitual.TEAM_RITUAL_TITLE}),
     (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_LEDE}),
@@ -504,7 +505,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
   let C=mpTeamRitual.breathCueAt(c);
   let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
   (0,_.useEffect)(()=>{function e(){r(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
-  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+1;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}return mpTeamRitual.BREATH_DURATION_SEC}return n})},1e3);return()=>clearInterval(e)},[o]);
+  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
   (0,_.useEffect)(()=>()=>{m&&m()},[m]);
   function E(e,t){
     let i=mpSaveRitual(mpTeamRitual.markRitual(n,e,t));
@@ -529,6 +530,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
     a(`reading`);
   }
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings mp-lane-team-ritual`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
     (0,A.jsx)(`h1`,{children:mpTeamRitual.TEAM_RITUAL_SHORT}),
     (0,A.jsx)(`p`,{className:`lede`,children:mpTeamRitual.TEAM_RITUAL_LEDE}),
@@ -552,12 +554,17 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       ]})
     ]}),
     i===`breathe`?(0,A.jsxs)(`section`,{className:`simple-panel mp-team-breath`,"aria-label":`Step 1 Breathe`,children:[
+      (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
       (0,A.jsx)(`h2`,{children:`Step 1 · Breathe`}),
-      (0,A.jsx)(`p`,{children:`About three minutes. Follow Maddy’s timed breath if you’d like company — inhale 4, hold 4, exhale 6. The clock keeps going after the clip ends.`}),
+      (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_BREATH_HERO}),
       (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
+      C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-count`,"aria-live":`polite`,children:C.count}):null,
       (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
       h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
-        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+        (0,A.jsxs)(`div`,{className:`mp-team-breath-frame`,children:[
+          (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+          C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-overlay`,"aria-hidden":!0,children:C.count}):null
+        ]}),
         (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
       ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[

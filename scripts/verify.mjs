@@ -123,6 +123,8 @@ const checks = [
   [!js.includes("showModal"), "native dialogs are modeless so the brand can receive clicks"],
   [js.includes("Work team morning ritual") && js.includes("mpTeamRitualCard"), "optional team morning ritual card is present"],
   [js.includes("mpTeamRitualPage") && js.includes("t===`Team morning`"), "team morning ritual page is routed"],
+  [js.includes("MindPal is glad you’re here") && js.includes("mp-team-ritual-open"), "team ritual opens with a MindPal line"],
+  [js.includes("mp-team-breath-count") && js.includes("MindPal counts down each phase"), "team ritual breath cue counts down in-phase"],
   [js.includes("Step 1 · Breathe") && js.includes("Step 2 · Peaceful reading"), "team ritual keeps breath before reading"],
   [js.includes("maddy-timed-breath") && js.includes("/videos/maddy/timed-breath.mp4"), "team ritual reuses Maddy timed breath"],
   [js.includes("does not mark a Pack A") && js.includes("mindpal.teamMorningRitual.v1"), "team ritual reading stays off the Pack A Done gate"],
@@ -160,7 +162,7 @@ if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")
 if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
   throw new Error("Support/Growth group styles missing");
 }
-if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock")) {
+if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count")) {
   throw new Error("team morning ritual styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
