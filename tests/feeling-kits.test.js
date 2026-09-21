@@ -40,6 +40,8 @@ describe("feeling kits", () => {
     assert.ok(kit.startHere.body.includes("Rest is not a prize"));
     assert.ok(kit.startHere.chapterChips.includes("#sleep"));
     assert.ok(kit.startHere.chapterChips.includes("#self-compassion"));
+    assert.ok(kit.browseTags.length > 1);
+    assert.ok(kit.browseTags.includes("self-compassion") || kit.browseTags.includes("sleep"));
     assert.ok(kit.readings.every((item) => item.body && item.body.length > 80));
     assert.ok(kit.readings.every((item) => item.chapterChips.length));
     assert.ok(kit.readings.every((item) => item.title));
@@ -58,8 +60,10 @@ describe("feeling kits", () => {
   it("keeps drugs & alcohol featured talk-through and a curated shortlist", () => {
     const kit = feelingKit("aod", { pack: packA, hubs, catalogs, kitCatalog: kits });
     assert.equal(kit.startHere.id, "dna-dopamine-loop-v1");
+    assert.equal(kit.startHere.owner, true);
     assert.match(kit.startHere.title, /Drugs and alcohol/);
     assert.match(kit.startHere.body, /puppy/);
+    assert.ok(kit.browseTags.length > 1);
     assert.ok(kit.readings.length >= 6 && kit.readings.length <= 10);
     assert.equal(kit.videos.some((item) => item.id === "V02"), true);
     assert.equal(kit.videos.find((item) => item.id === "V02").cta, "Play");
@@ -118,6 +122,7 @@ describe("feeling kits", () => {
     assert.match(kitUi, /Journal \/ wins/);
     assert.match(kitUi, /Open the reading/);
     assert.match(kitUi, /mpKitReadingArticle/);
+    assert.match(kitUi, /function mpKitTagFilter\(\{tags:/);
     assert.doesNotMatch(kitUi, /matching Pack A reading/);
     assert.doesNotMatch(kitUi, /Locked on morning path/);
     assert.match(note, /high-model|high model|High-quality model/i);

@@ -3,6 +3,7 @@ import { isOwnerReading, mergeOwnerReadings } from "../readings/owner.js";
 import { videosForIds } from "../videos/emotions.js";
 
 export const KIT_READING_LIMIT = 10;
+export const KIT_BROWSE_TAG_LIMIT = 12;
 export const KIT_SECTION_IDS = ["start", "readings", "videos", "evidence", "talk", "journal"];
 
 const PROBLEM_ALIASES = {
@@ -148,10 +149,16 @@ export function feelingKit(
   const problem =
     Array.isArray(hubs?.problems) &&
     hubs.problems.find((item) => item?.id === spec.id || item?.id === feelingId);
-  const tagSet = new Set();
+  const tagCounts = new Map();
   for (const row of [startHere, ...readings].filter(Boolean)) {
-    for (const tag of row.chapterTags) tagSet.add(tag);
+    for (const tag of row.chapterTags) {
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    }
   }
+  const browseTags = [...tagCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .map(([tag]) => tag)
+    .slice(0, KIT_BROWSE_TAG_LIMIT);
   return {
     id: spec.id,
     title: spec.title || spec.shortTitle || spec.id,
@@ -165,7 +172,7 @@ export function feelingKit(
     journalPrompt: spec.journalPrompt || problem?.journalPrompt || "",
     safety: spec.safety && spec.safety.title && spec.safety.body ? spec.safety : null,
     evidence: evidenceFromSpec(spec),
-    browseTags: [...tagSet],
+    browseTags,
     sections: KIT_SECTION_IDS.filter((id) => {
       if (id === "evidence") return Boolean(evidenceFromSpec(spec));
       return true;

@@ -5,11 +5,11 @@ function mpKitReadingMeta(reading){
   }
   return theme||``;
 }
-function mpKitTagFilter(tags,active,onChange){
-  if(!tags||!tags.length)return null;
-  return(0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse by Pack A chapter tag`,children:tags.map(tag=>{
-    let on=active===tag;
-    return(0,A.jsx)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${on?` is-active`:``}`,"aria-pressed":on,onClick:()=>onChange(on?``:tag),children:mpReadings.formatTag(tag)||tag},tag);
+function mpKitTagFilter({tags:e,active:t,onChange:n}){
+  if(!e||!e.length)return null;
+  return(0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse by Pack A chapter tag`,children:e.map(r=>{
+    let i=t===r;
+    return(0,A.jsx)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${i?` is-active`:``}`,"aria-pressed":i,onClick:()=>n(i?``:r),children:mpReadings.formatTag(r)||r},r);
   })});
 }
 function mpKitReadingArticle({reading:e,onBack:t,kitReadings:n}){
