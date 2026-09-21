@@ -726,7 +726,37 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{c(e)}})
   ]});
-  return(0,A.jsx)(mpFeelingKitPage,{feelingId:l.id,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v});
+  if(mpReadings.feelingKit&&mpReadings.feelingKit(l.id,{pack:mpPackA,hubs:mpProblemHubs})){
+    return(0,A.jsx)(mpFeelingKitPage,{feelingId:l.id,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v});
+  }
+  let u=mpProblems.readingsForProblem(mpPackA,l.id);
+  let growth=l.group===`growth`||(mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(l));
+  let videoTag=mpProblems.videoTagForProblem?mpProblems.videoTagForProblem(l.id):l.id;
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem${growth?` mp-lane-growth`:``}`,"aria-label":l.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:growth?`GROWTH · BUILD STRENGTH`:`SUPPORT · WHEN IT'S HEAVY`}),
+    (0,A.jsx)(`h1`,{children:l.title}),
+    (0,A.jsx)(`p`,{className:`lede`,children:l.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:mpProblemHubs.disclaimer}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Readings`}),
+      (0,A.jsx)(`p`,{children:`Pack A mornings tagged for this theme. Tap a title to open the full chapter. The daily Done gate still lives on the Readings page.`}),
+      (0,A.jsx)(mpHubOpenableReadings,{readings:u,emptyLabel:`No tagged readings for this theme yet.`,onExplore:r})
+    ]}),
+    (0,A.jsx)(mpSupportVideos,{initialTag:videoTag,heading:growth?`Videos for this theme`:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Companion`}),
+      (0,A.jsx)(`p`,{children:growth?`Opens Companion with a short educational prompt for this growth theme. The usual disclaimer stays — this is not a therapist or emergency service.`:`Opens Companion with a short educational prompt for this problem. The usual disclaimer stays — this is not a therapist or emergency service.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(l.companionPrompt);t&&t(l.companionPrompt)},children:`Talk this through with Companion`})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Journal`}),
+      (0,A.jsx)(`p`,{children:l.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        n?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>n(l.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:i||(n?()=>n(`A small win today: `):null)})
+    ]})
+  ]});
 }
 function mpNotifyRitual(){
   try{mpTeamRitual.notifyRitualChange()}catch{}
