@@ -13035,7 +13035,18 @@ function joinCompanionUrl(base, path) {
   return `${prefix}${String(path || "").replace(/^\//, "")}`;
 }
 
+function companionBaseFromSearch(search = "") {
+  const query = String(search || "");
+  const params = new URLSearchParams(query.startsWith("?") ? query.slice(1) : query);
+  const fromQuery = params.get("companionBase");
+  if (!fromQuery) return "";
+  return normalizeCompanionBase(fromQuery);
+}
+
 function resolveCompanionBase(source = globalThis) {
+  const fromQuery = companionBaseFromSearch(source?.location?.search || "");
+  if (fromQuery) return fromQuery;
+
   const fromWindow =
     source && typeof source[BASE_WINDOW_KEY] === "string"
       ? source[BASE_WINDOW_KEY].trim()
@@ -14091,9 +14102,345 @@ mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
 mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
-mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_WINDOW_KEY,SAFETY_STATES,LIVE_LABEL,DEMO_LABEL,UNAVAILABLE_NOTE,normalizeCompanionBase,storedCompanionBase,persistCompanionBase,joinCompanionUrl,resolveCompanionBase,companionUrl,parseCompanionStatus,fetchCompanionStatus,parseCompanionReply,buildChatRequest,sendCompanionChat};
+mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_WINDOW_KEY,SAFETY_STATES,LIVE_LABEL,DEMO_LABEL,UNAVAILABLE_NOTE,normalizeCompanionBase,storedCompanionBase,persistCompanionBase,joinCompanionUrl,companionBaseFromSearch,resolveCompanionBase,companionUrl,parseCompanionStatus,fetchCompanionStatus,parseCompanionReply,buildChatRequest,sendCompanionChat};
 mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,detectCrisisIntent,safetyStateForText,THREAD_STORAGE_KEY,MESSAGE_TEXT_MAX,emptyThread,normalizeMessage,normalizeThread,parseThreadJson,loadThread,saveThread,clearThread,appendMessage,downloadableTranscript,canSendText,shouldSendOnKey};
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
+})();var mpCompanionDemo=(function(){/** Local Companion demo — works without Live AI. Bryan owns the proxy. */
+
+/** Same localStorage key as src/companion/client.js so Reflect / Appointment share Live. */
+const COMPANION_BASE_KEY = "mindpal.companion.base";
+const DEFAULT_COMPANION_BASE = "/mindpal/";
+const COMPANION_POLICY_VERSION = "companion-ai-v1";
+const HELP_ROUTE = "Get support";
+const REFLECT_ROUTE = "Reflect";
+const BREATH_EXERCISE_ID = "E01";
+
+const DEMO_BANNER = "DETERMINISTIC DEMO · NO LIVE AI";
+const LIVE_BANNER = "LIVE AI COMPANION · XAI GROK";
+
+const CHOICES = [
+  { id: "ordinary", label: "A small exercise", kind: "practice" },
+  { id: "distress", label: "I’m distressed", kind: "crisis" },
+  { id: "concern_uncertain", label: "I’m not sure I’m safe", kind: "crisis" },
+  { id: "urgent", label: "Immediate help", kind: "crisis" },
+];
+
+const INTENT_PANELS = {
+  ordinary: {
+    title: "A small, optional exercise",
+    body: "Nothing here is assessed. When you are ready, show practice choices for a breath, a one-sentence reframe, a tiny next step, or Reflect.",
+  },
+  distress: {
+    title: "Human help comes first",
+    body: "If this stretch feels too heavy, use Help — Lifeline 13 11 14, or 000 in an emergency. MindPal cannot monitor you or summon help.",
+  },
+  concern_uncertain: {
+    title: "If you are not sure you are safe",
+    body: "Please use human support now. In Australia call Lifeline 13 11 14, or 000 if you are in immediate danger.",
+  },
+  urgent: {
+    title: "Immediate help",
+    body: "If you are in immediate danger in Australia, call 000. Lifeline is 13 11 14. MindPal cannot contact anyone for you.",
+  },
+};
+
+const CRISIS_LINES = {
+  emergency: { label: "Emergency", number: "000", href: "tel:000" },
+  lifeline: { label: "Lifeline", number: "13 11 14", href: "tel:131114" },
+};
+
+const PRACTICE_CARDS = [
+  {
+    id: "breath",
+    title: "A short breath",
+    teaser: "A few quiet cycles, without forcing the air.",
+    body: "Notice the air moving in and out for a few cycles, without forcing it.",
+    cta: "Open a steady-detail pause",
+    action: { type: "exercise", exerciseId: BREATH_EXERCISE_ID },
+  },
+  {
+    id: "reframe",
+    title: "One sentence reframe",
+    teaser: "A kind sentence you can try, change, or skip.",
+    body: "Try: “This is a hard stretch, and I can take the next minute kindly.” You can change the words, or skip them.",
+    cta: "Show the sentence",
+    action: { type: "expand" },
+  },
+  {
+    id: "next-step",
+    title: "A tiny next step",
+    teaser: "One thing you could do in the next two minutes — or sit still.",
+    body: "Name one thing you could do in the next two minutes — drink water, step outside, or choose to sit still.",
+    cta: "Show a tiny step",
+    action: { type: "expand" },
+  },
+  {
+    id: "reflect",
+    title: "Open Reflect",
+    teaser: "A quieter page if a private line would help.",
+    body: "A quieter page if a private line would help. Optional — you can leave whenever you like.",
+    cta: "Open Reflect",
+    action: { type: "route", route: REFLECT_ROUTE },
+  },
+];
+
+function choiceById(id) {
+  return CHOICES.find((item) => item.id === id) || null;
+}
+
+function isCrisisChoice(id) {
+  return choiceById(id)?.kind === "crisis";
+}
+
+function practiceCardById(id) {
+  return PRACTICE_CARDS.find((item) => item.id === id) || null;
+}
+
+function emptyCompanionState() {
+  return {
+    choiceId: "ordinary",
+    panel: "intent",
+    practicesVisible: false,
+    expandedCardId: null,
+    status: "demo",
+    model: null,
+    chatOpen: false,
+    navigate: null,
+    exerciseId: null,
+  };
+}
+
+function companionBanner(state) {
+  return state?.status === "live" ? LIVE_BANNER : DEMO_BANNER;
+}
+
+function setCompanionLive(state, status) {
+  const available = status?.available === true;
+  return {
+    ...state,
+    status: available ? "live" : "demo",
+    model: typeof status?.model === "string" ? status.model : null,
+    chatOpen: available ? state.chatOpen : false,
+  };
+}
+
+function applyChoice(state, choiceId) {
+  const choice = choiceById(choiceId);
+  if (!choice) return { ...state, navigate: null, exerciseId: null };
+  if (choice.kind === "crisis") {
+    return {
+      ...state,
+      choiceId,
+      panel: "crisis",
+      practicesVisible: false,
+      expandedCardId: null,
+      chatOpen: false,
+      navigate: HELP_ROUTE,
+      exerciseId: null,
+    };
+  }
+  return {
+    ...state,
+    choiceId,
+    panel: "intent",
+    practicesVisible: false,
+    expandedCardId: null,
+    navigate: null,
+    exerciseId: null,
+  };
+}
+
+function revealPractices(state) {
+  if (isCrisisChoice(state.choiceId)) {
+    return {
+      ...state,
+      panel: "crisis",
+      practicesVisible: false,
+      chatOpen: false,
+      navigate: HELP_ROUTE,
+      exerciseId: null,
+    };
+  }
+  if (state.panel === "practices" && state.practicesVisible) {
+    return {
+      ...state,
+      panel: "practices",
+      practicesVisible: true,
+      expandedCardId: state.expandedCardId || "breath",
+      navigate: null,
+      exerciseId: null,
+    };
+  }
+  return {
+    ...state,
+    panel: "practices",
+    practicesVisible: true,
+    expandedCardId: null,
+    chatOpen: false,
+    navigate: null,
+    exerciseId: null,
+  };
+}
+
+function activatePracticeCard(state, cardId) {
+  const card = practiceCardById(cardId);
+  if (!card) return { ...state, navigate: null, exerciseId: null };
+  if (card.action.type === "expand") {
+    return {
+      ...state,
+      expandedCardId: state.expandedCardId === cardId ? null : cardId,
+      navigate: null,
+      exerciseId: null,
+    };
+  }
+  if (card.action.type === "exercise") {
+    return {
+      ...state,
+      expandedCardId: cardId,
+      navigate: null,
+      exerciseId: card.action.exerciseId,
+    };
+  }
+  return {
+    ...state,
+    expandedCardId: cardId,
+    navigate: card.action.route || null,
+    exerciseId: null,
+  };
+}
+
+function openLiveChat(state) {
+  if (state.status !== "live") return { ...state, navigate: null, exerciseId: null };
+  return {
+    ...state,
+    panel: "chat",
+    chatOpen: true,
+    navigate: null,
+    exerciseId: null,
+  };
+}
+
+function primaryCtaLabel(state) {
+  if (isCrisisChoice(state.choiceId) || state.panel === "crisis") {
+    return "Open Help now";
+  }
+  return "Show practice choices";
+}
+
+function normalizeCompanionBase(raw) {
+  if (typeof raw !== "string") return DEFAULT_COMPANION_BASE;
+  const trimmed = raw.trim();
+  if (!trimmed) return DEFAULT_COMPANION_BASE;
+  return trimmed.endsWith("/") ? trimmed : `${trimmed}/`;
+}
+
+function companionBaseLookup(deps = {}) {
+  const win = deps.window ?? (typeof globalThis !== "undefined" ? globalThis : {});
+  return {
+    search: win.location?.search || "",
+    storage: win.localStorage,
+    globalBase: win.MINDPAL_COMPANION_BASE,
+  };
+}
+
+function resolveCompanionBaseUrl({
+  explicit,
+  search = "",
+  storage,
+  globalBase,
+} = {}) {
+  if (explicit) return normalizeCompanionBase(explicit);
+  const query = String(search || "");
+  const params = new URLSearchParams(query.startsWith("?") ? query.slice(1) : query);
+  const fromQuery = params.get("companionBase");
+  if (fromQuery) return normalizeCompanionBase(fromQuery);
+  if (globalBase) return normalizeCompanionBase(globalBase);
+  try {
+    const stored = storage?.getItem?.(COMPANION_BASE_KEY);
+    if (stored) return normalizeCompanionBase(stored);
+  } catch {
+    /* storage may be blocked */
+  }
+  return DEFAULT_COMPANION_BASE;
+}
+
+function saveCompanionBase(raw, storage) {
+  const base = normalizeCompanionBase(raw);
+  try {
+    storage?.setItem?.(COMPANION_BASE_KEY, base);
+  } catch {
+    /* ignore quota / private mode */
+  }
+  return base;
+}
+
+function companionStatusUrl(base) {
+  return `${normalizeCompanionBase(base)}api/companion/status`;
+}
+
+function companionChatUrl(base) {
+  return `${normalizeCompanionBase(base)}api/companion/chat`;
+}
+
+function parseCompanionStatus(payload) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    return { available: false, model: null };
+  }
+  return {
+    available: payload.available === true,
+    model: typeof payload.model === "string" ? payload.model : null,
+  };
+}
+
+async function probeCompanionStatus({
+  base,
+  fetchImpl,
+  timeoutMs = 1500,
+} = {}) {
+  const fetchFn = fetchImpl ?? (typeof fetch === "function" ? fetch : null);
+  if (!fetchFn) return { available: false, model: null };
+  const ctrl = typeof AbortController === "function" ? new AbortController() : null;
+  const timer = setTimeout(() => ctrl?.abort?.(), timeoutMs);
+  try {
+    const res = await fetchFn(companionStatusUrl(base), {
+      method: "GET",
+      signal: ctrl?.signal,
+      headers: { Accept: "application/json" },
+      cache: "no-store",
+    });
+    if (!res?.ok) return { available: false, model: null };
+    return parseCompanionStatus(await res.json());
+  } catch {
+    return { available: false, model: null };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function companionChatPayload({ safetyState, message, requestId }) {
+  return {
+    requestId: requestId || "companion-demo",
+    policyVersion: COMPANION_POLICY_VERSION,
+    safetyState: isCrisisChoice(safetyState) ? "urgent" : safetyState || "ordinary",
+    message: String(message || "").trim(),
+  };
+}
+
+function parseCompanionReply(payload, requestId) {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) return null;
+  if (payload.requestId !== requestId) return null;
+  if (payload.policyVersion !== COMPANION_POLICY_VERSION) return null;
+  if (!["reply", "human_help"].includes(payload.kind)) return null;
+  if (typeof payload.reply !== "string" || !payload.reply.trim()) return null;
+  return {
+    kind: payload.kind,
+    reply: payload.reply.trim(),
+    modelDisclosure:
+      typeof payload.modelDisclosure === "string" ? payload.modelDisclosure : "",
+  };
+}
+
+return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -14705,6 +15052,162 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
       ]}),
       (0,A.jsx)(`p`,{className:`muted`,children:`Enter sends. Shift+Enter adds a line. Nothing is sent until you press Send.`}),
       d?(0,A.jsx)(`p`,{role:`status`,children:d}):null
+    ]})
+  ]});
+}function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
+  let[i,a]=(0,_.useState)(()=>mpCompanionDemo.emptyCompanionState());
+  let[o,s]=(0,_.useState)(()=>typeof mpProblems<`u`&&mpProblems.takeCompanionPrompt?mpProblems.takeCompanionPrompt()||``:``);
+  let[c,l]=(0,_.useState)(!1);
+  let[u,d]=(0,_.useState)(``);
+  let[f,p]=(0,_.useState)([]);
+  let[m,h]=(0,_.useState)(!1);
+  let[k,j]=(0,_.useState)(0);
+  (0,_.useEffect)(()=>{
+    let cancelled=!1;
+    mpCompanion.fetchCompanionStatus().then(status=>{
+      if(!cancelled)a(prev=>mpCompanionDemo.setCompanionLive(prev,status));
+    });
+    return()=>{cancelled=!0};
+  },[k]);
+  function C(choiceId){
+    let next=mpCompanionDemo.applyChoice(i,choiceId);
+    a(next);
+    if(next.navigate===mpCompanionDemo.HELP_ROUTE)e&&e();
+  }
+  function w(){
+    let next=mpCompanionDemo.revealPractices(i);
+    a(next);
+    if(next.navigate===mpCompanionDemo.HELP_ROUTE)e&&e();
+  }
+  function T(cardId){
+    let next=mpCompanionDemo.activatePracticeCard(i,cardId);
+    a(next);
+    if(next.exerciseId)t&&t(next.exerciseId);
+    if(next.navigate===mpCompanionDemo.REFLECT_ROUTE)n&&n();
+    if(next.navigate===mpCompanionDemo.HELP_ROUTE)e&&e();
+  }
+  function E(){
+    let next=mpCompanionDemo.openLiveChat(i);
+    a(next);
+  }
+  async function O(){
+    if(m)return;
+    if(mpCompanionDemo.isCrisisChoice(i.choiceId)){
+      e&&e();
+      return;
+    }
+    let message=u.trim();
+    if(!message){
+      p(prev=>[...prev,{role:`guide`,text:`A typed message is optional. The local demo still works — show practice choices, or use Help if you need a person.`}]);
+      return;
+    }
+    h(!0);
+    try{
+      let result=await mpCompanion.sendCompanionChat({
+        message,
+        safetyState:i.choiceId,
+        lane:`companion`,
+      });
+      if(result.kind!==`reply`||!result.value||!result.value.reply){
+        p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`Live chat is not available yet. Practice cards and Help still work on this page.`}]);
+      }else{
+        p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:result.value.reply,disclosure:result.value.modelDisclosure}]);
+        if(result.value.kind===`human_help`)e&&e();
+      }
+      d(``);
+    }catch{
+      p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`Could not reach the companion proxy. Local practice choices and Help remain available.`}]);
+    }finally{
+      h(!1);
+    }
+  }
+  let live=i.status===`live`;
+  let panel=mpCompanionDemo.INTENT_PANELS[i.choiceId]||mpCompanionDemo.INTENT_PANELS.ordinary;
+  let crisis=i.panel===`crisis`||mpCompanionDemo.isCrisisChoice(i.choiceId);
+  return(0,A.jsxs)(`div`,{className:`mp-companion-page`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`A LITTLE COMPANY, WITH CLEAR BOUNDARIES`}),
+    (0,A.jsx)(`h1`,{children:`At your pace.`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:`An optional guide to a small next step.`}),
+    (0,A.jsxs)(`div`,{className:`companion-layout`,children:[
+      (0,A.jsxs)(`section`,{className:`companion-stage`,children:[
+        !c&&(0,A.jsx)(Ui,{}),
+        (0,A.jsx)(`h2`,{children:`Your MindPal companion`}),
+        (0,A.jsx)(`p`,{children:`Interactive practice preview`}),
+        (0,A.jsx)(Wi,{children:mpCompanionDemo.companionBanner(i)}),
+        (0,A.jsxs)(`div`,{className:`button-row`,children:[
+          (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:()=>l(!c),children:c?`Show character`:`Text-only view`}),
+          (0,A.jsxs)(`span`,{className:`muted`,children:[(0,A.jsx)(En,{size:16}),`No audio or microphone`]})
+        ]})
+      ]}),
+      (0,A.jsxs)(`section`,{className:`companion-chat`,children:[
+        (0,A.jsx)(`h2`,{children:`A guide, with you in control.`}),
+        (0,A.jsx)(`p`,{children:`This character offers fixed practice choices. It is not a person, therapist or emergency service. Your diary is never accessed automatically.`}),
+        (0,A.jsxs)(`div`,{className:`support-choices`,children:[
+          (0,A.jsx)(`p`,{className:`eyebrow`,children:`CHOOSE WHAT FITS · THE DEMO DOES NOT ASSESS TEXT`}),
+          mpCompanionDemo.CHOICES.map(choice=>(0,A.jsx)(`button`,{
+            type:`button`,
+            className:i.choiceId===choice.id?`selected`:``,
+            "aria-pressed":i.choiceId===choice.id,
+            onClick:()=>C(choice.id),
+            children:choice.label,
+          },choice.id))
+        ]}),
+        (0,A.jsxs)(`div`,{className:`mp-companion-panel ${crisis?`mp-companion-panel-crisis`:``}`,role:`status`,"aria-live":`polite`,children:[
+          (0,A.jsx)(`h3`,{children:panel.title}),
+          (0,A.jsx)(`p`,{children:panel.body})
+        ]}),
+        crisis?(0,A.jsxs)(`div`,{className:`urgent-box mp-crisis-panel`,children:[
+          (0,A.jsx)(`strong`,{children:`Human help comes first.`}),
+          (0,A.jsx)(`p`,{children:`If you are in immediate danger in Australia, call 000. For crisis support, call Lifeline on 13 11 14.`}),
+          (0,A.jsxs)(`div`,{className:`button-row`,children:[
+            (0,A.jsx)(`a`,{className:`primary`,href:`tel:000`,children:`Call 000`}),
+            (0,A.jsx)(`a`,{className:`secondary`,href:`tel:131114`,children:`Call Lifeline 13 11 14`}),
+            (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>e&&e(),children:`Open Help`})
+          ]})
+        ]}):null,
+        i.practicesVisible&&!crisis?(0,A.jsxs)(`div`,{className:`mp-practice-grid`,"aria-label":`Practice choices`,children:[
+          (0,A.jsx)(`p`,{className:`eyebrow`,children:`PRACTICE CHOICES · OPTIONAL`}),
+          mpCompanionDemo.PRACTICE_CARDS.map(card=>(0,A.jsxs)(`article`,{className:`mp-practice-card${i.expandedCardId===card.id?` is-open`:``}`,children:[
+            (0,A.jsx)(`h3`,{children:card.title}),
+            (0,A.jsx)(`p`,{children:card.teaser||card.body}),
+            (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>T(card.id),children:i.expandedCardId===card.id&&card.action.type===`expand`?`Hide this` : card.cta}),
+            i.expandedCardId===card.id&&card.action.type===`expand`?(0,A.jsx)(`p`,{className:`mp-practice-expand`,children:card.body}):null
+          ]},card.id))
+        ]}):null,
+        live&&i.chatOpen?(0,A.jsxs)(`div`,{className:`mp-companion-live-chat`,children:[
+          (0,A.jsx)(`h3`,{children:`Talk with MindPal`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`Live replies go through a private server proxy. Crisis paths stay on this page.`}),
+          f.map((msg,idx)=>(0,A.jsxs)(`p`,{className:`mp-chat-line mp-chat-${msg.role}`,children:[
+            (0,A.jsx)(`strong`,{children:msg.role===`you`?`You`:`MindPal`}),
+            ` · `,
+            msg.text,
+            msg.disclosure?(0,A.jsx)(`span`,{className:`muted`,children:` ${msg.disclosure}`}):null
+          ]},idx)),
+          (0,A.jsx)(`label`,{htmlFor:`mp-live-chat`,children:`Message the AI companion`}),
+          (0,A.jsx)(`textarea`,{id:`mp-live-chat`,value:u,maxLength:2e3,onChange:ev=>d(ev.target.value),placeholder:`Type a message, or leave blank and use the demo.`}),
+          (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:m,onClick:O,children:m?`Sending…`:`Send to AI companion`})
+        ]}):null,
+        (0,A.jsxs)(`label`,{htmlFor:`companion-message`,children:[
+          `Sample message`,
+          ` `,
+          (0,A.jsx)(`span`,{className:`muted`,children:`optional · demo does not interpret this`})
+        ]}),
+        (0,A.jsx)(`textarea`,{id:`companion-message`,value:o,maxLength:2e3,onChange:ev=>s(ev.target.value),placeholder:`Use sample text only…`}),
+        (0,A.jsxs)(`div`,{className:`button-row`,children:[
+          (0,A.jsxs)(`button`,{className:`primary`,type:`button`,onClick:w,children:[
+            mpCompanionDemo.primaryCtaLabel(i),
+            ` →`
+          ]}),
+          live?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:E,children:`Talk with MindPal`}):null,
+          (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>e&&e(),children:`Reach human support`})
+        ]}),
+        (0,A.jsx)(`p`,{className:`muted`,children:`Local demo · no automatic retries · Help is always available`}),
+        (0,A.jsxs)(`details`,{className:`mp-companion-setup`,open:!live,children:[
+          (0,A.jsx)(`summary`,{children:`Live companion address (optional)`}),
+          (0,A.jsx)(`p`,{children:`Paste a companion base URL when a private proxy is up. This build does not invent a public tunnel. You can also set ?companionBase=, localStorage mindpal.companion.base, or window.MINDPAL_COMPANION_BASE.`}),
+          (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(tick=>tick+1)})
+        ]})
+      ]})
     ]})
   ]});
 }/*mp-readings-runtime-end*//*mp-bt-start*/function bt({mode:e=`random`,tag:t}){
@@ -16301,7 +16804,7 @@ Several things may contribute to changes in mood or sleep. If low mood, anxiety 
 
 You can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.
 
-This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,`Appointment Questions`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,"Team morning":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,"Struggling mothers":`route.mothers`,"Drugs & alcohol":`route.aod`,"Mens health":`route.mensHealth`,"Appointment Questions":`route.appointment`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`My diary`,icon:rn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn},{name:`Appointment Questions`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());let[mpGateTick,mpSetGateTick]=(0,_.useState)(0);(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt());mpSetGateTick(e=>e+1)}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&mpShowSignInGate()?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`div`,{className:`mp-brand-row`,children:[(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`sidebar`,onOpen:()=>I(`Profile`)})]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`topbar`,onOpen:()=>I(`Profile`)}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&mpShowSignInGate()?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`||t===`Appointment Questions`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(mpMensHealthFeelingsChip,{onOpen:()=>{mpOpenProblem(`mens-health`),I(`Mens health`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`),onCompanion:()=>I(`Companion`),onHelp:()=>I(`Get support`),onJournal:e=>{C(e),I(`My diary`)}})]}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`),onOpenReflect:()=>I(`Reflect`),onOpenAppointment:()=>I(`Appointment Questions`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Profile`&&(0,A.jsx)(mpProfilePage,{}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Drugs & alcohol`&&(0,A.jsx)(mpAodHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small, honest win today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Mens health`&&(0,A.jsx)(mpMensHealthHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A way I showed up today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y}),t===`Women’s wellbeing`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),(0,A.jsx)(mpMothersWomenCard,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}})]}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),!mpShowSignInGate()||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
+This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,`Appointment Questions`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,"Team morning":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,"Struggling mothers":`route.mothers`,"Drugs & alcohol":`route.aod`,"Mens health":`route.mensHealth`,"Appointment Questions":`route.appointment`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`My diary`,icon:rn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn},{name:`Appointment Questions`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());let[mpGateTick,mpSetGateTick]=(0,_.useState)(0);(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt());mpSetGateTick(e=>e+1)}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&mpShowSignInGate()?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`div`,{className:`mp-brand-row`,children:[(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`sidebar`,onOpen:()=>I(`Profile`)})]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`topbar`,onOpen:()=>I(`Profile`)}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&mpShowSignInGate()?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`||t===`Appointment Questions`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(mpMensHealthFeelingsChip,{onOpen:()=>{mpOpenProblem(`mens-health`),I(`Mens health`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`),onCompanion:()=>I(`Companion`),onHelp:()=>I(`Get support`),onJournal:e=>{C(e),I(`My diary`)}})]}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`),onOpenReflect:()=>I(`Reflect`),onOpenAppointment:()=>I(`Appointment Questions`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Profile`&&(0,A.jsx)(mpProfilePage,{}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Drugs & alcohol`&&(0,A.jsx)(mpAodHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small, honest win today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Mens health`&&(0,A.jsx)(mpMensHealthHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A way I showed up today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Companion`&&(0,A.jsx)(mpCompanionPage,{onHelp:()=>I(`Get support`),onExercise:y,onReflect:()=>I(`Reflect`)}),t===`Women’s wellbeing`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),(0,A.jsx)(mpMothersWomenCard,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}})]}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),!mpShowSignInGate()||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
   let[e,t]=(0,_.useState)(null);
   let n=(0,_.useId)();
   let r=(0,_.useRef)(null);
