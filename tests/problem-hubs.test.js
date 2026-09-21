@@ -258,6 +258,8 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /No speaker library dump here/);
     assert.match(inject, /Need support/);
+    assert.match(inject, /mpHubOpenableReadings,\{readings:s/);
+    assert.match(inject, /function mpBookReader\(/);
     assert.match(inject, /mpFoldSection/);
     assert.match(inject, /id:`readings`/);
     assert.match(inject, /id:`videos`/);
