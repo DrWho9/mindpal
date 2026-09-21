@@ -4,26 +4,105 @@ function mpGoHome(navigate){
 function mpNotifySession(){
   try{window.dispatchEvent(new Event(`mindpal-session-change`))}catch{}
 }
+function mpNeedsFaithSetup(){
+  try{
+    if(typeof Dt==`function`&&!Dt())return !1;
+    return !mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{});
+  }catch{return !1}
+}
+function mpShowSignInGate(){
+  try{return typeof Dt==`function`?!Dt()||mpNeedsFaithSetup():!0}catch{return !0}
+}
 function mpSignedInName(fallback){
   try{
     let e=typeof Mt==`function`?Mt(Dt()):null;
     return (e&&e.displayName||e&&e.username||fallback||``).trim();
   }catch{return (fallback||``).trim()}
 }
+function mpFaithCatalog(){
+  try{return typeof Ft<`u`?Ft:null}catch{return null}
+}
+function mpFaithChoice(stance,traditionId){
+  return mpFaith.prefsFromChoice({stance,traditionId});
+}
+function mpSaveFaithChoice(stance,traditionId){
+  return mpFaith.setSessionFaithPrefs({stance,traditionId});
+}
+function mpFaithPrefQuestions({mode:e=`setup`,onDone:t}){
+  let n=mpFaith.sessionPreferences()||{};
+  let[r,i]=(0,_.useState)(()=>mpFaith.isSecularPrefs(n)?`secular`:n.faithStance===`religious`||mpFaith.hasFaithPreference(n)?`religious`:``);
+  let[a,o]=(0,_.useState)(()=>mpFaith.traditionIdFromPrefs(n)||``);
+  let[s,c]=(0,_.useState)(()=>mpFaith.OTHER_TRADITIONS.some(e=>e.id===(mpFaith.traditionIdFromPrefs(n)||``)));
+  let[l,u]=(0,_.useState)(``);
+  function d(){
+    if(r===`secular`){
+      mpSaveFaithChoice(`secular`);
+      t&&t(mpFaithChoice(`secular`));
+      return;
+    }
+    if(r!==`religious`||!a){
+      u(`Pick a religion, or choose Other if yours is not in the first four.`);
+      return;
+    }
+    mpSaveFaithChoice(`religious`,a);
+    t&&t(mpFaithChoice(`religious`,a));
+  }
+  function f(e){
+    o(e);
+    c(mpFaith.OTHER_TRADITIONS.some(t=>t.id===e));
+    u(``);
+  }
+  return(0,A.jsxs)(`section`,{className:`mp-faith-pref`,"aria-label":`Faith preference`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:e===`edit`?`YOUR SPACE`:`A QUIET QUESTION`}),
+    (0,A.jsx)(`h2`,{children:e===`edit`?`Faith preference`:`How should mornings meet you?`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:`A short preference so we can keep scripture optional and kind. Nothing preachy — just so Today can relate to you.`}),
+    (0,A.jsx)(`p`,{children:`Would you like faith-aware words, or a secular space?`}),
+    (0,A.jsxs)(`div`,{className:`mp-faith-chips`,"aria-label":`Religious or not`,children:[
+      (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${r===`religious`?` is-open`:``}`,"aria-pressed":r===`religious`,onClick:()=>{i(`religious`);u(``)},children:`I have a faith / religion`}),
+      (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${r===`secular`?` is-open`:``}`,"aria-pressed":r===`secular`,onClick:()=>{i(`secular`);o(``);c(!1);u(``)},children:`No religion / prefer secular`})
+    ]}),
+    r===`religious`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{children:`So we can relate to you — what’s your religion?`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Four common choices first. Other opens a fuller list. One selection is enough.`}),
+      (0,A.jsxs)(`div`,{className:`mp-faith-chips`,"aria-label":`Religion`,children:[
+        mpFaith.PRIMARY_TRADITIONS.map(e=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${a===e.id?` is-open`:``}`,"aria-pressed":a===e.id,onClick:()=>f(e.id),children:e.label},e.id)),
+        (0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${s?` is-open`:``}`,"aria-pressed":s,onClick:()=>{c(e=>!e);if(mpFaith.PRIMARY_TRADITIONS.some(e=>e.id===a)){o(``)}},children:`Other`})
+      ]}),
+      s?(0,A.jsx)(`div`,{className:`mp-faith-chips mp-faith-chips-other`,"aria-label":`Other traditions`,children:mpFaith.OTHER_TRADITIONS.map(e=>(0,A.jsx)(`button`,{type:`button`,className:`mp-faith-chip${a===e.id?` is-open`:``}`,"aria-pressed":a===e.id,onClick:()=>f(e.id),children:e.label},e.id))}):null
+    ]}):null,
+    (0,A.jsx)(`p`,{className:`muted`,children:`Saved on this device with your local profile. You can change it later in Account.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:d,children:e===`edit`?`Save preference`:r===`secular`?`Continue with a secular space`:`Continue`})
+    ]}),
+    l?(0,A.jsx)(`p`,{role:`status`,children:l}):null
+  ]});
+}
 function mpSignInPage({onSignedIn:e}){
-  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}});
-  async function p(m){
+  let[t,n]=(0,_.useState)(``),[r,i]=(0,_.useState)(``),[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(()=>{try{return Tt()}catch{return[]}}),[p,m]=(0,_.useState)(()=>mpNeedsFaithSetup());
+  function h(g){
+    mpNotifySession();
+    if(!mpFaith.hasFaithPreference(g&&g.preferences)&&!mpFaith.hasFaithPreference(mpFaith.sessionPreferences()||{})){
+      m(!0);
+      return;
+    }
+    e&&e(g);
+  }
+  async function g(v){
     u(!0),c(``);
     try{
-      let h=m===`create`?await At(t,r,a):await jt(t,r);
-      mpNotifySession();
-      e&&e(h);
-    }catch(h){
-      if(m===`create`){
-        try{let g=await jt(t,r);mpNotifySession();e&&e(g);return}catch{}
+      let y=v===`create`?await At(t,r,a):await jt(t,r);
+      h(y);
+    }catch(y){
+      if(v===`create`){
+        try{let b=await jt(t,r);h(b);return}catch{}
       }
-      c(h instanceof Error?h.message:`Could not sign in.`);
+      c(y instanceof Error?y.message:`Could not sign in.`);
     }finally{u(!1)}
+  }
+  if(p){
+    return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Faith preference`,children:[
+      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>e&&e(mpFaith.sessionPreferences())})
+    ]});
   }
   return(0,A.jsxs)(`section`,{className:`mp-signin-page`,"aria-label":`Sign in`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`YOUR SPACE`}),
@@ -32,17 +111,17 @@ function mpSignInPage({onSignedIn:e}){
     (0,A.jsx)(`p`,{className:`muted`,children:`Demo login only — use a throwaway password. Nothing is sent to the cloud.`}),
     d.length?(0,A.jsxs)(`div`,{className:`mp-profile-chips`,"aria-label":`Profiles on this device`,children:[
       (0,A.jsx)(`p`,{className:`muted`,children:`On this device:`}),
-      d.map(m=>(0,A.jsx)(`button`,{type:`button`,className:`secondary small-button`,onClick:()=>{n(m.username),o(m.displayName||``)},children:m.displayName||m.username},m.username))
+      d.map(v=>(0,A.jsx)(`button`,{type:`button`,className:`secondary small-button`,onClick:()=>{n(v.username),o(v.displayName||``)},children:v.displayName||v.username},v.username))
     ]}):null,
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-name`,children:`What should we call you?`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-name`,value:a,onChange:m=>o(m.target.value),autoComplete:`nickname`,placeholder:`A first name is enough`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-name`,value:a,onChange:v=>o(v.target.value),autoComplete:`nickname`,placeholder:`A first name is enough`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-user`,children:`Username`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-user`,value:t,onChange:m=>n(m.target.value),autoComplete:`username`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-user`,value:t,onChange:v=>n(v.target.value),autoComplete:`username`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-signin-pass`,children:`Password`}),
-    (0,A.jsx)(`input`,{id:`mp-signin-pass`,type:`password`,value:r,onChange:m=>i(m.target.value),autoComplete:`current-password`}),
+    (0,A.jsx)(`input`,{id:`mp-signin-pass`,type:`password`,value:r,onChange:v=>i(v.target.value),autoComplete:`current-password`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:l,onClick:()=>p(`in`),children:`Sign in`}),
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:l,onClick:()=>p(`create`),children:`Create local profile`})
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:l,onClick:()=>g(`in`),children:`Sign in`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:l,onClick:()=>g(`create`),children:`Create local profile`})
     ]}),
     s?(0,A.jsx)(`p`,{role:`status`,children:s}):null
   ]});
@@ -93,18 +172,61 @@ function mpMaddyTeaser({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
   ]});
 }
+function mpMorningVerse(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  if(!mpFaith.shouldShowFaithModules(e))return null;
+  let n=mpFaith.pickMorningVerse(mpFaithCatalog(),e);
+  if(!n||!n.verse)return null;
+  let r=mpFaith.shouldShowMorningPrayer(e);
+  let i=typeof Pt<`u`?Pt.entries:null;
+  let a=r&&i?(i[(typeof It==`function`?It():``)]||i.default):null;
+  let[o,s]=(0,_.useState)(``);
+  let{listening:c,listenStatus:l,toggle:u}=mt();
+  let d=[n.verse.reference,n.verse.text,n.reflection,n.practice?.text?`1-min practice. ${n.practice.text}`:``,a?.prayer?.text?`Prayer. ${a.prayer.text}`:``].filter(Boolean).join(`
+
+`);
+  return(0,A.jsxs)(`section`,{id:`today-verse`,className:`simple-panel mp-morning-verse`,"aria-label":n.fallback?`Quiet reflection`:`Morning faith reading`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpFaith.verseEyebrow(n)}),
+    (0,A.jsx)(`h3`,{children:n.verse.reference||`Today’s reading`}),
+    (0,A.jsxs)(`p`,{children:[`“`,n.verse.text,`”`]}),
+    n.verse.url?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`a`,{href:n.verse.url,target:`_blank`,rel:`noreferrer`,children:`Open passage`}),n.verse.source_note?` · ${n.verse.source_note}`:``]}):n.verse.source_note?(0,A.jsx)(`p`,{children:n.verse.source_note}):null,
+    n.reflection?(0,A.jsx)(`p`,{children:n.reflection}):null,
+    n.practice?.text?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`1-min practice:`}),` `,n.practice.text]}):null,
+    a?.prayer?.text?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Prayer`}),
+      (0,A.jsx)(`p`,{children:a.prayer.text}),
+      a.prayer.note?(0,A.jsx)(`p`,{children:a.prayer.note}):null
+    ]}):null,
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>u(d),children:c?`Pause`:`Listen`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(d+`
+
+— MindPal faith reading`);s(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>s(``),2e3)},children:`Copy`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await pt(d+`
+
+— MindPal faith reading`,`MindPal faith reading`);e!==`cancelled`&&(s(e===`shared`?`Shared.`:e===`copied`?`Copied for sharing.`:`Could not share.`),setTimeout(()=>s(``),2e3))},children:`Share`})
+    ]}),
+    o||l?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:o||l}):null
+  ]});
+}
 function mpCollapsedVerse(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}));
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  if(!e)return null;
   return(0,A.jsxs)(`details`,{className:`mp-verse-collapse`,children:[
     (0,A.jsx)(`summary`,{children:`Today’s verse — tap to expand`}),
-    (0,A.jsx)(Rt,{})
+    (0,A.jsx)(mpMorningVerse,{})
   ]});
 }
 function mpReadingsPage(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}));
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings`,"aria-label":`Readings`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`READINGS`}),
     (0,A.jsx)(`h1`,{children:`Today’s readings`}),
-    (0,A.jsx)(`p`,{className:`lede`,children:`A verse, an optional prayer, and the pack reading for this morning. Take what helps; leave the rest.`}),
-    (0,A.jsx)(Rt,{}),
+    (0,A.jsx)(`p`,{className:`lede`,children:e?`A verse or faith reading, an optional prayer when it fits, and the pack reading for this morning. Take what helps; leave the rest.`:`Today’s pack reading. Faith words stay tucked away unless you choose them in Account.`}),
+    e?(0,A.jsx)(mpMorningVerse,{}):null,
     (0,A.jsx)(bt,{})
   ]});
 }
@@ -155,12 +277,23 @@ function mpFaithSettings(){
     (0,A.jsx)(`p`,{className:`muted`,children:`Kept here so the morning page stays tidy.`})
   ]});
 }
+function mpAccountFaithCard(){
+  let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
+  let[n,r]=(0,_.useState)(!1);
+  (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
+  return(0,A.jsxs)(`div`,{className:`mp-account-faith`,children:[
+    (0,A.jsx)(`p`,{children:`Faith preference: ${mpFaith.faithSummary(e)}`}),
+    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,"aria-expanded":n,onClick:()=>r(e=>!e),children:n?`Close`:`Edit`}),
+    n?(0,A.jsx)(mpFaithPrefQuestions,{mode:`edit`,onDone:()=>{t(mpFaith.sessionPreferences()||{});r(!1)}}):null
+  ]});
+}
 function mpAccountFooter(){
   let e=mpSignedInName(``);
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-account-footer`,"aria-label":`Account`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`ACCOUNT`}),
     (0,A.jsx)(`h2`,{children:e?`Signed in as ${e}`:`Local account`}),
     (0,A.jsx)(`p`,{children:`Demo login only — this profile stays on this device. Nothing is sent to the cloud.`}),
+    (0,A.jsx)(mpAccountFaithCard,{}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Wins, photos and friends stay on this device. Sharing them with other people needs a future backend — nothing is uploaded today.`})
@@ -184,12 +317,20 @@ function mpProblemChipClass(item,open){
     :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:item.id===`mens-health`?` mp-problem-chip-mens`:``;
   return `mp-problem-chip${open?` is-open`:``}${extra}`;
 }
+function mpVisibleProblemGroups(){
+  let e=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}];
+  if(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))return e;
+  return e.map(t=>({...t,problems:(t.problems||[]).filter(t=>t.id!==`faith`)})).filter(t=>(t.problems||[]).length);
+}
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
-  let n=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}],[r,i]=(0,_.useState)(null);
+  let[n,o]=(0,_.useState)(()=>mpVisibleProblemGroups()),[r,i]=(0,_.useState)(null);
   (0,_.useEffect)(()=>{
     function e(){i(null)}
+    function t(){o(mpVisibleProblemGroups())}
     window.addEventListener(mpNav.HOME_EVENT,e);
-    return()=>window.removeEventListener(mpNav.HOME_EVENT,e);
+    window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,t);
+    window.addEventListener(`mindpal-session-change`,t);
+    return()=>{window.removeEventListener(mpNav.HOME_EVENT,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,t);window.removeEventListener(`mindpal-session-change`,t)};
   },[]);
   function chipsFor(group){return group.problems||[]}
   return(0,A.jsxs)(`section`,{className:`mp-problem-list mp-problem-list-${t}`,"aria-label":`What do you need help with?`,children:[
@@ -754,8 +895,13 @@ function mpDayStep({id:e,day:t,isNext:n,onOpen:r,onMark:i,extra:a}){
   ]});
 }
 function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,onOpenEvening:a,onAddWin:o,onOpenMaddy:s,onOpenProblem:v,onOpenTeamRitual:w}){
-  let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay());
-  (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}return window.addEventListener(`visibilitychange`,e),e(),()=>window.removeEventListener(`visibilitychange`,e)},[]);
+  let c=mpSignedInName(e),l=mpCalendar.partOfDay(),[u,d]=(0,_.useState)(()=>mpTodaySteps.loadDay()),[faithAsk,setFaithAsk]=(0,_.useState)(()=>mpNeedsFaithSetup());
+  (0,_.useEffect)(()=>{function e(){d(mpTodaySteps.loadDay())}function n(){setFaithAsk(mpNeedsFaithSetup())}window.addEventListener(`visibilitychange`,e);window.addEventListener(`mindpal-session-change`,n);window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n);e();n();return()=>{window.removeEventListener(`visibilitychange`,e);window.removeEventListener(`mindpal-session-change`,n);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n)}},[]);
+  if(faithAsk){
+    return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub mp-signin-page`,"aria-label":`Faith preference`,children:[
+      (0,A.jsx)(mpFaithPrefQuestions,{mode:`setup`,onDone:()=>setFaithAsk(!1)})
+    ]});
+  }
   let f=mpTodaySteps.nextStepId(u),p=mpFaith.isCopticDateEnabled();
   function m(e,t){
     let n=mpTodaySteps.saveDay(mpTodaySteps.markStep(u,e,t));

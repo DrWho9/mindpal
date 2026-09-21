@@ -102,6 +102,14 @@ dialog[open]>*{pointer-events:auto}
 .mp-signin-page h1{margin:.2em 0 .4em}
 .mp-signin-page input{width:100%;margin:6px 0 14px}
 .mp-profile-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 16px}
+.mp-faith-pref{margin:8px 0 4px;display:flex;flex-direction:column;gap:10px}
+.mp-faith-pref h2{margin:.1em 0 .2em}
+.mp-faith-chips{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 8px}
+.mp-faith-chip{background:#fffef9;border:2px solid #7c9163;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:650;cursor:pointer;color:#2f3b2c}
+.mp-faith-chip:hover,.mp-faith-chip.is-open{background:#2f5a3d;color:#f7f8f2;border-color:#2f5a3d}
+.mp-faith-chips-other{padding-top:4px}
+.mp-account-faith{margin:10px 0 14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.mp-morning-verse{margin:0 0 12px}
 
 .mp-today-hub{margin-bottom:18px;display:flex;flex-direction:column;gap:18px}
 .mp-civil-date{margin:2px 0 0;font-size:1.15rem;font-weight:650;color:#2f3b2c}
