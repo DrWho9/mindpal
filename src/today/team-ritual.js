@@ -91,6 +91,7 @@ export const PEACEFUL_THEME_LABELS = [
 export const HEAVY_RITUAL_TAGS = [
   "aod",
   "mothers",
+  "mens-health",
   "sleep",
   "anxiety",
   "drugs",

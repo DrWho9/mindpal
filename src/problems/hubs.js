@@ -1,6 +1,7 @@
 import {
   AOD_SUPPORT_TAGS,
   GROWTH_THEME_TAGS,
+  MENS_SUPPORT_TAGS,
   MOTHER_SUPPORT_TAGS,
   PROBLEM_GROUPS,
   PROBLEM_TAG_IDS,
@@ -13,8 +14,37 @@ import {
   isOwnerReading,
   ownerCompanionOpener,
 } from "../readings/owner.js";
+import {
+  MENS_HEALTH_MADDY_IDS,
+  MENS_HEALTH_PROBLEM_ID,
+  MENS_HEALTH_READING_LIMIT,
+  MENS_HEALTH_ROUTE,
+  dedicatedProblemRoute,
+  featuredMensHelpline,
+  isMensHealthProblem,
+  isMensHealthYoutubeUrl,
+  mensHealthHelplines,
+  mensHealthQueuedVideos,
+  mensHealthStats,
+  mensHealthYoutube,
+} from "./mens-health.js";
 
 export { GROWTH_THEME_TAGS, PROBLEM_GROUPS };
+export {
+  MENS_HEALTH_MADDY_IDS,
+  MENS_HEALTH_PROBLEM_ID,
+  MENS_HEALTH_READING_LIMIT,
+  MENS_HEALTH_ROUTE,
+  dedicatedProblemRoute,
+  featuredMensHelpline,
+  isMensHealthProblem,
+  isMensHealthYoutubeUrl,
+  mensHealthHelplines,
+  mensHealthQueuedVideos,
+  mensHealthStats,
+  mensHealthYoutube,
+};
+export { MENS_SUPPORT_TAGS };
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
@@ -84,6 +114,7 @@ export const PROBLEM_VIDEO_TAGS = {
   faith: "faith",
   mothers: "self-compassion",
   aod: "alcohol",
+  "mens-health": "motivation",
   mindset: "mindset",
   motivation: "motivation",
   "stronger-mind": "resilience",
@@ -115,7 +146,9 @@ export function readingsForProblem(pack, problemId, limit) {
       ? MOTHERS_READING_LIMIT
       : problemId === AOD_PROBLEM_ID
         ? AOD_READING_LIMIT
-        : 6;
+        : problemId === MENS_HEALTH_PROBLEM_ID
+          ? MENS_HEALTH_READING_LIMIT
+          : 6;
   const featured = featuredOwnerReadings(problemId);
   const featuredIds = new Set(featured.map((item) => item.id));
   const tagged = readings
@@ -130,6 +163,10 @@ export function motherSupportTags(reading) {
 
 export function aodSupportTags(reading) {
   return readingProblemTags(reading).filter((tag) => AOD_SUPPORT_TAGS.includes(tag));
+}
+
+export function mensSupportTags(reading) {
+  return readingProblemTags(reading).filter((tag) => MENS_SUPPORT_TAGS.includes(tag));
 }
 
 export function videoProblemTags(video) {
@@ -170,7 +207,9 @@ export function maddyForProblem(catalog, problemId) {
       ? MOTHERS_MADDY_IDS
       : problemId === AOD_PROBLEM_ID
         ? AOD_MADDY_IDS
-        : null;
+        : problemId === MENS_HEALTH_PROBLEM_ID
+          ? MENS_HEALTH_MADDY_IDS
+          : null;
   if (!scoped) return videos;
   return scoped.map((id) => videos.find((item) => item.id === id)).filter(Boolean);
 }

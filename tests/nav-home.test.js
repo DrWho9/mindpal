@@ -114,5 +114,7 @@ describe("brand home wiring", () => {
     assert.match(build, /replaceAll\("\.showModal\(\)", "\.show\(\)"\)/);
     assert.match(build, /sidebar-journal-nav/);
     assert.match(build, /\{name:`My diary`,icon:rn\}/);
+    assert.match(build, /mpProfileButton/);
+    assert.match(build, /onClick:\(\)=>mpGoHome\(I\).*mpProfileButton/);
   });
 });

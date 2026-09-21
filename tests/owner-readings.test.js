@@ -29,6 +29,7 @@ describe("owner AOD talk-through", () => {
     assert.ok(draft.toLowerCase().indexOf("drugs and alcohol") < draft.search(/\bDNA\b/));
     assert.equal(featuredOwnerReadings("aod")[0].id, reading.id);
     assert.deepEqual(featuredOwnerReadings("mothers"), []);
+    assert.ok(featuredOwnerReadings("mens-health").length >= 6);
     assert.equal(mergeOwnerReadings(packA)[0].id, reading.id);
   });
 

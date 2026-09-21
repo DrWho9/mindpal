@@ -1,0 +1,161 @@
+{
+  "version": "1.0.0",
+  "id": "mens-health",
+  "route": "Mens health",
+  "title": "Men's Health",
+  "shortTitle": "Men's Health",
+  "hero": "There's nothing wrong with being your best self.",
+  "disclaimer": "MindPal offers reflection and support — not a diagnosis, not treatment, and not a replacement for a GP or a counsellor. In immediate danger in Australia, call 000.",
+  "checkedAt": "2026-09-21",
+  "stats": [
+    {
+      "id": "suicide-2024",
+      "topic": "Suicide",
+      "period": "2024 (ABS preliminary)",
+      "male": "~76.5% of deaths (2,529)",
+      "female": "778 deaths",
+      "maleRate": "~18.3 / 100,000 (age-standardised)",
+      "femaleRate": "~5.5 / 100,000 (age-standardised)",
+      "compare": "Male age-standardised rate about 3× the female rate",
+      "note": "Preliminary. Figures can rise as coronial work is finished.",
+      "sourceLabel": "ABS — Intentional self-harm (suicide) deaths, 2024",
+      "sourceUrl": "https://www.abs.gov.au/statistics/health/causes-death/intentional-self-harm-suicide-deaths/latest-release"
+    },
+    {
+      "id": "prison-2025",
+      "topic": "Prison",
+      "period": "30 June 2025 (ABS)",
+      "male": "43,169 of 46,998 adult prisoners (~92%)",
+      "female": "3,831 (~8%)",
+      "maleRate": "~404 / 100,000 adult males",
+      "femaleRate": "~35 / 100,000 adult females",
+      "compare": "Males were 92% of the adult prison population",
+      "note": "National Prisoner Census at midnight 30 June 2025.",
+      "sourceLabel": "ABS — Prisoners in Australia, 2025",
+      "sourceUrl": "https://www.abs.gov.au/statistics/people/crime-and-justice/prisoners-australia/latest-release"
+    },
+    {
+      "id": "homelessness-2021",
+      "topic": "Homelessness",
+      "period": "Census night 2021 (ABS estimate)",
+      "male": "68,516 of 122,494 people (55.9%)",
+      "female": "53,974 (44.1%)",
+      "maleRate": "55 / 10,000 males",
+      "femaleRate": "42 / 10,000 females",
+      "compare": "Males were 55.9% of people estimated as experiencing homelessness",
+      "note": "Census estimate, not a nightly street count.",
+      "sourceLabel": "ABS — Estimating Homelessness: Census, 2021",
+      "sourceUrl": "https://www.abs.gov.au/statistics/people/housing/estimating-homelessness-census/latest-release"
+    }
+  ],
+  "youtube": [
+    {
+      "id": "YT-MENS-01",
+      "title": "MensLine Australia — official channel",
+      "channel": "MensLine Australia",
+      "blurb": "National 24/7 counselling and referral for men. External YouTube.",
+      "url": "https://www.youtube.com/c/MLCAustralia",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-02",
+      "title": "Looking after your mental health",
+      "channel": "Beyond Blue Official",
+      "blurb": "Short official Beyond Blue literacy clip. External YouTube.",
+      "url": "https://www.youtube.com/watch?v=Y-TZjfOTezQ",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-03",
+      "title": "What happens when you call Lifeline",
+      "channel": "Lifeline Australia",
+      "blurb": "How 13 11 14 works. External YouTube.",
+      "url": "https://www.youtube.com/watch?v=HPiNybTW1_o",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-04",
+      "title": "20 Years of Changing the Face of Men's Health",
+      "channel": "Movember",
+      "blurb": "Official Movember story on men's health work. External YouTube.",
+      "url": "https://www.youtube.com/watch?v=xsJ95zPqfVg",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-05",
+      "title": "Suicide notes talk too late",
+      "channel": "Movember",
+      "blurb": "Movember 'we need to talk' piece. External YouTube.",
+      "url": "https://www.youtube.com/watch?v=cDYAgurah8g",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-06",
+      "title": "Healthy Male — official channel",
+      "channel": "Healthy Male",
+      "blurb": "AU men's health literacy (physical, sexual, mental). External YouTube.",
+      "url": "https://www.youtube.com/c/HealthyMale_AU",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-07",
+      "title": "Risk taking and injury",
+      "channel": "Healthy Male",
+      "blurb": "Practical talk on risk, recovery and knowing your limits. External YouTube.",
+      "url": "https://www.youtube.com/watch?v=IxRptGeWeDc",
+      "external": true
+    },
+    {
+      "id": "YT-MENS-08",
+      "title": "Sleep Health Foundation — official channel",
+      "channel": "Sleep Health Foundation",
+      "blurb": "AU sleep literacy. Sleep is a tool, not vanity. External YouTube.",
+      "url": "https://www.youtube.com/channel/UCQmURqwYj9L9koYxKyrTxTA",
+      "external": true
+    }
+  ],
+  "queuedVideos": [
+    {
+      "id": "MH-V01",
+      "title": "Best self is not a performance"
+    },
+    {
+      "id": "MH-V02",
+      "title": "Mateship is a skill"
+    },
+    {
+      "id": "MH-V03",
+      "title": "Show up for the people who count on you"
+    }
+  ],
+  "helplines": [
+    {
+      "id": "mensline",
+      "name": "MensLine Australia",
+      "phone": "1300 78 99 78",
+      "blurb": "24/7 counselling and referral for men — featured here.",
+      "url": "https://mensline.org.au/",
+      "featured": true
+    },
+    {
+      "id": "lifeline",
+      "name": "Lifeline",
+      "phone": "13 11 14",
+      "blurb": "24/7 crisis support.",
+      "url": "https://www.lifeline.org.au/"
+    },
+    {
+      "id": "beyondblue",
+      "name": "Beyond Blue",
+      "phone": "1300 22 4636",
+      "blurb": "Anxiety, depression and suicide-prevention support.",
+      "url": "https://www.beyondblue.org.au/"
+    },
+    {
+      "id": "emergency",
+      "name": "Emergency",
+      "phone": "000",
+      "blurb": "Immediate danger in Australia."
+    }
+  ]
+}
