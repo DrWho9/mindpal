@@ -219,6 +219,10 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):e===`nudge`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Add a daily win when something small goes well.`}),
       (0,A.jsx)(`p`,{className:`muted`,children:`Optional. Never a test.`})
+    ]}):e===`growth`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`ONE WIN · INTENTION`}),
+      (0,A.jsx)(`h2`,{children:`One win or intention for the day`}),
+      (0,A.jsx)(`p`,{children:`A sentence is enough. Small counts. You’ll see these again in Before you sleep.`})
     ]}):(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`DAILY WINS`}),
       (0,A.jsx)(`h2`,{children:`A win from today`}),
@@ -571,22 +575,22 @@ function mpMothersWomenCard({onOpen:e}){
 }
 function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a}){
   (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
+  let[f,p]=(0,_.useState)(`readings`);
   let o=mpProblems.findProblem(mpProblemHubs,`mothers`);
   if(!o)return(0,A.jsx)(`p`,{children:`The mothers space is not loaded yet.`});
   let s=mpProblems.readingsForProblem(mpPackA,`mothers`),c=mpProblems.maddyForProblem(mpMaddy,`mothers`),l=mpMotherYtEntries(o);
+  function m(e){p(t=>t===e?``:e)}
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":`Struggling mothers`,children:[
     (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`MOTHERS · OPTIONAL SUPPORT`}),
     (0,A.jsx)(`h1`,{children:`Struggling mothers`}),
     (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse.`}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. Tap a section to open it — one at a time.`}),
+    (0,A.jsx)(mpFoldSection,{id:`readings`,title:`Verse / Readings`,meta:`Pack A excerpts · not a Done gate`,open:f===`readings`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{children:`Open a full daily chapter — body, practice, Listen and tags. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
       (0,A.jsx)(mpHubOpenableReadings,{readings:s,emptyLabel:`No tagged mother readings yet.`,onExplore:n})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Videos`}),
+    ]})}),
+    (0,A.jsx)(mpFoldSection,{id:`videos`,title:`Videos`,meta:`Maddy and YouTube · no speaker dump`,open:f===`videos`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for overwhelm, sleep and self-compassion. No speaker library dump here.`}),
       c.length?(0,A.jsxs)(A.Fragment,{children:[
         (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
@@ -608,28 +612,25 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
           ]},e.id);
         })})
       ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Companion`}),
+    ]})}),
+    (0,A.jsx)(mpFoldSection,{id:`companion`,title:`Companion`,meta:`Educational prompt · not a therapist`,open:f===`companion`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{children:`Opens Companion with a mother-support prompt — educational and peer-like. It is software, not a therapist, and it cannot watch over you or treat postnatal depression.`}),
       e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Journal / wins`}),
+    ]})}),
+    (0,A.jsx)(mpFoldSection,{id:`journal`,title:`Journal / wins`,meta:`A sentence is enough`,open:f===`journal`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{children:o.journalPrompt}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[
         t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
       ]}),
       (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small win amid caring for others: `):null)})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-safety`,children:[
-      (0,A.jsx)(`h2`,{children:`If this feels like too much`}),
+    ]})}),
+    (0,A.jsx)(mpFoldSection,{id:`safety`,title:`If this feels like too much`,meta:`000 · Need support`,className:`mp-mothers-safety`,open:f===`safety`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{children:`MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline.`}),
       (0,A.jsxs)(`div`,{className:`button-row`,children:[
         i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null,
         a?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:a,children:`Women’s wellbeing`}):null
       ]})
-    ]})
+    ]})})
   ]});
 }
 function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
@@ -760,65 +761,61 @@ function mpSaveRitual(next){
   mpNotifyRitual();
   return e;
 }
-function mpTeamRitualCard({onOpen:e}){
-  let[t,n]=(0,_.useState)(()=>mpTeamRitual.loadRitual(mpPackA)),[r,i]=(0,_.useState)(!1);
-  (0,_.useEffect)(()=>{function e(){n(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
-  let a=mpTeamRitual.ritualStepStatus(t,`breathe`),o=mpTeamRitual.ritualStepStatus(t,`reading`),s=mpTeamRitual.nextRitualStep(t);
-  let c=s===`reading`?`Continue to the reading`:s?`Start the settle`:`Open the ritual again`;
-  return(0,A.jsxs)(`section`,{className:`mp-team-ritual-card`,"aria-label":`Work team morning ritual`,children:[
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
-    (0,A.jsx)(`h2`,{children:mpTeamRitual.TEAM_RITUAL_TITLE}),
-    (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_LEDE}),
-    (0,A.jsx)(`p`,{className:`muted`,children:mpTeamRitual.TEAM_RITUAL_HINT}),
-    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,"aria-expanded":r,onClick:()=>i(e=>!e),children:r?`Hide the two steps`:`See the two steps`}),
-    r?(0,A.jsxs)(`ol`,{className:`mp-team-ritual-steps`,children:[
-      (0,A.jsxs)(`li`,{className:a!==`todo`?`is-${a}`:``,children:[
-        (0,A.jsx)(`strong`,{children:`Step 1 · Breathe (~3 min)`}),
-        (0,A.jsx)(`span`,{children:mpTeamRitual.RITUAL_STEPS.breathe.blurb}),
-        a!==`todo`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:a===`done`?`Done`:`Skipped`}):null
-      ]}),
-      (0,A.jsxs)(`li`,{className:`${o!==`todo`?`is-${o} `:``}${s===`reading`?`is-next`:``}`,children:[
-        (0,A.jsx)(`strong`,{children:`Step 2 · Peaceful reading`}),
-        (0,A.jsx)(`span`,{children:mpTeamRitual.RITUAL_STEPS.reading.blurb}),
-        s===`reading`?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
-        o!==`todo`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:o===`done`?`Done`:`Skipped`}):null
-      ]})
-    ]}):null,
-    (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:c}):null
-    ]})
-  ]});
+function mpNotifyGrowth(){
+  try{mpIndividualGrowth.notifyGrowthChange()}catch{}
 }
-function mpTeamRitualPage({onToday:e,onReadings:t}){
-  let[n,r]=(0,_.useState)(()=>mpTeamRitual.loadRitual(mpPackA));
-  let[i,a]=(0,_.useState)(()=>mpTeamRitual.canOpenReading(mpTeamRitual.loadRitual(mpPackA))?`reading`:`breathe`);
+function mpSaveGrowth(next){
+  let e=mpIndividualGrowth.saveGrowth(next,mpPackA);
+  mpNotifyGrowth();
+  return e;
+}
+function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
+  let[n,r]=(0,_.useState)(()=>mpIndividualGrowth.loadGrowth(mpPackA));
+  let[i,a]=(0,_.useState)(()=>mpIndividualGrowth.nextGrowthStep(mpIndividualGrowth.loadGrowth(mpPackA))||`settle`);
   let[o,s]=(0,_.useState)(!1);
   let[c,l]=(0,_.useState)(0);
+  let[q,j]=(0,_.useState)(``);
+  let[z,B]=(0,_.useState)(``);
   let u=(0,_.useRef)(null);
   let{listening:d,listenStatus:f,toggle:p,stop:m}=mt();
   let h=mpTeamRitual.breathClip(mpMaddy);
   let g=mpReadings.maddyPublishedSrc(mpTeamRitual.breathClipSrc(mpMaddy));
-  let v=mpTeamRitual.ritualReading(mpPackA,n);
-  let y=mpTeamRitual.ritualStepStatus(n,`breathe`);
-  let b=mpTeamRitual.ritualStepStatus(n,`reading`);
-  let x=mpTeamRitual.canOpenReading(n);
-  let S=mpTeamRitual.nextRitualStep(n);
+  let v=mpIndividualGrowth.growthReading(mpPackA,n);
+  let k=mpTeamRitual.ritualTradition(mpFaith.sessionPreferences?mpFaith.sessionPreferences():null);
+  let N=typeof Ft<`u`?mpTeamRitual.pickRitualVerse(Ft,new Date(),k):null;
+  let P=N?mpTeamRitual.ritualChapterTarget(N):null;
+  let y=mpIndividualGrowth.growthStepStatus(n,`settle`);
+  let Q=mpIndividualGrowth.growthStepStatus(n,`verse`);
+  let b=mpIndividualGrowth.growthStepStatus(n,`reading`);
+  let Y=mpIndividualGrowth.growthStepStatus(n,`win`);
+  let x=mpIndividualGrowth.canOpenGrowthReading(n);
+  let O=mpIndividualGrowth.canOpenGrowthVerse(n);
+  let W=mpIndividualGrowth.canOpenGrowthWin(n);
+  let S=mpIndividualGrowth.nextGrowthStep(n);
   let C=mpTeamRitual.breathCueAt(c);
   let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
-  (0,_.useEffect)(()=>{function e(){r(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
-  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+1;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}return mpTeamRitual.BREATH_DURATION_SEC}return n})},1e3);return()=>clearInterval(e)},[o]);
+  (0,_.useEffect)(()=>{function e(){r(mpIndividualGrowth.loadGrowth(mpPackA))}return window.addEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e),()=>window.removeEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e)},[]);
+  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveGrowth(mpIndividualGrowth.markGrowth(mpIndividualGrowth.loadGrowth(mpPackA),`settle`,`done`));r(t);try{u.current&&u.current.pause()}catch{}a(`verse`);return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
   (0,_.useEffect)(()=>()=>{m&&m()},[m]);
+  function F(e){
+    if(!mpIndividualGrowth.canOpenGrowthStep(n,e))return;
+    a(e);
+  }
   function E(e,t){
-    let i=mpSaveRitual(mpTeamRitual.markRitual(n,e,t));
+    let i=mpSaveGrowth(mpIndividualGrowth.markGrowth(n,e,t));
     r(i);
-    if(e===`breathe`&&t!==`todo`){
+    if(e===`settle`&&t!==`todo`){
       s(!1);
       try{u.current&&u.current.pause()}catch{}
-      a(`reading`);
+      a(mpIndividualGrowth.canOpenGrowthVerse(i)?`verse`:`settle`);
     }
-    if(e===`breathe`&&t===`todo`){
-      l(0);s(!1);a(`breathe`);
+    if(e===`verse`&&t!==`todo`){
+      a(mpIndividualGrowth.canOpenGrowthReading(i)?`reading`:`verse`);
     }
+    if(e===`reading`&&t!==`todo`){
+      a(mpIndividualGrowth.canOpenGrowthWin(i)?`win`:`reading`);
+    }
+    if(t===`todo`)a(e);
     return i;
   }
   function D(){
@@ -826,75 +823,318 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
     s(!0);
     try{u.current&&u.current.play&&u.current.play()}catch{}
   }
-  function T(){
-    if(!x)return;
-    a(`reading`);
+  async function G(){
+    if(!P)return;
+    B(``);j(``);
+    if(!P.fetchUrl){B(`The catalog keeps this teaching at its source — MindPal does not invent a longer text.`);return}
+    try{
+      let e=await fetch(P.fetchUrl,{referrerPolicy:`no-referrer`});
+      let t=await e.json();
+      if(t&&t.text)j(String(t.text).trim());
+      else B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }catch{
+      B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }
   }
+  let J=N?`${N.verse?.reference||``}. ${N.verse?.text||``}`:``;
+  let settleBody=(0,A.jsxs)(`div`,{className:`mp-team-breath`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpIndividualGrowth.GROWTH_OPEN}),
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_BREATH_HERO}),
+    (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
+    C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-count`,"aria-live":`polite`,children:C.count}):null,
+    (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
+    h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
+      (0,A.jsxs)(`div`,{className:`mp-team-breath-frame`,children:[
+        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+        C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-overlay`,"aria-hidden":!0,children:C.count}):null
+      ]}),
+      (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
+    ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:D,children:o?`Pause`:`Start the breath`}),
+      y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`settle`,`done`),children:`I’m done`}):null,
+      y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`settle`,`skipped`),children:`Skip this breath`}):null,
+      y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`settle`,`todo`),children:`Undo breath`}):null
+    ]}),
+    O?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`The body has had a moment. Open today’s verse when you’re ready.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`verse`),children:`Go to the verse`})
+    ]}):null
+  ]});
+  let verseBody=(0,A.jsxs)(`div`,{className:`mp-team-verse`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_VERSE_HERO}),
+    N?(0,A.jsxs)(`article`,{className:`mp-team-verse-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`VERSE FOR THE DAY${N.lane?` · ${String(N.lane).replace(/_/g,` `)}`:``}`}),
+      (0,A.jsx)(`h3`,{children:N.verse?.reference||`Today’s verse`}),
+      (0,A.jsxs)(`p`,{children:[`“`,N.verse?.text||``,`”`]}),
+      N.verse?.source_note?(0,A.jsx)(`p`,{className:`muted`,children:N.verse.source_note}):null,
+      N.reflection?(0,A.jsx)(`p`,{children:N.reflection}):null,
+      (0,A.jsxs)(`details`,{className:`mp-verse-collapse`,onToggle:e=>{if(e.target.open)G()},children:[
+        (0,A.jsx)(`summary`,{children:mpIndividualGrowth.GROWTH_CHAPTER_SUMMARY}),
+        q?(0,A.jsx)(`p`,{className:`mp-team-chapter`,children:q}):null,
+        z?(0,A.jsx)(`p`,{className:`muted`,children:z}):null,
+        P?.openUrl?(0,A.jsx)(`p`,{children:(0,A.jsx)(`a`,{href:P.openUrl,target:`_blank`,rel:`noreferrer`,children:`Open the chapter at its source`})}):null
+      ]})
+    ]}):(0,A.jsx)(`p`,{children:`Today’s verse is not loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      N?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:N.id||`growth-verse`,text:J}),children:d?`Pause`:`Listen`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`verse`,`done`),children:`I’m done`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`skipped`),children:`Skip the verse`}):null,
+      Q!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`todo`),children:`Undo verse`}):null
+    ]}),
+    x?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`When you’re ready, open the peaceful reading.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`reading`),children:`Go to the peaceful reading`})
+    ]}):null,
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let readingBody=(0,A.jsxs)(`div`,{className:`mp-team-reading`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_READING_HERO}),
+    v?(0,A.jsxs)(`article`,{className:`mp-team-reading-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`PACK A · PEACEFUL`}),
+      (0,A.jsx)(`h3`,{children:v.title}),
+      (0,A.jsx)(`p`,{className:`muted`,children:v.theme_label?`Day ${v.day} · ${v.theme_label}`:`Day ${v.day}`}),
+      (v.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+      v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
+    ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
+      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>mpOpenBookReader(v.id,R),children:`Open the book reader`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`I’m done`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
+      b!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`todo`),children:`Undo reading`}):null
+    ]}),
+    W?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`When you’re ready, name one win or intention.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`win`),children:`Go to one win`})
+    ]}):null,
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let winBody=(0,A.jsxs)(`div`,{className:`mp-growth-win`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_WIN_HERO}),
+    (0,A.jsx)(mpWinsPanel,{variant:`growth`,onOpenJournal:T}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      Y===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`win`,`done`),children:`I’m done`}):null,
+      Y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`win`,`skipped`),children:`Skip this win`}):null,
+      Y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`win`,`todo`),children:`Undo win`}):null
+    ]})
+  ]});
+  let bodies={settle:settleBody,verse:verseBody,reading:readingBody,win:winBody};
+  return(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-morning mp-individual-growth`,"aria-label":`Individual Growth`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpIndividualGrowth.GROWTH_OPEN}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpIndividualGrowth.GROWTH_EYEBROW}),
+    (0,A.jsx)(`h2`,{children:mpIndividualGrowth.GROWTH_TITLE}),
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_LEDE}),
+    (0,A.jsx)(`p`,{className:`muted`,children:mpIndividualGrowth.GROWTH_FLOW}),
+    (0,A.jsx)(`ol`,{className:`mp-team-ritual-path`,"aria-label":`Individual Growth steps`,children:mpIndividualGrowth.GROWTH_STEP_IDS.map(e=>{
+      let t=mpIndividualGrowth.GROWTH_STEPS[e],o=mpIndividualGrowth.growthStepStatus(n,e),s=i===e,c=S===e,l=mpIndividualGrowth.canOpenGrowthStep(n,e);
+      return(0,A.jsxs)(`li`,{className:`mp-day-step${s?` is-current`:``}${c?` is-next`:``}${o!==`todo`?` is-${o}`:``}${l?``:` is-locked`}`,children:[
+        (0,A.jsxs)(`button`,{type:`button`,className:`mp-step-main`,onClick:()=>F(e),"aria-expanded":s,disabled:!l,children:[
+          (0,A.jsx)(`span`,{className:`mp-step-num`,children:`Step ${t.number} · ${t.rowLabel}`}),
+          c?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+          o===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+          o===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null,
+          !l?(0,A.jsx)(`span`,{className:`muted`,children:`After the step before`}):null
+        ]}),
+        s?(0,A.jsx)(`div`,{className:`mp-team-step-body`,children:bodies[e]}):null
+      ]},e);
+    })})
+  ]});
+}
+function mpFoldSection({id:e,title:t,meta:n,open:r,onToggle:i,children:a,className:o}){
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-fold${r?` is-open`:``}${o?` ${o}`:``}`,"aria-label":t,children:[
+    (0,A.jsxs)(`button`,{type:`button`,className:`mp-fold-head`,"aria-expanded":r,onClick:()=>i(e),children:[
+      (0,A.jsx)(`h2`,{children:t}),
+      n?(0,A.jsx)(`span`,{className:`muted`,children:n}):null,
+      (0,A.jsx)(`span`,{className:`mp-fold-caret`,children:r?`Hide`:`Show`})
+    ]}),
+    r?(0,A.jsx)(`div`,{className:`mp-fold-body`,children:a}):null
+  ]});
+}
+function mpTeamRitualCard({onOpen:e}){
+  let[t,n]=(0,_.useState)(()=>mpTeamRitual.loadRitual(mpPackA)),[r,i]=(0,_.useState)(!1);
+  (0,_.useEffect)(()=>{function e(){n(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
+  let a=mpTeamRitual.ritualStepStatus(t,`breathe`),o=mpTeamRitual.ritualStepStatus(t,`verse`),s=mpTeamRitual.ritualStepStatus(t,`reading`),c=mpTeamRitual.nextRitualStep(t);
+  let l=c===`verse`?`Continue to the verse`:c===`reading`?`Continue to the reading`:c?`Start the settle`:`Open the ritual again`;
+  return(0,A.jsxs)(`section`,{className:`mp-team-ritual-card`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
+    (0,A.jsx)(`h2`,{children:mpTeamRitual.TEAM_RITUAL_TITLE}),
+    (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_LEDE}),
+    (0,A.jsx)(`p`,{className:`muted`,children:mpTeamRitual.TEAM_RITUAL_HINT}),
+    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,"aria-expanded":r,onClick:()=>i(e=>!e),children:r?`Hide the three steps`:`See the three steps`}),
+    r?(0,A.jsxs)(`ol`,{className:`mp-team-ritual-steps`,children:[["breathe",a],["verse",o],["reading",s]].map(([e,n])=>{
+      let r=mpTeamRitual.RITUAL_STEPS[e];
+      return(0,A.jsxs)(`li`,{className:`${n!==`todo`?`is-${n} `:``}${c===e?`is-next`:``}`,children:[
+        (0,A.jsx)(`strong`,{children:`Step ${r.number} · ${r.rowLabel}`}),
+        (0,A.jsx)(`span`,{children:r.blurb}),
+        c===e?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+        n!==`todo`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:n===`done`?`Done`:`Skipped`}):null
+      ]},e);
+    })}):null,
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:l}):null
+    ]})
+  ]});
+}
+function mpTeamRitualPage({onToday:e,onReadings:t}){
+  let[n,r]=(0,_.useState)(()=>mpTeamRitual.loadRitual(mpPackA));
+  let[i,a]=(0,_.useState)(()=>mpTeamRitual.nextRitualStep(mpTeamRitual.loadRitual(mpPackA))||`breathe`);
+  let[o,s]=(0,_.useState)(!1);
+  let[c,l]=(0,_.useState)(0);
+  let[q,j]=(0,_.useState)(``);
+  let[z,B]=(0,_.useState)(``);
+  let u=(0,_.useRef)(null);
+  let{listening:d,listenStatus:f,toggle:p,stop:m}=mt();
+  let h=mpTeamRitual.breathClip(mpMaddy);
+  let g=mpReadings.maddyPublishedSrc(mpTeamRitual.breathClipSrc(mpMaddy));
+  let v=mpTeamRitual.ritualReading(mpPackA,n);
+  let k=mpTeamRitual.ritualTradition(mpFaith.sessionPreferences?mpFaith.sessionPreferences():null);
+  let N=typeof Ft<`u`?mpTeamRitual.pickRitualVerse(Ft,new Date(),k):null;
+  let P=N?mpTeamRitual.ritualChapterTarget(N):null;
+  let y=mpTeamRitual.ritualStepStatus(n,`breathe`);
+  let Q=mpTeamRitual.ritualStepStatus(n,`verse`);
+  let b=mpTeamRitual.ritualStepStatus(n,`reading`);
+  let x=mpTeamRitual.canOpenReading(n);
+  let O=mpTeamRitual.canOpenVerse(n);
+  let S=mpTeamRitual.nextRitualStep(n);
+  let C=mpTeamRitual.breathCueAt(c);
+  let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
+  (0,_.useEffect)(()=>{function e(){r(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
+  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}a(`verse`);return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
+  (0,_.useEffect)(()=>()=>{m&&m()},[m]);
+  function F(e){
+    if(!mpTeamRitual.canOpenRitualStep(n,e))return;
+    a(e);
+  }
+  function E(e,t){
+    let i=mpSaveRitual(mpTeamRitual.markRitual(n,e,t));
+    r(i);
+    if(e===`breathe`&&t!==`todo`){
+      s(!1);
+      try{u.current&&u.current.pause()}catch{}
+      a(mpTeamRitual.canOpenVerse(i)?`verse`:`breathe`);
+    }
+    if(e===`verse`&&t!==`todo`){
+      a(mpTeamRitual.canOpenReading(i)?`reading`:`verse`);
+    }
+    if(t===`todo`)a(e);
+    return i;
+  }
+  function D(){
+    if(o){s(!1);try{u.current&&u.current.pause()}catch{};return}
+    s(!0);
+    try{u.current&&u.current.play&&u.current.play()}catch{}
+  }
+  async function G(){
+    if(!P)return;
+    B(``);j(``);
+    if(!P.fetchUrl){B(`The catalog keeps this teaching at its source — MindPal does not invent a longer text.`);return}
+    try{
+      let e=await fetch(P.fetchUrl,{referrerPolicy:`no-referrer`});
+      let t=await e.json();
+      if(t&&t.text)j(String(t.text).trim());
+      else B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }catch{
+      B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }
+  }
+  let J=N?`${N.verse?.reference||``}. ${N.verse?.text||``}`:``;
+  let breathBody=(0,A.jsxs)(`div`,{className:`mp-team-breath`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
+    (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_BREATH_HERO}),
+    (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
+    C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-count`,"aria-live":`polite`,children:C.count}):null,
+    (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
+    h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
+      (0,A.jsxs)(`div`,{className:`mp-team-breath-frame`,children:[
+        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+        C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-overlay`,"aria-hidden":!0,children:C.count}):null
+      ]}),
+      (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
+    ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:D,children:o?`Pause`:`Start the breath`}),
+      y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`breathe`,`done`),children:`I’m done`}):null,
+      y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`skipped`),children:`Skip this breath`}):null,
+      y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`todo`),children:`Undo breath`}):null
+    ]}),
+    O?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`The body has had a moment. Open today’s verse when you’re ready.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`verse`),children:`Go to the verse`})
+    ]}):null
+  ]});
+  let verseBody=(0,A.jsxs)(`div`,{className:`mp-team-verse`,children:[
+    (0,A.jsx)(`p`,{children:mpTeamRitual.TEAM_RITUAL_VERSE_HERO}),
+    N?(0,A.jsxs)(`article`,{className:`mp-team-verse-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`VERSE FOR THE DAY${N.lane?` · ${String(N.lane).replace(/_/g,` `)}`:``}`}),
+      (0,A.jsx)(`h3`,{children:N.verse?.reference||`Today’s verse`}),
+      (0,A.jsxs)(`p`,{children:[`“`,N.verse?.text||``,`”`]}),
+      N.verse?.source_note?(0,A.jsx)(`p`,{className:`muted`,children:N.verse.source_note}):null,
+      N.reflection?(0,A.jsx)(`p`,{children:N.reflection}):null,
+      (0,A.jsxs)(`details`,{className:`mp-verse-collapse`,onToggle:e=>{if(e.target.open)G()},children:[
+        (0,A.jsx)(`summary`,{children:mpTeamRitual.TEAM_RITUAL_CHAPTER_SUMMARY}),
+        q?(0,A.jsx)(`p`,{className:`mp-team-chapter`,children:q}):null,
+        z?(0,A.jsx)(`p`,{className:`muted`,children:z}):null,
+        P?.openUrl?(0,A.jsx)(`p`,{children:(0,A.jsx)(`a`,{href:P.openUrl,target:`_blank`,rel:`noreferrer`,children:`Open the chapter at its source`})}):null
+      ]})
+    ]}):(0,A.jsx)(`p`,{children:`Today’s verse is not loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      N?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:N.id||`ritual-verse`,text:J}),children:d?`Pause`:`Listen`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`verse`,`done`),children:`I’m done`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`skipped`),children:`Skip the verse`}):null,
+      Q!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`todo`),children:`Undo verse`}):null
+    ]}),
+    x?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`When you’re ready, open the peaceful reading.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`reading`),children:`Go to the peaceful reading`})
+    ]}):null,
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let readingBody=(0,A.jsxs)(`div`,{className:`mp-team-reading`,children:[
+    (0,A.jsx)(`p`,{children:`One gentle Pack A piece for this morning. Opening here does not mark a Pack A day Done.`}),
+    v?(0,A.jsxs)(`article`,{className:`mp-team-reading-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`PACK A · PEACEFUL`}),
+      (0,A.jsx)(`h3`,{children:v.title}),
+      (0,A.jsx)(`p`,{className:`muted`,children:v.theme_label?`Day ${v.day} · ${v.theme_label}`:`Day ${v.day}`}),
+      (v.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+      v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
+    ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`That’s enough for this morning`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
+      b!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`todo`),children:`Undo reading`}):null,
+      t?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:t,children:`Today’s pack reading`}):null
+    ]}),
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let bodies={breathe:breathBody,verse:verseBody,reading:readingBody};
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings mp-lane-team-ritual`,"aria-label":`Work team morning ritual`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpTeamRitual.TEAM_RITUAL_OPEN}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:mpTeamRitual.TEAM_RITUAL_EYEBROW}),
     (0,A.jsx)(`h1`,{children:mpTeamRitual.TEAM_RITUAL_SHORT}),
     (0,A.jsx)(`p`,{className:`lede`,children:mpTeamRitual.TEAM_RITUAL_LEDE}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Step 1 Breathe (~3 min), then Step 2 Peaceful reading. One piece is enough.`}),
-    (0,A.jsxs)(`ol`,{className:`mp-team-ritual-path`,children:[
-      (0,A.jsxs)(`li`,{className:`mp-day-step${i===`breathe`?` is-current`:``}${S===`breathe`?` is-next`:``}${y!==`todo`?` is-${y}`:``}`,children:[
-        (0,A.jsxs)(`div`,{className:`mp-step-head`,children:[
-          (0,A.jsx)(`span`,{className:`mp-step-num`,children:`Step 1 · Breathe (~3 min)`}),
-          S===`breathe`?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
-          y===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
-          y===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
-        ]})
-      ]}),
-      (0,A.jsxs)(`li`,{className:`mp-day-step${i===`reading`?` is-current`:``}${S===`reading`?` is-next`:``}${b!==`todo`?` is-${b}`:``}`,children:[
-        (0,A.jsxs)(`div`,{className:`mp-step-head`,children:[
-          (0,A.jsx)(`span`,{className:`mp-step-num`,children:`Step 2 · Peaceful reading`}),
-          S===`reading`?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
-          b===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
-          b===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
-        ]})
-      ]})
-    ]}),
-    i===`breathe`?(0,A.jsxs)(`section`,{className:`simple-panel mp-team-breath`,"aria-label":`Step 1 Breathe`,children:[
-      (0,A.jsx)(`h2`,{children:`Step 1 · Breathe`}),
-      (0,A.jsx)(`p`,{children:`About three minutes. Follow Maddy’s timed breath if you’d like company — inhale 4, hold 4, exhale 6. The clock keeps going after the clip ends.`}),
-      (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
-      (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
-      h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
-        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
-        (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
-      ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:D,children:o?`Pause`:`Start the breath`}),
-        y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`breathe`,`done`),children:`That’s enough`}):null,
-        y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`skipped`),children:`Skip this breath`}):null,
-        y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`breathe`,`todo`),children:`Undo breath`}):null
-      ]}),
-      x?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
-        (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
-        (0,A.jsx)(`p`,{children:`The body has had a moment. Open the peaceful reading when you’re ready.`}),
-        (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:T,children:`Open the peaceful reading`})
-      ]}):null
-    ]}):null,
-    i===`reading`?(0,A.jsxs)(`section`,{className:`simple-panel mp-team-reading`,"aria-label":`Step 2 Peaceful reading`,children:[
-      (0,A.jsx)(`h2`,{children:`Step 2 · Peaceful reading`}),
-      (0,A.jsx)(`p`,{children:`One gentle Pack A piece for this morning. Opening here does not mark a Pack A day Done.`}),
-      v?(0,A.jsxs)(`article`,{className:`mp-team-reading-body`,children:[
-        (0,A.jsx)(`p`,{className:`eyebrow`,children:`PACK A · PEACEFUL`}),
-        (0,A.jsx)(`h3`,{children:v.title}),
-        (0,A.jsx)(`p`,{className:`muted`,children:v.theme_label?`Day ${v.day} · ${v.theme_label}`:`Day ${v.day}`}),
-        (v.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
-        v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
-      ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
-        b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`That’s enough for this morning`}):null,
-        b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
-        b!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`todo`),children:`Undo reading`}):null,
-        t?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:t,children:`Today’s pack reading`}):null
-      ]}),
-      f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
-    ]}):null,
+    (0,A.jsx)(`p`,{className:`muted`,children:mpTeamRitual.TEAM_RITUAL_FLOW}),
+    (0,A.jsx)(`ol`,{className:`mp-team-ritual-path`,children:mpTeamRitual.RITUAL_STEP_IDS.map(e=>{
+      let t=mpTeamRitual.RITUAL_STEPS[e],o=mpTeamRitual.ritualStepStatus(n,e),s=i===e,c=S===e,l=mpTeamRitual.canOpenRitualStep(n,e);
+      return(0,A.jsxs)(`li`,{className:`mp-day-step${s?` is-current`:``}${c?` is-next`:``}${o!==`todo`?` is-${o}`:``}${l?``:` is-locked`}`,children:[
+        (0,A.jsxs)(`button`,{type:`button`,className:`mp-step-main`,onClick:()=>F(e),"aria-expanded":s,disabled:!l,children:[
+          (0,A.jsx)(`span`,{className:`mp-step-num`,children:`Step ${t.number} · ${t.rowLabel}`}),
+          c?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+          o===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+          o===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null,
+          !l?(0,A.jsx)(`span`,{className:`muted`,children:`After the step before`}):null
+        ]}),
+        s?(0,A.jsx)(`div`,{className:`mp-team-step-body`,children:bodies[e]}):null
+      ]},e);
+    })}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      i===`reading`&&!x?null:i===`reading`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>a(`breathe`),children:`Back to the breath`}):null,
       e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Back to Today`}):null
     ]})
   ]});
@@ -950,19 +1190,21 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
+    (0,A.jsx)(mpIndividualGrowthCard,{onOpenJournal:o||r,onOpenReadings:t}),
     (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),
-    mpTodaySteps.BANDS.map(e=>e.id===`night`?(0,A.jsx)(mpNightBand,{day:u,isNext:f===`evening`,onOpenJournal:r,onMark:m},e.id):(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
+    (0,A.jsxs)(`section`,{className:`mp-day-band mp-band-team`,"aria-label":`Team Growth`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`TEAM GROWTH`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Optional. A workplace or friends settle — not the morning path.`}),
+      (0,A.jsx)(mpTeamRitualCard,{onOpen:w})
+    ]}),
+    mpTodaySteps.BANDS.filter(e=>e.id!==`morning`).map(e=>e.id===`night`?(0,A.jsx)(mpNightBand,{day:u,isNext:f===`evening`,onOpenJournal:r,onMark:m},e.id):(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
       (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
-      e.id===`morning`?(0,A.jsx)(mpTeamRitualCard,{onOpen:w}):null,
-      e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
-      e.id===`morning`?(0,A.jsx)(mpPeacefulReadingPeek,{onOpen:t}):null,
-      e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
       (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
         let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,g=n.rowLabel||n.title;
         return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${t}${a?` is-next`:``}${i!==`todo`?` is-${i}`:``}`,children:[
           (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[t]&&h[t](),children:[
-            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,g]}),
+            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[n.when,` · `,g]}),
             a?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
             i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
             i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null

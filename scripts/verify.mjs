@@ -37,8 +37,8 @@ const checks = [
   [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
   [js.includes("Do this next"), "numbered day-steps are present"],
-  [js.includes("Follow today’s steps — Morning, Day, then Night."), "Today hub flow copy is present"],
-  [js.includes("Today’s verse — tap to expand"), "Morning verse starts collapsed"],
+  [js.includes("Start with Individual Growth") && js.includes("four personal steps"), "Today hub flow copy is present"],
+  [js.includes("Settle / breathe") && js.includes("One win / intention"), "Individual Growth steps are present"],
   [js.includes("mp-day-band") && js.includes("mp-band-${e.id}"), "Morning/Day/Night bands are present"],
   [js.includes("Readings — Verse of the day"), "compact Readings row is present"],
   [js.includes("Open Watch with Maddy"), "Maddy teaser links out from Today"],
@@ -133,8 +133,17 @@ const checks = [
   [!js.includes("className:`brand`,onClick:()=>I(`Today`)"), "sidebar brand no longer uses the raw Today setter"],
   [!js.includes("showModal"), "native dialogs are modeless so the brand can receive clicks"],
   [js.includes("Work team morning ritual") && js.includes("mpTeamRitualCard"), "optional team morning ritual card is present"],
+  [js.includes("mpIndividualGrowthCard") && js.includes("MINDPAL · INDIVIDUAL GROWTH") && js.includes("Settle / breathe"), "Individual Growth 4-step accordion is present"],
+  [js.includes("TEAM GROWTH") && js.includes("mp-band-team"), "Team Growth sits in its own band"],
+  [js.indexOf("mpIndividualGrowthCard") < js.indexOf("mpProblemHubList,{variant:`today`") && js.indexOf("mpProblemHubList,{variant:`today`") < js.indexOf("mp-band-team"), "Today order is Individual, then Support chips, then Team"],
+  [!js.includes("See the two steps"), "stale two-step copy is gone"],
   [js.includes("mpTeamRitualPage") && js.includes("t===`Team morning`"), "team morning ritual page is routed"],
-  [js.includes("Step 1 · Breathe") && js.includes("Step 2 · Peaceful reading"), "team ritual keeps breath before reading"],
+  [js.includes("MindPal is glad you’re here") && js.includes("mp-team-ritual-open"), "team ritual opens with a MindPal line"],
+  [js.includes("mp-team-breath-count") && js.includes("MindPal counts down each phase"), "team ritual breath cue counts down in-phase"],
+  [js.includes("I’m done") && js.includes("Skip this breath") && !/onClick:\(\)=>E\(`breathe`,`done`\),children:`That’s enough`/.test(js), "team ritual breath done button says I’m done"],
+  [js.includes("Breathe (~3 min)") && js.includes("Verse of the day") && js.includes("Peaceful reading") && js.includes("TEAM_RITUAL_FLOW"), "team ritual is breathe then verse then reading"],
+  [js.includes("Read the whole chapter — tap to expand") && js.includes("mp-team-step-body"), "team ritual accordion keeps chapter expand inside one step"],
+  [js.includes("mpFoldSection") && js.includes("mp-lane-mothers") && js.includes("mp-fold-head"), "mothers hub sections are accordion folds"],
   [js.includes("maddy-timed-breath") && js.includes("/videos/maddy/timed-breath.mp4"), "team ritual reuses Maddy timed breath"],
   [js.includes("does not mark a Pack A") && js.includes("mindpal.teamMorningRitual.v1"), "team ritual reading stays off the Pack A Done gate"],
   [js.includes("onOpenTeamRitual:()=>I(`Team morning`)"), "Today Morning card opens the team ritual"],
@@ -145,6 +154,11 @@ const checks = [
   [js.includes("t===`verse`&&(0,A.jsx)(mpMorningVerse,{})"), "Explore verse uses the targeted card"],
   [js.includes("faithStance:``,tradition:``,traditionId:``"), "new local profiles do not default to Christianity"],
   [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
+  [js.includes("filterDirectoryEntries") && js.includes("directoryOpenUrl"), "YouTube directory search/open helpers are present"],
+  [js.includes("mp-yt-dir-search") && js.includes("youtube-speaker-filter"), "YouTube directory has Search + speaker filter"],
+  [js.includes("type:`submit`") && js.includes("children:`Search`"), "YouTube directory Search submits on button/Enter"],
+  [js.includes("mpReadings.isDirectoryOpenable(e)"), "directory open gate uses the URL helper"],
+  [!js.includes("This draft preview has no videos cleared for ordinary release"), "empty draft-preview directory copy is gone"],
   [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
   [js.includes("setFaithAsk(mpNeedsFaithSetup())") && js.includes("if(faithAsk)"), "Today shows faith questions when preference is missing"],
   [js.includes("mpSetGateTick(e=>e+1)"), "faith-change re-renders the sign-in gate"],
@@ -185,11 +199,17 @@ if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")
 if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
   throw new Error("Support/Growth group styles missing");
 }
-if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock")) {
+if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count") || !css.includes(".mp-fold-head")) {
   throw new Error("team morning ritual styles missing");
+}
+if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
+  throw new Error("Individual Growth / Team Growth band styles missing");
 }
 if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
   throw new Error("faith preference chip styles missing");
+}
+if (!css.includes(".mp-yt-dir-search") || !css.includes(".mp-yt-dir-results")) {
+  throw new Error("YouTube directory search styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");

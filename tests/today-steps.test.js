@@ -34,7 +34,9 @@ const day = new Date(2026, 8, 20, 9, 0, 0);
 
 describe("today steps pathway", () => {
   it("keeps the hub as a short numbered flow", () => {
-    assert.equal(HUB_FLOW_LINE, "Follow today’s steps — Morning, Day, then Night.");
+    assert.match(HUB_FLOW_LINE, /Individual Growth/);
+    assert.match(HUB_FLOW_LINE, /Support/);
+    assert.match(HUB_FLOW_LINE, /Team/);
     assert.equal(stepRowLabel("readings"), "Readings — Verse of the day");
     assert.equal(hubStepCaption("readings"), "Step 1 · Readings — Verse of the day");
     assert.equal(hubStepCaption("evening"), "Step 4 · Before you sleep");

@@ -128,6 +128,9 @@ function wrapRuntime() {
   const meditations = stripExports(
     readFileSync(join(root, "src/videos/yt-meditations.js"), "utf8"),
   );
+  const ytDirectory = stripExports(
+    readFileSync(join(root, "src/videos/yt-directory.js"), "utf8"),
+  );
   const emotions = stripExports(
     readFileSync(join(root, "src/videos/emotions.js"), "utf8"),
   );
@@ -195,9 +198,10 @@ function wrapRuntime() {
     moduleSource("src/today/steps.js"),
     moduleSource("src/today/wins.js"),
     moduleSource("src/today/team-ritual.js"),
+    moduleSource("src/today/individual-growth.js"),
     moduleSource("src/nav/home.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${openReadingSrc}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${openReadingSrc}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${ytDirectory}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences};
@@ -205,7 +209,8 @@ mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
-mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenReading,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
+mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
+mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
 })();${ytSection}${sidebarShare}${voicePicker}${feelingsUi}`;
 }
 
@@ -256,6 +261,8 @@ function patchJs(source) {
     if (gtStart < 0 || gtEnd < 0) throw new Error("signed coaches anchor missing");
     next = `${next.slice(0, gtStart)}/*mp-gt-start*/${gt}/*mp-gt-end*/${next.slice(gtEnd)}`;
   }
+
+  next = patchYtDirectory(next);
 
   next = replaceOnce(
     next,
@@ -553,7 +560,53 @@ function patchJs(source) {
   if (next.includes("(0,A.jsx)(ge,{initialTopic:")) {
     throw new Error("Feelings Videos still mounts the speaker picker");
   }
+  if (!next.includes("filterDirectoryEntries") || !next.includes("directoryOpenUrl")) {
+    throw new Error("YouTube directory search/open helpers missing");
+  }
+  if (!next.includes("mp-yt-dir-search") || !next.includes("youtube-speaker-filter")) {
+    throw new Error("YouTube directory search form missing");
+  }
+  if (!next.includes("type:`submit`") || !next.includes("children:`Search`")) {
+    throw new Error("YouTube directory Search button missing");
+  }
+  if (next.includes("This draft preview has no videos cleared for ordinary release")) {
+    throw new Error("empty draft-preview directory copy must not remain");
+  }
   return next;
+}
+
+function patchYtDirectory(source) {
+  const inject = readFileSync(join(root, "src/patches/yt-directory.inject.js"), "utf8").trim();
+  let next = source;
+  const oldGate =
+    "function ue(e,t,n=[],r=Date.now()){return!n.includes(e.id)&&e.reviewStatus!==`withheld`&&!e.editorialHold&&e.selection?.state!==`hold`&&e.availability===`checked`&&ce(e.checkedAt)&&Date.parse(e.checkedAt)<=r&&!!e.evidenceUrl&&!!w(e.url)&&(le(e,r)||t===`draft-review`)}";
+  const newGate =
+    "function ue(e,t,n=[],r=Date.now()){return mpReadings.isDirectoryOpenable(e)}";
+  if (next.includes(oldGate)) {
+    next = replaceOnce(next, oldGate, newGate, "yt-directory-open-gate");
+  } else if (!next.includes(newGate) && !next.includes("mpReadings.isDirectoryOpenable(e)")) {
+    throw new Error("YouTube directory open-gate anchor missing");
+  }
+  if (next.includes("/*mp-yt-dir-start*/")) {
+    return replaceMarkedOrOnce(
+      next,
+      "/*mp-yt-dir-start*/",
+      "/*mp-yt-dir-end*/",
+      inject,
+      "",
+      "yt-directory",
+    );
+  }
+  const start = next.indexOf(
+    "function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i})",
+  );
+  const end = next.indexOf(
+    "function ve({onDiary:e,onPractice:t,onLeave:n,onDirectory:r})",
+  );
+  if (start < 0 || end < 0 || end <= start) {
+    throw new Error("YouTube directory page anchor missing");
+  }
+  return `${next.slice(0, start)}/*mp-yt-dir-start*/${inject}/*mp-yt-dir-end*/${next.slice(end)}`;
 }
 
 function patchFeelingsVideos(source, feelingsUi) {
@@ -869,11 +922,11 @@ function patchOwnerUx(source) {
   if (!next.includes("Do this next")) {
     throw new Error("day-steps chrome missing from bundle");
   }
-  if (!next.includes("Follow today’s steps — Morning, Day, then Night.")) {
+  if (!next.includes("Start with Individual Growth") || !next.includes("four personal steps")) {
     throw new Error("hub flow copy missing from bundle");
   }
-  if (!next.includes("Today’s verse — tap to expand")) {
-    throw new Error("collapsed Morning verse missing from bundle");
+  if (!next.includes("Settle / breathe") || !next.includes("One win / intention")) {
+    throw new Error("Individual Growth steps missing from bundle");
   }
   if (!next.includes("mp-day-band") || !next.includes("mp-band-${e.id}")) {
     throw new Error("Morning/Day/Night bands missing from bundle");
@@ -917,8 +970,8 @@ function patchOwnerUx(source) {
   if (next.includes("Optional faith content. Skip anytime.")) {
     throw new Error("prayer WEB footer still in bundle");
   }
-  if (!next.includes("Follow today’s steps")) {
-    throw new Error("Morning/Day/Night flow line missing from bundle");
+  if (!next.includes("Individual Growth") || !next.includes("Support and Team")) {
+    throw new Error("Today Individual / Support / Team flow line missing from bundle");
   }
   if (!next.includes("What do you need help with?")) {
     throw new Error("problem hub list missing from bundle");
@@ -938,8 +991,17 @@ function patchOwnerUx(source) {
   if (next.includes("a===`adult`&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`)")) {
     throw new Error("Today feelings dump button still live");
   }
-  if (!next.includes("Today’s verse — tap to expand")) {
-    throw new Error("collapsed verse control missing from Today");
+  if (!next.includes("Today’s verse — tap to expand") && !next.includes("mpIndividualGrowthCard")) {
+    throw new Error("Today verse or Individual Growth path missing");
+  }
+  if (!next.includes("mpIndividualGrowthCard") || !next.includes("MINDPAL · INDIVIDUAL GROWTH")) {
+    throw new Error("Individual Growth accordion missing from Today");
+  }
+  if (!next.includes("TEAM GROWTH") || !next.includes("mp-band-team")) {
+    throw new Error("Team Growth band missing from Today");
+  }
+  if (next.includes("See the two steps")) {
+    throw new Error("stale two-step copy still in Today");
   }
   if (!next.includes("takeCompanionPrompt")) {
     throw new Error("Companion prefill helper missing from bundle");
@@ -965,11 +1027,14 @@ function patchOwnerUx(source) {
   if (!next.includes("mpTeamRitualPage") || !next.includes("t===`Team morning`")) {
     throw new Error("team morning ritual page missing from bundle");
   }
-  if (!next.includes("maddy-timed-breath") || !next.includes("Step 1 · Breathe")) {
+  if (!next.includes("maddy-timed-breath") || !next.includes("Breathe (~3 min)")) {
     throw new Error("team ritual breath step missing from bundle");
   }
-  if (!next.includes("Step 2 · Peaceful reading") || !next.includes("does not mark a Pack A")) {
-    throw new Error("team ritual peaceful reading missing from bundle");
+  if (!next.includes("Verse of the day") || !next.includes("Peaceful reading") || !next.includes("does not mark a Pack A")) {
+    throw new Error("team ritual verse and peaceful reading missing from bundle");
+  }
+  if (!next.includes("mp-fold-head") || !next.includes("mp-team-step-body")) {
+    throw new Error("team ritual / mothers accordion missing from bundle");
   }
   if (!next.includes("mpTeamRitual={TEAM_RITUAL_STORAGE_KEY")) {
     throw new Error("mpTeamRitual runtime missing from bundle");
