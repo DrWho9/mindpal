@@ -1,16 +1,20 @@
 import {
+  captionsDisclosure,
   isVideoPlayable,
   overlayCatalogVideo,
   publishedLibrarySrc,
   videoCardAriaLabel,
   videoCardCta,
+  videoDisplayTitle,
+  videoDurationLabel,
+  videoPresenterName,
 } from "./playback.js";
 import { hasMaddyMediaUrl, isMaddyCompanionPlayable, maddyPublishedSrc } from "./maddy.js";
 
 export const LIBRARY_OPEN_EVENT = "mindpal-open-library-video";
 
 function titleOf(video) {
-  return video?.cardTitle || video?.title || "MindPal video";
+  return videoDisplayTitle(video);
 }
 
 function resolveCatalogVideo(video, catalog) {
@@ -50,6 +54,11 @@ export function libraryCardModel(video, now = new Date(), catalog) {
       src,
       id: video.id || "",
       title: titleOf(video),
+      presenter: "Maddy",
+      durationLabel: videoDurationLabel(video),
+      captionsNote: "",
+      eyebrow: "Watch with Maddy",
+      cardType: "WITH MADDY",
     };
   }
 
@@ -64,11 +73,17 @@ export function libraryCardModel(video, now = new Date(), catalog) {
       src,
       id: video.id || "",
       title: titleOf(video),
+      presenter: "Maddy",
+      durationLabel: videoDurationLabel(video),
+      captionsNote: "",
+      eyebrow: "Watch with Maddy",
+      cardType: "WITH MADDY",
     };
   }
 
   const playable = isVideoPlayable(video, now);
   const src = playable ? publishedLibrarySrc(video.videoUrl || video.src) : "";
+  const presenter = videoPresenterName(video);
   return {
     kind: playable ? "library-play" : "open-draft",
     cta: videoCardCta(video, now),
@@ -78,6 +93,21 @@ export function libraryCardModel(video, now = new Date(), catalog) {
     src,
     id: video.id || "",
     title: titleOf(video),
+    presenter,
+    durationLabel: videoDurationLabel(video),
+    captionsNote: playable ? captionsDisclosure(video) : "",
+    eyebrow: playable
+      ? presenter
+        ? `With ${presenter}`
+        : "Ready to play"
+      : "Open draft",
+    cardType: playable
+      ? presenter
+        ? `WITH ${presenter.toUpperCase()}`
+        : "READY TO PLAY"
+      : video.specialistReviewRequired
+        ? "SPECIALIST REVIEW REQUIRED"
+        : "OPEN DRAFT",
   };
 }
 

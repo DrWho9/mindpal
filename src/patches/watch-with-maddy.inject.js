@@ -36,17 +36,21 @@ function MpLibraryHost(){
     }
   },children:[
     (0,A.jsxs)(`div`,{className:`modal-top`,children:[
-      (0,A.jsx)(`span`,{className:`eyebrow`,children:o.kind===`maddy-play`?`Watch with Maddy`:o.playable?`MindPal video`:`Open draft`}),
+      (0,A.jsx)(`span`,{className:`eyebrow`,children:o.eyebrow||(o.kind===`maddy-play`?`Watch with Maddy`:o.playable?`Ready to play`:`Open draft`)}),
       (0,A.jsx)(`button`,{className:`icon-button`,type:`button`,"aria-label":`Close video`,onClick:a,children:(0,A.jsx)(On,{size:20})})
     ]}),
     (0,A.jsx)(`h2`,{id:n,children:o.title}),
-    s?(0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:o.src,ref:i,"aria-label":`${o.title} with Maddy`,autoPlay:!0}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[
+    o.durationLabel?(0,A.jsx)(`p`,{className:`muted mp-clip-meta`,children:o.durationLabel}):null,
+    s?(0,A.jsxs)(`div`,{className:`mp-clip-player`,children:[
+      (0,A.jsx)(`video`,{controls:!0,playsInline:!0,preload:`metadata`,src:o.src,ref:i,"aria-label":o.presenter?`${o.title} with ${o.presenter}`:o.title,autoPlay:!0}),
+      o.captionsNote?(0,A.jsx)(`p`,{className:`muted mp-captions-note`,children:o.captionsNote}):null
+    ]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[
       (0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),
       (0,A.jsx)(`p`,{children:`This card opens the script. Play appears only when a real mp4 or webm file exists.`}),
       (0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})
     ]}),
     (0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[
-      (0,A.jsx)(`h3`,{children:s?`About this clip`:e.video.transcriptText?`Script transcript · draft`:`Production outline · draft`}),
+      (0,A.jsx)(`h3`,{children:s?`Words from this clip`:e.video.transcriptText?`Script transcript · draft`:`Production outline · draft`}),
       (0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.video.transcriptText||e.video.outline||e.video.description||`A full script and reviewed video will be added after content and production review.`}),
       s?null:(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})
     ]})

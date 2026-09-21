@@ -30,6 +30,10 @@ const coachInject = readFileSync(
   join(root, "../src/patches/signed-coaches.inject.js"),
   "utf8",
 );
+const todayInject = readFileSync(
+  join(root, "../src/patches/owner-ux.inject.js"),
+  "utf8",
+);
 
 describe("video card click smoke", () => {
   it("fires a handler for every Maddy core clip and marks them playable", () => {
@@ -86,6 +90,11 @@ describe("video card click smoke", () => {
     assert.equal(play.cta, "Play");
     assert.equal(play.opens, "player");
     assert.equal(play.src, "/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4");
+    assert.equal(play.title, "A gentle start to a difficult morning");
+    assert.equal(play.presenter, "Denyse");
+    assert.match(play.captionsNote, /Captions are not on this clip yet/);
+    assert.doesNotMatch(play.ariaLabel, /\bV02\b/);
+    assert.doesNotMatch(play.ariaLabel, /MP-V02/);
   });
 
   it("treats Feelings Maddy rows as Play with a Pages MP4 src", () => {
@@ -127,11 +136,22 @@ describe("card injects keep click + keyboard paths", () => {
     assert.match(maddyInject, /onKeyDown/);
     assert.match(maddyInject, /controls:!0,playsInline:!0/);
     assert.match(maddyInject, /MpLibraryHost/);
+    assert.match(maddyInject, /Words from this clip/);
+    assert.match(maddyInject, /mp-captions-note/);
+    assert.doesNotMatch(maddyInject, /with Maddy`,autoPlay/);
   });
 
   it("coach cards and related drafts call the shared activators", () => {
     assert.match(coachInject, /activateCoachCard\(e,n\)/);
     assert.match(coachInject, /activateLibraryVideo\(t,/);
+    assert.match(coachInject, /Related drafts/);
     assert.match(coachInject, /onKeyDown/);
+  });
+
+  it("Today Day band plays V02 in place with captions disclosure", () => {
+    assert.match(todayInject, /function mpV02Teaser\(/);
+    assert.match(todayInject, /featuredPlayableVideo/);
+    assert.match(todayInject, /e\.id===`day`\?\(0,A\.jsx\)\(mpV02Teaser,{}\)/);
+    assert.match(todayInject, /MpLibraryHost/);
   });
 });

@@ -248,6 +248,19 @@ function mpMaddyTeaser({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:e,children:`Open Watch with Maddy`}):null
   ]});
 }
+function mpV02Teaser(){
+  let e=mpReadings.featuredPlayableVideo(typeof mpVideoCatalog<`u`?mpVideoCatalog:null);
+  if(!e)return null;
+  let t=mpReadings.libraryCardModel(e);
+  return(0,A.jsxs)(`aside`,{className:`mp-v02-teaser`,"aria-label":t.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:t.eyebrow||`Ready to play`}),
+    (0,A.jsx)(`h3`,{children:t.title}),
+    (0,A.jsx)(`p`,{className:`muted`,children:e.description||e.outline||``}),
+    t.durationLabel?(0,A.jsx)(`p`,{className:`muted`,children:t.durationLabel}):null,
+    t.captionsNote?(0,A.jsx)(`p`,{className:`muted mp-captions-note`,children:t.captionsNote}):null,
+    (0,A.jsx)(`button`,{className:`primary`,type:`button`,"aria-label":t.ariaLabel,onClick:()=>mpReadings.activateLibraryVideo(e),children:t.cta})
+  ]});
+}
 function mpMorningVerse(){
   let[e,t]=(0,_.useState)(()=>mpFaith.sessionPreferences()||{});
   (0,_.useEffect)(()=>{function n(){t(mpFaith.sessionPreferences()||{})}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
@@ -1232,6 +1245,8 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
           ]})
         ]},t)
       })}),
+      e.id===`day`?(0,A.jsx)(MpLibraryHost,{}):null,
+      e.id===`day`?(0,A.jsx)(mpV02Teaser,{}):null,
       e.id===`day`?(0,A.jsx)(mpMaddyTeaser,{onOpen:s}):null
     ]},e.id))
   ]});

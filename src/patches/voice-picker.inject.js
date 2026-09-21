@@ -6,6 +6,7 @@ function mpVoicePicker(){
       let a=typeof window<`u`&&window.speechSynthesis?window.speechSynthesis.getVoices()||[]:[];
       r(mpReadings.listPickerVoices(a));
     };
+    mpReadings.warmSpeechVoices?.(window.speechSynthesis);
     i();
     if(typeof window<`u`&&window.speechSynthesis){
       window.speechSynthesis.addEventListener(`voiceschanged`,i);
@@ -20,7 +21,7 @@ function mpVoicePicker(){
       mpReadings.saveVoiceURI(r);
     },children:[
       (0,A.jsx)(`option`,{value:mpReadings.MADDY_PREF_URI,children:mpReadings.MADDY_PREF_LABEL}),
-      (0,A.jsx)(`option`,{value:``,children:`Auto (best English)`}),
+      (0,A.jsx)(`option`,{value:``,children:`Auto (warmest English)`}),
       n.map(e=>(0,A.jsx)(`option`,{value:e.voiceURI,children:e.label},e.voiceURI))
     ]}),
     (0,A.jsx)(`span`,{className:`muted mindpal-voice-note`,children:`Maddy’s recorded clips play for her companion videos. Other text uses a calmer device voice until a Maddy voice ID is available.`})

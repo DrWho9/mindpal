@@ -9,8 +9,12 @@ import {
   mergedLibraryVideos,
   overlayCatalogVideo,
   publishedLibrarySrc,
+  captionsDisclosure,
+  featuredPlayableVideo,
   videoCardAriaLabel,
   videoCardCta,
+  videoDisplayTitle,
+  videoDurationLabel,
 } from "../src/videos/playback.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -46,9 +50,16 @@ describe("videos catalog V01–V12", () => {
     assert.equal(v02.clinicalStatus, "APPROVED");
     assert.equal(v02.rightsStatus, "CLEARED");
     assert.equal(v02.captionUrl, undefined);
+    assert.equal(v02.presenter, "Denyse");
+    assert.equal(v02.placeholderLabel, "Ready to play");
     assert.equal(isVideoPlayable(v02), true);
     assert.equal(videoCardCta(v02), "Play");
+    assert.equal(videoDisplayTitle(v02), "A gentle start to a difficult morning");
     assert.match(videoCardAriaLabel(v02), /Play/);
+    assert.doesNotMatch(videoCardAriaLabel(v02), /\bV02\b/);
+    assert.match(videoDurationLabel(v02), /45 seconds/);
+    assert.match(captionsDisclosure(v02), /Captions are not on this clip yet/);
+    assert.equal(featuredPlayableVideo(catalog)?.id, "V02");
     assert.equal(publishedLibrarySrc(v02.src), V02_PUBLIC);
 
     const path = join(root, "../", V02_FILE);

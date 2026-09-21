@@ -49,12 +49,55 @@ export function isVideoPlayable(video, now = new Date()) {
   return true;
 }
 
+export function videoDisplayTitle(video) {
+  const title = String(video?.cardTitle || video?.title || "").trim();
+  return title || "MindPal video";
+}
+
+export function videoPresenterName(video) {
+  const name = String(video?.presenter || video?.person || "").trim();
+  if (!name) return "";
+  if (/^maddy$/i.test(name)) return "Maddy";
+  return name;
+}
+
+export function videoDurationLabel(video) {
+  if (typeof video?.durationLabel === "string" && video.durationLabel.trim()) {
+    return video.durationLabel.trim();
+  }
+  const seconds = Number(video?.actualDurationSeconds || video?.targetDurationSeconds || 0);
+  if (!seconds) return "";
+  if (seconds < 90) return `About ${Math.round(seconds)} seconds`;
+  const mins = Math.round(seconds / 30) / 2;
+  return `${mins} min`;
+}
+
+export function captionsAvailable(video) {
+  return typeof video?.captionUrl === "string" && /\.(vtt|srt)$/i.test(video.captionUrl.trim());
+}
+
+export function captionsDisclosure(video) {
+  if (typeof video?.captionsDisclosure === "string" && video.captionsDisclosure.trim()) {
+    return video.captionsDisclosure.trim();
+  }
+  if (captionsAvailable(video)) {
+    return "Captions are on this clip. Turn them on from the player if you want them.";
+  }
+  if (isVideoPlayable(video)) {
+    return "Captions are not on this clip yet. The words are underneath the player.";
+  }
+  return "";
+}
+
+export function featuredPlayableVideo(catalog) {
+  const list = Array.isArray(catalog?.videos) ? catalog.videos : [];
+  return list.find((item) => item?.id === "V02" && isVideoPlayable(item)) || null;
+}
+
 export function videoCardCta(video, now = new Date()) {
   return isVideoPlayable(video, now) ? "Play" : "Open draft";
 }
 
 export function videoCardAriaLabel(video, now = new Date()) {
-  const title = video?.title || "MindPal video";
-  const id = video?.id || "";
-  return `${id} ${title} · ${videoCardCta(video, now)}`.trim();
+  return `${videoDisplayTitle(video)} · ${videoCardCta(video, now)}`;
 }

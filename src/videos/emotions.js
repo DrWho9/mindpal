@@ -1,4 +1,4 @@
-import { isVideoPlayable, publishedLibrarySrc, videoCardCta } from "./playback.js";
+import { isVideoPlayable, publishedLibrarySrc, videoCardCta, videoDisplayTitle, videoDurationLabel } from "./playback.js";
 import { isMaddyCompanionPlayable, maddyDurationLabel, maddyPublishedSrc } from "./maddy.js";
 import { entriesForCategory, isMeditationOpenable, meditationCategories, meditationCtaLabel, meditationOpenUrl } from "./yt-meditations.js";
 
@@ -122,17 +122,19 @@ function mindpalItem(video, now = new Date()) {
   const playable = isVideoPlayable(video, now);
   return {
     id: video.id,
-    title: video.title,
-    description: video.outline || "",
+    title: videoDisplayTitle(video),
+    description: video.description || video.outline || "",
     kind: playable ? "mindpal-playable" : "mindpal-draft",
-    source: "MindPal",
+    source: playable ? "MindPal" : "MindPal draft",
     cta: videoCardCta(video, now),
     playable,
     src: playable ? publishedLibrarySrc(video.videoUrl || video.src) : "",
     publishedSrc: playable ? publishedLibrarySrc(video.videoUrl || video.src) : "",
-    durationLabel: video.targetDurationSeconds
-      ? `${Math.round(video.targetDurationSeconds / 30) / 2} min target`
-      : "",
+    durationLabel: playable
+      ? videoDurationLabel(video)
+      : video.targetDurationSeconds
+        ? `${Math.round(video.targetDurationSeconds / 30) / 2} min target`
+        : "",
     outline: video.outline || "",
     transcriptText: video.transcriptText || "",
     openUrl: null,

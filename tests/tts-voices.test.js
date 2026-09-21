@@ -7,6 +7,7 @@ import {
   TTS_PITCH,
   TTS_RATE,
   TTS_VOICE_KEY,
+  isNeuralOrNatural,
   listPickerVoices,
   loadSavedVoiceURI,
   pickVoice,
@@ -53,6 +54,16 @@ describe("Listen voice pick", () => {
     const picked = pickVoice(voices, "");
     assert.equal(picked.voiceURI, "natasha");
     assert.notEqual(picked.voiceURI, voices[0].voiceURI);
+    assert.equal(isNeuralOrNatural(picked), true);
+  });
+
+  it("never keeps a generic Google voice as the silent default when a Natural voice exists", () => {
+    const voices = [
+      voice("Google US English", "en-US", "google-us"),
+      voice("Microsoft Sonia Online (Natural) - English (United Kingdom)", "en-GB", "sonia"),
+    ];
+    assert.equal(pickVoice(voices, "").voiceURI, "sonia");
+    assert.equal(pickVoice(voices, "auto").voiceURI, "sonia");
   });
 
   it("does not pick a non-English Google voice ahead of English neural/natural", () => {
@@ -204,6 +215,7 @@ describe("Phase-1 Neural audio", () => {
 describe("Listen UI keeps a Voice picker near Listen", () => {
   it("injects a persisted picker and daily Listen passes reading id", () => {
     assert.match(picker, /Listen voice/);
+    assert.match(picker, /Auto \(warmest English\)/);
     assert.match(picker, /saveVoiceURI/);
     assert.match(picker, /MADDY_PREF_LABEL/);
     assert.match(picker, /Play Maddy’s welcome/);
