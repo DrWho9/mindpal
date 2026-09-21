@@ -150,6 +150,11 @@ const checks = [
   [js.includes("t===`verse`&&(0,A.jsx)(mpMorningVerse,{})"), "Explore verse uses the targeted card"],
   [js.includes("faithStance:``,tradition:``,traditionId:``"), "new local profiles do not default to Christianity"],
   [js.includes("A quiet, honest moment is enough"), "universal scripture fallback is present"],
+  [js.includes("filterDirectoryEntries") && js.includes("directoryOpenUrl"), "YouTube directory search/open helpers are present"],
+  [js.includes("mp-yt-dir-search") && js.includes("youtube-speaker-filter"), "YouTube directory has Search + speaker filter"],
+  [js.includes("type:`submit`") && js.includes("children:`Search`"), "YouTube directory Search submits on button/Enter"],
+  [js.includes("mpReadings.isDirectoryOpenable(e)"), "directory open gate uses the URL helper"],
+  [!js.includes("This draft preview has no videos cleared for ordinary release"), "empty draft-preview directory copy is gone"],
   [js.includes("function mpNeedsFaithSetup(") && js.includes("mpShowSignInGate()"), "first-setup faith gate holds the sign-in shell"],
   [js.includes("setFaithAsk(mpNeedsFaithSetup())") && js.includes("if(faithAsk)"), "Today shows faith questions when preference is missing"],
   [js.includes("mpSetGateTick(e=>e+1)"), "faith-change re-renders the sign-in gate"],
@@ -201,6 +206,9 @@ if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
 }
 if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
   throw new Error("faith preference chip styles missing");
+}
+if (!css.includes(".mp-yt-dir-search") || !css.includes(".mp-yt-dir-results")) {
+  throw new Error("YouTube directory search styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");
