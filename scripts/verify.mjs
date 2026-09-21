@@ -59,6 +59,15 @@ const checks = [
   [js.includes("dna-dopamine-loop-v1") && js.includes("mp-hub-featured"), "AOD featured talk-through is present"],
   [js.includes("puppy-and-treat loop") && js.includes("not genetics"), "AOD talk-through spells DNA as drugs and alcohol, not genetics"],
   [js.includes("mpAodFeelingsChip"), "AOD Feelings entry is present"],
+  [js.includes("Mens health") && js.includes("mpMensHealthHubPage"), "Men's Health hub is present"],
+  [js.includes("mpMensHealthFeelingsChip") && js.includes("mp-problem-chip-mens"), "Men's Health Feelings chip and Today chip are present"],
+  [js.includes("There's nothing wrong with being your best self."), "Men's Health hero line is present"],
+  [js.includes("1300 78 99 78") && js.includes("MensLine"), "MensLine is featured"],
+  [js.includes("The picture in Australia") && js.includes("mp-hub-acc-toggle"), "Men's Health accordion is present"],
+  [js.includes("MindPal videos (soon)") && js.includes("Best self is not a performance"), "queued MindPal video titles are present without HeyGen spend"],
+  [!js.includes("toxic masculinity") && !js.includes("Toxic masculinity"), "hub does not use toxic-masculinity framing"],
+  [js.includes("t===`Mens health`") && js.includes("\"Mens health\":`route.mensHealth`"), "Mens health hash route is mounted"],
+  [js.includes("globalThis.mpMensHealth=mpMensHealth"), "Men's Health catalog is attached to globalThis"],
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],
   [js.includes("mpAccountFooter"), "Settings account footer is present"],
@@ -200,6 +209,9 @@ if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth
 }
 if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count") || !css.includes(".mp-fold-head")) {
   throw new Error("team morning ritual styles missing");
+}
+if (!css.includes(".mp-lane-mens") || !css.includes(".mp-hub-acc-toggle") || !css.includes(".mp-mens-compare")) {
+  throw new Error("Men's Health hub styles missing");
 }
 if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
   throw new Error("Individual Growth / Team Growth band styles missing");

@@ -34,6 +34,7 @@ export const FEELING_SUPPORT = {
   faith: "Optional meaning or prayer — skip anything that does not fit.",
   overwhelm: "You can leave this activity and come back another time.",
   aod: "Craving or shame around drink or other substances can sit here. This is not detox and not a diagnosis.",
+  "mens-health": "There's nothing wrong with being your best self. This is optional company, not a diagnosis.",
   "": "You can explore without putting a name to how you feel.",
 };
 
