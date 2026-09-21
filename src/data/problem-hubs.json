@@ -87,6 +87,16 @@
       "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…"
     },
     {
+      "id": "mens-health",
+      "group": "support",
+      "title": "Men's Health",
+      "shortTitle": "Men's Health",
+      "intro": "There's nothing wrong with being your best self. MindPal holds a strength-based space for Australian men — responsibility, courage, brotherhood, skill, and showing up for family, mates and work. Literacy and company, not a diagnosis and not treatment.",
+      "meditationCategoryId": "morning",
+      "companionPrompt": "I've opened the MindPal Men's Health hub. Please stay educational and peer-like: help me take one practical step toward my best self — responsibility, skill, mateship, showing up for family or work. Do not lecture culture-war talking points and do not talk down being a man. You are software, not a therapist. This is not a diagnosis or treatment. If I am in danger I will use human help / 000 / MensLine 1300 78 99 78 / Lifeline 13 11 14.",
+      "journalPrompt": "One way I showed up today — for family, a mate, or the work in front of me… The next kept promise I can make is…"
+    },
+    {
       "id": "mindset",
       "group": "growth",
       "title": "Positive mindset",

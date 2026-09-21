@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import {
   AOD_SUPPORT_TAGS,
   GROWTH_TAG_IDS,
+  MENS_SUPPORT_TAGS,
   MOTHER_SUPPORT_TAGS,
   PROBLEM_GROUPS,
   PROBLEM_TAG_IDS,
@@ -16,11 +17,13 @@ import {
 } from "../src/problems/theme-map.js";
 import {
   aodSupportTags,
+  dedicatedProblemRoute,
   findProblem,
   isGrowthProblem,
   listProblemGroups,
   listProblems,
   maddyForProblem,
+  mensSupportTags,
   motherSupportTags,
   readingsForProblem,
   saveCompanionPrompt,
@@ -35,8 +38,10 @@ const ownerReadings = JSON.parse(readFileSync(join(root, "../src/data/owner-read
 const maddy = JSON.parse(readFileSync(join(root, "../src/data/maddy-companion.json"), "utf8"));
 const videos = JSON.parse(readFileSync(join(root, "../src/data/videos-catalog.json"), "utf8"));
 const hubs = JSON.parse(readFileSync(join(root, "../src/data/problem-hubs.json"), "utf8"));
+const mensHealth = JSON.parse(readFileSync(join(root, "../src/data/mens-health.json"), "utf8"));
 const inject = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
 globalThis.mpOwnerReadings = ownerReadings;
+globalThis.mpMensHealth = mensHealth;
 
 function memoryStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -58,6 +63,7 @@ describe("problem hubs", () => {
       "faith",
       "mothers",
       "aod",
+      "mens-health",
     ]);
     assert.deepEqual(GROWTH_TAG_IDS, [
       "mindset",
@@ -103,6 +109,7 @@ describe("problem hubs", () => {
         "Faith / prayer & meaning",
         "Struggling mothers",
         "Drugs & alcohol",
+        "Men's Health",
         "Positive mindset",
         "Motivation / a gentle start",
         "Stronger mind",
@@ -174,6 +181,12 @@ describe("problem hubs", () => {
       videosForProblem(videos, "aod").some((item) => /^V\d+/.test(item.id)),
       false,
       "HeyGen drafts are not the AOD default",
+    );
+    assert.deepEqual(maddyForProblem(maddy, "mens-health").map((item) => item.id), []);
+    assert.equal(
+      videosForProblem(videos, "mens-health").some((item) => /^V\d+/.test(item.id)),
+      false,
+      "HeyGen drafts are not the Men's Health default",
     );
   });
 
@@ -270,6 +283,41 @@ describe("problem hubs", () => {
     assert.match(aod.companionPrompt, /not genetics/);
     assert.match(inject, /mp-hub-featured/);
     assert.match(inject, /Read the talk-through/);
+  });
+
+  it("wires a dedicated Men's Health hub with accordion, ABS stats and MensLine", () => {
+    const mens = findProblem(hubs, "mens-health");
+    assert.equal(mens.group, "support");
+    assert.equal(mens.shortTitle, "Men's Health");
+    assert.match(mens.intro, /best self/);
+    assert.match(mens.intro, /MindPal/);
+    assert.match(mens.companionPrompt, /not a therapist/);
+    assert.match(mens.companionPrompt, /000/);
+    assert.match(mens.companionPrompt, /MensLine/);
+    assert.doesNotMatch(mens.intro, /toxic masculinity/i);
+    assert.doesNotMatch(mens.companionPrompt, /toxic masculinity/i);
+    assert.match(mens.journalPrompt, /showed up/);
+    assert.equal(dedicatedProblemRoute("mens-health"), "Mens health");
+    const readings = readingsForProblem(packA, "mens-health", 100);
+    assert.ok(readings.length >= 6 && readings.length <= 8, `mens-health has ${readings.length}`);
+    assert.ok(readings.every((item) => item.pack === "owner"));
+    for (const reading of readings) {
+      const extra = mensSupportTags(reading);
+      assert.ok(
+        extra.some((tag) => MENS_SUPPORT_TAGS.includes(tag)),
+        `${reading.id} should carry a men's support tag`,
+      );
+      assert.doesNotMatch(reading.body, /toxic masculinity/i);
+      assert.match(reading.body, /MindPal/);
+    }
+    assert.match(inject, /mpMensHealthHubPage/);
+    assert.match(inject, /mpMensHealthFeelingsChip/);
+    assert.match(inject, /mpMensAccordion/);
+    assert.match(inject, /There's nothing wrong with being your best self/);
+    assert.match(inject, /MensLine Australia 1300 78 99 78/);
+    assert.match(inject, /MindPal videos \(soon\)/);
+    assert.match(inject, /External YouTube/);
+    assert.doesNotMatch(inject, /toxic masculinity/i);
   });
 
   it("features the drugs and alcohol talk-through first on the AOD hub", () => {

@@ -36,6 +36,166 @@
         "low-mood",
         "learning-loop"
       ]
+    },
+    {
+      "id": "mens-best-self-v1",
+      "title": "There's nothing wrong with being your best self",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "best-self",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "Best self is not a costume. It is the next kept promise — for family, mates, and work. MindPal literacy, not a diagnosis.",
+      "body": "MindPal is not here to tell you that being a man is the problem. There is nothing wrong with being your best self.\n\nBest self is not a speech and it is not a costume you put on for other people. It is the next useful thing you can actually do: the walk you said you would take, the hour at work you finish properly, the mate you check on, the kid you sit with, the early night you keep.\n\nDiscipline is a kindness you do your future self. One small kept promise trains reliability. Reliability is how people around you sleep a little easier — and how you look yourself in the eye in the morning.\n\nYou do not need a new personality. You need a next move sized for this week. Skip anything that does not fit. This is reflection, not a diagnosis and not a treatment plan.\n\nIf you are in danger in Australia, call 000. MensLine on 1300 78 99 78 and Lifeline on 13 11 14 are human help. Need support in the app lists the same lines.",
+      "practice": "Pick one kept promise for the next 24 hours — a walk, an honest hour of work, a check-in, or an earlier night. Do that one. That is enough.",
+      "companionOpener": "I've opened the MindPal Men's Health hub. Please stay educational and peer-like: help me take one practical step toward my best self — responsibility, skill, showing up. Do not lecture me about culture-war talking points and do not talk down being a man. You are software, not a therapist. This is not a diagnosis or treatment. If I am in danger I will use human help / 000 / MensLine 1300 78 99 78.",
+      "theme_tags": [
+        "mens-health",
+        "discipline",
+        "purpose",
+        "courage"
+      ],
+      "tags": [
+        "motivation",
+        "courage",
+        "mindset"
+      ]
+    },
+    {
+      "id": "mens-mateship-v1",
+      "title": "Mateship is a skill",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "mateship",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "A mate is not an audience. Brotherhood is practised in ordinary weeks — a check-in, a lift, showing up.",
+      "body": "A mate is not an audience for your highlight reel. Brotherhood is a skill. You practise it in ordinary weeks, not only after a crash.\n\nSkill looks like this: you send the text. You turn up. You give a lift. You ask a second time when the first answer was 'yeah, fine.' You let a mate be useful to you as well — pride that never asks for a hand is just isolation with a better name.\n\nYou do not need a speech about feelings to be a brother. You need reliability. The man who answers, who keeps a confidence, who stands next to someone at a hard appointment, is already doing the work.\n\nMindPal is company for that work, not a clinic. If a mate is in danger, you use human help — 000, MensLine 1300 78 99 78, Lifeline 13 11 14. You are not the emergency service. Showing up still matters.",
+      "practice": "Check on one mate today. Ask once, then ask once more if the first answer was thin. Offer one practical help if you have it.",
+      "companionOpener": "I've opened the MindPal piece on mateship. Please stay educational and peer-like: help me practise being a reliable mate without lectures. You are software, not a therapist. If someone is in danger I will use human help / 000.",
+      "theme_tags": [
+        "mens-health",
+        "mateship",
+        "courage"
+      ],
+      "tags": [
+        "relationships",
+        "courage",
+        "motivation"
+      ]
+    },
+    {
+      "id": "mens-purpose-v1",
+      "title": "Purpose is the next useful thing",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "purpose",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "Purpose is not a TED talk. It is the next useful thing for family, work, or a mate — then the next.",
+      "body": "Purpose is not a TED talk. Most days it is smaller and more honest than that: the next useful thing you can do for family, for work, or for a mate — then the next.\n\nA man can waste a year waiting for a calling that arrives with a soundtrack. The work in front of you is already a calling if someone depends on it. Fix the thing. Finish the hour. Make the call. Carry the load that is actually yours.\n\nPurpose and rest can sit in the same week. Burning yourself out is not dedication; it is a leak. Skill includes knowing when to stop so you can show up again tomorrow.\n\nMindPal will not give you a life plan. It will keep you company while you pick the next useful thing. Not a diagnosis. If the day is unsafe, use human help — 000, MensLine, Lifeline.",
+      "practice": "Write one useful thing you can finish today that someone else will feel. Do that before you hunt a bigger meaning.",
+      "companionOpener": "I've opened the MindPal piece on purpose. Please stay practical: help me name the next useful thing for family, work, or mates. You are software, not a therapist. This is not a diagnosis.",
+      "theme_tags": [
+        "mens-health",
+        "purpose",
+        "work",
+        "discipline"
+      ],
+      "tags": [
+        "motivation",
+        "challenge",
+        "mindset"
+      ]
+    },
+    {
+      "id": "mens-fatherhood-v1",
+      "title": "Provider and protector — without a scorecard",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "fatherhood",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "Showing up as a provider and protector is a vocation. It is not a slight on anyone else.",
+      "body": "If you are a father, a partner, an uncle, or the man the household leans on, that load is real. Providing and protecting is a vocation. It is not a slight on women, and it is not a contest. It is showing up with skill for the people who count on you.\n\nProvider is more than a payslip. It is food on the table, a calm voice in a scare, a fence that gets fixed, a name on a form, a Saturday at the sport. Protector is more than muscle. It is the man who stays in the room when it would be easier to disappear.\n\nYou can honour that role without turning it into a scorecard against anyone else. Other people have their own work. Yours is still yours.\n\nIf you do not have kids, the same muscle still applies: be the man someone can ring. MindPal is optional company for that, not a parenting clinic and not a diagnosis. Human help if you need it: MensLine 1300 78 99 78, Lifeline 13 11 14, 000 in danger.",
+      "practice": "Do one concrete thing today that makes home or a person in your care safer, calmer, or better supplied. Keep it small and finished.",
+      "companionOpener": "I've opened the MindPal piece on fatherhood and showing up as a provider and protector. Please stay respectful of that role and do not talk it down. Help me pick one practical way to show up. You are software, not a therapist.",
+      "theme_tags": [
+        "mens-health",
+        "fatherhood",
+        "purpose"
+      ],
+      "tags": [
+        "relationships",
+        "motivation",
+        "courage"
+      ]
+    },
+    {
+      "id": "mens-emotional-courage-v1",
+      "title": "Emotional courage is still courage",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "emotional-courage",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "It takes nerve to tell the truth. Feeling something and staying in the room is strength, not a demotion.",
+      "body": "It can take more nerve to tell a mate you are not all right than to pretend you are steel. Courage is not the absence of feeling. Courage is staying in the room with the truth long enough to do the next right thing.\n\nNaming a hard thing — I am stretched, I am angry, I miss him, I am scared about money — is not a demotion. It is information. Men have always used information to fix what can be fixed and to carry what cannot.\n\nYou do not have to empty the tank in public. A sentence to one trusted person, a line in a journal, a call to MensLine, is enough of a start. Strength includes knowing when a job is bigger than you and handing it to someone trained.\n\nMindPal can sit with the sentence. It cannot watch over you or treat you. If you are in danger, call 000. Lifeline 13 11 14. MensLine 1300 78 99 78.",
+      "practice": "Tell the truth in one sentence — to a journal, a mate, or MensLine. Then name one practical next step. Stop there.",
+      "companionOpener": "I've opened the MindPal piece on emotional courage. Please treat honesty as strength, not as a lecture. Help me put one true sentence into words and one practical next step. You are software, not a therapist. If I am in danger I will use 000 / MensLine / Lifeline.",
+      "theme_tags": [
+        "mens-health",
+        "emotional-courage",
+        "courage",
+        "mateship"
+      ],
+      "tags": [
+        "courage",
+        "self-compassion",
+        "relationships"
+      ]
+    },
+    {
+      "id": "mens-fitness-sleep-work-v1",
+      "title": "Sleep, a body, and a day's work",
+      "minutes": 3,
+      "day": 0,
+      "theme_label": "fitness-sleep-work",
+      "featured": true,
+      "featuredProblem": "mens-health",
+      "gate": false,
+      "pack": "owner",
+      "source": "mindpal_original_owner",
+      "excerpt": "Sleep, food, and a body that can carry the day are tools. You cannot show up well on an empty tank.",
+      "body": "Sleep, food, and a body that can carry the day are not vanity. They are tools. You cannot show up well for family, mates, or work on an empty tank.\n\nA short walk, a regular bedtime, water, and a meal that is not only fuel-station leftovers will not make you a new man by Friday. They will make today's work more possible. Fitness is a craft. Sleep is part of the craft. So is knowing when the job is done and the lights go off.\n\nWork has honour when you give it a fair hour. It becomes a trap when it is the only place you prove you exist. Leave something in the tank for the people who get you after knock-off.\n\nThis is MindPal literacy, not a training program and not medical advice. If sleep, pain, or mood is scaring you, talk to a GP or to MensLine. In danger, 000.",
+      "practice": "Choose one tool for the next night or morning: a set bedtime, a short walk, or a proper meal. Keep it ordinary and done.",
+      "companionOpener": "I've opened the MindPal piece on sleep, fitness and work. Please keep it practical and non-clinical — one small tool I can use. You are software, not a doctor. This is not treatment.",
+      "theme_tags": [
+        "mens-health",
+        "fitness",
+        "work",
+        "discipline"
+      ],
+      "tags": [
+        "sleep",
+        "motivation",
+        "stress"
+      ]
     }
   ]
 }
