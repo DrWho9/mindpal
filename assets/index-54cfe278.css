@@ -432,4 +432,28 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 @media (width<=640px){
   .mp-profile-btn-topbar{display:inline-flex;align-items:center;margin:0 6px 0 2px}
   .mp-top-brand{margin-right:0}
-}/*mp-styles-end*/
+}
+
+.mp-reflect-chat{display:flex;flex-direction:column;gap:12px}
+.mp-reflect-disclaimer{margin:0 0 4px}
+.mp-reflect-status{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 4px}
+.mp-reflect-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:700;letter-spacing:.02em;background:#f3f1e7;color:#5c5348;border:1px solid #e3dcc6}
+.mp-reflect-status.is-live .mp-reflect-pill{background:#e7f0e1;color:#254c36;border-color:#304e3b}
+.mp-reflect-setup{margin:0 0 8px}
+.mp-reflect-setup summary{cursor:pointer;font-weight:650;min-height:40px}
+.mp-reflect-thread{background:#fffef9;border:1px solid #d5dccb;border-radius:16px;min-height:220px;max-height:min(52vh,420px);overflow:auto;padding:14px 14px 16px;display:flex;flex-direction:column;gap:10px}
+.mp-reflect-empty{margin:8px 4px}
+.mp-reflect-msg{border-radius:14px;padding:10px 12px;max-width:40rem}
+.mp-reflect-msg p{margin:0}
+.mp-reflect-who{font-size:12px;font-weight:700;letter-spacing:.03em;margin:0 0 4px !important;color:#5c6756}
+.mp-reflect-msg-user{align-self:flex-end;background:#e7efe6;border:1px solid #c9dccb}
+.mp-reflect-msg-assistant{align-self:flex-start;background:#eef3ea;border:1px solid #d5dccb}
+.mp-reflect-msg-note{align-self:stretch;background:#f3f1e7;border:1px solid #e3dcc6}
+.mp-reflect-msg.is-crisis{background:#f8ece8;border-color:#e2c4b8}
+.mp-reflect-composer textarea{width:100%;min-height:7rem;margin:6px 0 10px}
+.mp-reflect-crisis .button-row{margin-top:8px}
+.mp-reflect-crisis a.primary,.mp-reflect-crisis a.secondary{text-decoration:none;display:inline-flex;align-items:center}
+.mp-appoint-chat{margin:18px 0 22px;padding:16px;border:1px solid #d5dccb;border-radius:18px;background:#fbfaf3}
+.mp-appoint-chat h3{margin:0 0 6px}
+.mp-companion-base{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.mp-companion-base input{width:100%;min-height:42px}/*mp-styles-end*/
