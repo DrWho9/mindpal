@@ -244,6 +244,13 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /No speaker library dump here/);
     assert.match(inject, /Need support/);
+    assert.match(inject, /mpFoldSection/);
+    assert.match(inject, /id:`readings`/);
+    assert.match(inject, /id:`videos`/);
+    assert.match(inject, /id:`companion`/);
+    assert.match(inject, /id:`journal`/);
+    assert.match(inject, /id:`safety`/);
+    assert.match(inject, /one at a time/);
   });
 
   it("wires a dedicated drugs & alcohol hub with safety copy", () => {

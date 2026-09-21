@@ -14,16 +14,21 @@ import {
   TEAM_RITUAL_BREATH_ID,
   TEAM_RITUAL_BREATH_SRC,
   TEAM_RITUAL_BREATH_HERO,
+  TEAM_RITUAL_CHAPTER_SUMMARY,
   TEAM_RITUAL_EYEBROW,
+  TEAM_RITUAL_FLOW,
   TEAM_RITUAL_LEDE,
   TEAM_RITUAL_OPEN,
   TEAM_RITUAL_SHORT,
   TEAM_RITUAL_STORAGE_KEY,
   TEAM_RITUAL_TITLE,
+  TEAM_RITUAL_VERSE_HERO,
   breathClip,
   breathClipSrc,
   breathCueAt,
   canOpenReading,
+  canOpenRitualStep,
+  canOpenVerse,
   emptyRitual,
   formatBreathClock,
   loadRitual,
@@ -31,8 +36,12 @@ import {
   nextRitualStep,
   peacefulReadings,
   pickPeacefulReading,
+  pickRitualVerse,
+  ritualChapterTarget,
   ritualReading,
+  ritualTradition,
   saveRitual,
+  verseLaneForTradition,
 } from "../src/today/team-ritual.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -60,7 +69,8 @@ describe("work team morning ritual", () => {
     assert.equal(nextStepId(emptyDay(monday)), "readings");
     assert.equal(STEP_IDS.includes("breathe"), false);
     assert.equal(RITUAL_STEP_IDS[0], "breathe");
-    assert.equal(RITUAL_STEP_IDS[1], "reading");
+    assert.equal(RITUAL_STEP_IDS[1], "verse");
+    assert.equal(RITUAL_STEP_IDS[2], "reading");
   });
 
   it("uses warm team-settle copy, not hustle language", () => {
@@ -74,29 +84,74 @@ describe("work team morning ritual", () => {
     assert.match(TEAM_RITUAL_LEDE, /MindPal/);
     assert.match(TEAM_RITUAL_LEDE, /optional/i);
     assert.match(TEAM_RITUAL_LEDE, /peaceful reading/i);
+    assert.match(TEAM_RITUAL_LEDE, /verse/i);
     assert.match(RITUAL_STEPS.breathe.blurb, /MindPal/);
     assert.match(TEAM_RITUAL_BREATH_HERO, /MindPal/);
     assert.match(TEAM_RITUAL_BREATH_HERO, /counts down/i);
+    assert.match(TEAM_RITUAL_FLOW, /Step 2 Verse/);
+    assert.match(TEAM_RITUAL_VERSE_HERO, /MindPal/);
+    assert.equal(TEAM_RITUAL_CHAPTER_SUMMARY, "Read the whole chapter — tap to expand");
     assert.doesNotMatch(TEAM_RITUAL_LEDE, /hustle|crush|unlock potential|standup/i);
     assert.equal(RITUAL_STEPS.breathe.rowLabel, "Breathe (~3 min)");
+    assert.equal(RITUAL_STEPS.verse.title, "Verse of the day");
     assert.equal(RITUAL_STEPS.reading.title, "Peaceful reading");
+    assert.equal(RITUAL_STEPS.reading.number, 3);
   });
 
-  it("locks breath before the peaceful reading", () => {
+  it("locks breath then verse then the peaceful reading", () => {
     let state = emptyRitual(packA, monday);
     assert.equal(state.breathe, "todo");
+    assert.equal(state.verse, "todo");
     assert.equal(state.reading, "todo");
+    assert.equal(canOpenVerse(state), false);
     assert.equal(canOpenReading(state), false);
+    assert.equal(canOpenRitualStep(state, "breathe"), true);
     assert.equal(nextRitualStep(state), "breathe");
+    assert.equal(markRitual(state, "verse", "done", packA, monday).verse, "todo");
     assert.equal(markRitual(state, "reading", "done", packA, monday).reading, "todo");
     state = markRitual(state, "breathe", "done", packA, monday);
+    assert.equal(canOpenVerse(state), true);
+    assert.equal(canOpenReading(state), false);
+    assert.equal(nextRitualStep(state), "verse");
+    state = markRitual(state, "verse", "done", packA, monday);
     assert.equal(canOpenReading(state), true);
     assert.equal(nextRitualStep(state), "reading");
     state = markRitual(state, "reading", "done", packA, monday);
     assert.equal(nextRitualStep(state), null);
     const skipped = markRitual(emptyRitual(packA, monday), "breathe", "skipped", packA, monday);
-    assert.equal(canOpenReading(skipped), true);
-    assert.equal(nextRitualStep(skipped), "reading");
+    assert.equal(canOpenVerse(skipped), true);
+    assert.equal(nextRitualStep(skipped), "verse");
+    const skippedVerse = markRitual(skipped, "verse", "skipped", packA, monday);
+    assert.equal(canOpenReading(skippedVerse), true);
+    assert.equal(nextRitualStep(skippedVerse), "reading");
+  });
+
+  it("picks a catalog verse by tradition and never invents scripture", () => {
+    const catalog = {
+      default: {
+        id: "default",
+        lane: "christian",
+        verse: { text: "This is the day that Yahweh has made.", reference: "Psalm 118:24 · WEB", url: "https://www.biblegateway.com/passage/?search=Psalm+118%3A24&version=NKJV" },
+      },
+      entries: [
+        { id: "c1", date: "2026-09-21", lane: "christian", verse: { text: "Peace I leave with you.", reference: "John 14:27 · WEB", url: "https://www.biblegateway.com/passage/?search=John+14%3A27&version=NKJV" } },
+        { id: "i1", lane: "islamic", verse: { text: "Truly, with hardship comes ease.", reference: "Qur’an 94:5–6", url: "https://quran.com/94" } },
+        { id: "w1", lane: "wisdom", verse: { text: "Be kind whenever possible.", reference: "Attributed to the Dalai Lama (widely circulated teaching)", url: "https://www.dalailama.com/" } },
+      ],
+    };
+    assert.equal(verseLaneForTradition("Christianity"), "christian");
+    assert.equal(verseLaneForTradition("Coptic Orthodox"), "christian");
+    assert.equal(verseLaneForTradition("Islam"), "islamic");
+    assert.equal(verseLaneForTradition(""), "wisdom");
+    assert.equal(verseLaneForTradition("No religion"), "wisdom");
+    assert.equal(ritualTradition({ tradition: "Islam" }), "Islam");
+    assert.equal(pickRitualVerse(catalog, monday, "Christianity").id, "c1");
+    assert.equal(pickRitualVerse(catalog, monday, "Islam").id, "i1");
+    assert.equal(pickRitualVerse(catalog, monday, "").id, "w1");
+    assert.equal(ritualChapterTarget(catalog.entries[0]).kind, "web");
+    assert.match(ritualChapterTarget(catalog.entries[0]).fetchUrl, /bible-api\.com/);
+    assert.equal(ritualChapterTarget(catalog.entries[1]).kind, "source");
+    assert.equal(ritualChapterTarget(catalog.entries[1]).fetchUrl, null);
   });
 
   it("picks one calm Pack A reading for the civil day", () => {
@@ -174,6 +229,7 @@ describe("work team morning ritual", () => {
     const nextMorning = loadRitual(packA, storage, tuesday);
     assert.equal(nextMorning.date, "2026-09-22");
     assert.equal(nextMorning.breathe, "todo");
+    assert.equal(nextMorning.verse, "todo");
     assert.equal(nextMorning.reading, "todo");
   });
 
@@ -187,18 +243,27 @@ describe("work team morning ritual", () => {
     assert.match(inject, /mp-team-breath-count/);
     assert.match(inject, /mp-team-breath-overlay/);
     assert.match(inject, /TEAM_RITUAL_SHORT|Team morning settle/);
-    assert.match(inject, /Step 1 · Breathe/);
-    assert.match(inject, /Step 2 · Peaceful reading/);
+    assert.match(inject, /TEAM_RITUAL_FLOW/);
+    assert.match(inject, /Step \$\{t\.number\} · \$\{t\.rowLabel\}|Step \$\{r\.number\} · \$\{r\.rowLabel\}/);
+    assert.match(inject, /Go to the verse/);
+    assert.match(inject, /Go to the peaceful reading/);
+    assert.match(inject, /\[\"breathe\",a\],\[\"verse\",o\],\[\"reading\",s\]/);
+    assert.match(inject, /mp-team-step-body/);
+    assert.match(inject, /aria-expanded/);
+    assert.match(inject, /Go to the verse/);
+    assert.match(inject, /TEAM_RITUAL_CHAPTER_SUMMARY/);
     assert.match(inject, /Do this next/);
     assert.match(inject, /maddy-timed-breath|breathClipSrc/);
     assert.match(inject, /does not mark a Pack A/);
     assert.match(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpTeamRitualCard/);
     assert.match(inject, /onOpenTeamRitual/);
     assert.match(inject, /mpTeamRitual\.canOpenReading/);
+    assert.match(inject, /mpTeamRitual\.canOpenVerse/);
     assert.match(inject, /onClick:\(\)=>E\(`breathe`,`done`\),children:`I’m done`/);
     assert.match(inject, /Skip this breath/);
     assert.doesNotMatch(inject, /onClick:\(\)=>E\(`breathe`,`done`\),children:`That’s enough`/);
     assert.match(inject, /That’s enough for this morning/);
+    assert.match(inject, /See the three steps/);
     assert.doesNotMatch(inject, /hustle|crush the morning|standup/i);
     assert.match(build, /src\/today\/team-ritual\.js/);
     assert.match(build, /mpTeamRitual=/);

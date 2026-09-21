@@ -124,6 +124,14 @@ dialog[open]>*{pointer-events:auto}
 .mp-team-ritual-steps li.is-next{box-shadow:0 0 0 2px rgba(47,90,61,.18)}
 .mp-team-ritual-path{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:8px}
 .mp-team-ritual-path .mp-day-step{padding:12px 14px}
+.mp-team-ritual-path .mp-step-main{width:100%}
+.mp-team-ritual-path .mp-day-step.is-locked{opacity:.78}
+.mp-team-step-body{margin:12px 0 2px;padding-top:8px;border-top:1px solid #dfe4d5}
+.mp-team-verse-body,.mp-team-chapter{display:flex;flex-direction:column;gap:10px;margin:8px 0 12px}
+.mp-fold .mp-fold-head{appearance:none;background:transparent;border:0;padding:0;margin:0;width:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:44px}
+.mp-fold .mp-fold-head h2{margin:0;flex:1 1 12rem}
+.mp-fold-caret{font-size:13px;font-weight:650;color:#2f5a3d}
+.mp-fold-body{margin-top:10px}
 .mp-team-breath-clock{font-size:1.35rem;font-weight:700;letter-spacing:.04em;margin:8px 0 2px;color:#5c6756}
 .mp-team-breath-count{font-size:4rem;font-weight:750;line-height:.95;letter-spacing:.02em;margin:2px 0 4px;color:#2f5a3d;font-variant-numeric:tabular-nums}
 .mp-team-breath-cue{font-size:1.15rem;margin:0 0 12px;max-width:40ch}
