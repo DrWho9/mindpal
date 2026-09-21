@@ -255,7 +255,7 @@ describe("composer keys", () => {
 describe("Reflect chat inject", () => {
   it("replaces the preview with a named MindPal conversation", () => {
     assert.match(inject, /Talk with MindPal/);
-    assert.match(inject, /children:`Send`/);
+    assert.match(inject, /children:l\?`Sending…`:`Send`/);
     assert.match(inject, /shouldSendOnKey/);
     assert.match(inject, /fetchCompanionStatus/);
     assert.match(inject, /sendCompanionChat/);

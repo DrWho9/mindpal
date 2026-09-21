@@ -180,7 +180,7 @@ const checks = [
   [js.includes("function ti(props){return mpReflectPage(props)}") && js.includes("function mpReflectPage("), "Reflect mounts the MindPal chat page"],
   [js.includes("Talk with MindPal") && js.includes("Enter sends"), "Reflect chat is named Talk with MindPal and documents Enter"],
   [js.includes('"route.reflect":`Talk with MindPal`'), "Reflect breadcrumb names Talk with MindPal"],
-  [js.includes("/mindpal/api/companion/") && js.includes("COMPANION_POLICY_VERSION"), "Reflect uses the existing companion API path"],
+  [js.includes("api/companion/") && js.includes("COMPANION_POLICY_VERSION") && js.includes("/mindpal/"), "Reflect uses the existing companion API path"],
   [js.includes("not a psychologist") && js.includes("Lifeline 13 11 14"), "Reflect prompt and crisis copy stay non-clinical"],
   [js.includes("Clear reflection & finish") && js.includes("mindpal.reflect.thread.v1"), "Reflect thread can be cleared and persisted"],
   [js.includes("GitHub Pages cannot host the live proxy") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion API base"],

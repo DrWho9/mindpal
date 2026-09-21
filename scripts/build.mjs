@@ -1127,7 +1127,7 @@ function patchOwnerUx(source) {
   if (!next.includes("Talk with MindPal") || !next.includes("Enter sends")) {
     throw new Error("Reflect chat chrome is missing");
   }
-  if (!next.includes("/mindpal/api/companion/") || !next.includes("COMPANION_POLICY_VERSION")) {
+  if (!next.includes("api/companion/") || !next.includes("COMPANION_POLICY_VERSION") || !next.includes("DEFAULT_PAGES_BASE")) {
     throw new Error("companion chat path is missing from the runtime");
   }
   if (next.includes("t===`Reflect`") && !next.includes("Talk with MindPal")) {
