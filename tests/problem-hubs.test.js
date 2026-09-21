@@ -186,8 +186,9 @@ describe("problem hubs", () => {
   });
 
   it("keeps Today sign-in off the mid-page and verse collapsed", () => {
-    assert.match(inject, /mpTodaySteps\.HUB_FLOW_LINE|Follow today’s steps/);
-    assert.match(inject, /Today’s verse — tap to expand/);
+    assert.match(inject, /mpTodaySteps\.HUB_FLOW_LINE|Individual Growth/);
+    assert.match(inject, /mpIndividualGrowthCard/);
+    assert.match(inject, /Verse of the day|GROWTH_CHAPTER_SUMMARY|Today’s verse/);
     assert.match(inject, /mp-account-footer/);
     assert.match(inject, /What do you need help with\?/);
     assert.match(inject, /mp-problem-chip/);

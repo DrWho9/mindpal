@@ -255,7 +255,10 @@ describe("work team morning ritual", () => {
     assert.match(inject, /Do this next/);
     assert.match(inject, /maddy-timed-breath|breathClipSrc/);
     assert.match(inject, /does not mark a Pack A/);
-    assert.match(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpTeamRitualCard/);
+    assert.match(inject, /mp-band-team/);
+    assert.match(inject, /TEAM GROWTH/);
+    assert.match(inject, /mpTeamRitualCard,\{onOpen:w\}/);
+    assert.doesNotMatch(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpTeamRitualCard/);
     assert.match(inject, /onOpenTeamRitual/);
     assert.match(inject, /mpTeamRitual\.canOpenReading/);
     assert.match(inject, /mpTeamRitual\.canOpenVerse/);

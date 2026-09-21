@@ -34,8 +34,8 @@ const checks = [
   [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
   [js.includes("Do this next"), "numbered day-steps are present"],
-  [js.includes("Follow today’s steps — Morning, Day, then Night."), "Today hub flow copy is present"],
-  [js.includes("Today’s verse — tap to expand"), "Morning verse starts collapsed"],
+  [js.includes("Start with Individual Growth") && js.includes("four personal steps"), "Today hub flow copy is present"],
+  [js.includes("Settle / breathe") && js.includes("One win / intention"), "Individual Growth steps are present"],
   [js.includes("mp-day-band") && js.includes("mp-band-${e.id}"), "Morning/Day/Night bands are present"],
   [js.includes("Readings — Verse of the day"), "compact Readings row is present"],
   [js.includes("Open Watch with Maddy"), "Maddy teaser links out from Today"],
@@ -122,6 +122,10 @@ const checks = [
   [!js.includes("className:`brand`,onClick:()=>I(`Today`)"), "sidebar brand no longer uses the raw Today setter"],
   [!js.includes("showModal"), "native dialogs are modeless so the brand can receive clicks"],
   [js.includes("Work team morning ritual") && js.includes("mpTeamRitualCard"), "optional team morning ritual card is present"],
+  [js.includes("mpIndividualGrowthCard") && js.includes("MINDPAL · INDIVIDUAL GROWTH") && js.includes("Settle / breathe"), "Individual Growth 4-step accordion is present"],
+  [js.includes("TEAM GROWTH") && js.includes("mp-band-team"), "Team Growth sits in its own band"],
+  [js.indexOf("mpIndividualGrowthCard") < js.indexOf("mpProblemHubList,{variant:`today`") && js.indexOf("mpProblemHubList,{variant:`today`") < js.indexOf("mp-band-team"), "Today order is Individual, then Support chips, then Team"],
+  [!js.includes("See the two steps"), "stale two-step copy is gone"],
   [js.includes("mpTeamRitualPage") && js.includes("t===`Team morning`"), "team morning ritual page is routed"],
   [js.includes("MindPal is glad you’re here") && js.includes("mp-team-ritual-open"), "team ritual opens with a MindPal line"],
   [js.includes("mp-team-breath-count") && js.includes("MindPal counts down each phase"), "team ritual breath cue counts down in-phase"],
@@ -167,6 +171,9 @@ if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth
 }
 if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count") || !css.includes(".mp-fold-head")) {
   throw new Error("team morning ritual styles missing");
+}
+if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
+  throw new Error("Individual Growth / Team Growth band styles missing");
 }
 if (!css.includes(".mp-top-brand") || !css.includes(".sidebar{z-index:50}")) {
   throw new Error("MindPal brand must stay clickable above sheets");

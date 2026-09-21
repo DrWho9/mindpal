@@ -8991,7 +8991,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -9190,7 +9190,8 @@ const STEPS_STORAGE_KEY = "mindpal.todaySteps.v1";
 
 const STEP_IDS = ["readings", "focus", "later", "evening"];
 
-const HUB_FLOW_LINE = "Follow today’s steps — Morning, Day, then Night.";
+const HUB_FLOW_LINE =
+  "Start with Individual Growth — four personal steps. Support and Team sit below if you want them.";
 
 const STEP_META = {
   readings: {
@@ -9828,6 +9829,192 @@ function notifyRitualChange(win = globalThis.window) {
   }
 }
 
+
+
+const GROWTH_STORAGE_KEY = "mindpal.individualGrowth.v1";
+const GROWTH_CHANGE_EVENT = "mindpal-individual-growth-change";
+
+const GROWTH_TITLE = "MindPal individual growth";
+const GROWTH_SHORT = "Your morning with MindPal";
+const GROWTH_EYEBROW = "MINDPAL · INDIVIDUAL GROWTH";
+const GROWTH_OPEN =
+  "MindPal is glad you’re here — settle in before the day gets loud.";
+const GROWTH_LEDE =
+  "Four quiet steps for you: settle, a verse, one peaceful reading, then one win or intention. Nobody is keeping score.";
+const GROWTH_HINT =
+  "Tap a step to open it. One at a time — settle first, then the words, then a win.";
+const GROWTH_FLOW =
+  "Step 1 Settle, then Step 2 Verse, then Step 3 Peaceful reading, then Step 4 One win.";
+const GROWTH_BREATH_HERO =
+  "About three minutes for you — not a team ritual. Follow Maddy if you’d like company — inhale 4, hold 4, exhale 6. MindPal counts down each phase. The clock keeps going after the clip ends.";
+const GROWTH_VERSE_HERO =
+  "MindPal keeps today’s verse optional. If you named a tradition, we use that lane. If not, a gentle non-faith teaching from the same catalog — never invented scripture.";
+const GROWTH_READING_HERO =
+  "One gentle Pack A piece for this morning. Opening here does not mark a Pack A day Done.";
+const GROWTH_WIN_HERO =
+  "Name one win or one intention for the day. A sentence is enough. Small counts.";
+const GROWTH_CHAPTER_SUMMARY = "Read the whole chapter — tap to expand";
+
+const GROWTH_STEP_IDS = ["settle", "verse", "reading", "win"];
+
+const GROWTH_STEPS = {
+  settle: {
+    id: "settle",
+    number: 1,
+    title: "Settle / breathe",
+    rowLabel: "Settle / breathe",
+    blurb: "A personal timed breath with MindPal. Countdown cues, then I’m done when you’ve had enough.",
+  },
+  verse: {
+    id: "verse",
+    number: 2,
+    title: "Verse of the day",
+    rowLabel: "Verse of the day",
+    blurb: "Today’s verse from the MindPal catalog. Expand the chapter if you want the surrounding lines.",
+  },
+  reading: {
+    id: "reading",
+    number: 3,
+    title: "Peaceful reading",
+    rowLabel: "Peaceful reading",
+    blurb: "One gentle Pack A piece is enough. Not a problem hub.",
+  },
+  win: {
+    id: "win",
+    number: 4,
+    title: "One win / intention",
+    rowLabel: "One win / intention",
+    blurb: "One win or intention for the day — or skip and come back tonight.",
+  },
+};
+
+function asStatus(value) {
+  return value === "done" || value === "skipped" ? value : "todo";
+}
+
+function emptyGrowth(pack, date = new Date()) {
+  const reading = pickPeacefulReading(pack, date);
+  return {
+    version: 1,
+    date: civilDateKey(date),
+    settle: "todo",
+    verse: "todo",
+    reading: "todo",
+    win: "todo",
+    readingId: reading?.id || null,
+  };
+}
+
+function normalizeGrowth(raw, pack, date = new Date()) {
+  const today = civilDateKey(date);
+  const base = emptyGrowth(pack, date);
+  if (!raw || typeof raw !== "object") return base;
+  if (raw.date !== today) return base;
+  const pool = peacefulReadings(pack);
+  const readingId = pool.some((item) => item.id === raw.readingId)
+    ? raw.readingId
+    : base.readingId;
+  const settle = asStatus(raw.settle);
+  let verse = asStatus(raw.verse);
+  let reading = asStatus(raw.reading);
+  let win = asStatus(raw.win);
+  if (verse !== "todo" && settle === "todo") verse = "todo";
+  if (reading !== "todo" && verse === "todo") reading = "todo";
+  if (win !== "todo" && reading === "todo") win = "todo";
+  return { version: 1, date: today, settle, verse, reading, win, readingId };
+}
+
+function parseGrowthJson(text, pack, date = new Date()) {
+  if (!text || typeof text !== "string") return emptyGrowth(pack, date);
+  try {
+    return normalizeGrowth(JSON.parse(text), pack, date);
+  } catch {
+    return emptyGrowth(pack, date);
+  }
+}
+
+function loadGrowth(pack, storage = globalThis.localStorage, date = new Date()) {
+  if (!storage) return emptyGrowth(pack, date);
+  try {
+    return parseGrowthJson(storage.getItem(GROWTH_STORAGE_KEY), pack, date);
+  } catch {
+    return emptyGrowth(pack, date);
+  }
+}
+
+function saveGrowth(growth, pack, storage = globalThis.localStorage, date = new Date()) {
+  const next = normalizeGrowth(growth, pack, date);
+  if (!storage) return next;
+  try {
+    storage.setItem(GROWTH_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    /* private mode / quota */
+  }
+  return next;
+}
+
+function growthStepStatus(growth, stepId) {
+  if (!GROWTH_STEP_IDS.includes(stepId)) return "todo";
+  return asStatus(growth?.[stepId]);
+}
+
+function canOpenGrowthVerse(growth) {
+  const settle = growthStepStatus(growth, "settle");
+  return settle === "done" || settle === "skipped";
+}
+
+function canOpenGrowthReading(growth) {
+  const verse = growthStepStatus(growth, "verse");
+  return verse === "done" || verse === "skipped";
+}
+
+function canOpenGrowthWin(growth) {
+  const reading = growthStepStatus(growth, "reading");
+  return reading === "done" || reading === "skipped";
+}
+
+function canOpenGrowthStep(growth, stepId) {
+  if (stepId === "settle") return true;
+  if (stepId === "verse") return canOpenGrowthVerse(growth);
+  if (stepId === "reading") return canOpenGrowthReading(growth);
+  if (stepId === "win") return canOpenGrowthWin(growth);
+  return false;
+}
+
+function markGrowth(growth, stepId, status, pack, date = new Date()) {
+  if (!GROWTH_STEP_IDS.includes(stepId)) return normalizeGrowth(growth, pack, date);
+  if (status !== "done" && status !== "skipped" && status !== "todo") {
+    return normalizeGrowth(growth, pack, date);
+  }
+  const current = normalizeGrowth(growth, pack, date);
+  if (stepId !== "settle" && status !== "todo" && !canOpenGrowthStep(current, stepId)) {
+    return current;
+  }
+  return { ...current, [stepId]: status };
+}
+
+function nextGrowthStep(growth) {
+  if (growthStepStatus(growth, "settle") === "todo") return "settle";
+  if (growthStepStatus(growth, "verse") === "todo") return "verse";
+  if (growthStepStatus(growth, "reading") === "todo") return "reading";
+  if (growthStepStatus(growth, "win") === "todo") return "win";
+  return null;
+}
+
+function growthReading(pack, growth) {
+  const id = growth?.readingId;
+  const pool = peacefulReadings(pack);
+  return pool.find((item) => item.id === id) || pickPeacefulReading(pack) || null;
+}
+
+function notifyGrowthChange(win = globalThis.window) {
+  try {
+    win?.dispatchEvent?.(new Event(GROWTH_CHANGE_EVENT));
+  } catch {
+    /* listeners are optional */
+  }
+}
+
 /** Existing Today / home hash route — do not invent a new page. */
 const HOME_ROUTE = "Today";
 const HOME_EVENT = "mindpal-go-home";
@@ -10420,6 +10607,7 @@ mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,n
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
+mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -10782,6 +10970,10 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):e===`nudge`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Add a daily win when something small goes well.`}),
       (0,A.jsx)(`p`,{className:`muted`,children:`Optional. Never a test.`})
+    ]}):e===`growth`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`ONE WIN · INTENTION`}),
+      (0,A.jsx)(`h2`,{children:`One win or intention for the day`}),
+      (0,A.jsx)(`p`,{children:`A sentence is enough. Small counts. You’ll see these again in Before you sleep.`})
     ]}):(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`DAILY WINS`}),
       (0,A.jsx)(`h2`,{children:`A win from today`}),
@@ -11169,6 +11361,188 @@ function mpSaveRitual(next){
   mpNotifyRitual();
   return e;
 }
+function mpNotifyGrowth(){
+  try{mpIndividualGrowth.notifyGrowthChange()}catch{}
+}
+function mpSaveGrowth(next){
+  let e=mpIndividualGrowth.saveGrowth(next,mpPackA);
+  mpNotifyGrowth();
+  return e;
+}
+function mpIndividualGrowthCard({onOpenJournal:T}){
+  let[n,r]=(0,_.useState)(()=>mpIndividualGrowth.loadGrowth(mpPackA));
+  let[i,a]=(0,_.useState)(()=>mpIndividualGrowth.nextGrowthStep(mpIndividualGrowth.loadGrowth(mpPackA))||`settle`);
+  let[o,s]=(0,_.useState)(!1);
+  let[c,l]=(0,_.useState)(0);
+  let[q,j]=(0,_.useState)(``);
+  let[z,B]=(0,_.useState)(``);
+  let u=(0,_.useRef)(null);
+  let{listening:d,listenStatus:f,toggle:p,stop:m}=mt();
+  let h=mpTeamRitual.breathClip(mpMaddy);
+  let g=mpReadings.maddyPublishedSrc(mpTeamRitual.breathClipSrc(mpMaddy));
+  let v=mpIndividualGrowth.growthReading(mpPackA,n);
+  let k=mpTeamRitual.ritualTradition(mpFaith.sessionPreferences?mpFaith.sessionPreferences():null);
+  let N=typeof Ft<`u`?mpTeamRitual.pickRitualVerse(Ft,new Date(),k):null;
+  let P=N?mpTeamRitual.ritualChapterTarget(N):null;
+  let y=mpIndividualGrowth.growthStepStatus(n,`settle`);
+  let Q=mpIndividualGrowth.growthStepStatus(n,`verse`);
+  let b=mpIndividualGrowth.growthStepStatus(n,`reading`);
+  let Y=mpIndividualGrowth.growthStepStatus(n,`win`);
+  let x=mpIndividualGrowth.canOpenGrowthReading(n);
+  let O=mpIndividualGrowth.canOpenGrowthVerse(n);
+  let W=mpIndividualGrowth.canOpenGrowthWin(n);
+  let S=mpIndividualGrowth.nextGrowthStep(n);
+  let C=mpTeamRitual.breathCueAt(c);
+  let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
+  (0,_.useEffect)(()=>{function e(){r(mpIndividualGrowth.loadGrowth(mpPackA))}return window.addEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e),()=>window.removeEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e)},[]);
+  (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveGrowth(mpIndividualGrowth.markGrowth(mpIndividualGrowth.loadGrowth(mpPackA),`settle`,`done`));r(t);try{u.current&&u.current.pause()}catch{}a(`verse`);return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
+  (0,_.useEffect)(()=>()=>{m&&m()},[m]);
+  function F(e){
+    if(!mpIndividualGrowth.canOpenGrowthStep(n,e))return;
+    a(e);
+  }
+  function E(e,t){
+    let i=mpSaveGrowth(mpIndividualGrowth.markGrowth(n,e,t));
+    r(i);
+    if(e===`settle`&&t!==`todo`){
+      s(!1);
+      try{u.current&&u.current.pause()}catch{}
+      a(mpIndividualGrowth.canOpenGrowthVerse(i)?`verse`:`settle`);
+    }
+    if(e===`verse`&&t!==`todo`){
+      a(mpIndividualGrowth.canOpenGrowthReading(i)?`reading`:`verse`);
+    }
+    if(e===`reading`&&t!==`todo`){
+      a(mpIndividualGrowth.canOpenGrowthWin(i)?`win`:`reading`);
+    }
+    if(t===`todo`)a(e);
+    return i;
+  }
+  function D(){
+    if(o){s(!1);try{u.current&&u.current.pause()}catch{};return}
+    s(!0);
+    try{u.current&&u.current.play&&u.current.play()}catch{}
+  }
+  async function G(){
+    if(!P)return;
+    B(``);j(``);
+    if(!P.fetchUrl){B(`The catalog keeps this teaching at its source — MindPal does not invent a longer text.`);return}
+    try{
+      let e=await fetch(P.fetchUrl,{referrerPolicy:`no-referrer`});
+      let t=await e.json();
+      if(t&&t.text)j(String(t.text).trim());
+      else B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }catch{
+      B(`Open the source to read the chapter. MindPal will not invent the lines.`);
+    }
+  }
+  let J=N?`${N.verse?.reference||``}. ${N.verse?.text||``}`:``;
+  let settleBody=(0,A.jsxs)(`div`,{className:`mp-team-breath`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpIndividualGrowth.GROWTH_OPEN}),
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_BREATH_HERO}),
+    (0,A.jsx)(`p`,{className:`mp-team-breath-clock`,"aria-live":`polite`,children:w}),
+    C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-count`,"aria-live":`polite`,children:C.count}):null,
+    (0,A.jsx)(`p`,{className:`mp-team-breath-cue`,"aria-live":`polite`,children:C.label}),
+    h?(0,A.jsxs)(`div`,{className:`mp-team-breath-video`,children:[
+      (0,A.jsxs)(`div`,{className:`mp-team-breath-frame`,children:[
+        (0,A.jsx)(`video`,{ref:u,controls:!0,playsInline:!0,preload:`metadata`,src:g,"aria-label":`Timed breath with Maddy`}),
+        C.count?(0,A.jsx)(`p`,{className:`mp-team-breath-overlay`,"aria-hidden":!0,children:C.count}):null
+      ]}),
+      (0,A.jsx)(`p`,{className:`muted`,children:h.description||`Maddy’s timed breath.`})
+    ]}):(0,A.jsx)(`p`,{className:`muted`,children:`A quiet in-app timer is enough if the clip is not to hand.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:D,children:o?`Pause`:`Start the breath`}),
+      y===`todo`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>E(`settle`,`done`),children:`I’m done`}):null,
+      y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`settle`,`skipped`),children:`Skip this breath`}):null,
+      y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`settle`,`todo`),children:`Undo breath`}):null
+    ]}),
+    O?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`The body has had a moment. Open today’s verse when you’re ready.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`verse`),children:`Go to the verse`})
+    ]}):null
+  ]});
+  let verseBody=(0,A.jsxs)(`div`,{className:`mp-team-verse`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_VERSE_HERO}),
+    N?(0,A.jsxs)(`article`,{className:`mp-team-verse-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`VERSE FOR THE DAY${N.lane?` · ${String(N.lane).replace(/_/g,` `)}`:``}`}),
+      (0,A.jsx)(`h3`,{children:N.verse?.reference||`Today’s verse`}),
+      (0,A.jsxs)(`p`,{children:[`“`,N.verse?.text||``,`”`]}),
+      N.verse?.source_note?(0,A.jsx)(`p`,{className:`muted`,children:N.verse.source_note}):null,
+      N.reflection?(0,A.jsx)(`p`,{children:N.reflection}):null,
+      (0,A.jsxs)(`details`,{className:`mp-verse-collapse`,onToggle:e=>{if(e.target.open)G()},children:[
+        (0,A.jsx)(`summary`,{children:mpIndividualGrowth.GROWTH_CHAPTER_SUMMARY}),
+        q?(0,A.jsx)(`p`,{className:`mp-team-chapter`,children:q}):null,
+        z?(0,A.jsx)(`p`,{className:`muted`,children:z}):null,
+        P?.openUrl?(0,A.jsx)(`p`,{children:(0,A.jsx)(`a`,{href:P.openUrl,target:`_blank`,rel:`noreferrer`,children:`Open the chapter at its source`})}):null
+      ]})
+    ]}):(0,A.jsx)(`p`,{children:`Today’s verse is not loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      N?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:N.id||`growth-verse`,text:J}),children:d?`Pause`:`Listen`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`verse`,`done`),children:`I’m done`}):null,
+      Q===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`skipped`),children:`Skip the verse`}):null,
+      Q!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`todo`),children:`Undo verse`}):null
+    ]}),
+    x?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`When you’re ready, open the peaceful reading.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`reading`),children:`Go to the peaceful reading`})
+    ]}):null,
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let readingBody=(0,A.jsxs)(`div`,{className:`mp-team-reading`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_READING_HERO}),
+    v?(0,A.jsxs)(`article`,{className:`mp-team-reading-body`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`PACK A · PEACEFUL`}),
+      (0,A.jsx)(`h3`,{children:v.title}),
+      (0,A.jsx)(`p`,{className:`muted`,children:v.theme_label?`Day ${v.day} · ${v.theme_label}`:`Day ${v.day}`}),
+      (v.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+      v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
+    ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`I’m done`}):null,
+      b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
+      b!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`todo`),children:`Undo reading`}):null
+    ]}),
+    W?(0,A.jsxs)(`div`,{className:`mp-team-next`,children:[
+      (0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}),
+      (0,A.jsx)(`p`,{children:`When you’re ready, name one win or intention.`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`win`),children:`Go to one win`})
+    ]}):null,
+    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
+  ]});
+  let winBody=(0,A.jsxs)(`div`,{className:`mp-growth-win`,children:[
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_WIN_HERO}),
+    (0,A.jsx)(mpWinsPanel,{variant:`growth`,onOpenJournal:T}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      Y===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`win`,`done`),children:`I’m done`}):null,
+      Y===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`win`,`skipped`),children:`Skip this win`}):null,
+      Y!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`win`,`todo`),children:`Undo win`}):null
+    ]})
+  ]});
+  let bodies={settle:settleBody,verse:verseBody,reading:readingBody,win:winBody};
+  return(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-morning mp-individual-growth`,"aria-label":`Individual Growth`,children:[
+    (0,A.jsx)(`p`,{className:`mp-team-ritual-open`,children:mpIndividualGrowth.GROWTH_OPEN}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:mpIndividualGrowth.GROWTH_EYEBROW}),
+    (0,A.jsx)(`h2`,{children:mpIndividualGrowth.GROWTH_TITLE}),
+    (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_LEDE}),
+    (0,A.jsx)(`p`,{className:`muted`,children:mpIndividualGrowth.GROWTH_FLOW}),
+    (0,A.jsx)(`ol`,{className:`mp-team-ritual-path`,"aria-label":`Individual Growth steps`,children:mpIndividualGrowth.GROWTH_STEP_IDS.map(e=>{
+      let t=mpIndividualGrowth.GROWTH_STEPS[e],o=mpIndividualGrowth.growthStepStatus(n,e),s=i===e,c=S===e,l=mpIndividualGrowth.canOpenGrowthStep(n,e);
+      return(0,A.jsxs)(`li`,{className:`mp-day-step${s?` is-current`:``}${c?` is-next`:``}${o!==`todo`?` is-${o}`:``}${l?``:` is-locked`}`,children:[
+        (0,A.jsxs)(`button`,{type:`button`,className:`mp-step-main`,onClick:()=>F(e),"aria-expanded":s,disabled:!l,children:[
+          (0,A.jsx)(`span`,{className:`mp-step-num`,children:`Step ${t.number} · ${t.rowLabel}`}),
+          c?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+          o===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+          o===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null,
+          !l?(0,A.jsx)(`span`,{className:`muted`,children:`After the step before`}):null
+        ]}),
+        s?(0,A.jsx)(`div`,{className:`mp-team-step-body`,children:bodies[e]}):null
+      ]},e);
+    })})
+  ]});
+}
 function mpFoldSection({id:e,title:t,meta:n,open:r,onToggle:i,children:a,className:o}){
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-fold${r?` is-open`:``}${o?` ${o}`:``}`,"aria-label":t,children:[
     (0,A.jsxs)(`button`,{type:`button`,className:`mp-fold-head`,"aria-expanded":r,onClick:()=>i(e),children:[
@@ -11401,18 +11775,21 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
+    (0,A.jsx)(mpIndividualGrowthCard,{onOpenJournal:o||r}),
     (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),
-    mpTodaySteps.BANDS.map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
+    (0,A.jsxs)(`section`,{className:`mp-day-band mp-band-team`,"aria-label":`Team Growth`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`TEAM GROWTH`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Optional. A workplace or friends settle — not the morning path.`}),
+      (0,A.jsx)(mpTeamRitualCard,{onOpen:w})
+    ]}),
+    mpTodaySteps.BANDS.filter(e=>e.id!==`morning`).map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
       (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
-      e.id===`morning`?(0,A.jsx)(mpTeamRitualCard,{onOpen:w}):null,
-      e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
-      e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
       (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
         let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,g=n.rowLabel||n.title;
         return(0,A.jsxs)(`li`,{className:`mp-day-step mp-step-row mp-step-${t}${a?` is-next`:``}${i!==`todo`?` is-${i}`:``}`,children:[
           (0,A.jsxs)(`button`,{className:`mp-step-main`,type:`button`,onClick:()=>h[t]&&h[t](),children:[
-            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[`Step ${n.number}`,` · `,g]}),
+            (0,A.jsxs)(`span`,{className:`mp-step-num`,children:[n.when,` · `,g]}),
             a?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
             i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
             i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
