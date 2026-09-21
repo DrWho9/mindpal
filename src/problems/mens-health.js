@@ -11,6 +11,11 @@ const EMPTY = { stats: [], youtube: [], queuedVideos: [], helplines: [] };
 
 export function mensHealthCatalog(override) {
   if (override && typeof override === "object" && !Array.isArray(override)) return override;
+  try {
+    if (typeof mpMensHealth !== "undefined" && mpMensHealth) return mpMensHealth;
+  } catch {
+    /* Node tests use globalThis */
+  }
   if (typeof globalThis !== "undefined" && globalThis.mpMensHealth) return globalThis.mpMensHealth;
   return EMPTY;
 }

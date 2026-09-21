@@ -7577,7 +7577,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "blurb": "Immediate danger in Australia."
     }
   ]
-};var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
+};if(typeof globalThis<`u`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;}var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
 const PACK_B_ID = "mindpal-daily-soften-v1";
 const STORAGE_KEY = "mindpal.readings.v1";
 const LEGACY_STORAGE_KEY = "mindpal.reading.progress.v1";
@@ -7722,6 +7722,11 @@ const AOD_FEATURED_READING_ID = "dna-dopamine-loop-v1";
 function ownerReadingsCatalog(override) {
   if (Array.isArray(override?.readings)) return override;
   if (Array.isArray(override)) return { readings: override };
+  try {
+    if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) return mpOwnerReadings;
+  } catch {
+    /* Node tests use globalThis */
+  }
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
   }
@@ -10370,6 +10375,11 @@ const AOD_FEATURED_READING_ID = "dna-dopamine-loop-v1";
 function ownerReadingsCatalog(override) {
   if (Array.isArray(override?.readings)) return override;
   if (Array.isArray(override)) return { readings: override };
+  try {
+    if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) return mpOwnerReadings;
+  } catch {
+    /* Node tests use globalThis */
+  }
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
   }
@@ -10432,6 +10442,11 @@ const EMPTY = { stats: [], youtube: [], queuedVideos: [], helplines: [] };
 
 function mensHealthCatalog(override) {
   if (override && typeof override === "object" && !Array.isArray(override)) return override;
+  try {
+    if (typeof mpMensHealth !== "undefined" && mpMensHealth) return mpMensHealth;
+  } catch {
+    /* Node tests use globalThis */
+  }
   if (typeof globalThis !== "undefined" && globalThis.mpMensHealth) return globalThis.mpMensHealth;
   return EMPTY;
 }

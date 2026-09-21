@@ -5,6 +5,11 @@ export const AOD_FEATURED_READING_ID = "dna-dopamine-loop-v1";
 export function ownerReadingsCatalog(override) {
   if (Array.isArray(override?.readings)) return override;
   if (Array.isArray(override)) return { readings: override };
+  try {
+    if (typeof mpOwnerReadings !== "undefined" && mpOwnerReadings) return mpOwnerReadings;
+  } catch {
+    /* Node tests use globalThis */
+  }
   if (typeof globalThis.mpOwnerReadings !== "undefined" && globalThis.mpOwnerReadings) {
     return globalThis.mpOwnerReadings;
   }

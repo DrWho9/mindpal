@@ -64,6 +64,7 @@ const checks = [
   [js.includes("MindPal videos (soon)") && js.includes("Best self is not a performance"), "queued MindPal video titles are present without HeyGen spend"],
   [!js.includes("toxic masculinity") && !js.includes("Toxic masculinity"), "hub does not use toxic-masculinity framing"],
   [js.includes("t===`Mens health`") && js.includes("\"Mens health\":`route.mensHealth`"), "Mens health hash route is mounted"],
+  [js.includes("globalThis.mpMensHealth=mpMensHealth"), "Men's Health catalog is attached to globalThis"],
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],
   [js.includes("mpAccountFooter"), "Settings account footer is present"],
