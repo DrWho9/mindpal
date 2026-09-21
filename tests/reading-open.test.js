@@ -15,6 +15,7 @@ import {
 const root = dirname(fileURLToPath(import.meta.url));
 const packA = JSON.parse(readFileSync(join(root, "../src/data/pack-a.json"), "utf8"));
 const inject = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
+const kitUi = readFileSync(join(root, "../src/patches/feelings-readings.inject.js"), "utf8");
 const daily = readFileSync(join(root, "../src/patches/daily-reading.inject.js"), "utf8");
 const build = readFileSync(join(root, "../scripts/build.mjs"), "utf8");
 
@@ -58,8 +59,9 @@ describe("open reading helper", () => {
     assert.match(inject, /function mpNightBand\(/);
     assert.match(inject, /Open Journal/);
     assert.match(inject, /Open the book reader/);
-    assert.match(inject, /mpHubOpenableReadings,\{readings:s/);
     assert.match(inject, /mpHubOpenableReadings,\{readings:u/);
+    assert.match(kitUi, /mpKitReadingArticle/);
+    assert.match(kitUi, /Open the reading/);
     assert.match(daily, /takeOpenReadingId|openReading/);
     assert.match(daily, /mindpal-daily-reading/);
     assert.match(build, /openReading,findReadingById/);

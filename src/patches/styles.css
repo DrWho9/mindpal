@@ -455,3 +455,17 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 .mp-appoint-chat h3{margin:0 0 6px}
 .mp-companion-base{display:flex;flex-direction:column;gap:8px;margin:10px 0}
 .mp-companion-base input{width:100%;min-height:42px}
+.mp-feeling-kit{display:flex;flex-direction:column;gap:10px;margin:14px 0 8px}
+.mp-kit-section{background:#fffef9;border:1px solid #dfe4d5;border-radius:16px;overflow:hidden}
+.mp-kit-section.is-open{border-color:#c5d0b8;box-shadow:0 0 0 2px rgba(47,90,61,.08)}
+.mp-kit-toggle{width:100%;text-align:left;background:#f7f8f2;border:0;padding:14px 16px;min-height:48px;font:inherit;font-weight:700;cursor:pointer;color:#2f3b2c}
+.mp-kit-section.is-open .mp-kit-toggle{background:#eef3ea}
+.mp-kit-body{padding:4px 16px 16px}
+.mp-kit-blurb{color:#4a5346;font-size:14px;line-height:1.45}
+.mp-kit-article{margin-top:8px}
+.mp-kit-evidence h3{margin:1em 0 .35em;font-size:1.05rem}
+.mp-kit-evidence h4{margin:.8em 0 .25em}
+.mp-kit-note{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;margin:8px 0}
+.mp-kit-guides{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:10px}
+.mp-kit-guides li{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.mp-kit-safety{margin-top:8px}

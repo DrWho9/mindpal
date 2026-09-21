@@ -159,6 +159,36 @@ function youtubeItem(entry, now = new Date()) {
   };
 }
 
+export function videosForIds(ids, catalogs = {}, now = new Date()) {
+  const wanted = Array.isArray(ids) ? ids.filter((id) => typeof id === "string" && id.trim()) : [];
+  if (!wanted.length) return [];
+  const maddyById = new Map(
+    (Array.isArray(catalogs?.maddy?.videos) ? catalogs.maddy.videos : []).map((video) => [
+      video.id,
+      video,
+    ]),
+  );
+  const catalogById = new Map(
+    (Array.isArray(catalogs?.videos?.videos) ? catalogs.videos.videos : []).map((video) => [
+      video.id,
+      video,
+    ]),
+  );
+  const ytById = new Map();
+  for (const category of meditationCategories(catalogs?.meditations)) {
+    for (const entry of entriesForCategory(category)) {
+      if (entry?.id && !ytById.has(entry.id)) ytById.set(entry.id, entry);
+    }
+  }
+  const items = [];
+  for (const id of wanted) {
+    if (maddyById.has(id)) items.push(maddyItem(maddyById.get(id)));
+    else if (catalogById.has(id)) items.push(mindpalItem(catalogById.get(id), now));
+    else if (ytById.has(id)) items.push(youtubeItem(ytById.get(id), now));
+  }
+  return items;
+}
+
 export function curatedVideosForEmotion(
   emotionId,
   { maddy, videos, meditations } = {},

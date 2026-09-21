@@ -7842,7 +7842,720 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
     "verified": true,
     "checkedAt": "2026-09-09"
   }
-];if(typeof globalThis<`u`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;}var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
+];var mpFeelingKits={
+  "version": "1.0.0",
+  "note": "Editorial feeling/problem kits. High-model pass should rewrite blurbs and re-pick videos — see content/FEELINGS-CURATION.md.",
+  "aliases": {
+    "sad": "low-mood",
+    "anxious": "anxiety",
+    "angry": "anger",
+    "overwhelmed": "overwhelm",
+    "mood": "low-mood",
+    "numb": "low-mood",
+    "drugs": "aod",
+    "alcohol": "aod",
+    "craving": "aod"
+  },
+  "kits": {
+    "aod": {
+      "title": "Drugs & alcohol",
+      "shortTitle": "Drugs & alcohol",
+      "eyebrow": "DRUGS & ALCOHOL · OPTIONAL SUPPORT",
+      "lede": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is a small kit, not a day dump: start with the talk-through, then a few readings and clips. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
+      "startHereId": "dna-dopamine-loop-v1",
+      "startHereBlurb": "A plain talk-through of drugs and alcohol — the puppy-and-treat loop. DNA is only a nickname for that phrase, not genetics. Literacy, not a detox plan.",
+      "readingIds": [
+        "thank-your-past-coping",
+        "ask-for-help-simply",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "let-the-feeling-move-through",
+        "be-loyal-to-your-body",
+        "forgive-a-past-self",
+        "begin-again-without-drama"
+      ],
+      "readingBlurbs": {
+        "thank-your-past-coping": "Old strategies can be thanked without being kept. Softens shame around what once helped.",
+        "ask-for-help-simply": "One plain ask is enough. Company is allowed around drink or other substances.",
+        "be-on-your-own-side": "Self-talk that does not pile on after a hard stretch.",
+        "speak-more-softly-to-yourself": "The inner critic can get quieter without a lecture.",
+        "let-the-feeling-move-through": "A craving or low mood can be weather — noticed, not argued with.",
+        "be-loyal-to-your-body": "Body cues first. Literacy about craving, not a protocol.",
+        "forgive-a-past-self": "A past version of you can be forgiven without rewriting the whole story.",
+        "begin-again-without-drama": "A fresh start can be small. No performance required."
+      },
+      "videoIds": [
+        "V02",
+        "maddy-timed-breath",
+        "maddy-welcome",
+        "YT-KIND-01",
+        "V07"
+      ],
+      "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…",
+      "safety": {
+        "title": "If you are in danger, or intoxicated and unsafe",
+        "body": "This space is not detox and not a replacement for AOD treatment. If you are intoxicated and in danger, or in crisis in Australia, call 000. Need support lists human help and counselling lines already in the app, including Lifeline — we do not invent extra numbers here."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Need support lists human help already in the app.",
+        "notes": [
+          {
+            "title": "A learning loop, not a moral verdict",
+            "body": "The featured talk-through is literacy: a reward that arrives quickly after a low mood can train a loop. That picture is for noticing, not for DIY detox. Coming off alcohol or other drugs after heavy use can be medically unsafe without proper care."
+          },
+          {
+            "title": "Where public guidance lives",
+            "body": "Australian government and foundation pages explain how to find alcohol and other drug help. MindPal does not add extra phone numbers here. Open the public page, or use Need support in the app."
+          }
+        ],
+        "guides": [
+          {
+            "title": "How to find help",
+            "org": "Australian Government — Department of Health",
+            "why": "Official pathways for alcohol and other drug support, including the national hotline listed on that page.",
+            "url": "https://www.health.gov.au/our-work/drug-help/how-to-find-help"
+          },
+          {
+            "title": "Help & support services",
+            "org": "Alcohol and Drug Foundation",
+            "why": "A public directory and starting point for local AOD services. Literacy and referral, not a MindPal clinic.",
+            "url": "https://adf.org.au/help-support/search/"
+          }
+        ],
+        "sources": [
+          {
+            "title": "Alcohol",
+            "org": "HealthDirect",
+            "note": "Government-funded plain-language page on alcohol and health. Use their wording; we do not invent statistics here.",
+            "url": "https://www.healthdirect.gov.au/alcohol"
+          }
+        ]
+      }
+    },
+    "anxiety": {
+      "title": "Anxiety / worry",
+      "shortTitle": "Anxiety",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Worry can loop. This kit is a short path — one opener, a few readings, a clip — not a diagnosis and not a course of treatment.",
+      "startHereId": "catch-the-worry-snowball",
+      "startHereBlurb": "Catch the worry snowball early — a literacy opener for rumination before it gathers speed.",
+      "readingIds": [
+        "leave-room-for-maybe",
+        "name-three-steadies",
+        "walk-off-one-worry",
+        "refuse-the-spiral-once",
+        "lower-the-volume-on-urgency",
+        "dont-rehearse-the-argument",
+        "look-up-from-the-problem",
+        "choose-a-smaller-stage"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "YT-ANX-01",
+        "V08",
+        "V05"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for everyday worry. Please keep it practical and non-clinical — one small thing I could notice or do, and remind me this is not a diagnosis.",
+      "journalPrompt": "The worry that keeps returning is… One smaller, kinder sentence about it is…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.",
+        "notes": [
+          {
+            "title": "Worry can loop",
+            "body": "Everyday worry often tries to solve a future that has not arrived yet. Catching the loop early is literacy, not a test. If worry or panic is new, severe, or affecting daily life, a GP is the right next step."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Anxiety",
+            "org": "HealthDirect",
+            "why": "Government-funded page on everyday anxiety and when to seek care.",
+            "url": "https://www.healthdirect.gov.au/anxiety"
+          },
+          {
+            "title": "Anxiety",
+            "org": "Beyond Blue",
+            "why": "AU public literacy and support pathways for anxiety.",
+            "url": "https://www.beyondblue.org.au/mental-health/anxiety"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "sleep": {
+      "title": "Sleep / restless night",
+      "shortTitle": "Sleep",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "A restless night is common. This kit is a gentle wind-down path — not a sleep clinic, and nothing here has to be finished.",
+      "startHereId": "rest-is-not-a-prize",
+      "startHereBlurb": "Rest is not a prize you earn. A kind opener when the night will not settle.",
+      "readingIds": [
+        "end-the-day-without-a-verdict",
+        "keep-tonight-simple",
+        "leave-work-at-the-edge",
+        "soften-your-shoulders-now",
+        "give-your-nervous-system-a-margin",
+        "make-tomorrow-lighter-tonight",
+        "practise-ending-well",
+        "be-loyal-to-your-body"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "YT-SLEEP-01",
+        "YT-SLEEP-02",
+        "V12"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for a restless night. Please keep it practical and non-clinical — one small wind-down I could try, and remind me this is not medical advice.",
+      "journalPrompt": "Tonight felt restless because… One kind thing I can try before sleep is…",
+      "evidence": {
+        "disclaimer": "Education only — not a sleep clinic and not medical advice. New or severe symptoms need a clinician.",
+        "notes": [
+          {
+            "title": "A restless night is common",
+            "body": "Sleep can be thin when the day was loud or the mind is still working. A wind-down chapter is optional company. Ongoing insomnia, breathing trouble, or a sudden change in sleep still belongs with a GP."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Insomnia",
+            "org": "HealthDirect",
+            "why": "Government-funded page on difficulty sleeping and when to get help.",
+            "url": "https://www.healthdirect.gov.au/insomnia"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "low-mood": {
+      "title": "Heavy / low mood",
+      "shortTitle": "Low mood",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "A heavy day does not need a cheerful script. Sit with one opener, or a sentence — only if you want to. Not a diagnosis.",
+      "startHereId": "notice-the-weather-inside",
+      "startHereBlurb": "Notice the weather inside. Mood can be named without being fixed.",
+      "readingIds": [
+        "sit-with-an-unfinished-feeling",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "put-down-the-scoreboard",
+        "let-the-feeling-move-through",
+        "keep-your-humour-handy",
+        "let-someone-help-you",
+        "hold-joy-without-waiting-for-deserving"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-tip",
+        "YT-KIND-01",
+        "V10"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for a heavy or low mood. Please keep it gentle and non-clinical — one manageable option, and remind me this is not therapy or a diagnosis.",
+      "journalPrompt": "Today feels heavy because… One small kindness I can offer myself is…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not therapy and not a diagnosis. AU urgent help: 000 / Lifeline 13 11 14.",
+        "notes": [
+          {
+            "title": "A heavy day is still a day",
+            "body": "Low mood can ask for a smaller next step, not a cheerful script. If low mood lasts, or you do not feel safe, use human help. MindPal does not monitor you."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Depression",
+            "org": "HealthDirect",
+            "why": "Government-funded page on low mood and depression, and who to speak with.",
+            "url": "https://www.healthdirect.gov.au/depression"
+          },
+          {
+            "title": "Depression",
+            "org": "Beyond Blue",
+            "why": "AU public literacy and support pathways.",
+            "url": "https://www.beyondblue.org.au/mental-health/depression"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "stress": {
+      "title": "Stress / overload",
+      "shortTitle": "Stress",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "When the day feels too full, one smaller step is enough. This kit is optional pauses, not a productivity plan.",
+      "startHereId": "trust-a-small-next-step",
+      "startHereBlurb": "Trust a small next step. Shrink the day by one thing.",
+      "readingIds": [
+        "one-thing-at-a-time",
+        "postpone-one-nonessential",
+        "good-enough-is-allowed",
+        "lower-the-volume-on-urgency",
+        "soften-your-shoulders-now",
+        "return-to-breathing-room",
+        "hand-back-what-isnt-yours",
+        "redefine-a-productive-day"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V03",
+        "V04",
+        "YT-ANX-04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling overloaded. Please keep it practical and non-clinical — help me shrink today by one thing, and remind me this is not treatment.",
+      "journalPrompt": "What is making today feel too full… One demand I can set down or shrink is…",
+      "evidence": {
+        "disclaimer": "Education only — not a productivity plan and not treatment.",
+        "notes": [
+          {
+            "title": "Shrink the day by one thing",
+            "body": "Overwhelm often means too many demands, not a character flaw. One postponed task is literacy. If stress is affecting sleep, work or safety, a GP or Need support is the next step."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Stress",
+            "org": "HealthDirect",
+            "why": "Government-funded page on stress and when to seek care.",
+            "url": "https://www.healthdirect.gov.au/stress"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "overwhelm": {
+      "title": "Overwhelmed or stressed",
+      "shortTitle": "Overwhelm",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Too much at once. This kit starts small — one opener, then a shortlist — and you can leave anytime.",
+      "startHereId": "one-thing-at-a-time",
+      "startHereBlurb": "One thing at a time. A literacy opener when everything arrives at once.",
+      "readingIds": [
+        "postpone-one-nonessential",
+        "trust-a-small-next-step",
+        "keep-promises-small",
+        "leave-space-in-the-calendar",
+        "name-three-steadies",
+        "give-your-nervous-system-a-margin",
+        "share-the-load-out-loud",
+        "honour-a-limit-without-apology-essay"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V04",
+        "V03",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling overloaded. Please keep it practical and non-clinical — help me shrink today by one thing, and remind me this is not treatment.",
+      "journalPrompt": "What is making today feel too full… One demand I can set down or shrink is…"
+    },
+    "mothers": {
+      "title": "Struggling mothers",
+      "shortTitle": "Mothers",
+      "eyebrow": "MOTHERS · OPTIONAL SUPPORT",
+      "lede": "The days can be full of pressure, exhaustion and a quiet guilt that you are not doing enough. This kit is optional company — open a Pack A chapter, sit with a clip, or read a short literacy note. It is not medical care, not a diagnosis, and not a replacement for a GP, midwife or maternal-child nurse.",
+      "startHereId": "rest-is-not-a-prize",
+      "startHereBlurb": "Rest is not a prize you earn. A literacy opener for sleep debt and the guilt that says you have not done enough to deserve a pause.",
+      "readingIds": [
+        "let-the-house-be-lived-in",
+        "reduce-one-expectation",
+        "hand-back-what-isnt-yours",
+        "ask-for-help-simply",
+        "share-the-load-out-loud",
+        "put-down-the-scoreboard",
+        "keep-tonight-simple",
+        "notice-the-weather-inside"
+      ],
+      "readingBlurbs": {
+        "let-the-house-be-lived-in": "A lived-in house can be evidence that care is happening — not a fail.",
+        "reduce-one-expectation": "One smaller demand is enough. Perinatal load does not need a full audit.",
+        "hand-back-what-isnt-yours": "Emotional labour can be handed back kindly. Support is not the same as owning every mood.",
+        "ask-for-help-simply": "Asking can be one plain sentence. Company is allowed.",
+        "share-the-load-out-loud": "Delegation can be spoken. You do not have to carry the roster alone.",
+        "put-down-the-scoreboard": "Comparison with other mothers is optional. Put the scoreboard down.",
+        "keep-tonight-simple": "Evening overload can be shrunk. One simpler night is a practice, not a failure.",
+        "notice-the-weather-inside": "Mood can be named without being fixed. A weather check, not a diagnosis."
+      },
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-timed-breath",
+        "V02",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'm a mother having a hard stretch — tired, stretched, and carrying a bit of guilt. Please stay educational and peer-like: one small, kind next step. You are software, not a therapist, and this is not a diagnosis or medical care. If I am in danger I will use human help / 000.",
+      "journalPrompt": "One small win amid caring for others today… A moment that was good enough, even if the rest was messy, was…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline. PANDA’s National Perinatal Mental Health Helpline is for expecting and new parents — it is not a crisis line."
+      },
+      "evidence": {
+        "disclaimer": "MindPal literacy and outbound public pages — not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. We do not invent studies or statistics here.",
+        "notes": [
+          {
+            "title": "Perinatal load",
+            "body": "Caring through pregnancy and the first year is a real workload — broken sleep, feeding, appointments, and the quiet job of keeping other people okay. Feeling stretched is a common human response to that load. A heavy week is information about capacity, not a verdict on whether you are a good mother. MindPal can sit with the day; a clinician can assess if something more is going on."
+          },
+          {
+            "title": "Sleep debt",
+            "body": "Broken nights change patience, mood and the story you tell about yourself. Wanting rest is not laziness. Australian public pages treat ongoing lack of sleep as part of why early parenthood can feel harder — and they still send you to a GP, midwife or child-and-family health nurse when low mood or worry lasts. This kit offers a wind-down chapter, not a sleep clinic."
+          },
+          {
+            "title": "Guilt",
+            "body": "Many mothers carry a private scoreboard: not enough, not patient enough, not the mother they meant to be. Guilt can show up even when you are already doing a great deal. Literacy here means noticing the sentence without turning it into a diagnosis. If guilt, fear or low mood keep you from functioning or from feeling safe, that is a reason to use human help — not to finish a reading first."
+          },
+          {
+            "title": "Asking for help",
+            "body": "Asking can be one plain sentence to a partner, a friend, a maternal-child nurse, or a helpline. It does not have to be a full story. Public Australian services exist because this stretch is known to be hard — PANDA, Beyond Blue, HealthDirect and COPE are education and pathways, not a replacement for the clinician who knows you."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Ready to COPE",
+            "org": "COPE — Centre of Perinatal Excellence",
+            "why": "A free Australian pregnancy and early-parenting guide, written to sit with the National Clinical Guideline. Weekly literacy on the emotional stretch — not a MindPal invention.",
+            "url": "https://www.cope.org.au/ready-to-cope"
+          },
+          {
+            "title": "New parents",
+            "org": "COPE",
+            "why": "Public fact sheets and pages on adjusting to parenthood, looking after yourself, and postnatal mental health conditions.",
+            "url": "https://www.cope.org.au/new-parents"
+          },
+          {
+            "title": "Parenting and mental health",
+            "org": "Beyond Blue",
+            "why": "AU literacy on pregnancy, caring for a baby, and when everyday strain might need a conversation with a GP or nurse.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting"
+          },
+          {
+            "title": "Postnatal depression",
+            "org": "HealthDirect",
+            "why": "Government-funded plain-language page: baby blues versus longer low mood, and who to speak with. Use their wording — we do not add extra numbers here.",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        ],
+        "sources": [
+          {
+            "title": "PANDA — Perinatal Anxiety & Depression Australia",
+            "org": "PANDA",
+            "note": "Australia’s national perinatal mental health organisation. Helpline 1300 726 306 (not 24/7 crisis — Lifeline 13 11 14 / 000 if you are in danger).",
+            "url": "https://www.panda.org.au/"
+          },
+          {
+            "title": "PANDA’s National Perinatal Mental Health Helpline",
+            "org": "PANDA",
+            "note": "What the helpline does: making sense of the stretch, linking to local care. They say they are not a crisis service.",
+            "url": "https://www.panda.org.au/articles/pandas-national-perinatal-mental-health-helpline"
+          },
+          {
+            "title": "Pregnancy and mental health",
+            "org": "Beyond Blue",
+            "note": "Public page on looking after emotional health during pregnancy, with pointers to PANDA and COPE.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/pregnancy"
+          },
+          {
+            "title": "Caring for a baby and mental health",
+            "org": "Beyond Blue",
+            "note": "Names sleep, unsettled babies and thin support as part of why the first year can feel hard. Education, not a test.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/caring-for-a-baby"
+          },
+          {
+            "title": "Signs and types of postnatal mental health conditions",
+            "org": "COPE",
+            "note": "COPE’s public literacy on when stress may be something to take to a clinician. MindPal does not screen or diagnose.",
+            "url": "https://www.cope.org.au/new-parents/postnatal-mental-health-conditions/signs-risk-factors-types-of-postnatal-mental-health-conditions"
+          }
+        ]
+      }
+    },
+    "anger": {
+      "title": "Angry or frustrated",
+      "shortTitle": "Anger",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Anger can be information. This kit offers a pause and a few readings — not a verdict, and not a demand to calm down on cue.",
+      "startHereId": "let-the-little-friction-pass",
+      "startHereBlurb": "Let today's little friction pass. A small opener before the next hour takes the heat.",
+      "readingIds": [
+        "breathe-before-you-send",
+        "choose-warmth-over-winning",
+        "dont-rehearse-the-argument",
+        "keep-a-short-resentment-list",
+        "choose-repair-over-replay",
+        "stop-collecting-injustices",
+        "offer-patience-in-traffic",
+        "let-the-feeling-move-through"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V06",
+        "V07",
+        "V04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for everyday frustration. Please keep it practical and non-clinical — one pause or smaller response, and remind me this is not a diagnosis.",
+      "journalPrompt": "What landed as frustration today… One smaller response I could try is…"
+    },
+    "motivation": {
+      "title": "Motivation / a gentle start",
+      "shortTitle": "Motivation",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Starting can feel heavy. This kit is gentle fuel — two minutes counts, and skipping is allowed. No shame, no hustle score.",
+      "startHereId": "skip-the-perfect-setup",
+      "startHereBlurb": "Skip the perfect setup. A start can be messy and still count.",
+      "readingIds": [
+        "celebrate-tiny-finishes",
+        "good-enough-is-allowed",
+        "one-thing-at-a-time",
+        "allow-progress-to-be-quiet",
+        "see-effort-not-only-outcome",
+        "return-to-breathing-room",
+        "redefine-a-productive-day",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-welcome",
+        "maddy-tip",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for finding a little fuel to start. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
+      "journalPrompt": "What I would like a little fuel for… The kindest first step I could take is…"
+    },
+    "faith": {
+      "title": "Faith / prayer & meaning",
+      "shortTitle": "Faith",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Optional faith and meaning — a reading or a quiet question. Skip anytime. Not a sermon and not clinical care.",
+      "startHereId": "keep-faith-with-ordinary-days",
+      "startHereBlurb": "Keep faith with ordinary days. Meaning can be small and still count.",
+      "readingIds": [
+        "thank-one-ordinary-thing",
+        "remember-most-moments-pass",
+        "accept-incomplete-knowledge",
+        "one-kind-thought",
+        "dont-argue-with-reality",
+        "forgive-a-past-self",
+        "write-the-kind-note",
+        "let-gratitude-be-specific"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "YT-SLEEP-03",
+        "V01",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step around faith, prayer or meaning. Please keep it optional and non-clinical — one gentle reflection, and remind me I can skip anything that does not fit.",
+      "journalPrompt": "What felt meaningful today, even in a small way… A hope or prayer I can hold lightly is…"
+    },
+    "lonely": {
+      "title": "Lonely or disconnected",
+      "shortTitle": "Lonely",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Disconnected moments are common. This kit is quiet company — not a social plan and not a diagnosis.",
+      "startHereId": "smile-at-a-stranger-moment",
+      "startHereBlurb": "Allow a small human moment. Connection can start smaller than a conversation.",
+      "readingIds": [
+        "ask-for-help-simply",
+        "let-someone-help-you",
+        "listen-longer-than-usual",
+        "dont-fix-every-silence",
+        "tend-one-relationship-seed",
+        "be-on-your-own-side",
+        "notice-the-weather-inside"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-welcome",
+        "YT-KIND-01",
+        "V10"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling lonely or disconnected. Please keep it gentle and non-clinical — one small, optional contact or kindness, and remind me this is not a diagnosis.",
+      "journalPrompt": "Where I felt on my own today… One small, optional reach I could make is…"
+    },
+    "guilty": {
+      "title": "Guilty or ashamed",
+      "shortTitle": "Guilty",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Guilt and shame can get loud. This kit is literacy and a softer sentence — not a verdict and not treatment.",
+      "startHereId": "speak-more-softly-to-yourself",
+      "startHereBlurb": "Speak more softly to yourself. A literacy opener when the inner critic is already mid-speech.",
+      "readingIds": [
+        "forgive-a-past-self",
+        "be-on-your-own-side",
+        "thank-your-past-coping",
+        "end-the-day-without-a-verdict",
+        "put-down-the-scoreboard",
+        "begin-again-without-drama",
+        "hold-joy-without-waiting-for-deserving"
+      ],
+      "videoIds": [
+        "V02",
+        "V07",
+        "YT-KIND-01",
+        "maddy-tip"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for guilt or shame. Please keep it gentle and non-clinical — one kinder sentence, and remind me this is not a verdict or a diagnosis.",
+      "journalPrompt": "The harsh sentence that keeps returning is… One kinder, believable sentence is…"
+    },
+    "unsure": {
+      "title": "Not sure",
+      "shortTitle": "Not sure",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "You do not need a precise word. This kit is a calm start — one opener, a clip, a sentence — and you can leave it unnamed.",
+      "startHereId": "name-three-steadies",
+      "startHereBlurb": "Name three steady things. A simple opener when the feeling has no tidy label.",
+      "readingIds": [
+        "notice-the-weather-inside",
+        "leave-room-for-maybe",
+        "sit-with-an-unfinished-feeling",
+        "return-to-breathing-room",
+        "good-enough-is-allowed",
+        "keep-your-humour-handy"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-timed-breath",
+        "V06",
+        "V04"
+      ],
+      "companionPrompt": "I'm not sure how to name this moment. Please stay educational and peer-like: one small, optional next step, and remind me I do not need a label or a diagnosis.",
+      "journalPrompt": "If I do not have a name for this yet, what I notice in the body or the day is…"
+    },
+    "mindset": {
+      "title": "Positive mindset",
+      "shortTitle": "Positive mindset",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Hope is a practice, not a performance. Small ways to reframe — without pretending the hard bits are not there.",
+      "startHereId": "good-enough-is-allowed",
+      "startHereBlurb": "Good enough is allowed. A hopeful stance that does not demand a show.",
+      "readingIds": [
+        "one-kind-thought",
+        "thank-one-ordinary-thing",
+        "notice-enough",
+        "give-the-benefit-briefly",
+        "be-on-your-own-side",
+        "keep-your-humour-handy",
+        "hold-joy-without-waiting-for-deserving",
+        "keep-faith-with-ordinary-days"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-tip",
+        "V01",
+        "V02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for practising a more hopeful mindset. Please keep it practical and non-clinical — one small reframe or noticing practice, and remind me this is not a positivity test.",
+      "journalPrompt": "One thing that was quietly good today… A kinder sentence I can try is…"
+    },
+    "stronger-mind": {
+      "title": "Stronger mind",
+      "shortTitle": "Stronger mind",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Focus and resilience are literacies you can practise. Small reps, not a boot camp.",
+      "startHereId": "soft-strength",
+      "startHereBlurb": "Soft strength still counts. Steadiness without a clenched hour.",
+      "readingIds": [
+        "leave-room-for-maybe",
+        "one-thing-at-a-time",
+        "name-three-steadies",
+        "put-the-phone-face-down",
+        "look-up-from-the-problem",
+        "close-open-loops-kindly",
+        "see-effort-not-only-outcome",
+        "stop-punishing-slow-progress"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "maddy-tip",
+        "V09",
+        "V04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for building a steadier mind — focus or resilience, without hustle. Please keep it practical and non-clinical — one small attention practice, and remind me this is not a toughness test.",
+      "journalPrompt": "One place my attention kept slipping… A small practice that would strengthen it is…"
+    },
+    "challenge": {
+      "title": "Rise to a challenge",
+      "shortTitle": "Rise to a challenge",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "A healthy stretch — courage for the next hill, not a demand to go past what you can hold. Rest is part of rising.",
+      "startHereId": "skip-the-perfect-setup",
+      "startHereBlurb": "Skip the perfect setup. Begin the hill from where you are.",
+      "readingIds": [
+        "celebrate-tiny-finishes",
+        "allow-progress-to-be-quiet",
+        "see-effort-not-only-outcome",
+        "prefer-presence-to-perfection",
+        "put-kindness-before-cleverness",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V09",
+        "maddy-welcome",
+        "V02",
+        "maddy-tip"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for rising to a challenge I chose. Please keep it practical and non-clinical — one brave, sized-right step, and remind me rest is part of stretch.",
+      "journalPrompt": "The challenge I want to meet… A sized-right next step, not a heroic leap, is…"
+    },
+    "hard-patch": {
+      "title": "Overcome a hard patch",
+      "shortTitle": "Overcome a hard patch",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Grit with self-compassion. You can be determined and still be kind to yourself in the same hour.",
+      "startHereId": "trust-a-small-next-step",
+      "startHereBlurb": "Trust a small next step. Determination can be one move, not a speech.",
+      "readingIds": [
+        "ask-for-help-simply",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "give-time-permission-to-help",
+        "thank-your-past-coping",
+        "let-the-feeling-move-through",
+        "return-to-breathing-room",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-tip",
+        "YT-KIND-01",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for getting through a hard patch. Please keep it practical and non-clinical — one sturdy, kind move, and remind me this is not a toughness test.",
+      "journalPrompt": "What feels hard right now… One kind, determined thing I can do next is…"
+    },
+    "gratitude": {
+      "title": "Gratitude & wins",
+      "shortTitle": "Gratitude & wins",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Thanks and small wins train a second scan — what is already holding you up. Not a highlight reel.",
+      "startHereId": "thank-one-ordinary-thing",
+      "startHereBlurb": "Thank one ordinary thing. Specific thanks beats a forced highlight reel.",
+      "readingIds": [
+        "one-kind-thought",
+        "let-gratitude-be-specific",
+        "make-room-for-delight",
+        "write-the-kind-note",
+        "keep-your-humour-handy",
+        "hold-joy-without-waiting-for-deserving",
+        "tend-one-relationship-seed",
+        "keep-faith-with-ordinary-days"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-tip",
+        "V01",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for noticing gratitude or a small win. Please keep it practical and non-clinical — one specific thanks, and remind me this is optional.",
+      "journalPrompt": "One ordinary thing I can thank… A small win I can name is…"
+    }
+  }
+};if(typeof globalThis<`u`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;globalThis.mpFeelingKits=mpFeelingKits;globalThis.mpMaddy=mpMaddy;globalThis.mpMeditationCatalog=mpMeditationCatalog;}var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
 const PACK_B_ID = "mindpal-daily-soften-v1";
 const STORAGE_KEY = "mindpal.readings.v1";
 const LEGACY_STORAGE_KEY = "mindpal.reading.progress.v1";
@@ -9200,6 +9913,36 @@ function youtubeItem(entry, now = new Date()) {
   };
 }
 
+function videosForIds(ids, catalogs = {}, now = new Date()) {
+  const wanted = Array.isArray(ids) ? ids.filter((id) => typeof id === "string" && id.trim()) : [];
+  if (!wanted.length) return [];
+  const maddyById = new Map(
+    (Array.isArray(catalogs?.maddy?.videos) ? catalogs.maddy.videos : []).map((video) => [
+      video.id,
+      video,
+    ]),
+  );
+  const catalogById = new Map(
+    (Array.isArray(catalogs?.videos?.videos) ? catalogs.videos.videos : []).map((video) => [
+      video.id,
+      video,
+    ]),
+  );
+  const ytById = new Map();
+  for (const category of meditationCategories(catalogs?.meditations)) {
+    for (const entry of entriesForCategory(category)) {
+      if (entry?.id && !ytById.has(entry.id)) ytById.set(entry.id, entry);
+    }
+  }
+  const items = [];
+  for (const id of wanted) {
+    if (maddyById.has(id)) items.push(maddyItem(maddyById.get(id)));
+    else if (catalogById.has(id)) items.push(mindpalItem(catalogById.get(id), now));
+    else if (ytById.has(id)) items.push(youtubeItem(ytById.get(id), now));
+  }
+  return items;
+}
+
 function curatedVideosForEmotion(
   emotionId,
   { maddy, videos, meditations } = {},
@@ -9405,6 +10148,189 @@ function mediaSourceLabel(item) {
   if (item?.source === "maddy") return "Watch with Maddy";
   if (item?.source === "youtube") return "YouTube meditation";
   return "MindPal draft";
+}
+
+
+
+
+const KIT_READING_LIMIT = 10;
+const KIT_BROWSE_TAG_LIMIT = 12;
+const KIT_SECTION_IDS = ["start", "readings", "videos", "evidence", "talk", "journal"];
+const AOD_BROWSE_TAGS = new Set(["aod", "alcohol", "drugs", "craving", "recovery-shame", "learning-loop"]);
+
+const PROBLEM_ALIASES = {
+  mood: "low-mood",
+  "low-mood": "low-mood",
+};
+
+function feelingKitsCatalog(override) {
+  if (override?.kits) return override;
+  if (typeof globalThis.mpFeelingKits !== "undefined" && globalThis.mpFeelingKits) {
+    return globalThis.mpFeelingKits;
+  }
+  return { version: "", aliases: {}, kits: {} };
+}
+
+function canonicalizeFeelingKitId(id, catalog = feelingKitsCatalog()) {
+  if (typeof id !== "string" || !id.trim()) return "";
+  const key = id.trim();
+  const aliases = catalog.aliases || {};
+  return aliases[key] || PROBLEM_ALIASES[key] || key;
+}
+
+function findFeelingKitSpec(id, catalog = feelingKitsCatalog()) {
+  const key = canonicalizeFeelingKitId(id, catalog);
+  if (!key) return null;
+  const spec = catalog.kits?.[key];
+  return spec && typeof spec === "object" ? { id: key, ...spec } : null;
+}
+
+function curatedReadingIdsForHub(hubId, catalog = feelingKitsCatalog()) {
+  const spec = findFeelingKitSpec(hubId, catalog);
+  if (!spec) return [];
+  const ids = [];
+  if (typeof spec.startHereId === "string" && spec.startHereId.trim()) {
+    ids.push(spec.startHereId.trim());
+  }
+  for (const id of Array.isArray(spec.readingIds) ? spec.readingIds : []) {
+    if (typeof id === "string" && id.trim() && !ids.includes(id.trim())) {
+      ids.push(id.trim());
+    }
+  }
+  return ids.slice(0, 1 + KIT_READING_LIMIT);
+}
+
+function chapterTags(reading) {
+  const emotion = normalizeTags(reading?.tags);
+  if (emotion.length) return emotion;
+  return normalizeTags(reading?.theme_tags || reading?.problemTags || readingTags(reading));
+}
+
+function chapterTagChips(reading) {
+  return chapterTags(reading)
+    .map((tag) => formatTag(tag))
+    .filter(Boolean);
+}
+
+function blurbFor(reading, spec) {
+  if (!reading) return "";
+  if (spec?.startHereId === reading.id && typeof spec.startHereBlurb === "string") {
+    return spec.startHereBlurb.trim();
+  }
+  const fromMap = spec?.readingBlurbs?.[reading.id];
+  if (typeof fromMap === "string" && fromMap.trim()) return fromMap.trim();
+  if (typeof reading.excerpt === "string" && reading.excerpt.trim()) return reading.excerpt.trim();
+  const first = String(reading.body || "").split(/\n\n/)[0] || "";
+  return first.trim();
+}
+
+function decorateReading(reading, spec) {
+  if (!reading) return null;
+  return {
+    ...reading,
+    blurb: blurbFor(reading, spec),
+    theme: typeof reading.theme_label === "string" ? reading.theme_label : "",
+    chapterTags: chapterTags(reading),
+    chapterChips: chapterTagChips(reading),
+    owner: isOwnerReading(reading),
+  };
+}
+
+function readingIndex(pack) {
+  const merged = mergeOwnerReadings(pack);
+  return new Map(merged.filter((item) => item?.id).map((item) => [item.id, item]));
+}
+
+function resolveKitReadings(pack, spec) {
+  const byId = readingIndex(pack);
+  const start = spec?.startHereId ? decorateReading(byId.get(spec.startHereId), spec) : null;
+  const readings = [];
+  for (const id of Array.isArray(spec?.readingIds) ? spec.readingIds : []) {
+    if (start && id === start.id) continue;
+    const row = decorateReading(byId.get(id), spec);
+    if (row) readings.push(row);
+  }
+  return {
+    startHere: start,
+    readings: readings.slice(0, KIT_READING_LIMIT),
+  };
+}
+
+function evidenceFromSpec(spec) {
+  const raw = spec?.evidence;
+  if (!raw || typeof raw !== "object") return null;
+  const notes = Array.isArray(raw.notes) ? raw.notes.filter((item) => item?.title && item?.body) : [];
+  const guides = Array.isArray(raw.guides) ? raw.guides.filter((item) => item?.title && item?.url) : [];
+  const sources = Array.isArray(raw.sources) ? raw.sources.filter((item) => item?.title && item?.url) : [];
+  if (!notes.length && !guides.length && !sources.length) return null;
+  return {
+    disclaimer:
+      typeof raw.disclaimer === "string" && raw.disclaimer.trim()
+        ? raw.disclaimer.trim()
+        : "Education only — not a diagnosis or a course of treatment.",
+    notes,
+    guides,
+    sources,
+  };
+}
+
+function videoCatalogs() {
+  return {
+    maddy: typeof globalThis.mpMaddy !== "undefined" ? globalThis.mpMaddy : null,
+    videos: typeof globalThis.mpVideoCatalog !== "undefined" ? globalThis.mpVideoCatalog : null,
+    meditations:
+      typeof globalThis.mpMeditationCatalog !== "undefined" ? globalThis.mpMeditationCatalog : null,
+  };
+}
+
+function feelingKit(
+  feelingId,
+  {
+    pack,
+    hubs,
+    catalogs,
+    kitCatalog,
+  } = {},
+) {
+  const spec = findFeelingKitSpec(feelingId, kitCatalog);
+  if (!spec) return null;
+  const packA =
+    pack || (typeof globalThis.mpPackA !== "undefined" ? globalThis.mpPackA : { readings: [] });
+  const { startHere, readings } = resolveKitReadings(packA, spec);
+  const videos = videosForIds(spec.videoIds || [], catalogs || videoCatalogs());
+  const problem =
+    Array.isArray(hubs?.problems) &&
+    hubs.problems.find((item) => item?.id === spec.id || item?.id === feelingId);
+  const tagCounts = new Map();
+  for (const row of [startHere, ...readings].filter(Boolean)) {
+    for (const tag of row.chapterTags) {
+      if (spec.id !== "aod" && AOD_BROWSE_TAGS.has(tag)) continue;
+      tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+    }
+  }
+  const browseTags = [...tagCounts.entries()]
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+    .map(([tag]) => tag)
+    .slice(0, KIT_BROWSE_TAG_LIMIT);
+  return {
+    id: spec.id,
+    title: spec.title || spec.shortTitle || spec.id,
+    shortTitle: spec.shortTitle || spec.title || spec.id,
+    eyebrow: spec.eyebrow || "FEELINGS · OPTIONAL SUPPORT",
+    lede: spec.lede || "",
+    startHere,
+    readings,
+    videos,
+    companionPrompt: spec.companionPrompt || problem?.companionPrompt || "",
+    journalPrompt: spec.journalPrompt || problem?.journalPrompt || "",
+    safety: spec.safety && spec.safety.title && spec.safety.body ? spec.safety : null,
+    evidence: evidenceFromSpec(spec),
+    browseTags,
+    sections: KIT_SECTION_IDS.filter((id) => {
+      if (id === "evidence") return Boolean(evidenceFromSpec(spec));
+      return true;
+    }),
+  };
 }
 
 const MINDPAL_PAGES_URL = "https://drwho9.github.io/mindpal/";
@@ -9864,7 +10790,7 @@ async function playMaddyClip(key, deps = {}) {
   return playAudioUrl(clip.url, deps);
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -12899,7 +13825,36 @@ function findProblem(catalog, id) {
   return listProblems(catalog).find((item) => item.id === id) || null;
 }
 
+function curatedIdsForProblem(problemId) {
+  if (typeof curatedReadingIdsForHub === "function") {
+    return curatedReadingIdsForHub(problemId);
+  }
+  const catalog =
+    typeof globalThis.mpFeelingKits !== "undefined" ? globalThis.mpFeelingKits : null;
+  const aliases = catalog?.aliases || {};
+  const key = aliases[problemId] || (problemId === "mood" ? "low-mood" : problemId);
+  const spec = catalog?.kits?.[key];
+  if (!spec) return [];
+  const ids = [];
+  if (typeof spec.startHereId === "string" && spec.startHereId.trim()) ids.push(spec.startHereId.trim());
+  for (const id of Array.isArray(spec.readingIds) ? spec.readingIds : []) {
+    if (typeof id === "string" && id.trim() && !ids.includes(id.trim())) ids.push(id.trim());
+  }
+  return ids;
+}
+
 function readingsForProblem(pack, problemId, limit) {
+  const curatedIds = curatedIdsForProblem(problemId);
+  if (curatedIds.length) {
+    const byId = new Map(
+      mergeOwnerReadings(pack)
+        .filter((item) => item?.id)
+        .map((item) => [item.id, item]),
+    );
+    const resolved = curatedIds.map((id) => byId.get(id)).filter(Boolean);
+    const cap = Number.isFinite(limit) ? limit : resolved.length;
+    return resolved.slice(0, cap);
+  }
   const readings = Array.isArray(pack?.readings) ? pack.readings : [];
   const cap = Number.isFinite(limit)
     ? limit
@@ -13106,98 +14061,208 @@ function mpMaddyListenButtons(){
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>n(`welcome`),children:e===`welcome`?`Playing welcome…`:`Play Maddy’s welcome`}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>n(`tip`),children:e===`tip`?`Playing tip…`:`Play Maddy’s tip`})
   ]});
-}function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings for this feeling`,showChips:r=!0}={}){
-  let i=mpReadings.tagsForFeeling(t),a=e&&mpReadings.TAG_VOCAB.includes(e)?e:``,[o,s]=(0,_.useState)(a),[c,l]=(0,_.useState)(null),[u,d]=(0,_.useState)(()=>mpReadings.loadProgress());
-  (0,_.useEffect)(()=>{d(mpReadings.loadProgress())},[]);
-  (0,_.useEffect)(()=>{s(a||``)},[a]);
-  let f=mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA),p=mpReadings.usedTags(mpPackA),m=o?[o]:i,h=mpReadings.readingsForTags(mpPackA,m),g=c&&f.find(e=>e.id===c)||null,v=g?mpReadings.canMarkDone(f,u.completedIds,g):!1,yOwner=g&&(mpReadings.isOwnerReading?mpReadings.isOwnerReading(g):g.pack===`owner`);
-  function y(){
-    if(!v||!g)return;
-    let e=mpReadings.markReadingDone(u,g,f);
-    mpReadings.saveProgress(e),d(e);
+}function mpKitReadingMeta(reading){
+  let theme=reading&&reading.theme_label||reading&&reading.theme||``;
+  if(reading&&(reading.pack===`owner`||reading.gate===!1||reading.owner)){
+    return theme?`MindPal original · ${theme}`:`MindPal original`;
   }
+  return theme||``;
+}
+function mpKitTagFilter({tags:e,active:t,onChange:n}){
+  if(!e||!e.length)return null;
+  return(0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse by Pack A chapter tag`,children:e.map(r=>{
+    let i=t===r;
+    return(0,A.jsx)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${i?` is-active`:``}`,"aria-pressed":i,onClick:()=>n(i?``:r),children:mpReadings.formatTag(r)||r},r);
+  })});
+}
+function mpKitReadingArticle({reading:e,onBack:t,kitReadings:n}){
+  if(!e)return null;
+  let r=mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpPackA.readings||[];
+  let i=mpReadings.loadProgress?mpReadings.loadProgress():{completedIds:[]};
+  let a=e.pack===`owner`||e.gate===!1||(mpReadings.isOwnerReading&&mpReadings.isOwnerReading(e));
+  let o=e.chapterChips||(mpReadings.chapterTagChips?mpReadings.chapterTagChips(e):[]);
+  return(0,A.jsxs)(`article`,{className:`mp-support-article mp-kit-article`,"aria-label":e.title,children:[
+    (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:t,children:`← Back to the kit`}),
+    (0,A.jsxs)(`p`,{className:`eyebrow`,children:[a?`MINDPAL ORIGINAL`:e.theme_label?e.theme_label.toUpperCase():`PACK A CHAPTER`,e.theme_label&&!a?` · ${e.theme_label}`:``]}),
+    (0,A.jsx)(`h3`,{children:e.title}),
+    o.length?(0,A.jsx)(`p`,{className:`mp-hub-tags`,children:o.join(` `)}):null,
+    (e.body||``).split(`\n\n`).map((t,n)=>(0,A.jsx)(`p`,{children:t},n)),
+    e.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,e.practice]}):null,
+    (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage?mpReadings.supportUnlockMessage(e,n&&n.length?n:r,i.completedIds||[]):`You can read this as support. Opening here does not mark a Pack A day Done.`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:a?`This MindPal original is always open as support. It is not a Pack A morning day.`:`Title and theme first. The morning Readings path still unlocks one Pack A day at a time — opening here does not skip that gate.`}),
+    (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Back to the kit`})
+  ]});
+}
+function mpKitReadingRow({reading:e,onOpen:t}){
+  let n=mpKitReadingMeta(e);
+  let r=e.chapterChips||(mpReadings.chapterTagChips?mpReadings.chapterTagChips(e):[]);
+  return(0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row mp-kit-reading-row`,onClick:()=>t(e),children:[
+    (0,A.jsx)(`strong`,{children:e.title}),
+    n?(0,A.jsx)(`span`,{className:`mp-support-row-meta`,children:n}):null,
+    e.blurb?(0,A.jsx)(`span`,{className:`mp-kit-blurb`,children:e.blurb}):null,
+    r.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:r.join(` `)}):null
+  ]});
+}
+function mpKitAccordionSection({id:e,title:t,openId:n,onOpen:r,children:i}){
+  let a=n===e;
+  return(0,A.jsxs)(`section`,{className:`mp-kit-section${a?` is-open`:``}`,"aria-labelledby":`mp-kit-${e}`,children:[
+    (0,A.jsx)(`button`,{type:`button`,id:`mp-kit-${e}`,className:`mp-kit-toggle`,"aria-expanded":a,onClick:()=>r(a?``:e),children:t}),
+    a?(0,A.jsx)(`div`,{className:`mp-kit-body`,children:i}):null
+  ]});
+}
+function mpFeelingKitAccordion({kit:e,onCompanion:t,onJournal:n,onSpeakers:r,onHelp:i,onAddWin:a,onExplore:o,onWomen:s}={}){
+  let[c,l]=(0,_.useState)(`start`);
+  let[u,d]=(0,_.useState)(null);
+  let[f,p]=(0,_.useState)(``);
+  let[m,h]=(0,_.useState)(!1);
+  if(!e)return null;
+  let g=u&&(u.id===(e.startHere&&e.startHere.id)||e.readings.some(t=>t.id===u.id))?u:null;
+  let v=f?e.readings.filter(t=>t.chapterTags&&t.chapterTags.includes(f)):e.readings;
+  function y(t){
+    return(0,A.jsx)(MpEmotionVideoCard,{item:t},t.id);
+  }
+  return(0,A.jsxs)(`div`,{className:`mp-feeling-kit`,"aria-label":`${e.title} kit`,children:[
+    (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
+    (0,A.jsx)(mpKitAccordionSection,{id:`start`,title:`Start here`,openId:c,onOpen:l,children:e.startHere?(0,A.jsxs)(`article`,{className:`mp-hub-featured`,"aria-label":`Featured reading`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:e.startHere.owner?`FEATURED · MINDPAL ORIGINAL`:`START HERE · PACK A`}),
+      (0,A.jsx)(`h3`,{children:e.startHere.title}),
+      e.startHere.theme?(0,A.jsx)(`p`,{className:`mp-support-row-meta`,children:e.startHere.theme}):null,
+      e.startHere.chapterChips&&e.startHere.chapterChips.length?(0,A.jsx)(`p`,{className:`mp-hub-tags`,children:e.startHere.chapterChips.join(` `)}):null,
+      (0,A.jsx)(`p`,{children:e.startHere.blurb}),
+      m?(0,A.jsx)(mpKitReadingArticle,{reading:e.startHere,onBack:()=>h(!1),kitReadings:[e.startHere,...e.readings]}):null,
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>h(t=>!t),children:m?`Hide the reading`:e.id===`aod`?`Read the talk-through`:`Open the reading`}),
+        t&&e.companionPrompt?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(e.companionPrompt);t(e.companionPrompt)},children:`Talk this through with Companion`}):null
+      ]})
+    ]}):(0,A.jsx)(`p`,{children:`A featured opener is still being chosen for this kit.`})}),
+    (0,A.jsx)(mpKitAccordionSection,{id:`readings`,title:`Readings`,openId:c,onOpen:e=>{l(e);d(null)},children:g?(0,A.jsx)(mpKitReadingArticle,{reading:g,onBack:()=>d(null),kitReadings:[e.startHere,...e.readings].filter(Boolean)}):(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{children:e.id===`aod`?`Readings for drugs & alcohol — a short curated list, title and theme first. Open a chapter to read the full Pack A body. The morning path still unlocks one day at a time.`:`Readings for this feeling — a curated shortlist from Pack A daily chapters. Open a card for the full body. Tags are from those chapters, not a Day-number dump.`}),
+      e.browseTags.length>1?(0,A.jsx)(mpKitTagFilter,{tags:e.browseTags,active:f,onChange:p}):null,
+      v.length?(0,A.jsx)(`ul`,{className:`mp-support-list mp-hub-readings`,children:v.map(t=>(0,A.jsx)(`li`,{children:(0,A.jsx)(mpKitReadingRow,{reading:t,onOpen:d})},t.id))}):(0,A.jsx)(`p`,{className:`muted`,children:f?`No chapters on this kit match that tag.`:`No curated readings for this kit yet.`}),
+      o?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:o,children:`Open today’s Readings`}):null
+    ]})}),
+    (0,A.jsx)(mpKitAccordionSection,{id:`videos`,title:`Videos`,openId:c,onOpen:l,children:(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(MpLibraryHost,{}),
+      (0,A.jsx)(`p`,{children:`A short emotion-scoped list — playable clips first, then YouTube link-outs, then Open draft. No speaker library dump here.`}),
+      e.videos.length?(0,A.jsx)(`div`,{className:`mp-emotion-video-list`,children:e.videos.map(t=>typeof MpEmotionVideoCard==`function`?y(t):(0,A.jsxs)(`article`,{className:`mp-emotion-video`,children:[
+        (0,A.jsx)(`h3`,{children:t.title}),
+        t.description?(0,A.jsx)(`p`,{children:t.description}):null
+      ]},t.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No curated videos for this kit yet.`}),
+      r?(0,A.jsx)(`p`,{className:`muted mp-speakers-secondary`,children:(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:r,children:mpReadings.BROWSE_SPEAKERS_LABEL})}):null
+    ]})}),
+    e.evidence?(0,A.jsx)(mpKitAccordionSection,{id:`evidence`,title:`Evidence & guidance`,openId:c,onOpen:l,children:(0,A.jsxs)(`div`,{className:`mp-kit-evidence`,children:[
+      (0,A.jsx)(`p`,{className:`muted`,children:e.evidence.disclaimer}),
+      e.evidence.notes.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`MindPal literacy notes`}),
+        e.evidence.notes.map(t=>(0,A.jsxs)(`article`,{className:`mp-kit-note`,children:[
+          (0,A.jsx)(`h4`,{children:t.title}),
+          (0,A.jsx)(`p`,{children:t.body})
+        ]},t.title))
+      ]}):null,
+      e.evidence.guides.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Evidence-based support books and chapters`}),
+        (0,A.jsx)(`p`,{className:`muted`,children:`Public Australian guides and chapters — titles and why they help. Outbound only. We do not invent studies or DOIs.`}),
+        (0,A.jsx)(`ul`,{className:`mp-kit-guides`,children:e.evidence.guides.map(t=>(0,A.jsxs)(`li`,{children:[
+          (0,A.jsx)(`strong`,{children:t.title}),
+          t.org?(0,A.jsx)(`span`,{className:`muted`,children:t.org}):null,
+          t.why?(0,A.jsx)(`p`,{children:t.why}):null,
+          (0,A.jsx)(`a`,{className:`secondary`,href:t.url,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open ${t.org||`source`}`})
+        ]},t.url))})
+      ]}):null,
+      e.evidence.sources.length?(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`h3`,{children:`Clinic notes and public evidence`}),
+        (0,A.jsx)(`p`,{className:`muted`,children:`Plain-language notes with links to real organisation pages. No fabricated statistics.`}),
+        (0,A.jsx)(`ul`,{className:`mp-kit-guides`,children:e.evidence.sources.map(t=>(0,A.jsxs)(`li`,{children:[
+          (0,A.jsx)(`strong`,{children:t.title}),
+          t.org?(0,A.jsx)(`span`,{className:`muted`,children:t.org}):null,
+          t.note?(0,A.jsx)(`p`,{children:t.note}):null,
+          (0,A.jsx)(`a`,{className:`secondary`,href:t.url,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open source`})
+        ]},t.url))})
+      ]}):null
+    ]})}):null,
+    (0,A.jsx)(mpKitAccordionSection,{id:`talk`,title:`Talk / Companion`,openId:c,onOpen:l,children:(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{children:e.id===`aod`?`Opens Companion on the drugs and alcohol talk-through — the puppy-and-treat loop. DNA is only a nickname for drugs and alcohol, not genetics. It is software, not a therapist or AOD clinician.`:`Opens Companion with a short educational prompt for this kit. Software, not a therapist or emergency service.`}),
+      t&&e.companionPrompt?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(e.companionPrompt);t(e.companionPrompt)},children:`Talk this through with Companion`}):null
+    ]})}),
+    (0,A.jsx)(mpKitAccordionSection,{id:`journal`,title:`Journal / wins`,openId:c,onOpen:l,children:(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{children:e.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        n?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>n(e.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:a||(n?()=>n(`A small win today: `):null)})
+    ]})}),
+    e.safety?(0,A.jsxs)(`section`,{className:`simple-panel mp-kit-safety${e.id===`aod`?` mp-aod-safety`:``}${e.id===`mothers`?` mp-mothers-safety`:``}`,children:[
+      (0,A.jsx)(`h2`,{children:e.safety.title}),
+      (0,A.jsx)(`p`,{children:e.safety.body}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null,
+        s?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:s,children:`Women’s wellbeing`}):null
+      ]})
+    ]}):null
+  ]});
+}
+function mpFeelingKitPage({feelingId:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:s}){
+  let c=mpReadings.feelingKit?mpReadings.feelingKit(e,{pack:mpPackA,hubs:mpProblemHubs}):null;
+  if(!c)return(0,A.jsx)(`p`,{children:`This space is not loaded yet.`});
+  let l=c.id===`aod`||c.id===`mothers`||c.id===`low-mood`||c.id===`anxiety`||c.id===`sleep`||c.id===`stress`;
+  let u=c.eyebrow&&c.eyebrow.indexOf(`GROWTH`)===0;
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem${u?` mp-lane-growth`:``}${c.id===`mothers`?` mp-lane-mothers`:``}${c.id===`aod`?` mp-lane-aod`:``}`,"aria-label":c.title,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:c.eyebrow}),
+    (0,A.jsx)(`h1`,{children:c.title}),
+    (0,A.jsx)(`p`,{className:`lede`,children:c.lede}),
+    l?(0,A.jsx)(`p`,{className:`muted`,children:c.id===`mothers`?`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse.`:c.id===`aod`?`Not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Soft pointers only.`:mpProblemHubs&&mpProblemHubs.disclaimer||mpReadings.SUPPORT_DISCLAIMER}):null,
+    (0,A.jsx)(mpFeelingKitAccordion,{kit:c,onCompanion:t,onJournal:n,onSpeakers:s,onHelp:a,onAddWin:i,onExplore:r,onWomen:o})
+  ]});
+}
+function mpSupportReadings({initialTag:e=``,feelingId:t=``,heading:n=`Readings for this feeling`,showChips:r=!0}={}){
+  let i=mpReadings.feelingKit&&t?mpReadings.feelingKit(t,{pack:mpPackA,hubs:mpProblemHubs}):null;
+  let[a,o]=(0,_.useState)(null);
+  let[s,c]=(0,_.useState)(``);
+  let l=i?[...i.startHere?[i.startHere]:[],...i.readings]:mpReadings.readingsForTags(mpPackA,e?[e]:mpReadings.tagsForFeeling(t)).slice(0,10).map(e=>({...e,theme:e.theme_label||``,chapterTags:mpReadings.chapterTags?mpReadings.chapterTags(e):e.tags||[],chapterChips:mpReadings.chapterTagChips?mpReadings.chapterTagChips(e):[],blurb:(e.body||``).split(`\n\n`)[0]||``}));
+  let u=s?l.filter(e=>(e.chapterTags||[]).includes(s)):l;
+  let d=a&&l.find(e=>e.id===a)||null;
   return(0,A.jsxs)(`section`,{className:`mp-support-readings`,"aria-label":n,children:[
     (0,A.jsx)(`h2`,{children:n}),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
-    r?(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{className:`muted`,children:`Browse by tag. Stored without # — shown as hashtags.`}),
-      (0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse readings by tag`,children:p.map(e=>{
-        let t=o===e.id||!o&&i.includes(e.id);
-        return(0,A.jsxs)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${t?` is-active`:``}`,"aria-pressed":t,onClick:()=>{s(n=>n===e.id?``:e.id),l(null)},children:[e.chip,` · `,e.count]},e.id);
-      })})
-    ]}):null,
-    g?(0,A.jsxs)(`article`,{className:`mp-support-article`,"aria-label":g.title,children:[
-      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>l(null),children:`← Back to readings list`}),
-      (0,A.jsxs)(`p`,{className:`eyebrow`,children:[yOwner?`SUPPORT READING · MINDPAL ORIGINAL`:`SUPPORT READING · DAY ${g.day}`,g.theme_label?` · ${g.theme_label}`:``]}),
-      (0,A.jsx)(`h3`,{children:g.title}),
-      g.body.split(`
-
-`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
-      (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,g.practice]}),
-      (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage(g,f,u.completedIds)}),
-      (0,A.jsx)(`p`,{className:`muted`,children:yOwner?`This MindPal original is always open as support. It is not a Pack A morning day.`:`The morning Readings pathway still unlocks one Pack A day at a time. Opening or listening here is not Done.`}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        yOwner?null:(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!v,onClick:y,children:u.completedIds.includes(g.id)?`Done`:`Done for today`}),
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l(null),children:`Back to list`})
-      ]})
-    ]}):(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{className:`muted`,children:m.length?`${h.length} matching Pack A reading${h.length===1?``:`s`}.`:`Choose a feeling or a tag to see matching readings.`}),
-      h.length?(0,A.jsx)(`ul`,{className:`mp-support-list`,children:h.map(e=>{
-        let t=mpReadings.isDayUnlocked(f,u.completedIds,e.day),n=u.completedIds.includes(e.id);
-        return(0,A.jsxs)(`li`,{children:[
-          (0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row`,onClick:()=>l(e.id),children:[
-            (0,A.jsx)(`span`,{className:`mp-support-row-meta`,children:e.pack===`owner`||e.gate===!1?`MindPal original · always open`:`Day ${e.day}${n?` · Done`:t?` · Unlocked`:` · Locked on morning path`}`}),
-            (0,A.jsx)(`strong`,{children:e.title}),
-            (0,A.jsx)(`span`,{className:`mp-support-row-tags`,children:mpReadings.readingTags(e).map(mpReadings.formatTag).join(` `)})
-          ]})
-        ]},e.id);
-      })}):(0,A.jsx)(`p`,{children:`No Pack A readings match this tag yet.`})
+    r&&!i?(0,A.jsx)(`p`,{className:`muted`,children:`A short curated list — title and theme first, not a Day-number dump.`}):null,
+    d?(0,A.jsx)(mpKitReadingArticle,{reading:d,onBack:()=>o(null),kitReadings:l}):(0,A.jsxs)(A.Fragment,{children:[
+      i&&i.browseTags.length>1?(0,A.jsx)(mpKitTagFilter,{tags:i.browseTags,active:s,onChange:c}):null,
+      u.length?(0,A.jsx)(`ul`,{className:`mp-support-list`,children:u.map(e=>(0,A.jsx)(`li`,{children:(0,A.jsx)(mpKitReadingRow,{reading:e,onOpen:t=>o(t.id)})},e.id))}):(0,A.jsx)(`p`,{children:`No Pack A readings in this shortlist yet.`})
     ]})
   ]});
 }
 function mpSupportVideos({initialTag:e=``,feelingId:t=``,heading:n=`Videos for this feeling`,showChips:r=!0,onSpeakers:i}={}){
-  let a=mpReadings.tagsForFeeling(t),o=mpReadings.canonicalizeTag(e),[s,c]=(0,_.useState)(o),[l,u]=(0,_.useState)(null);
-  (0,_.useEffect)(()=>{c(o||``)},[o]);
-  let d=s?[s]:a,f={catalog:typeof mpVideoCatalog<`u`?mpVideoCatalog:null,maddy:typeof mpMaddy<`u`?mpMaddy:null,meditations:typeof mpMeditationCatalog<`u`?mpMeditationCatalog:null},p=mpReadings.mediaForTags(f,d,mpReadings.VIDEO_DIRECTORY_LIMIT),m=l&&p.find(e=>e.id===l)||null;
+  let a=mpReadings.feelingKit&&t?mpReadings.feelingKit(t,{pack:mpPackA,hubs:mpProblemHubs}):null;
+  let o=a&&a.videos&&a.videos.length?a.videos:mpReadings.mediaForTags({catalog:typeof mpVideoCatalog<`u`?mpVideoCatalog:null,maddy:typeof mpMaddy<`u`?mpMaddy:null,meditations:typeof mpMeditationCatalog<`u`?mpMeditationCatalog:null},e?[e]:mpReadings.tagsForFeeling(t),mpReadings.VIDEO_DIRECTORY_LIMIT);
   return(0,A.jsxs)(`section`,{className:`mp-support-videos`,"aria-label":n,children:[
     (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`h2`,{children:n}),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:mpReadings.SUPPORT_DISCLAIMER}),
     (0,A.jsx)(`p`,{className:`muted`,children:`A short tagged set for this feeling — not the speaker directory.`}),
-    r?(0,A.jsx)(`div`,{className:`mp-tag-chips`,role:`list`,"aria-label":`Browse videos by tag`,children:mpReadings.TAG_VOCAB.map(e=>{
-      let t=s===e||!s&&a.includes(e);
-      return(0,A.jsx)(`button`,{type:`button`,role:`listitem`,className:`mp-tag-chip${t?` is-active`:``}`,"aria-pressed":t,onClick:()=>{c(t=>t===e?``:e),u(null)},children:mpReadings.formatTag(e)},e);
-    })}):null,
-    (0,A.jsx)(`p`,{className:`muted`,children:d.length?`Top ${p.length} tagged video${p.length===1?``:`s`} for this feeling.`:`Choose a feeling or a tag to see matching videos.`}),
-    p.length?(0,A.jsx)(`ul`,{className:`mp-support-list mp-video-list`,children:p.map(e=>{
-      let t=mpReadings.mediaSourceLabel(e),n=e.source===`youtube`?mpReadings.meditationOpenUrl(e):null;
-      return(0,A.jsxs)(`li`,{className:`mp-video-row`,children:[
-        (0,A.jsxs)(`div`,{className:`mp-support-row-meta`,children:[t,` · `,mpReadings.itemTags(e).map(mpReadings.formatTag).join(` `)]}),
+    o.length?(0,A.jsx)(`div`,{className:`mp-emotion-video-list`,children:o.map(e=>{
+      if(e.kind&&typeof MpEmotionVideoCard==`function`)return(0,A.jsx)(MpEmotionVideoCard,{item:e},e.id);
+      let t=mpReadings.mediaSourceLabel?mpReadings.mediaSourceLabel(e):``;
+      let n=e.source===`youtube`&&mpReadings.meditationOpenUrl?mpReadings.meditationOpenUrl(e):e.openUrl;
+      return(0,A.jsxs)(`article`,{className:`mp-emotion-video`,children:[
+        t?(0,A.jsx)(`p`,{className:`eyebrow`,children:t}):null,
         (0,A.jsx)(`h3`,{children:e.title}),
-        e.description||e.outline?(0,A.jsx)(`p`,{children:e.description||e.outline}):null,
-        (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          e.source===`maddy`||e.source===`catalog`?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:e.source===`maddy`?`Maddy`:e.person,kind:e.source===`maddy`?`maddy`:e.kind,src:e.src||e.publishedSrc,videoUrl:e.videoUrl||e.src}),children:e.source===`maddy`?`Play`:mpReadings.videoCardCta(e)}):null,
-          n?(0,A.jsx)(`a`,{className:`secondary`,href:n,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
-        ]})
+        n?(0,A.jsx)(`a`,{className:`primary`,href:n,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
       ]},e.id);
     })}):(0,A.jsx)(`p`,{children:`No tagged videos for this feeling yet.`}),
-    i?(0,A.jsx)(`p`,{className:`muted mp-speakers-secondary`,children:(0,A.jsxs)(`button`,{className:`text-button`,type:`button`,onClick:i,children:[`Browse signed coaches (optional) `]}) }):null,
-    m&&typeof gi==`function`?(0,A.jsx)(gi,{video:m,onClose:()=>u(null),onHelp:()=>u(null)}):null
+    i?(0,A.jsx)(`p`,{className:`muted mp-speakers-secondary`,children:(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i,children:`Browse signed coaches (optional)`})}):null
   ]});
 }
-function mpFeelingDirectory({feelingId:e=``,initialTag:t=``,onSpeakers:n}={}){
-  let r=e===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`;
-  return(0,A.jsxs)(`div`,{className:`mp-feeling-directory`,children:[
-    (0,A.jsx)(mpSupportReadings,{feelingId:e,initialTag:t,heading:r}),
-    (0,A.jsx)(mpSupportVideos,{feelingId:e,initialTag:t,heading:`Videos for this feeling`,onSpeakers:n})
-  ]});
+function mpFeelingDirectory({feelingId:e=``,initialTag:t=``,onSpeakers:n,onCompanion:r,onJournal:i,onHelp:a}={}){
+  let o=mpReadings.feelingKit&&e?mpReadings.feelingKit(e,{pack:mpPackA,hubs:mpProblemHubs}):null;
+  if(o)return(0,A.jsx)(mpFeelingKitAccordion,{kit:o,onSpeakers:n,onCompanion:r,onJournal:i,onHelp:a});
+  return(0,A.jsx)(`p`,{className:`muted`,children:`Choose a feeling to open a small kit — not a random list of Pack A days.`});
 }
 function mpExploreFeelingChoice({onSpeakers:e}={}){
   let[t,n]=(0,_.useState)(``);
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-explore-feeling`,"aria-label":`Explore an emotion or problem`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEELINGS · PROBLEMS`}),
     (0,A.jsx)(`h2`,{children:`Explore an emotion or problem`}),
-    (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse the tag directory. This is not an assessment and is not saved or sent anywhere.`}),
+    (0,A.jsx)(`p`,{children:`Choose a word if it fits. Each choice opens a small kit — not an assessment, and nothing is saved or sent.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-explore-feeling`,children:`How would you describe this moment? · optional`}),
     (0,A.jsxs)(`select`,{id:`mp-explore-feeling`,value:t,onChange:e=>n(e.target.value),children:[
       (0,A.jsx)(`option`,{value:``,children:`Browse without choosing`}),
@@ -13209,42 +14274,37 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
       (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
       (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
       (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`}),
+      (0,A.jsx)(`option`,{value:`mothers`,children:`Struggling mothers`}),
       (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`}),
       (0,A.jsx)(`option`,{value:`mens-health`,children:`Men's Health`})
     ]}),
     (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
   ]});
 }
-function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
-  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`],[`mens-health`,`Men's Health`]];
-  return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
+function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i,onCompanion:a,onHelp:o,onJournal:s}){
+  let[c,l]=(0,_.useState)(``);
+  let u=(0,_.useRef)(null);
+  let d=mpReadings.FEELING_EMOTIONS;
+  let f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`],[`mens-health`,`Men's Health`]];
+  let p=mpReadings.feelingKit&&c?mpReadings.feelingKit(c,{pack:mpPackA,hubs:mpProblemHubs}):null;
+  return(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
-    (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),
+    (0,A.jsx)(`p`,{children:`Choose a word if it fits. You get a small kit — start here, readings, videos — not a random list of Pack A days. This choice is not an assessment and is not saved or sent anywhere.`}),
     (0,A.jsx)(`label`,{htmlFor:`feeling-choice`,children:`How would you describe this moment? · optional`}),
-    (0,A.jsxs)(`select`,{ref:u,id:`feeling-choice`,value:a,onChange:e=>{o(e.target.value),c(``)},children:[
+    (0,A.jsxs)(`select`,{ref:u,id:`feeling-choice`,value:c,onChange:e=>l(e.target.value),children:[
       (0,A.jsx)(`option`,{value:``,children:`Browse without choosing`}),
       d.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e)),
       f.map(([e,t])=>(0,A.jsx)(`option`,{value:e,children:t},e))
     ]}),
+    p?(0,A.jsx)(mpFeelingKitAccordion,{kit:p,onCompanion:a,onJournal:s||e,onSpeakers:i||r,onHelp:o,onAddWin:s||e}):(0,A.jsx)(`p`,{className:`muted`,children:`Pick a feeling to open a calm kit. Browse without choosing stays empty on purpose — we no longer dump every matching Pack A day.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`read`),children:`Read something supportive`}),
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>c(`video`),children:`Videos`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>e(),children:`Open my diary`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>t(),children:`Try a short practice`})
     ]}),
-    (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation. “One steady detail” is an optional practice you can skip or stop; it is offered to everyone here, not selected as a treatment for your feeling.`}),
-    s&&(0,A.jsxs)(`div`,{children:[
-      (0,A.jsx)(`h2`,{ref:l,tabIndex:-1,children:s===`read`?a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`:`Videos for this feeling`}),
-      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{c(``),u.current?.focus()},children:`Back to choices`}),
-      s===`read`?(0,A.jsx)(mpSupportReadings,{feelingId:a,heading:a===`aod`?`Readings for drugs & alcohol`:`Readings for this feeling`}):(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(MpEmotionVideos,{headingRef:l,emotion:a,onBrowseSpeakers:i||r}),
-        (0,A.jsx)(mpSupportVideos,{feelingId:a,heading:`Videos for this feeling`,onSpeakers:i})
-      ]})
-    ]}),
+    (0,A.jsx)(`p`,{children:`Opening your diary keeps your existing draft and does not add your selection to it. This page has no listener or live AI conversation.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i||r,children:mpReadings.BROWSE_SPEAKERS_LABEL}),
-      i?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:i,children:`Browse signed coaches (optional)`}):null,
-      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{o(``),c(``),n()},children:`Stop and return to Today`})
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>{l(``),n()},children:`Stop and return to Today`})
     ]}),
     (0,A.jsx)(`p`,{children:`If this makes things harder, stop. You can take a break or seek human support. “Need support?” lists human-support options independently of this activity. In immediate danger in Australia, call 000. MindPal does not monitor you or contact help for you.`})
   ]});
@@ -14194,8 +15254,7 @@ function mpAodFeelingsChip({onOpen:e}){
   return(0,A.jsxs)(`section`,{className:`simple-panel mp-aod-feelings`,"aria-label":`Drugs & alcohol`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`OPTIONAL SUPPORT · NOT TREATMENT`}),
     (0,A.jsx)(`h2`,{children:`Drugs & alcohol`}),
-    (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet directory here. Optional company, not detox and not a replacement for AOD treatment.`}),
-    (0,A.jsx)(mpSupportReadings,{feelingId:`aod`,heading:`Readings for drugs & alcohol`,showChips:!1}),
+    (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet kit here. Optional company, not detox and not a replacement for AOD treatment.`}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the drugs & alcohol space`}):null
   ]});
 }
@@ -14215,146 +15274,13 @@ function mpMothersWomenCard({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
   ]});
 }
-function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a}){
+function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o}){
   (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
-  let[f,p]=(0,_.useState)(`readings`);
-  let o=mpProblems.findProblem(mpProblemHubs,`mothers`);
-  if(!o)return(0,A.jsx)(`p`,{children:`The mothers space is not loaded yet.`});
-  let s=mpProblems.readingsForProblem(mpPackA,`mothers`),c=mpProblems.maddyForProblem(mpMaddy,`mothers`),l=mpMotherYtEntries(o);
-  function m(e){p(t=>t===e?``:e)}
-  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":`Struggling mothers`,children:[
-    (0,A.jsx)(MpLibraryHost,{}),
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MOTHERS · OPTIONAL SUPPORT`}),
-    (0,A.jsx)(`h1`,{children:`Struggling mothers`}),
-    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. Tap a section to open it — one at a time.`}),
-    (0,A.jsx)(mpFoldSection,{id:`readings`,title:`Verse / Readings`,meta:`Pack A excerpts · not a Done gate`,open:f===`readings`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{children:`Open a full daily chapter — body, practice, Listen and tags. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
-      (0,A.jsx)(mpHubOpenableReadings,{readings:s,emptyLabel:`No tagged mother readings yet.`,onExplore:n})
-    ]})}),
-    (0,A.jsx)(mpFoldSection,{id:`videos`,title:`Videos`,meta:`Maddy and YouTube · no speaker dump`,open:f===`videos`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for overwhelm, sleep and self-compassion. No speaker library dump here.`}),
-      c.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
-        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:c.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:`Maddy`,kind:`maddy`,src:e.src,videoUrl:e.src}),children:[
-          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
-          (0,A.jsx)(`p`,{children:e.description}),
-          (0,A.jsx)(`span`,{className:`card-link`,children:`Play`})
-        ]},e.id))})
-      ]}):null,
-      l.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Voice-guided on YouTube`}),
-        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:l.map(e=>{
-          let t=mpReadings.meditationOpenUrl(e);
-          return(0,A.jsxs)(`li`,{children:[
-            (0,A.jsx)(`strong`,{children:e.title}),
-            (0,A.jsx)(`span`,{className:`muted`,children:e.channel||``}),
-            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
-          ]},e.id);
-        })})
-      ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
-    ]})}),
-    (0,A.jsx)(mpFoldSection,{id:`companion`,title:`Companion`,meta:`Educational prompt · not a therapist`,open:f===`companion`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{children:`Opens Companion with a mother-support prompt — educational and peer-like. It is software, not a therapist, and it cannot watch over you or treat postnatal depression.`}),
-      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
-    ]})}),
-    (0,A.jsx)(mpFoldSection,{id:`journal`,title:`Journal / wins`,meta:`A sentence is enough`,open:f===`journal`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{children:o.journalPrompt}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
-      ]}),
-      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small win amid caring for others: `):null)})
-    ]})}),
-    (0,A.jsx)(mpFoldSection,{id:`safety`,title:`If this feels like too much`,meta:`000 · Need support`,className:`mp-mothers-safety`,open:f===`safety`,onToggle:m,children:(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsx)(`p`,{children:`MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline.`}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null,
-        a?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:a,children:`Women’s wellbeing`}):null
-      ]})
-    ]})})
-  ]});
+  return(0,A.jsx)(mpFeelingKitPage,{feelingId:`mothers`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o});
 }
-function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
+function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a}){
   (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
-  let[f,p]=(0,_.useState)(!1);
-  let o=mpProblems.findProblem(mpProblemHubs,`aod`);
-  if(!o)return(0,A.jsx)(`p`,{children:`The drugs & alcohol space is not loaded yet.`});
-  let s=mpProblems.readingsForProblem(mpPackA,`aod`),c=mpProblems.maddyForProblem(mpMaddy,`aod`),l=mpMotherYtEntries(o);
-  let u=s[0]||null,d=u?s.slice(1):s;
-  let opener=mpProblems.ownerCompanionOpener?mpProblems.ownerCompanionOpener(`aod`,o.companionPrompt):o.companionPrompt;
-  let featuredTags=u&&mpProblems.aodSupportTags?mpProblems.aodSupportTags(u):[];
-  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-aod`,"aria-label":`Drugs & alcohol`,children:[
-    (0,A.jsx)(MpLibraryHost,{}),
-    (0,A.jsx)(`p`,{className:`eyebrow`,children:`DRUGS & ALCOHOL · OPTIONAL SUPPORT`}),
-    (0,A.jsx)(`h1`,{children:`Drugs & alcohol`}),
-    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Soft pointers only.`}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
-      (0,A.jsx)(`p`,{children:`Start with the MindPal original talk-through on drugs and alcohol — DNA is only a nickname for that phrase, not genetics. Tagged support excerpts sit underneath. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
-      u?(0,A.jsxs)(`article`,{className:`mp-hub-featured`,"aria-label":`Featured talk-through`,children:[
-        (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEATURED · MINDPAL ORIGINAL`}),
-        (0,A.jsx)(`h3`,{children:u.title}),
-        (0,A.jsx)(`p`,{children:u.excerpt||(u.body||``).split(`\n\n`)[0]}),
-        featuredTags.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:featuredTags.join(` · `)}):null,
-        f?(0,A.jsxs)(`div`,{className:`mp-hub-featured-body`,children:[
-          (u.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
-          u.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,u.practice]}):null,
-          (0,A.jsx)(`p`,{className:`mp-support-gate`,role:`status`,children:mpReadings.supportUnlockMessage?mpReadings.supportUnlockMessage(u,s,[]):`MindPal original support reading — always open.`})
-        ]}):null,
-        (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p(e=>!e),children:f?`Hide the talk-through`:`Read the talk-through`}),
-          e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
-        ]})
-      ]}):null,
-      (0,A.jsx)(mpHubOpenableReadings,{readings:d,emptyLabel:u?``:`No tagged drugs & alcohol readings yet.`,onExplore:n})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Videos`}),
-      (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for self-compassion, worry and stress. No speaker library dump here.`}),
-      c.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
-        (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:c.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:`Maddy`,kind:`maddy`,src:e.src,videoUrl:e.src}),children:[
-          (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
-          (0,A.jsx)(`p`,{children:e.description}),
-          (0,A.jsx)(`span`,{className:`card-link`,children:`Play`})
-        ]},e.id))})
-      ]}):null,
-      l.length?(0,A.jsxs)(A.Fragment,{children:[
-        (0,A.jsx)(`h3`,{children:`Voice-guided on YouTube`}),
-        (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
-        (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:l.map(e=>{
-          let t=mpReadings.meditationOpenUrl(e);
-          return(0,A.jsxs)(`li`,{children:[
-            (0,A.jsx)(`strong`,{children:e.title}),
-            (0,A.jsx)(`span`,{className:`muted`,children:e.channel||``}),
-            t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
-          ]},e.id);
-        })})
-      ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Companion`}),
-      (0,A.jsx)(`p`,{children:`Opens Companion on the drugs and alcohol talk-through — the puppy-and-treat loop. DNA is only a nickname for drugs and alcohol, not genetics. It is software, not a therapist or AOD clinician, and it cannot watch over you or run detox.`}),
-      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
-      (0,A.jsx)(`h2`,{children:`Journal / wins`}),
-      (0,A.jsx)(`p`,{children:o.journalPrompt}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
-      ]}),
-      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small, honest win today: `):null)})
-    ]}),
-    (0,A.jsxs)(`section`,{className:`simple-panel mp-aod-safety`,children:[
-      (0,A.jsx)(`h2`,{children:`If you are in danger, or intoxicated and unsafe`}),
-      (0,A.jsx)(`p`,{children:`This space is not detox and not a replacement for AOD treatment. If you are intoxicated and in danger, or in crisis in Australia, call 000. Need support lists human help and counselling lines already in the app, including Lifeline — we do not invent extra numbers here.`}),
-      (0,A.jsxs)(`div`,{className:`button-row`,children:[
-        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null
-      ]})
-    ]})
-  ]});
+  return(0,A.jsx)(mpFeelingKitPage,{feelingId:`aod`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a});
 }
 function mpMensAccordion({id:e,title:t,lede:n,openId:r,onToggle:i,children:a}){
   let o=r===e;
@@ -14479,14 +15405,17 @@ function mpMensHealthHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,o
 function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v}){
   let[s,c]=(0,_.useState)(()=>mpProblems.selectedProblemId());
   (0,_.useEffect)(()=>{function e(){c(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
-  if(s===`mothers`)return(0,A.jsx)(mpMothersHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o});
-  if(s===`aod`)return(0,A.jsx)(mpAodHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a});
+  if(s===`mothers`)return(0,A.jsx)(mpMothersHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v});
+  if(s===`aod`)return(0,A.jsx)(mpAodHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onSpeakers:v});
   if(s===`mens-health`)return(0,A.jsx)(mpMensHealthHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a});
   let l=mpProblems.findProblem(mpProblemHubs,s);
   if(!l)return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":`Problem hub`,children:[
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
     (0,A.jsx)(mpProblemHubList,{onOpen:e=>{c(e)}})
   ]});
+  if(mpReadings.feelingKit&&mpReadings.feelingKit(l.id,{pack:mpPackA,hubs:mpProblemHubs})){
+    return(0,A.jsx)(mpFeelingKitPage,{feelingId:l.id,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v});
+  }
   let u=mpProblems.readingsForProblem(mpPackA,l.id);
   let growth=l.group===`growth`||(mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(l));
   let videoTag=mpProblems.videoTagForProblem?mpProblems.videoTagForProblem(l.id):l.id;
@@ -15239,7 +16168,7 @@ Several things may contribute to changes in mood or sleep. If low mood, anxiety 
 
 You can choose practical support for today, such as asking someone for help or making one demand smaller. That does not replace healthcare when you need it.
 
-This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,"Team morning":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,"Struggling mothers":`route.mothers`,"Drugs & alcohol":`route.aod`,"Mens health":`route.mensHealth`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`My diary`,icon:rn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());let[mpGateTick,mpSetGateTick]=(0,_.useState)(0);(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt());mpSetGateTick(e=>e+1)}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&mpShowSignInGate()?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`div`,{className:`mp-brand-row`,children:[(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`sidebar`,onOpen:()=>I(`Profile`)})]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`topbar`,onOpen:()=>I(`Profile`)}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&mpShowSignInGate()?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(mpMensHealthFeelingsChip,{onOpen:()=>{mpOpenProblem(`mens-health`),I(`Mens health`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)})]}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Profile`&&(0,A.jsx)(mpProfilePage,{}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Drugs & alcohol`&&(0,A.jsx)(mpAodHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small, honest win today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Mens health`&&(0,A.jsx)(mpMensHealthHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A way I showed up today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y}),t===`Women’s wellbeing`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),(0,A.jsx)(mpMothersWomenCard,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}})]}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),!mpShowSignInGate()||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
+This pathway is optional, and you can leave it at any time. If writing or watching is unhelpful, stop. If you are in immediate danger or think you may act on thoughts of suicide or self-harm, call triple zero in Australia. For crisis support, call Lifeline on 13 11 14. “Help me now” lists further support options.`,revisionStatus:`PROPOSED_REVIEW_PENDING`}]},ui=class extends Error{constructor(){super(`This entry changed or was deleted. Reload before editing.`),this.name=`DiaryConflictError`}},di=class extends Error{constructor(){super(`Not saved. Device storage is unavailable. Your text has not been sent anywhere.`),this.name=`DiaryStorageError`}},fi=class{currentMode;memory=new Map;db;factory;databaseName;constructor(e=`session`,t={}){this.currentMode=e,this.factory=t.indexedDB??Ie(),this.databaseName=t.databaseName??`mindpal-private-diary-v1`}get mode(){return this.currentMode}open(){return this.factory?(this.db||=new Promise((e,t)=>{let n=this.factory.open(this.databaseName,1);n.onupgradeneeded=()=>n.result.createObjectStore(`entries`,{keyPath:`id`}),n.onsuccess=()=>{n.result.onversionchange=()=>{n.result.close(),this.db=void 0},e(n.result)},n.onerror=()=>t(new di),n.onblocked=()=>t(new di)}).catch(()=>{throw this.db=void 0,new di}),this.db):Promise.reject(new di)}async setMode(e){e===`device`&&await this.open(),this.currentMode=e}async list(){if(this.mode===`session`)return this.sorted([...this.memory.values()]);let e=await this.open();return new Promise((t,n)=>{let r=e.transaction(`entries`,`readonly`),i=r.objectStore(`entries`).getAll();r.oncomplete=()=>t(this.sorted(i.result)),r.onerror=r.onabort=()=>n(new di)})}sorted(e){return e.map(e=>({...e})).sort((e,t)=>t.updatedAt.localeCompare(e.updatedAt))}make(e,t){if(e.id&&(!t||t.revision!==e.expectedRevision))throw new ui;if(!e.body.trim()||e.body.length>2e4)throw Error(`Write between 1 and 20,000 characters.`);let n=new Date().toISOString();return{id:t?.id??Se(),body:e.body,revision:(t?.revision??0)+1,createdAt:t?.createdAt??n,updatedAt:n}}async save(e){if(this.mode===`session`){let t=this.make(e,e.id?this.memory.get(e.id):void 0);return this.memory.set(t.id,t),{...t}}let t=await this.open();return new Promise((n,r)=>{let i=t.transaction(`entries`,`readwrite`),a=i.objectStore(`entries`),o,s,c=t=>{try{o=this.make(e,t),a.put(o)}catch(e){s=e,i.abort()}};if(e.id){let t=a.get(e.id);t.onsuccess=()=>c(t.result)}else c();i.oncomplete=()=>n({...o}),i.onerror=i.onabort=()=>r(s??new di)})}async remove(e,t){if(this.mode===`session`){let n=this.memory.get(e);if(n&&n.revision!==t)throw new ui;this.memory.delete(e);return}let n=await this.open();await new Promise((r,i)=>{let a=n.transaction(`entries`,`readwrite`),o=a.objectStore(`entries`),s=o.get(e),c;s.onsuccess=()=>{let n=s.result;n&&n.revision!==t?(c=new ui,a.abort()):o.delete(e)},a.oncomplete=()=>r(),a.onerror=a.onabort=()=>i(c??new di)})}async clear(){if(this.mode===`session`){this.memory.clear();return}let e=await this.open();await new Promise((t,n)=>{let r=e.transaction(`entries`,`readwrite`);r.objectStore(`entries`).clear(),r.oncomplete=()=>t(),r.onerror=r.onabort=()=>n(new di)})}},pi=/^[a-f0-9]{64}$/i;function mi(e){return typeof e==`string`&&/^\/media\/[A-Za-z0-9_-]+\.(mp4|webm|vtt)$/.test(e)}function hi(e,t=new Date){if(e.withdrawn)return{available:!1,reason:`This video has been withdrawn.`};if(e.publicEligible!==!0||!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl))return{available:!1,reason:`HeyGen not rendered yet`};let n=e=>typeof e==`string`&&e.trim().length>0,r=e=>e?Date.parse(e):NaN;return e.clinicalStatus!==`APPROVED`||e.publicationStatus!==`PUBLISHED`||e.rightsStatus!==`CLEARED`||!n(e.reviewer)||!n(e.approvalEvidence)||!Number.isFinite(r(e.approvedAt))||r(e.approvedAt)>t.getTime()||!(r(e.reviewDue)>t.getTime())||!pi.test(e.scriptHash??``)||e.scriptHash!==e.approvedScriptHash?{available:!1,reason:`Production preview only. This draft has not been cleared for public release.`}:!mi(e.videoUrl)||!/\.(mp4|webm)$/.test(e.videoUrl)||!mi(e.captionUrl)||!e.captionUrl.endsWith(`.vtt`)||!n(e.transcriptText)||!pi.test(e.assetHash??``)||!n(e.sourceAssetId)||!n(e.presenterRightsRef)||!n(e.hostingLicenceRef)||!n(e.mediaQaReviewer)||!Number.isFinite(r(e.mediaQaDate))||r(e.mediaQaDate)>t.getTime()||!(typeof e.durationSeconds==`number`&&e.durationSeconds>0&&Number.isFinite(e.durationSeconds))?{available:!1,reason:`The reviewed video, captions and production evidence are not available yet.`}:{available:!0,videoUrl:e.videoUrl,captionUrl:e.captionUrl}}function gi({video:e,onClose:t,onHelp:n,onAlternative:r}){let i=(0,_.useId)(),a=(0,_.useRef)(null),o=(0,_.useRef)(null),[s,c]=(0,_.useState)(``),l=hi(e),u=()=>{o.current&&(o.current.pause(),o.current.currentTime=0)};(0,_.useEffect)(()=>{let e=document.activeElement,t=()=>a.current?.querySelector(`button`)?.focus(),n=e=>{a.current?.contains(e.target)||t()},r=o.current,i=document.body.style.overflow;return document.body.style.overflow=`hidden`,t(),document.addEventListener(`focusin`,n),()=>{document.removeEventListener(`focusin`,n),document.body.style.overflow=i,r?.pause(),e?.focus()}},[]),(0,_.useEffect)(()=>{c(``)},[e.id]);let d=()=>{u(),t()};return(0,A.jsx)(`div`,{className:`modal-backdrop`,onClick:e=>{e.target===e.currentTarget&&d()},children:(0,A.jsxs)(`div`,{className:`modal video-modal`,ref:a,role:`dialog`,"aria-modal":`true`,"aria-labelledby":i,onKeyDown:e=>{if(e.key===`Escape`&&(e.stopPropagation(),d()),e.key===`Tab`){let t=Array.from(a.current?.querySelectorAll(`button:not(:disabled), a[href], video[controls], [tabindex="0"]`)??[]).filter(e=>e.getClientRects().length>0),n=t[0],r=t[t.length-1];e.shiftKey&&document.activeElement===n?(e.preventDefault(),r?.focus()):!e.shiftKey&&document.activeElement===r&&(e.preventDefault(),n?.focus())}},children:[(0,A.jsxs)(`div`,{className:`modal-top`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`MindPal video library`}),(0,A.jsx)(`button`,{className:`icon-button`,"aria-label":`Close video`,onClick:d,children:(0,A.jsx)(On,{size:20})})]}),(0,A.jsx)(`h2`,{id:i,children:e.title}),l.available?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`video`,{"aria-label":e.title,ref:o,controls:!0,playsInline:!0,preload:`none`,onError:()=>c(`The video could not load. You can still read its transcript below.`),style:{width:`100%`,borderRadius:18,display:s?`none`:void 0},children:[(0,A.jsx)(`source`,{src:l.videoUrl,onError:()=>{u(),c(`The video could not load. You can still read its transcript below.`)}}),(0,A.jsx)(`track`,{kind:`captions`,src:l.captionUrl,srcLang:`en-AU`,label:`English captions`,default:!0,onError:()=>{u(),c(`Captions could not load. Playback has stopped; the transcript is available below.`)}})]},e.id),(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{disabled:!!s,onClick:u,children:[(0,A.jsx)(Cn,{size:16}),` Stop video`]}),(0,A.jsxs)(`button`,{disabled:!!s,onClick:()=>{o.current&&(o.current.muted=!0)},children:[(0,A.jsx)(En,{size:16}),` Mute`]})]})]}):(0,A.jsxs)(`div`,{className:`video-placeholder`,children:[(0,A.jsx)(un,{size:36}),(0,A.jsx)(`h3`,{children:`HeyGen not rendered yet`}),(0,A.jsx)(`p`,{children:l.reason}),(0,A.jsx)(`p`,{children:`No video has been rendered for this item. No credits are used by this preview.`})]}),s&&(0,A.jsx)(`p`,{role:`alert`,className:`notice`,children:s}),(0,A.jsxs)(`section`,{className:`transcript`,tabIndex:0,"aria-label":`Video text`,children:[(0,A.jsx)(`h3`,{children:e.transcriptText?l.available?`Video transcript`:`Script transcript · draft`:`Production outline · draft`}),(0,A.jsx)(`p`,{style:{whiteSpace:`pre-line`},children:e.transcriptText||e.outline||`A full script and reviewed video will be added after content and production review.`}),!l.available&&(0,A.jsx)(`p`,{className:`muted`,children:`Preparation material, awaiting qualified content review. You can leave or choose another activity at any time.`})]}),r&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>{u(),r()},children:`Choose grounding instead`}),(0,A.jsxs)(`button`,{className:`help-inline`,onClick:()=>{u(),n()},children:[(0,A.jsx)(on,{size:18}),` Urgent help and support`]})]})})}function _i(e,t){if(e===`urgent`||t===`urgent`)return`urgent`;let n={ordinary:0,distress:1,concern_uncertain:2,urgent:3};return n[t]>n[e]?t:e}function vi(e,t=8){let n=e===`urgent`,r=t<=0;return{mode:n?`urgent_help`:r?`fallback`:`static_choice`,safetyState:e,copyId:n?`human-help-now`:r?`session-finished`:e===`ordinary`?`choose-small-step`:`support-options`,contentIds:n||r?[]:[`E01`,`E03`],helpAvailable:!0,sessionRemainingTurns:Math.max(0,t-1),modelDisclosure:`Deterministic mock — no AI service`}}var yi={"human-help-now":`Please use human support now. This guide cannot contact emergency services or monitor your safety.`,"session-finished":`This practice session has finished. Static exercises and human help are still available.`,"choose-small-step":`You can try noticing one steady detail around you, or choose a word for how things feel. You can also do neither.`,"support-options":`You do not have to explain everything. You can reach human support, or choose a neutral detail around you if that feels useful.`},bi=class{respond(e,t){return new Promise((n,r)=>{if(t.aborted)return r(Error(`Cancelled`));let i=()=>{clearTimeout(a),r(Error(`Cancelled`))},a=setTimeout(()=>{t.removeEventListener(`abort`,i),n(vi(e.safetyState,e.remainingTurns))},350);t.addEventListener(`abort`,i,{once:!0})})}};function xi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=vi(t.safetyState,t.remainingTurns),r=e;if(Object.keys(r).length!==Object.keys(n).length)return null;for(let e of Object.keys(n)){if(!Object.hasOwn(r,e))return null;if(e===`contentIds`){if(!Array.isArray(r[e])||r[e].length!==n[e].length||r[e].some((t,r)=>t!==n[e][r]))return null}else if(r[e]!==n[e])return null}return n}var Si=class{consent;provider;timeoutMs;pending=null;constructor(e,t=new bi,n=12e3){this.consent=e,this.provider=t,this.timeoutMs=n}cancel(){this.pending?.abort(),this.pending=null}async request(e){let t=this.consent.capture(`ai`);if(!this.consent.isCurrent(t)||this.pending)return{kind:`discarded`};if(!Object.hasOwn({ordinary:1,distress:1,concern_uncertain:1,urgent:1},e.safetyState)||!Number.isInteger(e.remainingTurns)||e.remainingTurns<0||e.remainingTurns>8)return{kind:`unavailable`};let n=new AbortController;this.pending=n;let r,i=()=>{};try{let a=Object.freeze({...e}),o=new Promise((e,t)=>{let a=()=>t(Error(`Cancelled`));n.signal.addEventListener(`abort`,a,{once:!0}),i=()=>n.signal.removeEventListener(`abort`,a),r=setTimeout(()=>t(Error(`Timed out`)),this.timeoutMs)}),s=await Promise.race([this.provider.respond(a,n.signal),o]);if(n.signal.aborted||!this.consent.isCurrent(t))return{kind:`discarded`};let c=xi(s,a);return c?{kind:`response`,response:c}:{kind:`unavailable`}}catch{return n.signal.aborted||!this.consent.isCurrent(t)?{kind:`discarded`}:{kind:`unavailable`}}finally{clearTimeout(r),i(),n.abort(),this.pending===n&&(this.pending=null)}}},Ci=`companion-ai-v1`,wi=`/api/companion/chat`,Ti=[`ordinary`,`distress`,`concern_uncertain`,`urgent`],Ei={enabled:!0,providerName:`xAI Grok (server proxy)`,policyVersion:Ci,endpoint:wi};function Di(e){return!!e&&e.enabled&&e.endpoint===`/api/companion/chat`&&typeof e.providerName==`string`&&e.providerName.trim().length>0&&e.policyVersion===`companion-ai-v1`}function Oi(e,t){if(!e||typeof e!=`object`||Array.isArray(e))return null;let n=e;return Object.keys(n).sort().join(`,`)!==`kind,modelDisclosure,policyVersion,reply,requestId`||n.requestId!==t.requestId||n.policyVersion!==t.policyVersion||![`reply`,`human_help`].includes(String(n.kind))||typeof n.reply!=`string`||!n.reply.trim()||n.reply.length>1200||typeof n.modelDisclosure!=`string`||!n.modelDisclosure.trim()?null:{requestId:t.requestId,policyVersion:t.policyVersion,kind:n.kind,reply:n.reply,modelDisclosure:n.modelDisclosure}}var ki=class{endpointUrl;transport;constructor(e,t=fetch){this.endpointUrl=e,this.transport=t}async respond(e,t){let n=await this.transport(this.endpointUrl,{method:`POST`,credentials:`same-origin`,cache:`no-store`,redirect:`error`,signal:t,headers:{"Content-Type":`application/json`},body:JSON.stringify(e)});if(!n.ok||!n.headers.get(`Content-Type`)?.includes(`application/json`))throw Error(`Unavailable`);let r=await n.text();if(r.length>6e3)throw Error(`Unavailable`);return JSON.parse(r)}},Ai=class{consent;config;provider;timeoutMs;pending=null;constructor(e,t,n,r=15e3){this.consent=e,this.config=t,this.provider=n,this.timeoutMs=r}cancel(){this.pending?.abort(),this.pending=null}async send(e,t){let n=this.consent.capture(`ai`);if(!this.consent.isCurrent(n)||this.pending)return{kind:`discarded`};let r=typeof t==`string`?t.trim():``;if(!Di(this.config)||!r||r.length>2e3||!Ti.includes(e))return{kind:`unavailable`};let i={requestId:crypto.randomUUID(),policyVersion:this.config.policyVersion,safetyState:e,message:r},a=new AbortController;this.pending=a;let o,s=()=>{};try{let e=new Promise((e,t)=>{let n=()=>t(Error(`Stopped`));a.signal.addEventListener(`abort`,n,{once:!0}),s=()=>a.signal.removeEventListener(`abort`,n),o=setTimeout(()=>t(Error(`Timeout`)),this.timeoutMs)}),t=await Promise.race([this.provider.respond(i,a.signal),e]);if(a.signal.aborted||!this.consent.isCurrent(n))return{kind:`discarded`};let r=Oi(t,i);return r?{kind:`reply`,value:r}:{kind:`unavailable`}}catch{return{kind:a.signal.aborted||!this.consent.isCurrent(n)?`discarded`:`unavailable`}}finally{clearTimeout(o),s(),a.abort(),this.pending===a&&(this.pending=null)}}};function H(e,t,n){return new Ai(e,Ei,new ki(t,n))}function U(e,t=`/mindpal/`){return $e(t,`api/companion/${e}`)}function ji(e){if(!e||typeof e!=`object`||Array.isArray(e))return{available:!1,model:null};let t=e;return{available:t.available===!0,model:typeof t.model==`string`?t.model:null}}var Mi=null;async function Ni(e={}){if(Mi!==null)return Mi;if(typeof navigator<`u`&&navigator.onLine===!1)return Mi={available:!1,model:null},Mi;let t=e.fetchImpl??fetch,n=e.timeoutMs??1500,r=new AbortController,i=setTimeout(()=>r.abort(),n);try{let n=await t(U(`status`,e.base),{method:`GET`,signal:r.signal,headers:{Accept:`application/json`}});return n.ok?(Mi=ji(await n.json()),Mi):(Mi={available:!1,model:null},Mi)}catch{return Mi={available:!1,model:null},Mi}finally{clearTimeout(i)}}var Pi=new fi,Fi=new Ar,Ii=[`Feelings`,`YouTube directory`,`Today`,`Profile`,`Readings`,`Team morning`,`Later`,`Evening`,`Problem`,`Struggling mothers`,`Drugs & alcohol`,`Mens health`,`Explore`,`My diary`,`Focus`,`Companion`,`Women’s wellbeing`,`Settings`,`Body, food and wellbeing`,`Reflect`,`Get support`,`Youth preview`,`Youth lab`],Li={Today:`route.today`,Profile:`route.profile`,Readings:`route.readings`,"Team morning":`route.teamMorning`,Later:`route.later`,Evening:`route.evening`,Problem:`route.problem`,"Struggling mothers":`route.mothers`,"Drugs & alcohol":`route.aod`,"Mens health":`route.mensHealth`,Explore:`route.explore`,Feelings:`route.feelings`,"YouTube directory":`route.videos`,"My diary":`route.diary`,Focus:`route.focus`,Reflect:`route.reflect`,"Body, food and wellbeing":`route.health`,Companion:`route.companion`,"Women’s wellbeing":`route.women`,Settings:`route.settings`,"Get support":`route.support`,"Youth preview":`route.youthPreview`,"Youth lab":`route.youthLab`},Ri=()=>{try{let e=decodeURIComponent(location.hash.slice(1));return Ii.find(t=>t===e)||`Today`}catch{return`Today`}},zi=[{name:`Feelings`,icon:fn},{name:`My diary`,icon:rn},{name:`YouTube directory`,icon:vn},{name:`Reflect`,icon:gn},{name:`Body, food and wellbeing`,icon:fn},{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn}],Bi=[{id:`Today`,label:`Today`,icon:wn},{id:`Explore`,label:`Explore`,icon:pn},{id:`My diary`,label:`Journal`,icon:rn},{id:`Focus`,label:`Focus`,icon:sn},{id:`Companion`,label:`Companion`,icon:gn,badge:`Demo`}],Vi=[`Heavy`,`Unsettled`,`Somewhere in between`,`Okay`,`Good`];function Hi(e,t,n=`text/plain`){let r=URL.createObjectURL(new Blob([t],{type:n})),i=document.createElement(`a`);i.href=r,i.download=e,i.click(),setTimeout(()=>URL.revokeObjectURL(r),1e3)}function Ui({small:e=!1}){return(0,A.jsxs)(`div`,{className:`orb ${e?`small`:``}`,"aria-hidden":`true`,children:[(0,A.jsxs)(`div`,{className:`orb-face`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`span`,{})]}),(0,A.jsx)(`div`,{className:`orbit orbit-one`}),(0,A.jsx)(`div`,{className:`orbit orbit-two`})]})}function Wi({children:e}){return(0,A.jsx)(`span`,{className:`tag`,children:e})}function Gi(){let{t:e}=ae(),[t,n]=(0,_.useState)(Ri),[r,i]=(0,_.useState)(!1),[a,o]=(0,_.useState)(()=>qr()?`adult`:`unset`),[s,c]=(0,_.useState)(navigator.onLine),[l,u]=(0,_.useState)(!1),[d,f]=(0,_.useState)(``),[p,m]=(0,_.useState)(()=>Wr()),[h,g]=(0,_.useState)(ai),[v,y]=(0,_.useState)(null),[b,x]=(0,_.useState)(null),[S,C]=(0,_.useState)(``),[w,T]=(0,_.useState)(!1),[E,D]=(0,_.useState)(Pi.mode),[O,k]=(0,_.useState)(``),[j,M]=(0,_.useState)(null),[N,P]=(0,_.useState)(``),F=(0,_.useRef)(null);let[mpAuthed,mpSetAuthed]=(0,_.useState)(()=>!!Dt());let[mpGateTick,mpSetGateTick]=(0,_.useState)(0);(0,_.useEffect)(()=>{function e(){mpSetAuthed(!!Dt());mpSetGateTick(e=>e+1)}return window.addEventListener(`mindpal-session-change`,e),window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,e),()=>{window.removeEventListener(`mindpal-session-change`,e);window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,e)}},[]);(0,_.useEffect)(()=>{let e=()=>c(navigator.onLine);return window.addEventListener(`online`,e),window.addEventListener(`offline`,e),`serviceWorker`in navigator&&navigator.serviceWorker.ready.then(()=>u(!0)),()=>{window.removeEventListener(`online`,e),window.removeEventListener(`offline`,e)}},[]),(0,_.useEffect)(()=>{let e=()=>{Fi.set(`ai`,!1),n(Ri()),i(!1),y(null),x(null),requestAnimationFrame(()=>F.current?.focus())};return window.addEventListener(`popstate`,e),()=>window.removeEventListener(`popstate`,e)},[]),(0,_.useEffect)(()=>{if(!O)return;let e=e=>{e.preventDefault(),e.returnValue=``};return window.addEventListener(`beforeunload`,e),()=>window.removeEventListener(`beforeunload`,e)},[O]);function I(e){e!==`Companion`&&Fi.set(`ai`,!1),e!==t&&history.pushState(null,``,`#`+encodeURIComponent(e)),n(e),i(!1),y(null),x(null),P(``),requestAnimationFrame(()=>F.current?.focus()),window.scrollTo({top:0,behavior:`instant`})}function L(e){m(e),Gr(e)}function ee(){o(`adult`),Jr(!0),I(`Today`),requestAnimationFrame(()=>F.current?.focus())}function te(){o(`unset`),Jr(!1),L(``)}let ne=a!==`adult`&&t!==`Get support`&&t!==`Settings`&&t!==`Youth preview`&&t!==`Youth lab`;return(0,A.jsxs)(`div`,{className:`app${a===`adult`&&mpShowSignInGate()?` mp-signin-shell`:``}`,children:[(0,A.jsx)(`a`,{className:`skip`,href:`#main`,onClick:e=>{e.preventDefault(),F.current?.focus()},children:e(`navigation.skip`)}),(0,A.jsxs)(`aside`,{id:`primary-navigation`,className:`sidebar ${r?`expanded`:``}`,children:[(0,A.jsxs)(`div`,{className:`mp-brand-row`,children:[(0,A.jsxs)(`button`,{type:`button`,className:`brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`sidebar`,onOpen:()=>I(`Profile`)})]}),(0,A.jsxs)(`figure`,{className:`brand-quote`,children:[(0,A.jsx)(`blockquote`,{cite:`https://en.wikisource.org/wiki/The_Emperor_Marcus_Antoninus:_His_Conversation_with_Himself/Book_3`,children:(0,A.jsx)(`p`,{children:e(`brand.quote`)})}),(0,A.jsx)(`figcaption`,{children:e(`brand.author`)})]}),(0,A.jsx)(mpSidebarShare,{}),(0,A.jsx)(`div`,{className:`nav-label`,children:e(`navigation.label`)}),(0,A.jsx)(`nav`,{"aria-label":e(`navigation.main`),children:zi.map(({name:n,icon:r})=>(0,A.jsxs)(`button`,{onClick:()=>I(n),"aria-current":t===n?`page`:void 0,children:[(0,A.jsx)(r,{size:19}),e(Li[n]),t===n&&(0,A.jsx)(`span`,{className:`nav-dot`})]},n))}),(0,A.jsxs)(`div`,{className:`sidebar-bottom`,children:[(0,A.jsxs)(`div`,{className:`soft-note`,children:[(0,A.jsx)(pn,{size:21}),(0,A.jsxs)(`p`,{children:[e(`navigation.noPerfectDays`),(0,A.jsx)(`br`,{}),e(`navigation.littleSpace`)]})]}),(0,A.jsxs)(`button`,{onClick:()=>I(`Settings`),children:[(0,A.jsx)(bn,{size:18}),e(`navigation.preferences`)]}),(0,A.jsxs)(`button`,{className:`help-nav`,onClick:()=>I(`Get support`),children:[(0,A.jsx)(mn,{size:18}),e(`navigation.supportNow`),(0,A.jsx)(nn,{size:16})]}),(0,A.jsx)(`p`,{className:`sidebar-caption`,children:e(`navigation.caption`)})]})]}),(0,A.jsxs)(`div`,{className:`workspace`,children:[(0,A.jsxs)(`header`,{className:`topbar`,children:[(0,A.jsx)(`button`,{className:`mobile-menu`,"aria-expanded":r,"aria-controls":`primary-navigation`,onClick:()=>i(!r),"aria-label":e(`navigation.toggle`),children:(0,A.jsx)(hn,{})}),(0,A.jsxs)(`button`,{type:`button`,className:`brand mp-top-brand`,onClick:()=>mpGoHome(I),"aria-label":e(`navigation.home`),children:[(0,A.jsx)(`img`,{src:Ge(`/icon.svg`),alt:``}),`mindpal`]}),(0,A.jsx)(mpProfileButton,{placement:`topbar`,onOpen:()=>I(`Profile`)}),(0,A.jsxs)(`span`,{className:`breadcrumb`,children:[e(`navigation.space`),` `,(0,A.jsx)(`span`,{children:`/`}),` `,e(Li[t])]}),(0,A.jsxs)(`div`,{className:`top-actions`,children:[(0,A.jsxs)(`span`,{className:`privacy`,children:[(0,A.jsx)(xn,{size:15}),e(`navigation.privacy`)]}),(0,A.jsxs)(`button`,{className:`top-help`,onClick:()=>I(`Get support`),children:[e(`navigation.support`),` `,(0,A.jsx)(nn,{size:14})]}),(0,A.jsx)(`span`,{className:`profile`,"aria-label":p.trim()?e(`navigation.namedGuest`,{nickname:p.trim()}):e(`navigation.guest`),children:`M`})]})]}),(0,A.jsxs)(`div`,{className:`demo-banner`,children:[(0,A.jsx)(`span`,{className:`status-dot`}),e(`preview.notice`)]}),!s&&(0,A.jsxs)(`div`,{className:`offline`,role:`status`,children:[(0,A.jsx)(Dn,{size:16}),e(`preview.offline`)]}),(0,A.jsxs)(`main`,{id:`main`,tabIndex:-1,ref:F,children:[ne?(0,A.jsxs)(`section`,{className:`onboarding`,children:[(0,A.jsx)(Wi,{children:e(`welcome.eyebrow`)}),(0,A.jsx)(`h1`,{children:e(`welcome.title`)}),(0,A.jsxs)(`p`,{className:`lede`,children:[e(`welcome.introduction`),(0,A.jsx)(`br`,{}),e(`welcome.encouragement`)]}),(0,A.jsxs)(`details`,{children:[(0,A.jsx)(`summary`,{children:e(`welcome.nicknameOptional`)}),(0,A.jsx)(`label`,{htmlFor:`guest-nickname`,children:e(`welcome.nicknameLabel`)}),(0,A.jsx)(`input`,{id:`guest-nickname`,dir:`auto`,maxLength:40,value:p,onChange:e=>L(e.target.value)}),(0,A.jsxs)(`button`,{className:`primary small-button`,onClick:ee,children:[e(`welcome.continueName`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`p`,{children:e(`welcome.guestPrivacy`)})]}),(0,A.jsx)(Xn,{alt:e(`welcome.imageAlt`)}),(0,A.jsx)(`p`,{children:e(`welcome.adultNotice`)}),a===`under`?(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h2`,{children:e(`welcome.youngTitle`)}),(0,A.jsx)(`p`,{children:e(`welcome.youngSupport`)}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>I(`Get support`),children:[e(`welcome.findSupport`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>o(`unset`),children:e(`welcome.back`)})]}):(0,A.jsxs)(`div`,{className:`button-row`,children:[(0,A.jsxs)(`button`,{className:`primary`,onClick:ee,children:[e(`welcome.enter`),` `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>o(`under`),children:e(`welcome.under18`)})]}),(0,A.jsx)(`button`,{className:`text-button`,onClick:()=>I(`Get support`),children:e(`welcome.supportWithoutEntry`)})]}):a===`adult`&&mpShowSignInGate()?(0,A.jsx)(mpSignInPage,{onSignedIn:()=>{mpSetAuthed(!0),I(`Today`)}}):(0,A.jsxs)(A.Fragment,{children:[a===`adult`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})]}),a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(mpMensHealthFeelingsChip,{onOpen:()=>{mpOpenProblem(`mens-health`),I(`Mens health`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`),onCompanion:()=>I(`Companion`),onHelp:()=>I(`Get support`),onJournal:e=>{C(e),I(`My diary`)}})]}),a===`adult`&&t===`YouTube directory`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(`h1`,{children:`Browse external videos`}),(0,A.jsx)(ge,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onHelp:()=>I(`Get support`)})]}),a===`adult`&&t===`Today`&&(0,A.jsx)(Rr,{name:p.trim(),onOpenVerse:()=>I(`Readings`),onOpenFocus:()=>I(`Focus`),onWriteJournal:()=>{C(`What’s on my mind right now…`),I(`My diary`)},onOpenLater:()=>I(`Later`),onOpenEvening:()=>I(`Evening`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onOpenMaddy:()=>I(`Explore`),onOpenProblem:e=>I(mpDedicatedProblemRoute(e)),onOpenTeamRitual:()=>I(`Team morning`)}),!1&&t===`Today`&&(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>I(`Feelings`),children:`Help with how I’m feeling`}),!1&&t===`Today`&&(0,A.jsx)(kr,{onExercise:y,onReflect:()=>I(`Reflect`),onDiary:()=>I(`My diary`),onHelp:()=>I(`Get support`)}),!1&&(0,A.jsx)(ii,{active:t===`Today`,onHelp:()=>I(`Get support`)}),!1&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsxs)(`section`,{className:`hero`,children:[(0,A.jsxs)(`div`,{className:`hero-copy`,children:[(0,A.jsxs)(Wi,{children:[(0,A.jsx)(Sn,{size:13}),` YOUR DAILY ENCOURAGEMENT`]}),(0,A.jsxs)(`h2`,{children:[`Start where you are.`,(0,A.jsx)(`br`,{}),`That’s enough for today.`]}),(0,A.jsxs)(`p`,{children:[`A small pause can be a place to begin.`,(0,A.jsx)(`br`,{}),`There’s no right way to feel.`]}),(0,A.jsxs)(`button`,{className:`primary`,onClick:()=>y(`E01`),children:[`Take a gentle moment `,(0,A.jsx)(B,{size:17})]}),(0,A.jsx)(`span`,{className:`micro`,children:`30 seconds – 2 minutes · always optional`})]}),(0,A.jsxs)(`div`,{className:`hero-art`,children:[(0,A.jsx)(`div`,{className:`art-ring`}),(0,A.jsx)(Ui,{}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-one`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`floating-leaf leaf-two`,children:(0,A.jsx)(Sn,{size:18})}),(0,A.jsx)(`div`,{className:`art-caption`,children:`one small moment`})]})]}),(0,A.jsxs)(`section`,{className:`checkin`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`A MOMENT TO CHECK IN`}),(0,A.jsx)(`h2`,{children:`How’s your world today?`}),(0,A.jsx)(`p`,{children:`No score. No right answer. Just you.`})]}),(0,A.jsx)(`div`,{className:`mood-list`,children:Vi.map((e,t)=>(0,A.jsxs)(`button`,{className:d===e?`selected`:``,"aria-pressed":d===e,onClick:()=>f(e),children:[(0,A.jsxs)(`span`,{className:`mood-face mood-${t}`,children:[(0,A.jsx)(`i`,{}),(0,A.jsx)(`i`,{}),(0,A.jsx)(`b`,{})]}),(0,A.jsx)(`span`,{children:e})]},e))}),(0,A.jsxs)(`div`,{className:`checkin-footer`,children:[(0,A.jsx)(`span`,{"aria-live":`polite`,children:d?`Thanks for checking in. You can choose whatever feels manageable.`:`Your check-in stays in this session.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{f(``),document.getElementById(`small-steps`)?.scrollIntoView({behavior:`smooth`})},children:[`Skip for now `,(0,A.jsx)(B,{size:14})]})]})]}),(0,A.jsx)(ci,{value:h,onChange:g}),(0,A.jsxs)(`div`,{className:`section-title`,id:`small-steps`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`p`,{className:`eyebrow`,children:`SMALL THINGS, REAL LIFE`}),(0,A.jsx)(`h2`,{children:`What would feel helpful?`})]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Explore`),children:[`Explore everything `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsxs)(`div`,{className:`three-grid`,children:[(0,A.jsxs)(`button`,{className:`feature-card sage`,onClick:()=>y(`E01`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(pn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`A GENTLE EXERCISE · 2 MIN`}),(0,A.jsx)(`h3`,{children:`Find a steady detail`}),(0,A.jsxs)(`p`,{children:[`Notice something around you.`,(0,A.jsx)(`br`,{}),`Let that be enough.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Try a small pause `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card peach`,onClick:()=>{C(`One thing I noticed today…`),I(`My diary`)},children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(rn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`YOUR PRIVATE DIARY`}),(0,A.jsx)(`h3`,{children:`Put a thought into words`}),(0,A.jsxs)(`p`,{children:[`A sentence, a feeling, or a little`,(0,A.jsx)(`br`,{}),`of what’s on your mind.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Make a little room `,(0,A.jsx)(nn,{size:18})]})]}),(0,A.jsxs)(`button`,{className:`feature-card lavender`,onClick:()=>I(`Companion`),children:[(0,A.jsx)(`div`,{className:`card-icon`,children:(0,A.jsx)(gn,{})}),(0,A.jsx)(`span`,{className:`card-type`,children:`MEET YOUR COMPANION`}),(0,A.jsx)(`h3`,{children:`A guide at your pace`}),(0,A.jsxs)(`p`,{children:[`Choose a small next step with`,(0,A.jsx)(`br`,{}),`our optional practice guide.`]}),(0,A.jsxs)(`span`,{className:`card-link`,children:[`Say hello `,(0,A.jsx)(nn,{size:18})]})]})]}),(0,A.jsxs)(`div`,{className:`bottom-grid`,children:[(0,A.jsxs)(`section`,{className:`women-teaser`,children:[(0,A.jsxs)(`div`,{children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SPACE FOR YOUR EXPERIENCE`}),(0,A.jsxs)(`h2`,{children:[`Wellbeing, through`,(0,A.jsx)(`br`,{}),`life’s changes.`]}),(0,A.jsx)(`p`,{children:`Explore the women’s wellbeing pathways.`}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>I(`Women’s wellbeing`),children:[`Find your space `,(0,A.jsx)(B,{size:16})]})]}),(0,A.jsx)(fn,{size:78,strokeWidth:.8})]}),(0,A.jsxs)(`section`,{className:`video-teaser`,children:[(0,A.jsx)(`span`,{className:`eyebrow`,children:`SHORT WATCHES, SMALL MOMENTS`}),(0,A.jsx)(`h3`,{children:`Watch with Maddy`}),(0,A.jsxs)(`p`,{children:[`Play Welcome, Daily tip and Timed breath.`,(0,A.jsx)(`br`,{}),`Finished companion clips — no draft gate.`]}),(0,A.jsxs)(`button`,{className:`text-button`,onClick:()=>{I(`Explore`)},children:[`Open Watch with Maddy `,(0,A.jsx)(vn,{size:15})]}),(0,A.jsx)(`span`,{className:`tiny-label`,children:`Native MP4 · Welcome · Daily tip · Timed breath`})]})]})]}),t===`Explore`&&(0,A.jsx)(Ki,{openVideo:x}),t===`Profile`&&(0,A.jsx)(mpProfilePage,{}),t===`Readings`&&(0,A.jsx)(mpReadingsPage,{}),t===`Team morning`&&(0,A.jsx)(mpTeamRitualPage,{onToday:()=>I(`Today`),onReadings:()=>I(`Readings`)}),t===`Later`&&(0,A.jsx)(mpLaterPage,{onExercise:y,onFocus:()=>I(`Focus`)}),t===`Evening`&&(0,A.jsx)(mpEveningPage,{onJournal:()=>{C(`Before sleep, I noticed…`),I(`My diary`)}}),t===`Focus`&&(0,A.jsx)(`div`,{className:`mp-lane mp-lane-focus`,children:(0,A.jsx)(Hr,{onExercise:y,onDiary:e=>{C(e),I(`My diary`)},onHelp:()=>I(`Get support`),onCompanion:()=>I(`Companion`)})}),t===`My diary`&&(0,A.jsxs)(`div`,{className:`mp-lane mp-lane-journal`,children:[(0,A.jsx)(mpWinsPanel,{variant:`journal`}),(0,A.jsx)(Yi,{mode:E,setMode:D,busy:w,setBusy:T,body:O,setBody:k,editing:j,setEditing:M,initialPrompt:S,onHelp:()=>I(`Get support`)})]}),t===`Problem`&&(0,A.jsx)(mpProblemHubPage,{onOpenVideo:x,onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onSpeakers:()=>I(`Explore`),onAddWin:()=>{C(`A small win today: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Struggling mothers`&&(0,A.jsx)(mpMothersHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small win amid caring for others: `),I(`My diary`)},onHelp:()=>I(`Get support`),onWomen:()=>I(`Women’s wellbeing`)}),t===`Drugs & alcohol`&&(0,A.jsx)(mpAodHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A small, honest win today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Mens health`&&(0,A.jsx)(mpMensHealthHubPage,{onCompanion:()=>I(`Companion`),onJournal:e=>{C(e),I(`My diary`)},onExplore:()=>I(`Readings`),onAddWin:()=>{C(`A way I showed up today: `),I(`My diary`)},onHelp:()=>I(`Get support`)}),t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y}),t===`Women’s wellbeing`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(Zi,{onDiary:e=>{C(e),I(`My diary`)},onExercise:y}),(0,A.jsx)(mpMothersWomenCard,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}})]}),t===`Settings`&&(0,A.jsx)(Qi,{cached:l,adult:a===`adult`,onSteps:()=>I(`Today`),nickname:p,setNickname:L,onForgetDevice:te}),t===`Get support`&&(0,A.jsx)($i,{}),t===`Youth preview`&&(0,A.jsx)(Ee,{openLab:()=>I(`Youth lab`),onBack:()=>I(`Today`)}),t===`Youth lab`&&(0,A.jsx)(Ae,{onBack:()=>I(`Youth preview`)})]}),ne&&(0,A.jsx)(Te,{open:()=>I(`Youth preview`)}),N&&(0,A.jsx)(`p`,{role:`status`,children:N}),(0,A.jsxs)(`footer`,{children:[(0,A.jsx)(`span`,{children:`MindPal · a little space for you`}),(0,A.jsxs)(`button`,{onClick:()=>I(`Get support`),children:[`Help is always available `,(0,A.jsx)(nn,{size:14})]})]})]}),!mpShowSignInGate()||a!==`adult`?(0,A.jsx)(Ir,{items:Bi,active:t,onSelect:I}):null]}),v&&(0,A.jsx)(Ji,{onAlternative:()=>y(`E01`),id:v,onClose:()=>y(null),onHelp:()=>I(`Get support`),onFinish:()=>{y(null),C(`After that small pause, I noticed…`),I(`My diary`)}},v),b&&(0,A.jsx)(gi,{onAlternative:b===`V03`?()=>{x(null),y(`E01`)}:void 0,video:mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).find(e=>e.id===b),onClose:()=>x(null),onHelp:()=>I(`Get support`)})]})}/*mp-maddy-ui-start*/function MpLibraryHost(){
   let[e,t]=(0,_.useState)(null);
   let n=(0,_.useId)();
   let r=(0,_.useRef)(null);
