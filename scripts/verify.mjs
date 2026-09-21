@@ -25,7 +25,10 @@ const checks = [
   [js.includes("Open draft"), "Open draft CTA is present"],
   [js.includes("HeyGen not rendered yet"), "draft modal copy is present"],
   [!js.includes("HeyGen production planned"), "old HeyGen placeholder copy removed"],
-  [((js.match(/publicEligible:!1/g) || []).length >= 12), "catalog drafts stay publicEligible false"],
+  [((js.match(/publicEligible:!1/g) || []).length >= 11), "remaining catalog drafts stay publicEligible false"],
+  [js.includes(`"id": "V02"`) && js.includes("/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4"), "V02 catalog points at the Pages MP4"],
+  [js.includes(`"publicationStatus": "PUBLISHED"`) && js.includes(`"rightsStatus": "CLEARED"`), "V02 publication gates are cleared"],
+  [!sw.includes("videos/v02"), "service worker does not precache the V02 MP4"],
   [js.includes("Watch with Maddy"), "Watch with Maddy section is in the bundle"],
   [js.includes("/videos/maddy/welcome.mp4") && js.includes("/videos/maddy/tip.mp4") && js.includes("/videos/maddy/timed-breath.mp4"), "Maddy MP4 srcs are in the bundle"],
   [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
@@ -133,6 +136,7 @@ const maddyFiles = [
   ["videos/maddy/welcome.mp4", 2163855],
   ["videos/maddy/tip.mp4", 1946389],
   ["videos/maddy/timed-breath.mp4", 6126749],
+  ["videos/v02/MP-V02-en-AU-v1.1b-web.mp4", 2050995],
 ];
 for (const [rel, size] of maddyFiles) {
   const path = join(root, rel);

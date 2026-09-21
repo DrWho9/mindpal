@@ -1,11 +1,14 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import {
   hasPlayableMediaUrl,
   isVideoPlayable,
+  mergedLibraryVideos,
+  overlayCatalogVideo,
+  publishedLibrarySrc,
   videoCardAriaLabel,
   videoCardCta,
 } from "../src/videos/playback.js";
@@ -15,8 +18,11 @@ const catalog = JSON.parse(
   readFileSync(join(root, "../src/data/videos-catalog.json"), "utf8"),
 );
 
+const V02_FILE = "videos/v02/MP-V02-en-AU-v1.1b-web.mp4";
+const V02_PUBLIC = "/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4";
+
 describe("videos catalog V01–V12", () => {
-  it("is twelve unproduced drafts", () => {
+  it("keeps Wave B drafts unproduced and publishes Wave A V02", () => {
     const ids = catalog.videos.map((item) => item.id);
     assert.deepEqual(ids, [
       "V01",
@@ -32,7 +38,25 @@ describe("videos catalog V01–V12", () => {
       "V11",
       "V12",
     ]);
-    for (const video of catalog.videos) {
+    const v02 = catalog.videos.find((item) => item.id === "V02");
+    assert.equal(v02.videoUrl, V02_PUBLIC);
+    assert.equal(v02.src, "/videos/v02/MP-V02-en-AU-v1.1b-web.mp4");
+    assert.equal(v02.publicEligible, true);
+    assert.equal(v02.publicationStatus, "PUBLISHED");
+    assert.equal(v02.clinicalStatus, "APPROVED");
+    assert.equal(v02.rightsStatus, "CLEARED");
+    assert.equal(v02.captionUrl, undefined);
+    assert.equal(isVideoPlayable(v02), true);
+    assert.equal(videoCardCta(v02), "Play");
+    assert.match(videoCardAriaLabel(v02), /Play/);
+    assert.equal(publishedLibrarySrc(v02.src), V02_PUBLIC);
+
+    const path = join(root, "../", V02_FILE);
+    assert.equal(existsSync(path), true, path);
+    assert.equal(statSync(path).size, 2050995);
+    assert.equal(readFileSync(path).subarray(4, 8).toString("ascii"), "ftyp");
+
+    for (const video of catalog.videos.filter((item) => item.id !== "V02")) {
       assert.equal(video.videoUrl, null);
       assert.equal(video.publicEligible, false);
       assert.equal(video.publicationStatus, "UNPRODUCED");
@@ -73,5 +97,20 @@ describe("Play gate", () => {
 
   it("does not treat a youtube page as playable media", () => {
     assert.equal(hasPlayableMediaUrl("https://www.youtube.com/watch?v=abc"), false);
+  });
+
+  it("overlays the published catalog onto a vendor draft row", () => {
+    const vendor = {
+      id: "V02",
+      videoUrl: null,
+      publicEligible: false,
+      publicationStatus: "UNPRODUCED",
+    };
+    const merged = overlayCatalogVideo(vendor, catalog);
+    assert.equal(merged.videoUrl, V02_PUBLIC);
+    assert.equal(isVideoPlayable(merged), true);
+    const list = mergedLibraryVideos([vendor, { id: "V03", videoUrl: null }], catalog);
+    assert.equal(list[0].publicationStatus, "PUBLISHED");
+    assert.equal(list[1].publicationStatus, "UNPRODUCED");
   });
 });

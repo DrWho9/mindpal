@@ -69,11 +69,16 @@ describe("signed coach related videos", () => {
     assert.equal(aliased[0]?.id, "V99");
   });
 
-  it("uses Open draft for current catalog rows", () => {
+  it("uses Play for published V02 and Open draft for remaining rows", () => {
     for (const look of Object.values(looks)) {
       for (const video of videosForCoach(look, catalog.videos)) {
-        assert.equal(isVideoPlayable(video), false);
-        assert.equal(videoCardCta(video), "Open draft");
+        if (video.id === "V02") {
+          assert.equal(isVideoPlayable(video), true);
+          assert.equal(videoCardCta(video), "Play");
+        } else {
+          assert.equal(isVideoPlayable(video), false);
+          assert.equal(videoCardCta(video), "Open draft");
+        }
       }
     }
   });
