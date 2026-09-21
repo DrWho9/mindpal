@@ -25,7 +25,10 @@ const checks = [
   [js.includes("Open draft"), "Open draft CTA is present"],
   [js.includes("HeyGen not rendered yet"), "draft modal copy is present"],
   [!js.includes("HeyGen production planned"), "old HeyGen placeholder copy removed"],
-  [((js.match(/publicEligible:!1/g) || []).length >= 12), "catalog drafts stay publicEligible false"],
+  [((js.match(/publicEligible:!1/g) || []).length >= 11), "remaining catalog drafts stay publicEligible false"],
+  [js.includes(`"id": "V02"`) && js.includes("/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4"), "V02 catalog points at the Pages MP4"],
+  [js.includes(`"publicationStatus": "PUBLISHED"`) && js.includes(`"rightsStatus": "CLEARED"`), "V02 publication gates are cleared"],
+  [!sw.includes("videos/v02"), "service worker does not precache the V02 MP4"],
   [js.includes("Watch with Maddy"), "Watch with Maddy section is in the bundle"],
   [js.includes("/videos/maddy/welcome.mp4") && js.includes("/videos/maddy/tip.mp4") && js.includes("/videos/maddy/timed-breath.mp4"), "Maddy MP4 srcs are in the bundle"],
   [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
@@ -34,8 +37,8 @@ const checks = [
   [sw.includes("denylist:[/\\/videos\\//") && sw.includes("mp4|webm"), "service worker does not treat MP4 navigations as the app shell"],
   [!/sk-[A-Za-z0-9]{20,}/.test(html) && !/sk-[A-Za-z0-9]{20,}/.test(js), "no leaked secret prefixes"],
   [js.includes("Do this next"), "numbered day-steps are present"],
-  [js.includes("Follow today’s steps — Morning, Day, then Night."), "Today hub flow copy is present"],
-  [js.includes("Today’s verse — tap to expand"), "Morning verse starts collapsed"],
+  [js.includes("Start with Individual Growth") && js.includes("four personal steps"), "Today hub flow copy is present"],
+  [js.includes("Settle / breathe") && js.includes("One win / intention"), "Individual Growth steps are present"],
   [js.includes("mp-day-band") && js.includes("mp-band-${e.id}"), "Morning/Day/Night bands are present"],
   [js.includes("Readings — Verse of the day"), "compact Readings row is present"],
   [js.includes("Open Watch with Maddy"), "Maddy teaser links out from Today"],
@@ -59,6 +62,10 @@ const checks = [
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],
   [js.includes("mpAccountFooter"), "Settings account footer is present"],
+  [js.includes("mpAccountProfileCard") && js.includes("Age and gender:"), "Settings local account can edit age and gender"],
+  [js.includes("MINDPAL FACTS") && js.includes("not a diagnosis and not medical advice"), "sign-up MindPal facts card is present"],
+  [js.includes("ageBand:``,gender:``"), "new local profiles start without age or gender"],
+  [js.includes("mpNeedsFaithSetup()||mpNeedsProfileSetup()"), "first-run gate waits for age and gender"],
   [!js.includes("(0,A.jsx)(Nt,{})"), "mid-page LOCAL ACCOUNT card is unmounted"],
   [js.includes("theme_tags"), "Pack A theme tags are in the bundle"],
   [js.includes("Wins, photos and friends stay on this device"), "Settings notes future backend for wins/photos/friends"],
@@ -122,8 +129,17 @@ const checks = [
   [!js.includes("className:`brand`,onClick:()=>I(`Today`)"), "sidebar brand no longer uses the raw Today setter"],
   [!js.includes("showModal"), "native dialogs are modeless so the brand can receive clicks"],
   [js.includes("Work team morning ritual") && js.includes("mpTeamRitualCard"), "optional team morning ritual card is present"],
+  [js.includes("mpIndividualGrowthCard") && js.includes("MINDPAL · INDIVIDUAL GROWTH") && js.includes("Settle / breathe"), "Individual Growth 4-step accordion is present"],
+  [js.includes("TEAM GROWTH") && js.includes("mp-band-team"), "Team Growth sits in its own band"],
+  [js.indexOf("mpIndividualGrowthCard") < js.indexOf("mpProblemHubList,{variant:`today`") && js.indexOf("mpProblemHubList,{variant:`today`") < js.indexOf("mp-band-team"), "Today order is Individual, then Support chips, then Team"],
+  [!js.includes("See the two steps"), "stale two-step copy is gone"],
   [js.includes("mpTeamRitualPage") && js.includes("t===`Team morning`"), "team morning ritual page is routed"],
-  [js.includes("Step 1 · Breathe") && js.includes("Step 2 · Peaceful reading"), "team ritual keeps breath before reading"],
+  [js.includes("MindPal is glad you’re here") && js.includes("mp-team-ritual-open"), "team ritual opens with a MindPal line"],
+  [js.includes("mp-team-breath-count") && js.includes("MindPal counts down each phase"), "team ritual breath cue counts down in-phase"],
+  [js.includes("I’m done") && js.includes("Skip this breath") && !/onClick:\(\)=>E\(`breathe`,`done`\),children:`That’s enough`/.test(js), "team ritual breath done button says I’m done"],
+  [js.includes("Breathe (~3 min)") && js.includes("Verse of the day") && js.includes("Peaceful reading") && js.includes("TEAM_RITUAL_FLOW"), "team ritual is breathe then verse then reading"],
+  [js.includes("Read the whole chapter — tap to expand") && js.includes("mp-team-step-body"), "team ritual accordion keeps chapter expand inside one step"],
+  [js.includes("mpFoldSection") && js.includes("mp-lane-mothers") && js.includes("mp-fold-head"), "mothers hub sections are accordion folds"],
   [js.includes("maddy-timed-breath") && js.includes("/videos/maddy/timed-breath.mp4"), "team ritual reuses Maddy timed breath"],
   [js.includes("does not mark a Pack A") && js.includes("mindpal.teamMorningRitual.v1"), "team ritual reading stays off the Pack A Done gate"],
   [js.includes("onOpenTeamRitual:()=>I(`Team morning`)"), "Today Morning card opens the team ritual"],
@@ -149,6 +165,7 @@ const maddyFiles = [
   ["videos/maddy/welcome.mp4", 2163855],
   ["videos/maddy/tip.mp4", 1946389],
   ["videos/maddy/timed-breath.mp4", 6126749],
+  ["videos/v02/MP-V02-en-AU-v1.1b-web.mp4", 2050995],
 ];
 for (const [rel, size] of maddyFiles) {
   const path = join(root, rel);
@@ -176,8 +193,11 @@ if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")
 if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
   throw new Error("Support/Growth group styles missing");
 }
-if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock")) {
+if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count") || !css.includes(".mp-fold-head")) {
   throw new Error("team morning ritual styles missing");
+}
+if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
+  throw new Error("Individual Growth / Team Growth band styles missing");
 }
 if (!css.includes(".mp-faith-chip") || !css.includes(".mp-account-faith")) {
   throw new Error("faith preference chip styles missing");

@@ -58,10 +58,11 @@ describe("video card click smoke", () => {
     assert.equal(fired, 3);
   });
 
-  it("opens a script modal for every HeyGen Open draft card", () => {
+  it("opens a script modal for remaining HeyGen drafts and plays V02", () => {
     let fired = 0;
     const opened = [];
-    for (const video of heygenCatalog.videos) {
+    const drafts = heygenCatalog.videos.filter((item) => item.id !== "V02");
+    for (const video of drafts) {
       const result = activateLibraryVideo(video, (id) => {
         fired += 1;
         opened.push(id);
@@ -71,11 +72,20 @@ describe("video card click smoke", () => {
       assert.equal(result.cta, "Open draft");
       assert.equal(result.opens, "script");
     }
-    assert.equal(fired, 12);
+    assert.equal(fired, 11);
     assert.deepEqual(
       opened,
-      heygenCatalog.videos.map((item) => item.id),
+      drafts.map((item) => item.id),
     );
+    const v02 = heygenCatalog.videos.find((item) => item.id === "V02");
+    const play = activateLibraryVideo(v02, () => {
+      fired += 1;
+    });
+    assert.equal(play.fired, true);
+    assert.equal(play.playable, true);
+    assert.equal(play.cta, "Play");
+    assert.equal(play.opens, "player");
+    assert.equal(play.src, "/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4");
   });
 
   it("treats Feelings Maddy rows as Play with a Pages MP4 src", () => {
