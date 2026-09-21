@@ -125,6 +125,9 @@ function wrapRuntime() {
   const meditations = stripExports(
     readFileSync(join(root, "src/videos/yt-meditations.js"), "utf8"),
   );
+  const ytDirectory = stripExports(
+    readFileSync(join(root, "src/videos/yt-directory.js"), "utf8"),
+  );
   const emotions = stripExports(
     readFileSync(join(root, "src/videos/emotions.js"), "utf8"),
   );
@@ -194,7 +197,7 @@ function wrapRuntime() {
     moduleSource("src/today/team-ritual.js"),
     moduleSource("src/nav/home.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${ytDirectory}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences};
@@ -253,6 +256,8 @@ function patchJs(source) {
     if (gtStart < 0 || gtEnd < 0) throw new Error("signed coaches anchor missing");
     next = `${next.slice(0, gtStart)}/*mp-gt-start*/${gt}/*mp-gt-end*/${next.slice(gtEnd)}`;
   }
+
+  next = patchYtDirectory(next);
 
   next = replaceOnce(
     next,
@@ -550,7 +555,53 @@ function patchJs(source) {
   if (next.includes("(0,A.jsx)(ge,{initialTopic:")) {
     throw new Error("Feelings Videos still mounts the speaker picker");
   }
+  if (!next.includes("filterDirectoryEntries") || !next.includes("directoryOpenUrl")) {
+    throw new Error("YouTube directory search/open helpers missing");
+  }
+  if (!next.includes("mp-yt-dir-search") || !next.includes("youtube-speaker-filter")) {
+    throw new Error("YouTube directory search form missing");
+  }
+  if (!next.includes("type:`submit`") || !next.includes("children:`Search`")) {
+    throw new Error("YouTube directory Search button missing");
+  }
+  if (next.includes("This draft preview has no videos cleared for ordinary release")) {
+    throw new Error("empty draft-preview directory copy must not remain");
+  }
   return next;
+}
+
+function patchYtDirectory(source) {
+  const inject = readFileSync(join(root, "src/patches/yt-directory.inject.js"), "utf8").trim();
+  let next = source;
+  const oldGate =
+    "function ue(e,t,n=[],r=Date.now()){return!n.includes(e.id)&&e.reviewStatus!==`withheld`&&!e.editorialHold&&e.selection?.state!==`hold`&&e.availability===`checked`&&ce(e.checkedAt)&&Date.parse(e.checkedAt)<=r&&!!e.evidenceUrl&&!!w(e.url)&&(le(e,r)||t===`draft-review`)}";
+  const newGate =
+    "function ue(e,t,n=[],r=Date.now()){return mpReadings.isDirectoryOpenable(e)}";
+  if (next.includes(oldGate)) {
+    next = replaceOnce(next, oldGate, newGate, "yt-directory-open-gate");
+  } else if (!next.includes(newGate) && !next.includes("mpReadings.isDirectoryOpenable(e)")) {
+    throw new Error("YouTube directory open-gate anchor missing");
+  }
+  if (next.includes("/*mp-yt-dir-start*/")) {
+    return replaceMarkedOrOnce(
+      next,
+      "/*mp-yt-dir-start*/",
+      "/*mp-yt-dir-end*/",
+      inject,
+      "",
+      "yt-directory",
+    );
+  }
+  const start = next.indexOf(
+    "function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i})",
+  );
+  const end = next.indexOf(
+    "function ve({onDiary:e,onPractice:t,onLeave:n,onDirectory:r})",
+  );
+  if (start < 0 || end < 0 || end <= start) {
+    throw new Error("YouTube directory page anchor missing");
+  }
+  return `${next.slice(0, start)}/*mp-yt-dir-start*/${inject}/*mp-yt-dir-end*/${next.slice(end)}`;
 }
 
 function patchFeelingsVideos(source, feelingsUi) {
