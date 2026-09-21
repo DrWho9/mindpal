@@ -17,6 +17,11 @@ function MpLibraryHost(){
     t(null);
   };
   (0,_.useEffect)(()=>{
+    function e(){a()}
+    window.addEventListener(mpNav.HOME_EVENT,e);
+    return()=>window.removeEventListener(mpNav.HOME_EVENT,e);
+  },[]);
+  (0,_.useEffect)(()=>{
     if(!e)return;
     let t=document.activeElement,n=()=>r.current?.querySelector(`button`)?.focus(),i=e=>{r.current?.contains(e.target)||n()},o=document.body.style.overflow;
     return document.body.style.overflow=`hidden`,n(),document.addEventListener(`focusin`,i),()=>{document.removeEventListener(`focusin`,i),document.body.style.overflow=o,t?.focus()};

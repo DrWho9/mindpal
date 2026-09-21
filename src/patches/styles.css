@@ -27,6 +27,77 @@ button.video-card:focus-visible{outline-offset:4px;outline:3px solid #a05a32}
 .app.mp-signin-shell .sidebar-bottom,
 .app.mp-signin-shell .demo-banner,
 .app.mp-signin-shell .bottom-nav{display:none}
+
+/* Brand stays above sheets so MindPal is always a home control.
+   Vendor sheets used dialog.showModal(), which inerts the page so
+   the wordmark cannot receive clicks. They are modeless now; keep
+   them centered and dim only the workspace. */
+.sidebar{z-index:50}
+.topbar{z-index:51}
+button.brand{
+  cursor:pointer;
+  background:transparent;
+  border:0;
+  font:inherit;
+  color:inherit;
+}
+.mp-top-brand{display:none}
+dialog[open]{
+  position:fixed;
+  top:50%;
+  left:calc(246px + (100vw - 246px) / 2);
+  transform:translate(-50%,-50%);
+  margin:0;
+  height:fit-content;
+  max-height:90dvh;
+  z-index:60;
+  pointer-events:none;
+}
+dialog[open]>*{pointer-events:auto}
+.modal-backdrop{left:246px;z-index:40}
+.app:has(dialog[open]) .workspace::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  left:246px;
+  background:#24352be0;
+  -webkit-backdrop-filter:blur(5px);
+  backdrop-filter:blur(5px);
+  z-index:40;
+  pointer-events:none;
+}
+@media (width<=1180px){
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:215px}
+  dialog[open]{left:calc(215px + (100vw - 215px) / 2)}
+}
+@media (width<=900px){
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:190px}
+  dialog[open]{left:calc(190px + (100vw - 190px) / 2)}
+}
+@media (width<=640px){
+  .modal-backdrop,.app:has(dialog[open]) .workspace::before{left:0;top:64px}
+  dialog[open]{left:50%;top:calc(64px + (100dvh - 64px) / 2)}
+  dialog.thought-practice[open]{
+    inset:64px 0 0;
+    left:0;
+    top:64px;
+    height:calc(100dvh - 64px);
+    max-height:none;
+    margin:0;
+    transform:none;
+  }
+  .mp-top-brand{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin:0;
+    padding:0 4px;
+    font-size:20px;
+    font-weight:650;
+    letter-spacing:-1px;
+  }
+  .mp-top-brand img{width:22px;height:22px}
+}
 .mp-signin-page{max-width:34rem;margin:12px auto 32px;padding:8px 0 24px}
 .mp-signin-page h1{margin:.2em 0 .4em}
 .mp-signin-page input{width:100%;margin:6px 0 14px}
