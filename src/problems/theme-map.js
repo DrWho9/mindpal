@@ -8,6 +8,7 @@ export const SUPPORT_TAG_IDS = [
   "faith",
   "mothers",
   "aod",
+  "mens-health",
 ];
 
 export const GROWTH_TAG_IDS = [
@@ -38,6 +39,17 @@ export const MOTHER_SUPPORT_TAGS = [
   "guilt",
   "self-compassion",
   "faith",
+];
+
+/** Extra tags for the Men's Health hub — not their own Explore chips. */
+export const MENS_SUPPORT_TAGS = [
+  "discipline",
+  "mateship",
+  "purpose",
+  "fatherhood",
+  "emotional-courage",
+  "fitness",
+  "work",
 ];
 
 /** Extra tags for the drugs & alcohol hub — not their own Explore chips. */
@@ -202,6 +214,7 @@ const ALLOWED_TAGS = new Set([
   ...PROBLEM_TAG_IDS,
   ...MOTHER_SUPPORT_TAGS,
   ...AOD_SUPPORT_TAGS,
+  ...MENS_SUPPORT_TAGS,
   ...GROWTH_THEME_TAGS,
 ]);
 
@@ -237,6 +250,13 @@ const FEELING_TO_PROBLEM = {
   "hard-patch": "hard-patch",
   mothers: "mothers",
   motherhood: "mothers",
+  "mens-health": "mens-health",
+  discipline: "mens-health",
+  mateship: "mens-health",
+  purpose: "mens-health",
+  fatherhood: "mens-health",
+  "emotional-courage": "mens-health",
+  fitness: "mens-health",
   aod: "aod",
   alcohol: "aod",
   drugs: "aod",

@@ -101,13 +101,14 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
       (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
       (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
       (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`}),
-      (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`})
+      (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`}),
+      (0,A.jsx)(`option`,{value:`mens-health`,children:`Men's Health`})
     ]}),
     (0,A.jsx)(mpFeelingDirectory,{feelingId:t,onSpeakers:e})
   ]});
 }
 function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeakers:i}){
-  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`]];
+  let[a,o]=(0,_.useState)(``),[s,c]=(0,_.useState)(``),l=(0,_.useRef)(null),u=(0,_.useRef)(null),d=mpReadings.FEELING_EMOTIONS,f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`],[`mens-health`,`Men's Health`]];
   return(0,_.useEffect)(()=>{s&&l.current?.focus()},[s]),(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),
     (0,A.jsx)(`p`,{children:`Choose a word if it fits, or browse without choosing. You do not need to explain why you feel this way. This choice is not an assessment and is not saved or sent anywhere.`}),

@@ -166,6 +166,13 @@ function mpAccountFooter(){
     (0,A.jsx)(`p`,{className:`muted`,children:`Wins, photos and friends stay on this device. Sharing them with other people needs a future backend — nothing is uploaded today.`})
   ]});
 }
+function mpDedicatedProblemRoute(id){
+  if(mpProblems.dedicatedProblemRoute)return mpProblems.dedicatedProblemRoute(id);
+  if(id===`mothers`)return`Struggling mothers`;
+  if(id===`aod`)return`Drugs & alcohol`;
+  if(id===`mens-health`)return mpProblems.MENS_HEALTH_ROUTE||`Mens health`;
+  return`Problem`;
+}
 function mpOpenProblem(id,onOpen){
   mpProblems.selectProblem(id);
   try{window.dispatchEvent(new Event(`mindpal-problem-change`))}catch{}
@@ -174,7 +181,7 @@ function mpOpenProblem(id,onOpen){
 function mpProblemChipClass(item,open){
   let extra=item.group===`growth`||mpProblems.isGrowthProblem&&mpProblems.isGrowthProblem(item)
     ?` mp-problem-chip-growth`
-    :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:``;
+    :item.id===`mothers`?` mp-problem-chip-mothers`:item.id===`aod`?` mp-problem-chip-aod`:item.id===`mens-health`?` mp-problem-chip-mens`:``;
   return `mp-problem-chip${open?` is-open`:``}${extra}`;
 }
 function mpProblemHubList({onOpen:e,variant:t=`explore`}){
@@ -237,6 +244,14 @@ function mpAodFeelingsChip({onOpen:e}){
     (0,A.jsx)(`p`,{children:`If drink or other substances are taking up space — craving, shame, or trying again — there is a quiet directory here. Optional company, not detox and not a replacement for AOD treatment.`}),
     (0,A.jsx)(mpSupportReadings,{feelingId:`aod`,heading:`Readings for drugs & alcohol`,showChips:!1}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the drugs & alcohol space`}):null
+  ]});
+}
+function mpMensHealthFeelingsChip({onOpen:e}){
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-mens-feelings`,"aria-label":`Men's Health`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MINDPAL · MEN’S HEALTH`}),
+    (0,A.jsx)(`h2`,{children:`Men's Health`}),
+    (0,A.jsx)(`p`,{children:`There's nothing wrong with being your best self. A strength-based MindPal space for responsibility, courage, brotherhood and showing up — not a diagnosis.`}),
+    e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the Men's Health hub`}):null
   ]});
 }
 function mpMothersWomenCard({onOpen:e}){
@@ -407,11 +422,132 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
     ]})
   ]});
 }
+function mpMensAccordion({id:e,title:t,lede:n,openId:r,onToggle:i,children:a}){
+  let o=r===e;
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-hub-acc${o?` is-open`:``}`,"aria-label":t,children:[
+    (0,A.jsxs)(`button`,{className:`mp-hub-acc-toggle`,type:`button`,"aria-expanded":o,onClick:()=>i(o?``:e),children:[
+      (0,A.jsx)(`h2`,{children:t}),
+      (0,A.jsx)(`span`,{className:`mp-hub-acc-flag`,children:o?`Open · tap to hide`:`Tap to open`})
+    ]}),
+    n?(0,A.jsx)(`p`,{className:`muted`,children:n}):null,
+    o?a:null
+  ]});
+}
+function mpMensHealthHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
+  (0,_.useEffect)(()=>{mpOpenProblem(`mens-health`)},[]);
+  let[f,p]=(0,_.useState)(`picture`);
+  let[m,h]=(0,_.useState)(``);
+  let o=mpProblems.findProblem(mpProblemHubs,`mens-health`);
+  if(!o)return(0,A.jsx)(`p`,{children:`The MindPal Men's Health hub is not loaded yet.`});
+  let s=mpProblems.readingsForProblem(mpPackA,`mens-health`);
+  let stats=mpProblems.mensHealthStats?mpProblems.mensHealthStats():[];
+  let yt=mpProblems.mensHealthYoutube?mpProblems.mensHealthYoutube():[];
+  let lines=mpProblems.mensHealthHelplines?mpProblems.mensHealthHelplines():[];
+  let queued=mpProblems.mensHealthQueuedVideos?mpProblems.mensHealthQueuedVideos():[];
+  let featured=mpProblems.featuredMensHelpline?mpProblems.featuredMensHelpline():null;
+  let opener=mpProblems.ownerCompanionOpener?mpProblems.ownerCompanionOpener(`mens-health`,o.companionPrompt):o.companionPrompt;
+  function toggle(id){p(e=>e===id?``:id)}
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mens`,"aria-label":`Men's Health`,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MINDPAL · MEN’S HEALTH`}),
+    (0,A.jsx)(`h1`,{children:`Men's Health`}),
+    (0,A.jsx)(`p`,{className:`lede mp-mens-hero`,children:`There's nothing wrong with being your best self.`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`MindPal offers reflection and support — not a diagnosis, not treatment, and not a replacement for a GP or a counsellor. In immediate danger in Australia, call 000.`}),
+    (0,A.jsxs)(`section`,{className:`simple-panel mp-mens-strip`,"aria-label":`Australian men and women — official figures`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`AUSTRALIA · MEN AND WOMEN`}),
+      (0,A.jsx)(`h2`,{children:`The numbers, then the work`}),
+      (0,A.jsx)(`p`,{children:`Official ABS figures — literacy only. MindPal does not invent rates. Sources sit on each card.`}),
+      stats.length?(0,A.jsx)(`div`,{className:`mp-mens-compare`,children:stats.map(e=>(0,A.jsxs)(`article`,{className:`mp-mens-stat`,children:[
+        (0,A.jsx)(`h3`,{children:e.topic}),
+        (0,A.jsx)(`p`,{className:`muted`,children:e.period}),
+        (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Men`}),` · `,e.male]}),
+        e.maleRate?(0,A.jsx)(`p`,{className:`muted`,children:e.maleRate}):null,
+        (0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Women`}),` · `,e.female]}),
+        e.femaleRate?(0,A.jsx)(`p`,{className:`muted`,children:e.femaleRate}):null,
+        e.compare?(0,A.jsx)(`p`,{children:e.compare}):null,
+        (0,A.jsx)(`a`,{className:`text-button`,href:e.sourceUrl,target:`_blank`,rel:`noopener noreferrer`,children:e.sourceLabel})
+      ]},e.id))}):(0,A.jsx)(`p`,{children:`Official comparison figures are loading.`}),
+      (0,A.jsx)(`p`,{className:`mp-mens-bridge`,children:`The picture is uneven. The invitation is not shame. It is skill: show up for family, mates and work. There's nothing wrong with being your best self.`})
+    ]}),
+    (0,A.jsx)(mpMensAccordion,{id:`picture`,title:`The picture in Australia`,lede:`ABS suicide, prison and homelessness figures — tap to open.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      (0,A.jsx)(`p`,{children:`MindPal shows these official comparisons so the load on Australian men is not invisible. They are not a verdict on you, and they are not a diagnosis.`}),
+      stats.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:stats.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`strong`,{children:e.topic}),
+        (0,A.jsx)(`span`,{className:`muted`,children:e.period}),
+        (0,A.jsxs)(`span`,{children:[`Men: `,e.male,e.maleRate?` · ${e.maleRate}`:``]}),
+        (0,A.jsxs)(`span`,{children:[`Women: `,e.female,e.femaleRate?` · ${e.femaleRate}`:``]}),
+        e.note?(0,A.jsx)(`span`,{className:`muted`,children:e.note}):null,
+        (0,A.jsx)(`a`,{href:e.sourceUrl,target:`_blank`,rel:`noopener noreferrer`,children:e.sourceLabel})
+      ]},e.id))}):null
+    ]})}),
+    (0,A.jsx)(mpMensAccordion,{id:`bestself`,title:`Best self`,lede:`Short original MindPal readings — discipline, mateship, purpose, fatherhood, courage, sleep and work.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      (0,A.jsx)(`p`,{children:`Strength-based MindPal pieces. Opening here does not mark a Pack A day Done. Take what helps; leave the rest.`}),
+      s.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:s.map(item=>{
+        let extra=mpProblems.mensSupportTags?mpProblems.mensSupportTags(item):[];
+        let open=m===item.id;
+        return(0,A.jsxs)(`li`,{children:[
+          (0,A.jsx)(`strong`,{children:item.title}),
+          extra.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:extra.join(` · `)}):null,
+          item.excerpt&&!open?(0,A.jsx)(`p`,{children:item.excerpt}):null,
+          open?(0,A.jsxs)(`div`,{className:`mp-hub-featured-body`,children:[
+            (item.body||``).split(`\n\n`).map((para,idx)=>(0,A.jsx)(`p`,{children:para},idx)),
+            item.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,item.practice]}):null
+          ]}):null,
+          (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>h(open?``:item.id),children:open?`Hide this reading`:`Read this piece`})
+        ]},item.id);
+      })}):(0,A.jsx)(`p`,{className:`muted`,children:`MindPal best-self readings are filling.`}),
+      n?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
+    ]})}),
+    (0,A.jsx)(mpMensAccordion,{id:`watch`,title:`Watch / listen`,lede:`External YouTube only. MindPal does not host or embed these clips.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      (0,A.jsx)(`p`,{children:`Official and well-known Australian men’s health and support channels. Labelled external. Link-out only.`}),
+      yt.length?(0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:yt.map(item=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`strong`,{children:item.title}),
+        (0,A.jsx)(`span`,{className:`muted`,children:`${item.channel} · External YouTube`}),
+        item.blurb?(0,A.jsx)(`p`,{children:item.blurb}):null,
+        (0,A.jsx)(`a`,{className:`secondary`,href:item.url,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`})
+      ]},item.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube references are filling.`})
+    ]})}),
+    (0,A.jsx)(mpMensAccordion,{id:`talk`,title:`Talk to someone`,lede:`Human help. MindPal does not monitor you.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      featured?(0,A.jsxs)(`article`,{className:`mp-hub-featured mp-mens-featured-help`,"aria-label":`MensLine Australia`,children:[
+        (0,A.jsx)(`p`,{className:`eyebrow`,children:`FEATURED · MENSLINE AUSTRALIA`}),
+        (0,A.jsx)(`h3`,{children:featured.name}),
+        (0,A.jsx)(`p`,{className:`mp-mens-phone`,children:featured.phone}),
+        (0,A.jsx)(`p`,{children:featured.blurb}),
+        featured.url?(0,A.jsx)(`a`,{className:`primary`,href:featured.url,target:`_blank`,rel:`noopener noreferrer`,children:`MensLine website`}):null
+      ]}):null,
+      (0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:lines.filter(e=>!e.featured).map(item=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`strong`,{children:item.name}),
+        (0,A.jsx)(`span`,{className:`mp-mens-phone`,children:item.phone}),
+        item.blurb?(0,A.jsx)(`p`,{children:item.blurb}):null
+      ]},item.id))}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`MensLine Australia 1300 78 99 78 · Lifeline 13 11 14 · Beyond Blue 1300 22 4636 · Emergency 000. MindPal does not invent extra numbers here.`}),
+      i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null
+    ]})}),
+    (0,A.jsx)(mpMensAccordion,{id:`videos`,title:`MindPal videos (soon)`,lede:`Queued titles only. No HeyGen render in this hub.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      (0,A.jsx)(`p`,{children:`MindPal will film short companion clips for this hub later. Nothing here is a HeyGen draft and nothing is claimed as ready to play.`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Queued script titles:`}),
+      (0,A.jsx)(`ol`,{className:`mp-mens-queue`,children:queued.map(item=>(0,A.jsx)(`li`,{children:item.title},item.id))})
+    ]})}),
+    (0,A.jsx)(mpMensAccordion,{id:`companion`,title:`Companion / journal`,lede:`Optional. Software, not a therapist.`,openId:f,onToggle:toggle,children:(0,A.jsxs)(`div`,{className:`mp-hub-acc-body`,children:[
+      (0,A.jsx)(`h3`,{children:`Companion`}),
+      (0,A.jsx)(`p`,{children:`Opens Companion with a Men's Health prompt — educational and peer-like. It is software, not a therapist, and it cannot watch over you.`}),
+      e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null,
+      (0,A.jsx)(`h3`,{children:`Journal / wins`}),
+      (0,A.jsx)(`p`,{children:o.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A way I showed up today: `):null)})
+    ]})})
+  ]});
+}
 function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v}){
   let[s,c]=(0,_.useState)(()=>mpProblems.selectedProblemId());
   (0,_.useEffect)(()=>{function e(){c(mpProblems.selectedProblemId())}return window.addEventListener(`mindpal-problem-change`,e),e(),()=>window.removeEventListener(`mindpal-problem-change`,e)},[]);
   if(s===`mothers`)return(0,A.jsx)(mpMothersHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o});
   if(s===`aod`)return(0,A.jsx)(mpAodHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a});
+  if(s===`mens-health`)return(0,A.jsx)(mpMensHealthHubPage,{onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a});
   let l=mpProblems.findProblem(mpProblemHubs,s);
   if(!l)return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":`Problem hub`,children:[
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),

@@ -164,11 +164,28 @@ dialog[open]>*{pointer-events:auto}
 .mp-hub-tags{color:#6a5a3a;font-size:12px}
 .mp-problem-chip-mothers{border-color:#9a6934}
 .mp-problem-chip-aod{border-color:#8a9bb0}
-.mp-mothers-feelings,.mp-mothers-women,.mp-aod-feelings{margin:0 0 18px}
+.mp-problem-chip-mens{border-color:#3d5470}
+.mp-problem-chip-mens:hover,.mp-problem-chip-mens.is-open{background:#2a4a62;color:#f7f8f2;border-color:#2a4a62}
+.mp-mothers-feelings,.mp-mothers-women,.mp-aod-feelings,.mp-mens-feelings{margin:0 0 18px}
 .mp-lane-mothers{--mp-lane:#7a5a28}
 .mp-lane-aod{--mp-lane:#3d5470}
+.mp-lane-mens{--mp-lane:#2a4a62;background:linear-gradient(#e4eaf1,#f7f8f2 140px)}
 .mp-mothers-safety{border-color:#e2d2b0}
 .mp-aod-safety{border-color:#c5d0dc}
+.mp-mens-hero{font-weight:650;max-width:40ch}
+.mp-mens-compare{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.mp-mens-stat{background:#f4f7fb;border:1px solid #c5d0dc;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:6px}
+.mp-mens-stat h3{margin:0}
+.mp-mens-bridge{background:#eef3ea;border-left:3px solid #2f5a3d;padding:12px 14px;margin:12px 0 0;max-width:62ch}
+.mp-hub-acc{padding-top:12px}
+.mp-hub-acc-toggle{appearance:none;background:transparent;border:0;padding:0;margin:0 0 8px;width:100%;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;font:inherit;color:inherit;min-height:44px}
+.mp-hub-acc-toggle h2{margin:0}
+.mp-hub-acc-flag{color:#5c6756;font-size:13px;font-weight:650}
+.mp-hub-acc-body{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.mp-mens-phone{font-weight:750;letter-spacing:.02em;font-size:1.15rem}
+.mp-mens-queue{margin:8px 0 0;padding-left:1.2em;display:grid;gap:8px}
+.mp-mens-featured-help{background:#e8eef6}
+@media (width<=800px){.mp-mens-compare{grid-template-columns:1fr}}
 @media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
