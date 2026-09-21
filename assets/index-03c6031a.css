@@ -249,6 +249,12 @@ dialog[open]>*{pointer-events:auto}
 .mp-maddy-teaser{margin:16px 0 0;padding:12px 14px;border:1px solid #dfe4d5;border-radius:14px;background:#f7f8f2}
 .mp-maddy-teaser-label{margin:0 0 4px;font-weight:700}
 .mp-maddy-teaser .muted{margin:0 0 6px}
+.mp-v02-teaser{margin:16px 0 0;padding:14px 16px;border:1px solid #dfe4d5;border-radius:16px;background:#f4f7f0;display:flex;flex-direction:column;gap:6px}
+.mp-v02-teaser h3{margin:0;font-size:1.25rem}
+.mp-v02-teaser .primary{align-self:flex-start;margin-top:6px}
+.mp-captions-note{margin:8px 0 0;font-size:13px;line-height:1.45;max-width:62ch}
+.mp-clip-player{display:grid;gap:8px}
+.mp-clip-meta{margin:0 0 8px}
 .mp-step-readings{background:#eef5ee;border-color:#c9dccb}
 .mp-step-focus{background:#eaf1f7;border-color:#c5d4e4}
 .mp-step-journal{background:#f7eedc;border-color:#e2d2b0}
