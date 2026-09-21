@@ -5,6 +5,7 @@ import { videosForIds } from "../videos/emotions.js";
 export const KIT_READING_LIMIT = 10;
 export const KIT_BROWSE_TAG_LIMIT = 12;
 export const KIT_SECTION_IDS = ["start", "readings", "videos", "evidence", "talk", "journal"];
+const AOD_BROWSE_TAGS = new Set(["aod", "alcohol", "drugs", "craving", "recovery-shame", "learning-loop"]);
 
 const PROBLEM_ALIASES = {
   mood: "low-mood",
@@ -152,6 +153,7 @@ export function feelingKit(
   const tagCounts = new Map();
   for (const row of [startHere, ...readings].filter(Boolean)) {
     for (const tag of row.chapterTags) {
+      if (spec.id !== "aod" && AOD_BROWSE_TAGS.has(tag)) continue;
       tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
     }
   }

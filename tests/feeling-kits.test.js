@@ -42,6 +42,8 @@ describe("feeling kits", () => {
     assert.ok(kit.startHere.chapterChips.includes("#self-compassion"));
     assert.ok(kit.browseTags.length > 1);
     assert.ok(kit.browseTags.includes("self-compassion") || kit.browseTags.includes("sleep"));
+    assert.equal(kit.browseTags.includes("alcohol"), false);
+    assert.equal(kit.browseTags.includes("drugs"), false);
     assert.ok(kit.readings.every((item) => item.body && item.body.length > 80));
     assert.ok(kit.readings.every((item) => item.chapterChips.length));
     assert.ok(kit.readings.every((item) => item.title));
@@ -64,6 +66,7 @@ describe("feeling kits", () => {
     assert.match(kit.startHere.title, /Drugs and alcohol/);
     assert.match(kit.startHere.body, /puppy/);
     assert.ok(kit.browseTags.length > 1);
+    assert.ok(kit.browseTags.includes("alcohol") || kit.browseTags.includes("drugs"));
     assert.ok(kit.readings.length >= 6 && kit.readings.length <= 10);
     assert.equal(kit.videos.some((item) => item.id === "V02"), true);
     assert.equal(kit.videos.find((item) => item.id === "V02").cta, "Play");
