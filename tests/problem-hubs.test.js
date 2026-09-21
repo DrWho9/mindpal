@@ -244,6 +244,8 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersWomenCard/);
     assert.match(inject, /No speaker library dump here/);
     assert.match(inject, /Need support/);
+    assert.match(inject, /mpHubOpenableReadings,\{readings:s/);
+    assert.match(inject, /function mpBookReader\(/);
   });
 
   it("wires a dedicated drugs & alcohol hub with safety copy", () => {

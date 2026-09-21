@@ -70,6 +70,10 @@ const checks = [
   [js.includes("theme_tags"), "Pack A theme tags are in the bundle"],
   [js.includes("Wins, photos and friends stay on this device"), "Settings notes future backend for wins/photos/friends"],
   [js.includes("Before you sleep"), "evening step is present"],
+  [js.includes("function mpNightBand(") && js.includes("Open Journal"), "Today Night journal band is present"],
+  [js.includes("function mpBookReader(") && js.includes("mpHubOpenableReadings"), "reusable book reader is present"],
+  [js.includes("Open the book reader") && js.includes("openReading"), "peaceful reading opens the book reader"],
+  [js.includes("{name:`My diary`,icon:rn}"), "sidebar Journal item is present"],
   [js.includes("mindpal.todaySteps.v1"), "day-steps storage key is present"],
   [js.includes("mindpal.dailyWins.v1"), "daily wins storage key is present"],
   [js.includes("Show Coptic calendar date"), "Coptic settings toggle is present"],
@@ -168,6 +172,9 @@ if (!css.includes(".brand-quote") || !css.includes("quotes:none")) {
 }
 if (!css.includes("mp-band-morning") || !css.includes("mp-band-night") || !css.includes("mp-verse-collapse")) {
   throw new Error("Morning/Day/Night band styles missing");
+}
+if (!css.includes("mp-night-journal") || !css.includes("mp-peaceful-peek") || !css.includes("mp-book-reader")) {
+  throw new Error("Night journal and book-reader styles missing");
 }
 if (!css.includes("mp-emotion-crumb") || !css.includes("mp-emotion-video")) {
   throw new Error("emotion video directory styles missing");

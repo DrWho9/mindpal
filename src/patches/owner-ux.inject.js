@@ -291,6 +291,104 @@ function mpCollapsedVerse(){
     (0,A.jsx)(mpMorningVerse,{})
   ]});
 }
+function mpChapterTags(reading){
+  if(mpReadings.readingTags)return mpReadings.readingTags(reading).map(mpReadings.formatTag).filter(Boolean);
+  return[];
+}
+function mpTodayPackReading(){
+  try{
+    let e=mpReadings.loadProgress();
+    let t=mpReadings.packAComplete(e);
+    let n=mpReadings.orderedReadings(t?mpPackB:mpPackA);
+    return t?mpReadings.pickRandom(n):mpReadings.nextIncomplete(n,e.completedIds);
+  }catch{return null}
+}
+function mpOpenBookReader(id,onNavigate){
+  if(id&&mpReadings.openReading)mpReadings.openReading(id);
+  onNavigate&&onNavigate();
+}
+function mpBookReader({reading:e,readings:t,onBack:n,markGate:g=!0}){
+  let[r,i]=(0,_.useState)(()=>mpReadings.loadProgress());
+  let[a,o]=(0,_.useState)(``);
+  let{listening:s,listenStatus:c,toggle:l}=mt();
+  if(!e)return(0,A.jsx)(`p`,{children:`No reading is loaded yet.`});
+  let u=t||(mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA));
+  let d=e.pack===`owner`||e.gate===!1;
+  let f=g&&!d&&mpReadings.canMarkDone(u,r.completedIds,e);
+  let p=mpChapterTags(e);
+  function m(){
+    if(!f)return;
+    let n=mpReadings.markReadingDone(r,e,u);
+    mpReadings.saveProgress(n);i(n);o(`Marked Done. Opening or listening does not count.`);
+  }
+  return(0,A.jsxs)(`article`,{className:`activity-detail mindpal-daily-reading mp-book-reader`,"aria-label":e.title,"data-reading-id":e.id,children:[
+    n?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:n,children:`← Back to readings list`}):null,
+    (0,A.jsxs)(`p`,{className:`eyebrow`,children:[d?`SUPPORT READING · MINDPAL ORIGINAL`:`DAILY READING · PACK A · DAY ${e.day}`,e.theme_label?` · ${e.theme_label}`:``]}),
+    (0,A.jsx)(`h3`,{children:e.title}),
+    p.length?(0,A.jsx)(`p`,{className:`mp-hub-tags mp-support-row-tags`,children:p.join(` `)}):null,
+    (e.body||``).split(`\n\n`).map((e,t)=>(0,A.jsx)(`p`,{children:e},t)),
+    e.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,e.practice]}):null,
+    (0,A.jsx)(`p`,{className:`mindpal-reading-credit`,children:d?`MindPal original support reading — always open. Opening here does not mark a Pack A day Done.`:mpReadings.PACK_A_CREDIT}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      g&&!d?(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!f,onClick:m,children:r.completedIds.includes(e.id)?`Done`:`Done for today`}):null,
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l({id:e.id,text:yt(e)}),children:s?`Pause`:`Listen`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let t=await ft((typeof yt==`function`?yt(e):e.body||``)+`
+
+— MindPal daily reading`);o(t===`copied`?`Copied.`:`Could not copy.`);setTimeout(()=>o(``),2e3)},children:`Copy`}),
+      n?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:n,children:`Back to list`}):null
+    ]}),
+    a||c?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:a||c}):null
+  ]});
+}
+function mpHubOpenableReadings({readings:e=[],emptyLabel:t=`No tagged readings yet.`,onExplore:n}={}){
+  let[r,i]=(0,_.useState)(null);
+  let s=mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA);
+  let c=r&&(e.find(e=>e.id===r)||(mpReadings.findReadingById?mpReadings.findReadingById(r,s,mpPackA,mpPackB):null))||null;
+  if(c)return(0,A.jsx)(mpBookReader,{reading:c,readings:s,onBack:()=>i(null),markGate:!0});
+  return(0,A.jsxs)(A.Fragment,{children:[
+    e.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings mp-support-list`,children:e.map(t=>{
+      let n=mpChapterTags(t);
+      let r=t.pack===`owner`||t.gate===!1;
+      return(0,A.jsxs)(`li`,{children:[(0,A.jsxs)(`button`,{type:`button`,className:`mp-support-row`,onClick:()=>i(t.id),children:[
+        (0,A.jsx)(`span`,{className:`mp-support-row-meta`,children:r?`MindPal original · always open`:`Day ${t.day}${t.theme_label?` · ${t.theme_label}`:``}`}),
+        (0,A.jsx)(`strong`,{children:t.title}),
+        n.length?(0,A.jsx)(`span`,{className:`mp-support-row-tags`,children:n.join(` `)}):null
+      ]})]},t.id);
+    })}):t?(0,A.jsx)(`p`,{className:`muted`,children:t}):null,
+    n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
+  ]});
+}
+function mpPeacefulReadingPeek({onOpen:e}){
+  let n=mpTodayPackReading();
+  if(!n)return null;
+  return(0,A.jsxs)(`aside`,{className:`mp-peaceful-peek`,"aria-label":`Peaceful reading`,children:[
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`PEACEFUL READING`}),
+    (0,A.jsx)(`h3`,{children:n.title}),
+    (0,A.jsx)(`p`,{className:`muted`,children:n.theme_label?`Pack A · Day ${n.day} · ${n.theme_label}`:`Pack A · Day ${n.day}`}),
+    (0,A.jsx)(`p`,{children:`Open the full chapter — body, practice, Listen and Done — not just the title.`}),
+    e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenBookReader(n.id,e),children:`Open the book reader`}):null
+  ]});
+}
+function mpNightBand({day:e,isNext:t,onOpenJournal:n,onMark:r}){
+  let i=mpTodaySteps.stepStatus(e,`evening`);
+  return(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-night mp-night-journal`,"aria-label":`Night · Before you sleep`,children:[
+    (0,A.jsxs)(`div`,{className:`mp-night-head`,children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:`NIGHT`}),
+      t?(0,A.jsx)(`span`,{className:`mp-do-next`,children:`Do this next`}):null,
+      i===`done`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Done`}):null,
+      i===`skipped`?(0,A.jsx)(`span`,{className:`mp-step-flag`,children:`Skipped`}):null
+    ]}),
+    (0,A.jsx)(`h2`,{children:`Before you sleep`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:`Read today’s wins, then leave a short wind-down note in Journal. Nothing here is required.`}),
+    (0,A.jsx)(mpWinsPanel,{variant:`evening`}),
+    (0,A.jsxs)(`div`,{className:`button-row`,children:[
+      n?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:n,children:`Open Journal`}):null,
+      i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>r&&r(`evening`,`done`),children:`Mark done`}):null,
+      i===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>r&&r(`evening`,`skipped`),children:`Skip`}):null,
+      i!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>r&&r(`evening`,`todo`),children:`Undo`}):null
+    ]})
+  ]});
+}
 function mpReadingsPage(){
   let[e,t]=(0,_.useState)(()=>mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}));
   (0,_.useEffect)(()=>{function n(){t(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))}return window.addEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.addEventListener(`mindpal-session-change`,n),()=>{window.removeEventListener(mpFaith.FAITH_CHANGE_EVENT,n),window.removeEventListener(`mindpal-session-change`,n)}},[]);
@@ -320,7 +418,7 @@ function mpEveningPage({onJournal:e}){
     (0,A.jsx)(`p`,{className:`lede`,children:`Read today’s wins if you saved any, then leave a short wind-down note in Journal. Nothing here is required.`}),
     (0,A.jsx)(mpWinsPanel,{variant:`evening`}),
     (0,A.jsx)(`p`,{children:`When you’re ready, open Journal for a few lines before sleep — a sentence about the day is plenty.`}),
-    e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Write a short wind-down note`}):null
+    e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open Journal`}):null
   ]});
 }
 function mpMoreStepsCard(){
@@ -484,16 +582,8 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
     (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse.`}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Verse / Readings`}),
-      (0,A.jsx)(`p`,{children:`Support excerpts tagged for motherhood, exhaustion, overwhelm, guilt, self-compassion and faith. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
-      s.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:s.map(e=>{
-        let t=mpProblems.motherSupportTags?mpProblems.motherSupportTags(e):[];
-        return(0,A.jsxs)(`li`,{children:[
-          (0,A.jsx)(`strong`,{children:e.title}),
-          (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]}),
-          t.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:t.join(` · `)}):null
-        ]},e.id);
-      })}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged mother readings yet.`}),
-      n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
+      (0,A.jsx)(`p`,{children:`Open a full daily chapter — body, practice, Listen and tags. The main Readings path still unlocks one Pack A morning at a time — opening here does not mark a day Done.`}),
+      (0,A.jsx)(mpHubOpenableReadings,{readings:s,emptyLabel:`No tagged mother readings yet.`,onExplore:n})
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Videos`}),
@@ -575,15 +665,7 @@ function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i
           e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(opener);e(opener)},children:`Talk this through with Companion`}):null
         ]})
       ]}):null,
-      d.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:d.map(e=>{
-        let t=mpProblems.aodSupportTags?mpProblems.aodSupportTags(e):[];
-        return(0,A.jsxs)(`li`,{children:[
-          (0,A.jsx)(`strong`,{children:e.title}),
-          (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]}),
-          t.length?(0,A.jsx)(`span`,{className:`mp-hub-tags`,children:t.join(` · `)}):null
-        ]},e.id);
-      })}):u?null:(0,A.jsx)(`p`,{className:`muted`,children:`No tagged drugs & alcohol readings yet.`}),
-      n?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:n,children:`Open today’s Readings`}):null
+      (0,A.jsx)(mpHubOpenableReadings,{readings:d,emptyLabel:u?``:`No tagged drugs & alcohol readings yet.`,onExplore:n})
     ]}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Videos`}),
@@ -651,12 +733,8 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
     (0,A.jsx)(`p`,{className:`muted`,children:mpProblemHubs.disclaimer}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
       (0,A.jsx)(`h2`,{children:`Readings`}),
-      (0,A.jsx)(`p`,{children:`Pack A mornings tagged for this theme. The daily Done gate still lives on the Readings page.`}),
-      u.length?(0,A.jsx)(`ul`,{className:`mp-hub-readings`,children:u.map(e=>(0,A.jsxs)(`li`,{children:[
-        (0,A.jsx)(`strong`,{children:e.title}),
-        (0,A.jsxs)(`span`,{className:`muted`,children:[`Day `,e.day,e.theme_label?` · ${e.theme_label}`:``]})
-      ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:`No tagged readings for this theme yet.`}),
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>r&&r(),children:`Open today’s Readings`})
+      (0,A.jsx)(`p`,{children:`Pack A mornings tagged for this theme. Tap a title to open the full chapter. The daily Done gate still lives on the Readings page.`}),
+      (0,A.jsx)(mpHubOpenableReadings,{readings:u,emptyLabel:`No tagged readings for this theme yet.`,onExplore:r})
     ]}),
     (0,A.jsx)(mpSupportVideos,{initialTag:videoTag,heading:growth?`Videos for this theme`:`Videos for this feeling`,showChips:!1,onSpeakers:v}),
     (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
@@ -859,7 +937,11 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
     let n=mpTodaySteps.saveDay(mpTodaySteps.markStep(u,e,t));
     d(n);
   }
-  let h={readings:t,focus:n,later:i||n,evening:a||r};
+  function openPeaceful(){
+    let e=mpTodayPackReading();
+    mpOpenBookReader(e&&e.id,t);
+  }
+  let h={readings:openPeaceful,focus:n,later:i||n,evening:r||a};
   return(0,A.jsxs)(`section`,{className:`today-shortcuts mp-today-hub`,"aria-label":`Today’s steps`,children:[
     (0,A.jsxs)(`header`,{className:`today-greeting`,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:`TODAY`}),
@@ -869,11 +951,12 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
     (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),
-    mpTodaySteps.BANDS.map(e=>(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
+    mpTodaySteps.BANDS.map(e=>e.id===`night`?(0,A.jsx)(mpNightBand,{day:u,isNext:f===`evening`,onOpenJournal:r,onMark:m},e.id):(0,A.jsxs)(`section`,{className:`mp-day-band mp-band-${e.id}`,"aria-label":e.title,children:[
       (0,A.jsx)(`p`,{className:`eyebrow`,children:e.title.toUpperCase()}),
       (0,A.jsx)(`p`,{className:`muted`,children:e.lede}),
       e.id===`morning`?(0,A.jsx)(mpTeamRitualCard,{onOpen:w}):null,
       e.id===`morning`?(0,A.jsx)(mpCollapsedVerse,{}):null,
+      e.id===`morning`?(0,A.jsx)(mpPeacefulReadingPeek,{onOpen:t}):null,
       e.id===`morning`?(0,A.jsx)(mpWinsPanel,{variant:`hub`,onOpenJournal:o||r}):null,
       (0,A.jsx)(`ol`,{className:`mp-day-steps`,children:e.stepIds.map(t=>{
         let n=mpTodaySteps.STEP_META[t],i=mpTodaySteps.stepStatus(u,t),a=f===t,g=n.rowLabel||n.title;

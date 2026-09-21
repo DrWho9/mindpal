@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import {
   STEPS_STORAGE_KEY,
   STEP_IDS,
@@ -14,6 +17,9 @@ import {
   saveDay,
   stepRowLabel,
 } from "../src/today/steps.js";
+
+const root = dirname(fileURLToPath(import.meta.url));
+const inject = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
 
 function memoryStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -32,6 +38,15 @@ describe("today steps pathway", () => {
     assert.equal(stepRowLabel("readings"), "Readings — Verse of the day");
     assert.equal(hubStepCaption("readings"), "Step 1 · Readings — Verse of the day");
     assert.equal(hubStepCaption("evening"), "Step 4 · Before you sleep");
+  });
+
+  it("keeps a Night journal band at the bottom of Today", () => {
+    assert.match(inject, /function mpNightBand\(/);
+    assert.match(inject, /Open Journal/);
+    assert.match(inject, /e\.id===`night`\?\(0,A\.jsx\)\(mpNightBand/);
+    assert.match(inject, /Read today’s wins, then leave a short wind-down note in Journal/);
+    assert.match(inject, /function mpPeacefulReadingPeek\(/);
+    assert.match(inject, /Open the book reader/);
   });
 
   it("groups steps into Morning, Day and Night bands", () => {

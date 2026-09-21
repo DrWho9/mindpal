@@ -130,6 +130,12 @@ dialog[open]>*{pointer-events:auto}
 .mp-band-morning{background:linear-gradient(#e7efe6,#fffef9 90px)}
 .mp-band-day{background:linear-gradient(#e4eef6,#fffef9 90px)}
 .mp-band-night{background:linear-gradient(#ebe6de,#fffef9 90px)}
+.mp-night-journal{padding:16px 16px 18px}
+.mp-night-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 4px}
+.mp-night-journal .lede{margin:0 0 8px;max-width:48ch}
+.mp-peaceful-peek{background:#eef5ee;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:0 0 12px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.mp-peaceful-peek h3{margin:0}
+.mp-book-reader{margin-top:8px}
 .mp-day-band > .eyebrow{margin:0 0 2px}
 .mp-day-band > .muted{margin:0 0 10px}
 .mp-team-ritual-card{background:#fffef9;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;margin:0 0 12px}
