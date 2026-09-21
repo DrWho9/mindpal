@@ -25,7 +25,10 @@ const checks = [
   [js.includes("Open draft"), "Open draft CTA is present"],
   [js.includes("HeyGen not rendered yet"), "draft modal copy is present"],
   [!js.includes("HeyGen production planned"), "old HeyGen placeholder copy removed"],
-  [((js.match(/publicEligible:!1/g) || []).length >= 12), "catalog drafts stay publicEligible false"],
+  [((js.match(/publicEligible:!1/g) || []).length >= 11), "remaining catalog drafts stay publicEligible false"],
+  [js.includes(`"id": "V02"`) && js.includes("/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4"), "V02 catalog points at the Pages MP4"],
+  [js.includes(`"publicationStatus": "PUBLISHED"`) && js.includes(`"rightsStatus": "CLEARED"`), "V02 publication gates are cleared"],
+  [!sw.includes("videos/v02"), "service worker does not precache the V02 MP4"],
   [js.includes("Watch with Maddy"), "Watch with Maddy section is in the bundle"],
   [js.includes("/videos/maddy/welcome.mp4") && js.includes("/videos/maddy/tip.mp4") && js.includes("/videos/maddy/timed-breath.mp4"), "Maddy MP4 srcs are in the bundle"],
   [js.includes("playsInline:!0"), "Maddy cards use native playsInline video"],
@@ -59,6 +62,10 @@ const checks = [
   [js.includes("not detox") || js.includes("Not detox"), "AOD detox disclaimer is present"],
   [js.includes("not a replacement for alcohol and other drug treatment") || js.includes("not a replacement for AOD treatment"), "AOD treatment disclaimer is present"],
   [js.includes("mpAccountFooter"), "Settings account footer is present"],
+  [js.includes("mpAccountProfileCard") && js.includes("Age and gender:"), "Settings local account can edit age and gender"],
+  [js.includes("MINDPAL FACTS") && js.includes("not a diagnosis and not medical advice"), "sign-up MindPal facts card is present"],
+  [js.includes("ageBand:``,gender:``"), "new local profiles start without age or gender"],
+  [js.includes("mpNeedsFaithSetup()||mpNeedsProfileSetup()"), "first-run gate waits for age and gender"],
   [!js.includes("(0,A.jsx)(Nt,{})"), "mid-page LOCAL ACCOUNT card is unmounted"],
   [js.includes("theme_tags"), "Pack A theme tags are in the bundle"],
   [js.includes("Wins, photos and friends stay on this device"), "Settings notes future backend for wins/photos/friends"],
@@ -152,6 +159,7 @@ const maddyFiles = [
   ["videos/maddy/welcome.mp4", 2163855],
   ["videos/maddy/tip.mp4", 1946389],
   ["videos/maddy/timed-breath.mp4", 6126749],
+  ["videos/v02/MP-V02-en-AU-v1.1b-web.mp4", 2050995],
 ];
 for (const [rel, size] of maddyFiles) {
   const path = join(root, rel);

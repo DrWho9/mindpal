@@ -110,7 +110,18 @@ dialog[open]>*{pointer-events:auto}
 .mp-faith-chip{background:#fffef9;border:2px solid #7c9163;border-radius:999px;padding:10px 16px;min-height:44px;font:inherit;font-weight:650;cursor:pointer;color:#2f3b2c}
 .mp-faith-chip:hover,.mp-faith-chip.is-open{background:#2f5a3d;color:#f7f8f2;border-color:#2f5a3d}
 .mp-faith-chips-other{padding-top:4px}
+.mp-setup-step{background:#fffef9;border:1px solid #c9dccb;border-radius:12px;padding:10px 14px}
+.mp-setup-step summary{cursor:pointer;font-weight:650;min-height:40px;display:flex;align-items:center}
+.mp-setup-step[open] summary{margin-bottom:8px}
+.mp-facts-card{background:#eef3ea;border:1px solid #c9dccb;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.mp-facts-card h3{margin:.1em 0 .2em}
+.mp-facts-list{margin:4px 0 0;padding:0 0 0 1.2em;display:grid;gap:12px}
+.mp-facts-list li{padding-left:2px}
+.mp-facts-list p{margin:0 0 6px}
+.mp-fact-action{margin:0}
+.mp-facts-disclaimer{margin:4px 0 0;max-width:48ch}
 .mp-account-faith{margin:10px 0 14px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.mp-account-profile{margin-top:0}
 .mp-morning-verse{margin:0 0 12px}
 
 .mp-today-hub{margin-bottom:18px;display:flex;flex-direction:column;gap:18px}

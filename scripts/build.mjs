@@ -188,15 +188,17 @@ function wrapRuntime() {
     moduleSource("src/calendar/civil.js"),
     moduleSource("src/calendar/coptic.js"),
     moduleSource("src/prefs/faith.js"),
+    moduleSource("src/prefs/profile.js"),
     moduleSource("src/today/steps.js"),
     moduleSource("src/today/wins.js"),
     moduleSource("src/today/team-ritual.js"),
     moduleSource("src/today/individual-growth.js"),
     moduleSource("src/nav/home.js"),
   ].join("\n");
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpReadings=(function(){${progress}\n${ownerHelpers}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${emotions}\n${feelingMedia}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
+mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
@@ -352,6 +354,31 @@ function patchJs(source) {
     "video-hi-gate",
   );
 
+  next = replaceOnce(
+    next,
+    "{id:`V02`,assetIdentifier:`MP-V02-en-AU-v1.1`,title:`A gentle start to a difficult morning`,language:`en-AU`,scriptVersion:`1.1`,targetDurationSeconds:60,actualDurationSeconds:null,clinicalStatus:`DRAFT`,reviewer:null,approvedAt:null,reviewDue:`2026-12-05`,rightsStatus:`PENDING`,presenterRightsRef:null,publicationStatus:`UNPRODUCED`,sourceAssetId:null,scriptHash:`ea5a12ded6601da7179043b43c944cf9591af641433819671f80839b1e8de607`,assetHash:null,videoUrl:null,captionUrl:null",
+    "{id:`V02`,assetIdentifier:`MP-V02-en-AU-v1.1b`,title:`A gentle start to a difficult morning`,language:`en-AU`,scriptVersion:`1.1`,targetDurationSeconds:45,actualDurationSeconds:45,clinicalStatus:`APPROVED`,reviewer:null,approvedAt:null,reviewDue:`2026-12-05`,rightsStatus:`CLEARED`,presenterRightsRef:null,publicationStatus:`PUBLISHED`,sourceAssetId:null,scriptHash:`ea5a12ded6601da7179043b43c944cf9591af641433819671f80839b1e8de607`,assetHash:null,videoUrl:`/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4`,captionUrl:null",
+    "vendor-v02-playable",
+  );
+  next = replaceOnce(
+    next,
+    "placeholderLabel:`Media placeholder — no HeyGen video generated`,fallbackContentId:null,publicEligible:!1,outline:`Make room for a difficult morning.",
+    "placeholderLabel:`HeyGen Wave A · ready to play`,fallbackContentId:null,publicEligible:!0,outline:`Make room for a difficult morning.",
+    "vendor-v02-public-eligible",
+  );
+  next = replaceOnce(
+    next,
+    "a=li.videos.filter(e=>e.title.toLowerCase().includes(r.toLowerCase()))",
+    "a=mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).filter(e=>e.title.toLowerCase().includes(r.toLowerCase()))",
+    "explore-merge-catalog",
+  );
+  next = replaceOnce(
+    next,
+    "video:li.videos.find(e=>e.id===b)",
+    "video:mpReadings.mergedLibraryVideos(li.videos,typeof mpVideoCatalog<`u`?mpVideoCatalog:null).find(e=>e.id===b)",
+    "vendor-modal-merge-catalog",
+  );
+
   if (next.includes("/*mp-maddy-ui-start*/")) {
     next = replaceMarkedOrOnce(
       next,
@@ -415,6 +442,9 @@ function patchJs(source) {
   }
   if (!next.includes("/videos/maddy/welcome.mp4")) {
     throw new Error("Maddy welcome src missing from bundle");
+  }
+  if (!next.includes("/mindpal/videos/v02/MP-V02-en-AU-v1.1b-web.mp4")) {
+    throw new Error("V02 playable src missing from bundle");
   }
   if (!next.includes("playsInline:!0")) {
     throw new Error("native video playsInline missing from bundle");
@@ -572,7 +602,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "createdAt:new Date().toISOString(),preferences:{morningVerseEnabled:!0,morningPrayerEnabled:!0,tradition:`Christianity`}",
-    "createdAt:new Date().toISOString(),preferences:{morningVerseEnabled:!1,morningPrayerEnabled:!1,faithStance:``,tradition:``,traditionId:``}",
+    "createdAt:new Date().toISOString(),preferences:{morningVerseEnabled:!1,morningPrayerEnabled:!1,faithStance:``,tradition:``,traditionId:``,ageBand:``,gender:``}",
     "create-empty-faith-prefs",
   );
   next = replaceOnce(
@@ -958,8 +988,20 @@ function patchOwnerUx(source) {
   if (!next.includes("function mpNeedsFaithSetup(") || !next.includes("mpShowSignInGate()")) {
     throw new Error("first-setup faith gate is not holding the sign-in shell");
   }
+  if (!next.includes("function mpNeedsProfileSetup(") || !next.includes("mpNeedsFaithSetup()||mpNeedsProfileSetup()")) {
+    throw new Error("first-setup age and gender gate is not holding the sign-in shell");
+  }
+  if (!next.includes("function mpProfilePrefQuestions(") || !next.includes("mpAccountProfileCard") || !next.includes("MINDPAL FACTS")) {
+    throw new Error("age and gender setup or account edit missing");
+  }
   if (!next.includes("setFaithAsk(mpNeedsFaithSetup())") || !next.includes("if(faithAsk)")) {
     throw new Error("Today first-setup faith overlay is missing");
+  }
+  if (!next.includes("setProfileAsk(mpNeedsProfileSetup())") || !next.includes("if(profileAsk)")) {
+    throw new Error("Today first-setup age and gender overlay is missing");
+  }
+  if (!next.includes("ageBand:``,gender:``")) {
+    throw new Error("new local profiles still default to an age or gender");
   }
   if (!next.includes("mpSetGateTick(e=>e+1)")) {
     throw new Error("faith-change must re-render the sign-in gate");
