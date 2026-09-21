@@ -12,6 +12,7 @@ import {
 import {
   featuredOwnerReadings,
   isOwnerReading,
+  mergeOwnerReadings,
   ownerCompanionOpener,
 } from "../readings/owner.js";
 import {
@@ -138,7 +139,36 @@ export function findProblem(catalog, id) {
   return listProblems(catalog).find((item) => item.id === id) || null;
 }
 
+function curatedIdsForProblem(problemId) {
+  if (typeof curatedReadingIdsForHub === "function") {
+    return curatedReadingIdsForHub(problemId);
+  }
+  const catalog =
+    typeof globalThis.mpFeelingKits !== "undefined" ? globalThis.mpFeelingKits : null;
+  const aliases = catalog?.aliases || {};
+  const key = aliases[problemId] || (problemId === "mood" ? "low-mood" : problemId);
+  const spec = catalog?.kits?.[key];
+  if (!spec) return [];
+  const ids = [];
+  if (typeof spec.startHereId === "string" && spec.startHereId.trim()) ids.push(spec.startHereId.trim());
+  for (const id of Array.isArray(spec.readingIds) ? spec.readingIds : []) {
+    if (typeof id === "string" && id.trim() && !ids.includes(id.trim())) ids.push(id.trim());
+  }
+  return ids;
+}
+
 export function readingsForProblem(pack, problemId, limit) {
+  const curatedIds = curatedIdsForProblem(problemId);
+  if (curatedIds.length) {
+    const byId = new Map(
+      mergeOwnerReadings(pack)
+        .filter((item) => item?.id)
+        .map((item) => [item.id, item]),
+    );
+    const resolved = curatedIds.map((id) => byId.get(id)).filter(Boolean);
+    const cap = Number.isFinite(limit) ? limit : resolved.length;
+    return resolved.slice(0, cap);
+  }
   const readings = Array.isArray(pack?.readings) ? pack.readings : [];
   const cap = Number.isFinite(limit)
     ? limit

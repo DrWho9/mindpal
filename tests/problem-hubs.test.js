@@ -40,8 +40,11 @@ const videos = JSON.parse(readFileSync(join(root, "../src/data/videos-catalog.js
 const hubs = JSON.parse(readFileSync(join(root, "../src/data/problem-hubs.json"), "utf8"));
 const mensHealth = JSON.parse(readFileSync(join(root, "../src/data/mens-health.json"), "utf8"));
 const inject = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
+const kitUi = readFileSync(join(root, "../src/patches/feelings-readings.inject.js"), "utf8");
+const kits = JSON.parse(readFileSync(join(root, "../src/data/feeling-kits.json"), "utf8"));
 globalThis.mpOwnerReadings = ownerReadings;
 globalThis.mpMensHealth = mensHealth;
+globalThis.mpFeelingKits = kits;
 
 function memoryStorage(initial = {}) {
   const store = new Map(Object.entries(initial));
@@ -212,7 +215,7 @@ describe("problem hubs", () => {
     assert.match(inject, /Build strength/);
     assert.match(inject, /mp-problem-group/);
     assert.match(inject, /mp-problem-chip-growth/);
-    assert.match(inject, /GROWTH · BUILD STRENGTH/);
+    assert.match(JSON.stringify(kits), /GROWTH · BUILD STRENGTH/);
     assert.doesNotMatch(inject, /LOCAL ACCOUNT/);
     assert.doesNotMatch(inject, /Sign in for your morning space/);
   });
@@ -256,17 +259,13 @@ describe("problem hubs", () => {
     assert.match(inject, /mpMothersHubPage/);
     assert.match(inject, /mpMothersFeelingsChip/);
     assert.match(inject, /mpMothersWomenCard/);
-    assert.match(inject, /No speaker library dump here/);
-    assert.match(inject, /Need support/);
-    assert.match(inject, /mpHubOpenableReadings,\{readings:s/);
     assert.match(inject, /function mpBookReader\(/);
     assert.match(inject, /mpFoldSection/);
-    assert.match(inject, /id:`readings`/);
-    assert.match(inject, /id:`videos`/);
-    assert.match(inject, /id:`companion`/);
-    assert.match(inject, /id:`journal`/);
-    assert.match(inject, /id:`safety`/);
-    assert.match(inject, /one at a time/);
+    assert.match(kitUi, /No speaker library dump here/);
+    assert.match(kitUi, /Need support/);
+    assert.match(kitUi, /Evidence & guidance/);
+    assert.match(kitUi, /Open the reading/);
+    assert.match(kitUi, /mpKitReadingArticle/);
   });
 
   it("wires a dedicated drugs & alcohol hub with safety copy", () => {
@@ -278,13 +277,15 @@ describe("problem hubs", () => {
     assert.match(aod.journalPrompt, /non-shame/);
     assert.match(inject, /mpAodHubPage/);
     assert.match(inject, /mpAodFeelingsChip/);
-    assert.match(inject, /intoxicated and in danger/);
-    assert.match(inject, /Need support lists human help/);
+    assert.match(kits.kits.aod.safety.title, /intoxicated and unsafe/);
+    assert.match(kits.kits.aod.safety.body, /intoxicated and in danger/);
+    assert.match(kits.kits.aod.safety.body, /Need support lists human help/);
     assert.doesNotMatch(inject, /DirectLine/);
+    assert.doesNotMatch(kitUi, /DirectLine/);
     assert.match(aod.companionPrompt, /puppy-and-treat loop/);
     assert.match(aod.companionPrompt, /not genetics/);
-    assert.match(inject, /mp-hub-featured/);
-    assert.match(inject, /Read the talk-through/);
+    assert.match(kitUi, /mp-hub-featured/);
+    assert.match(kitUi, /Read the talk-through/);
   });
 
   it("wires a dedicated Men's Health hub with accordion, ABS stats and MensLine", () => {

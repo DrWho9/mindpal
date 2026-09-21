@@ -1,0 +1,714 @@
+{
+  "version": "1.0.0",
+  "note": "Editorial feeling/problem kits. High-model pass should rewrite blurbs and re-pick videos — see content/FEELINGS-CURATION.md.",
+  "aliases": {
+    "sad": "low-mood",
+    "anxious": "anxiety",
+    "angry": "anger",
+    "overwhelmed": "overwhelm",
+    "mood": "low-mood",
+    "numb": "low-mood",
+    "drugs": "aod",
+    "alcohol": "aod",
+    "craving": "aod"
+  },
+  "kits": {
+    "aod": {
+      "title": "Drugs & alcohol",
+      "shortTitle": "Drugs & alcohol",
+      "eyebrow": "DRUGS & ALCOHOL · OPTIONAL SUPPORT",
+      "lede": "Drink or other substances can take up a lot of space — craving, shame, or trying again. This is a small kit, not a day dump: start with the talk-through, then a few readings and clips. It is not detox, not medical advice, and not a replacement for alcohol and other drug treatment.",
+      "startHereId": "dna-dopamine-loop-v1",
+      "startHereBlurb": "A plain talk-through of drugs and alcohol — the puppy-and-treat loop. DNA is only a nickname for that phrase, not genetics. Literacy, not a detox plan.",
+      "readingIds": [
+        "thank-your-past-coping",
+        "ask-for-help-simply",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "let-the-feeling-move-through",
+        "be-loyal-to-your-body",
+        "forgive-a-past-self",
+        "begin-again-without-drama"
+      ],
+      "readingBlurbs": {
+        "thank-your-past-coping": "Old strategies can be thanked without being kept. Softens shame around what once helped.",
+        "ask-for-help-simply": "One plain ask is enough. Company is allowed around drink or other substances.",
+        "be-on-your-own-side": "Self-talk that does not pile on after a hard stretch.",
+        "speak-more-softly-to-yourself": "The inner critic can get quieter without a lecture.",
+        "let-the-feeling-move-through": "A craving or low mood can be weather — noticed, not argued with.",
+        "be-loyal-to-your-body": "Body cues first. Literacy about craving, not a protocol.",
+        "forgive-a-past-self": "A past version of you can be forgiven without rewriting the whole story.",
+        "begin-again-without-drama": "A fresh start can be small. No performance required."
+      },
+      "videoIds": [
+        "V02",
+        "maddy-timed-breath",
+        "maddy-welcome",
+        "YT-KIND-01",
+        "V07"
+      ],
+      "companionPrompt": "I've opened the MindPal talk-through on drugs and alcohol — the puppy-and-treat loop. DNA here is only a nickname for drugs and alcohol, not genetics. Please stay educational and peer-like: help me notice the feel-down → use → brief relief → come-down loop without shame. You are software, not a therapist or AOD clinician. This is not detox, not medical advice, and not treatment. If I am intoxicated, in danger, or in crisis I will use human help / 000.",
+      "journalPrompt": "What felt hard around drink or other substances today… One kind, non-shame sentence I can offer myself is…",
+      "safety": {
+        "title": "If you are in danger, or intoxicated and unsafe",
+        "body": "This space is not detox and not a replacement for AOD treatment. If you are intoxicated and in danger, or in crisis in Australia, call 000. Need support lists human help and counselling lines already in the app, including Lifeline — we do not invent extra numbers here."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not detox, not medical advice, and not a replacement for alcohol and other drug treatment. Need support lists human help already in the app.",
+        "notes": [
+          {
+            "title": "A learning loop, not a moral verdict",
+            "body": "The featured talk-through is literacy: a reward that arrives quickly after a low mood can train a loop. That picture is for noticing, not for DIY detox. Coming off alcohol or other drugs after heavy use can be medically unsafe without proper care."
+          },
+          {
+            "title": "Where public guidance lives",
+            "body": "Australian government and foundation pages explain how to find alcohol and other drug help. MindPal does not add extra phone numbers here. Open the public page, or use Need support in the app."
+          }
+        ],
+        "guides": [
+          {
+            "title": "How to find help",
+            "org": "Australian Government — Department of Health",
+            "why": "Official pathways for alcohol and other drug support, including the national hotline listed on that page.",
+            "url": "https://www.health.gov.au/our-work/drug-help/how-to-find-help"
+          },
+          {
+            "title": "Help & support services",
+            "org": "Alcohol and Drug Foundation",
+            "why": "A public directory and starting point for local AOD services. Literacy and referral, not a MindPal clinic.",
+            "url": "https://adf.org.au/help-support/search/"
+          }
+        ],
+        "sources": [
+          {
+            "title": "Alcohol",
+            "org": "HealthDirect",
+            "note": "Government-funded plain-language page on alcohol and health. Use their wording; we do not invent statistics here.",
+            "url": "https://www.healthdirect.gov.au/alcohol"
+          }
+        ]
+      }
+    },
+    "anxiety": {
+      "title": "Anxiety / worry",
+      "shortTitle": "Anxiety",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Worry can loop. This kit is a short path — one opener, a few readings, a clip — not a diagnosis and not a course of treatment.",
+      "startHereId": "catch-the-worry-snowball",
+      "startHereBlurb": "Catch the worry snowball early — a literacy opener for rumination before it gathers speed.",
+      "readingIds": [
+        "leave-room-for-maybe",
+        "name-three-steadies",
+        "walk-off-one-worry",
+        "refuse-the-spiral-once",
+        "lower-the-volume-on-urgency",
+        "dont-rehearse-the-argument",
+        "look-up-from-the-problem",
+        "choose-a-smaller-stage"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "YT-ANX-01",
+        "V08",
+        "V05"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for everyday worry. Please keep it practical and non-clinical — one small thing I could notice or do, and remind me this is not a diagnosis.",
+      "journalPrompt": "The worry that keeps returning is… One smaller, kinder sentence about it is…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not a diagnosis or a course of treatment. AU urgent help: 000 / Lifeline 13 11 14.",
+        "notes": [
+          {
+            "title": "Worry can loop",
+            "body": "Everyday worry often tries to solve a future that has not arrived yet. Catching the loop early is literacy, not a test. If worry or panic is new, severe, or affecting daily life, a GP is the right next step."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Anxiety",
+            "org": "HealthDirect",
+            "why": "Government-funded page on everyday anxiety and when to seek care.",
+            "url": "https://www.healthdirect.gov.au/anxiety"
+          },
+          {
+            "title": "Anxiety",
+            "org": "Beyond Blue",
+            "why": "AU public literacy and support pathways for anxiety.",
+            "url": "https://www.beyondblue.org.au/mental-health/anxiety"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "sleep": {
+      "title": "Sleep / restless night",
+      "shortTitle": "Sleep",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "A restless night is common. This kit is a gentle wind-down path — not a sleep clinic, and nothing here has to be finished.",
+      "startHereId": "rest-is-not-a-prize",
+      "startHereBlurb": "Rest is not a prize you earn. A kind opener when the night will not settle.",
+      "readingIds": [
+        "end-the-day-without-a-verdict",
+        "keep-tonight-simple",
+        "leave-work-at-the-edge",
+        "soften-your-shoulders-now",
+        "give-your-nervous-system-a-margin",
+        "make-tomorrow-lighter-tonight",
+        "practise-ending-well",
+        "be-loyal-to-your-body"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "YT-SLEEP-01",
+        "YT-SLEEP-02",
+        "V12"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for a restless night. Please keep it practical and non-clinical — one small wind-down I could try, and remind me this is not medical advice.",
+      "journalPrompt": "Tonight felt restless because… One kind thing I can try before sleep is…",
+      "evidence": {
+        "disclaimer": "Education only — not a sleep clinic and not medical advice. New or severe symptoms need a clinician.",
+        "notes": [
+          {
+            "title": "A restless night is common",
+            "body": "Sleep can be thin when the day was loud or the mind is still working. A wind-down chapter is optional company. Ongoing insomnia, breathing trouble, or a sudden change in sleep still belongs with a GP."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Insomnia",
+            "org": "HealthDirect",
+            "why": "Government-funded page on difficulty sleeping and when to get help.",
+            "url": "https://www.healthdirect.gov.au/insomnia"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "low-mood": {
+      "title": "Heavy / low mood",
+      "shortTitle": "Low mood",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "A heavy day does not need a cheerful script. Sit with one opener, or a sentence — only if you want to. Not a diagnosis.",
+      "startHereId": "notice-the-weather-inside",
+      "startHereBlurb": "Notice the weather inside. Mood can be named without being fixed.",
+      "readingIds": [
+        "sit-with-an-unfinished-feeling",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "put-down-the-scoreboard",
+        "let-the-feeling-move-through",
+        "keep-your-humour-handy",
+        "let-someone-help-you",
+        "hold-joy-without-waiting-for-deserving"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-tip",
+        "YT-KIND-01",
+        "V10"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for a heavy or low mood. Please keep it gentle and non-clinical — one manageable option, and remind me this is not therapy or a diagnosis.",
+      "journalPrompt": "Today feels heavy because… One small kindness I can offer myself is…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline."
+      },
+      "evidence": {
+        "disclaimer": "Education only — not therapy and not a diagnosis. AU urgent help: 000 / Lifeline 13 11 14.",
+        "notes": [
+          {
+            "title": "A heavy day is still a day",
+            "body": "Low mood can ask for a smaller next step, not a cheerful script. If low mood lasts, or you do not feel safe, use human help. MindPal does not monitor you."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Depression",
+            "org": "HealthDirect",
+            "why": "Government-funded page on low mood and depression, and who to speak with.",
+            "url": "https://www.healthdirect.gov.au/depression"
+          },
+          {
+            "title": "Depression",
+            "org": "Beyond Blue",
+            "why": "AU public literacy and support pathways.",
+            "url": "https://www.beyondblue.org.au/mental-health/depression"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "stress": {
+      "title": "Stress / overload",
+      "shortTitle": "Stress",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "When the day feels too full, one smaller step is enough. This kit is optional pauses, not a productivity plan.",
+      "startHereId": "trust-a-small-next-step",
+      "startHereBlurb": "Trust a small next step. Shrink the day by one thing.",
+      "readingIds": [
+        "one-thing-at-a-time",
+        "postpone-one-nonessential",
+        "good-enough-is-allowed",
+        "lower-the-volume-on-urgency",
+        "soften-your-shoulders-now",
+        "return-to-breathing-room",
+        "hand-back-what-isnt-yours",
+        "redefine-a-productive-day"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V03",
+        "V04",
+        "YT-ANX-04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling overloaded. Please keep it practical and non-clinical — help me shrink today by one thing, and remind me this is not treatment.",
+      "journalPrompt": "What is making today feel too full… One demand I can set down or shrink is…",
+      "evidence": {
+        "disclaimer": "Education only — not a productivity plan and not treatment.",
+        "notes": [
+          {
+            "title": "Shrink the day by one thing",
+            "body": "Overwhelm often means too many demands, not a character flaw. One postponed task is literacy. If stress is affecting sleep, work or safety, a GP or Need support is the next step."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Stress",
+            "org": "HealthDirect",
+            "why": "Government-funded page on stress and when to seek care.",
+            "url": "https://www.healthdirect.gov.au/stress"
+          }
+        ],
+        "sources": []
+      }
+    },
+    "overwhelm": {
+      "title": "Overwhelmed or stressed",
+      "shortTitle": "Overwhelm",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Too much at once. This kit starts small — one opener, then a shortlist — and you can leave anytime.",
+      "startHereId": "one-thing-at-a-time",
+      "startHereBlurb": "One thing at a time. A literacy opener when everything arrives at once.",
+      "readingIds": [
+        "postpone-one-nonessential",
+        "trust-a-small-next-step",
+        "keep-promises-small",
+        "leave-space-in-the-calendar",
+        "name-three-steadies",
+        "give-your-nervous-system-a-margin",
+        "share-the-load-out-loud",
+        "honour-a-limit-without-apology-essay"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V04",
+        "V03",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling overloaded. Please keep it practical and non-clinical — help me shrink today by one thing, and remind me this is not treatment.",
+      "journalPrompt": "What is making today feel too full… One demand I can set down or shrink is…"
+    },
+    "mothers": {
+      "title": "Struggling mothers",
+      "shortTitle": "Mothers",
+      "eyebrow": "MOTHERS · OPTIONAL SUPPORT",
+      "lede": "The days can be full of pressure, exhaustion and a quiet guilt that you are not doing enough. This kit is optional company — open a Pack A chapter, sit with a clip, or read a short literacy note. It is not medical care, not a diagnosis, and not a replacement for a GP, midwife or maternal-child nurse.",
+      "startHereId": "rest-is-not-a-prize",
+      "startHereBlurb": "Rest is not a prize you earn. A literacy opener for sleep debt and the guilt that says you have not done enough to deserve a pause.",
+      "readingIds": [
+        "let-the-house-be-lived-in",
+        "reduce-one-expectation",
+        "hand-back-what-isnt-yours",
+        "ask-for-help-simply",
+        "share-the-load-out-loud",
+        "put-down-the-scoreboard",
+        "keep-tonight-simple",
+        "notice-the-weather-inside"
+      ],
+      "readingBlurbs": {
+        "let-the-house-be-lived-in": "A lived-in house can be evidence that care is happening — not a fail.",
+        "reduce-one-expectation": "One smaller demand is enough. Perinatal load does not need a full audit.",
+        "hand-back-what-isnt-yours": "Emotional labour can be handed back kindly. Support is not the same as owning every mood.",
+        "ask-for-help-simply": "Asking can be one plain sentence. Company is allowed.",
+        "share-the-load-out-loud": "Delegation can be spoken. You do not have to carry the roster alone.",
+        "put-down-the-scoreboard": "Comparison with other mothers is optional. Put the scoreboard down.",
+        "keep-tonight-simple": "Evening overload can be shrunk. One simpler night is a practice, not a failure.",
+        "notice-the-weather-inside": "Mood can be named without being fixed. A weather check, not a diagnosis."
+      },
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-timed-breath",
+        "V02",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'm a mother having a hard stretch — tired, stretched, and carrying a bit of guilt. Please stay educational and peer-like: one small, kind next step. You are software, not a therapist, and this is not a diagnosis or medical care. If I am in danger I will use human help / 000.",
+      "journalPrompt": "One small win amid caring for others today… A moment that was good enough, even if the rest was messy, was…",
+      "safety": {
+        "title": "If this feels like too much",
+        "body": "MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline. PANDA’s National Perinatal Mental Health Helpline is for expecting and new parents — it is not a crisis line."
+      },
+      "evidence": {
+        "disclaimer": "MindPal literacy and outbound public pages — not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. We do not invent studies or statistics here.",
+        "notes": [
+          {
+            "title": "Perinatal load",
+            "body": "Caring through pregnancy and the first year is a real workload — broken sleep, feeding, appointments, and the quiet job of keeping other people okay. Feeling stretched is a common human response to that load. A heavy week is information about capacity, not a verdict on whether you are a good mother. MindPal can sit with the day; a clinician can assess if something more is going on."
+          },
+          {
+            "title": "Sleep debt",
+            "body": "Broken nights change patience, mood and the story you tell about yourself. Wanting rest is not laziness. Australian public pages treat ongoing lack of sleep as part of why early parenthood can feel harder — and they still send you to a GP, midwife or child-and-family health nurse when low mood or worry lasts. This kit offers a wind-down chapter, not a sleep clinic."
+          },
+          {
+            "title": "Guilt",
+            "body": "Many mothers carry a private scoreboard: not enough, not patient enough, not the mother they meant to be. Guilt can show up even when you are already doing a great deal. Literacy here means noticing the sentence without turning it into a diagnosis. If guilt, fear or low mood keep you from functioning or from feeling safe, that is a reason to use human help — not to finish a reading first."
+          },
+          {
+            "title": "Asking for help",
+            "body": "Asking can be one plain sentence to a partner, a friend, a maternal-child nurse, or a helpline. It does not have to be a full story. Public Australian services exist because this stretch is known to be hard — PANDA, Beyond Blue, HealthDirect and COPE are education and pathways, not a replacement for the clinician who knows you."
+          }
+        ],
+        "guides": [
+          {
+            "title": "Ready to COPE",
+            "org": "COPE — Centre of Perinatal Excellence",
+            "why": "A free Australian pregnancy and early-parenting guide, written to sit with the National Clinical Guideline. Weekly literacy on the emotional stretch — not a MindPal invention.",
+            "url": "https://www.cope.org.au/ready-to-cope"
+          },
+          {
+            "title": "New parents",
+            "org": "COPE",
+            "why": "Public fact sheets and pages on adjusting to parenthood, looking after yourself, and postnatal mental health conditions.",
+            "url": "https://www.cope.org.au/new-parents"
+          },
+          {
+            "title": "Parenting and mental health",
+            "org": "Beyond Blue",
+            "why": "AU literacy on pregnancy, caring for a baby, and when everyday strain might need a conversation with a GP or nurse.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting"
+          },
+          {
+            "title": "Postnatal depression",
+            "org": "HealthDirect",
+            "why": "Government-funded plain-language page: baby blues versus longer low mood, and who to speak with. Use their wording — we do not add extra numbers here.",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        ],
+        "sources": [
+          {
+            "title": "PANDA — Perinatal Anxiety & Depression Australia",
+            "org": "PANDA",
+            "note": "Australia’s national perinatal mental health organisation. Helpline 1300 726 306 (not 24/7 crisis — Lifeline 13 11 14 / 000 if you are in danger).",
+            "url": "https://www.panda.org.au/"
+          },
+          {
+            "title": "PANDA’s National Perinatal Mental Health Helpline",
+            "org": "PANDA",
+            "note": "What the helpline does: making sense of the stretch, linking to local care. They say they are not a crisis service.",
+            "url": "https://www.panda.org.au/articles/pandas-national-perinatal-mental-health-helpline"
+          },
+          {
+            "title": "Pregnancy and mental health",
+            "org": "Beyond Blue",
+            "note": "Public page on looking after emotional health during pregnancy, with pointers to PANDA and COPE.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/pregnancy"
+          },
+          {
+            "title": "Caring for a baby and mental health",
+            "org": "Beyond Blue",
+            "note": "Names sleep, unsettled babies and thin support as part of why the first year can feel hard. Education, not a test.",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/caring-for-a-baby"
+          },
+          {
+            "title": "Signs and types of postnatal mental health conditions",
+            "org": "COPE",
+            "note": "COPE’s public literacy on when stress may be something to take to a clinician. MindPal does not screen or diagnose.",
+            "url": "https://www.cope.org.au/new-parents/postnatal-mental-health-conditions/signs-risk-factors-types-of-postnatal-mental-health-conditions"
+          }
+        ]
+      }
+    },
+    "anger": {
+      "title": "Angry or frustrated",
+      "shortTitle": "Anger",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Anger can be information. This kit offers a pause and a few readings — not a verdict, and not a demand to calm down on cue.",
+      "startHereId": "let-the-little-friction-pass",
+      "startHereBlurb": "Let today's little friction pass. A small opener before the next hour takes the heat.",
+      "readingIds": [
+        "breathe-before-you-send",
+        "choose-warmth-over-winning",
+        "dont-rehearse-the-argument",
+        "keep-a-short-resentment-list",
+        "choose-repair-over-replay",
+        "stop-collecting-injustices",
+        "offer-patience-in-traffic",
+        "let-the-feeling-move-through"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "V06",
+        "V07",
+        "V04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for everyday frustration. Please keep it practical and non-clinical — one pause or smaller response, and remind me this is not a diagnosis.",
+      "journalPrompt": "What landed as frustration today… One smaller response I could try is…"
+    },
+    "motivation": {
+      "title": "Motivation / a gentle start",
+      "shortTitle": "Motivation",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Starting can feel heavy. This kit is gentle fuel — two minutes counts, and skipping is allowed. No shame, no hustle score.",
+      "startHereId": "skip-the-perfect-setup",
+      "startHereBlurb": "Skip the perfect setup. A start can be messy and still count.",
+      "readingIds": [
+        "celebrate-tiny-finishes",
+        "good-enough-is-allowed",
+        "one-thing-at-a-time",
+        "allow-progress-to-be-quiet",
+        "see-effort-not-only-outcome",
+        "return-to-breathing-room",
+        "redefine-a-productive-day",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-welcome",
+        "maddy-tip",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for finding a little fuel to start. Please keep it practical and non-clinical — one tiny first move, and remind me this is not a performance test.",
+      "journalPrompt": "What I would like a little fuel for… The kindest first step I could take is…"
+    },
+    "faith": {
+      "title": "Faith / prayer & meaning",
+      "shortTitle": "Faith",
+      "eyebrow": "SUPPORT · WHEN IT'S HEAVY",
+      "lede": "Optional faith and meaning — a reading or a quiet question. Skip anytime. Not a sermon and not clinical care.",
+      "startHereId": "keep-faith-with-ordinary-days",
+      "startHereBlurb": "Keep faith with ordinary days. Meaning can be small and still count.",
+      "readingIds": [
+        "thank-one-ordinary-thing",
+        "remember-most-moments-pass",
+        "accept-incomplete-knowledge",
+        "one-kind-thought",
+        "dont-argue-with-reality",
+        "forgive-a-past-self",
+        "write-the-kind-note",
+        "let-gratitude-be-specific"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "YT-SLEEP-03",
+        "V01",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step around faith, prayer or meaning. Please keep it optional and non-clinical — one gentle reflection, and remind me I can skip anything that does not fit.",
+      "journalPrompt": "What felt meaningful today, even in a small way… A hope or prayer I can hold lightly is…"
+    },
+    "lonely": {
+      "title": "Lonely or disconnected",
+      "shortTitle": "Lonely",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Disconnected moments are common. This kit is quiet company — not a social plan and not a diagnosis.",
+      "startHereId": "smile-at-a-stranger-moment",
+      "startHereBlurb": "Allow a small human moment. Connection can start smaller than a conversation.",
+      "readingIds": [
+        "ask-for-help-simply",
+        "let-someone-help-you",
+        "listen-longer-than-usual",
+        "dont-fix-every-silence",
+        "tend-one-relationship-seed",
+        "be-on-your-own-side",
+        "notice-the-weather-inside"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-welcome",
+        "YT-KIND-01",
+        "V10"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for feeling lonely or disconnected. Please keep it gentle and non-clinical — one small, optional contact or kindness, and remind me this is not a diagnosis.",
+      "journalPrompt": "Where I felt on my own today… One small, optional reach I could make is…"
+    },
+    "guilty": {
+      "title": "Guilty or ashamed",
+      "shortTitle": "Guilty",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "Guilt and shame can get loud. This kit is literacy and a softer sentence — not a verdict and not treatment.",
+      "startHereId": "speak-more-softly-to-yourself",
+      "startHereBlurb": "Speak more softly to yourself. A literacy opener when the inner critic is already mid-speech.",
+      "readingIds": [
+        "forgive-a-past-self",
+        "be-on-your-own-side",
+        "thank-your-past-coping",
+        "end-the-day-without-a-verdict",
+        "put-down-the-scoreboard",
+        "begin-again-without-drama",
+        "hold-joy-without-waiting-for-deserving"
+      ],
+      "videoIds": [
+        "V02",
+        "V07",
+        "YT-KIND-01",
+        "maddy-tip"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for guilt or shame. Please keep it gentle and non-clinical — one kinder sentence, and remind me this is not a verdict or a diagnosis.",
+      "journalPrompt": "The harsh sentence that keeps returning is… One kinder, believable sentence is…"
+    },
+    "unsure": {
+      "title": "Not sure",
+      "shortTitle": "Not sure",
+      "eyebrow": "FEELINGS · OPTIONAL SUPPORT",
+      "lede": "You do not need a precise word. This kit is a calm start — one opener, a clip, a sentence — and you can leave it unnamed.",
+      "startHereId": "name-three-steadies",
+      "startHereBlurb": "Name three steady things. A simple opener when the feeling has no tidy label.",
+      "readingIds": [
+        "notice-the-weather-inside",
+        "leave-room-for-maybe",
+        "sit-with-an-unfinished-feeling",
+        "return-to-breathing-room",
+        "good-enough-is-allowed",
+        "keep-your-humour-handy"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-timed-breath",
+        "V06",
+        "V04"
+      ],
+      "companionPrompt": "I'm not sure how to name this moment. Please stay educational and peer-like: one small, optional next step, and remind me I do not need a label or a diagnosis.",
+      "journalPrompt": "If I do not have a name for this yet, what I notice in the body or the day is…"
+    },
+    "mindset": {
+      "title": "Positive mindset",
+      "shortTitle": "Positive mindset",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Hope is a practice, not a performance. Small ways to reframe — without pretending the hard bits are not there.",
+      "startHereId": "good-enough-is-allowed",
+      "startHereBlurb": "Good enough is allowed. A hopeful stance that does not demand a show.",
+      "readingIds": [
+        "one-kind-thought",
+        "thank-one-ordinary-thing",
+        "notice-enough",
+        "give-the-benefit-briefly",
+        "be-on-your-own-side",
+        "keep-your-humour-handy",
+        "hold-joy-without-waiting-for-deserving",
+        "keep-faith-with-ordinary-days"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-tip",
+        "V01",
+        "V02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for practising a more hopeful mindset. Please keep it practical and non-clinical — one small reframe or noticing practice, and remind me this is not a positivity test.",
+      "journalPrompt": "One thing that was quietly good today… A kinder sentence I can try is…"
+    },
+    "stronger-mind": {
+      "title": "Stronger mind",
+      "shortTitle": "Stronger mind",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Focus and resilience are literacies you can practise. Small reps, not a boot camp.",
+      "startHereId": "soft-strength",
+      "startHereBlurb": "Soft strength still counts. Steadiness without a clenched hour.",
+      "readingIds": [
+        "leave-room-for-maybe",
+        "one-thing-at-a-time",
+        "name-three-steadies",
+        "put-the-phone-face-down",
+        "look-up-from-the-problem",
+        "close-open-loops-kindly",
+        "see-effort-not-only-outcome",
+        "stop-punishing-slow-progress"
+      ],
+      "videoIds": [
+        "maddy-timed-breath",
+        "maddy-tip",
+        "V09",
+        "V04"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for building a steadier mind — focus or resilience, without hustle. Please keep it practical and non-clinical — one small attention practice, and remind me this is not a toughness test.",
+      "journalPrompt": "One place my attention kept slipping… A small practice that would strengthen it is…"
+    },
+    "challenge": {
+      "title": "Rise to a challenge",
+      "shortTitle": "Rise to a challenge",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "A healthy stretch — courage for the next hill, not a demand to go past what you can hold. Rest is part of rising.",
+      "startHereId": "skip-the-perfect-setup",
+      "startHereBlurb": "Skip the perfect setup. Begin the hill from where you are.",
+      "readingIds": [
+        "celebrate-tiny-finishes",
+        "allow-progress-to-be-quiet",
+        "see-effort-not-only-outcome",
+        "prefer-presence-to-perfection",
+        "put-kindness-before-cleverness",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V09",
+        "maddy-welcome",
+        "V02",
+        "maddy-tip"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for rising to a challenge I chose. Please keep it practical and non-clinical — one brave, sized-right step, and remind me rest is part of stretch.",
+      "journalPrompt": "The challenge I want to meet… A sized-right next step, not a heroic leap, is…"
+    },
+    "hard-patch": {
+      "title": "Overcome a hard patch",
+      "shortTitle": "Overcome a hard patch",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Grit with self-compassion. You can be determined and still be kind to yourself in the same hour.",
+      "startHereId": "trust-a-small-next-step",
+      "startHereBlurb": "Trust a small next step. Determination can be one move, not a speech.",
+      "readingIds": [
+        "ask-for-help-simply",
+        "be-on-your-own-side",
+        "speak-more-softly-to-yourself",
+        "give-time-permission-to-help",
+        "thank-your-past-coping",
+        "let-the-feeling-move-through",
+        "return-to-breathing-room",
+        "begin-again-without-drama"
+      ],
+      "videoIds": [
+        "V02",
+        "maddy-tip",
+        "YT-KIND-01",
+        "V09"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for getting through a hard patch. Please keep it practical and non-clinical — one sturdy, kind move, and remind me this is not a toughness test.",
+      "journalPrompt": "What feels hard right now… One kind, determined thing I can do next is…"
+    },
+    "gratitude": {
+      "title": "Gratitude & wins",
+      "shortTitle": "Gratitude & wins",
+      "eyebrow": "GROWTH · BUILD STRENGTH",
+      "lede": "Thanks and small wins train a second scan — what is already holding you up. Not a highlight reel.",
+      "startHereId": "thank-one-ordinary-thing",
+      "startHereBlurb": "Thank one ordinary thing. Specific thanks beats a forced highlight reel.",
+      "readingIds": [
+        "one-kind-thought",
+        "let-gratitude-be-specific",
+        "make-room-for-delight",
+        "write-the-kind-note",
+        "keep-your-humour-handy",
+        "hold-joy-without-waiting-for-deserving",
+        "tend-one-relationship-seed",
+        "keep-faith-with-ordinary-days"
+      ],
+      "videoIds": [
+        "maddy-welcome",
+        "maddy-tip",
+        "V01",
+        "YT-KIND-02"
+      ],
+      "companionPrompt": "I'd like a short, educational next step for noticing gratitude or a small win. Please keep it practical and non-clinical — one specific thanks, and remind me this is optional.",
+      "journalPrompt": "One ordinary thing I can thank… A small win I can name is…"
+    }
+  }
+}
