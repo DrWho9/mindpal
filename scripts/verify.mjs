@@ -222,6 +222,12 @@ const checks = [
   [js.includes("DETERMINISTIC DEMO · NO LIVE AI") && js.includes("mpCompanionDemo"), "Companion keeps the DEMO banner until Live"],
   [js.includes("Lifeline on 13 11 14") && js.includes("Call 000"), "Companion crisis paths list Lifeline and 000"],
   [js.includes("does not invent a public tunnel") && js.includes("companionBase"), "Companion base URL is configurable without a tunnel"],
+  [js.includes("mpAppointmentCompanionCard") && js.includes("Talk this appointment through with Companion"), "appointment companion entry is present"],
+  [js.includes("data-mp-cta:`appointment-companion`") || js.includes('"data-mp-cta":`appointment-companion`'), "appointment companion CTA is marked"],
+  [js.includes("id:`youtube-search`") && js.includes("applySearch"), "YouTube directory search is always visible (inject replaces _e)"],
+  [js.includes("id:`companion-message`") && js.includes("e.metaKey||e.ctrlKey"), "Companion Ctrl/Cmd+Enter send is wired"],
+  [js.includes("data-mp-cta:`companion-send`") || js.includes('"data-mp-cta":`companion-send`'), "Companion send CTA is marked"],
+  [js.includes("DETERMINISTIC DEMO · NO LIVE AI") && js.includes("api/companion/${e}"), "Companion live-AI probe stays server-gated"],
 ];
 
 const maddyFiles = [

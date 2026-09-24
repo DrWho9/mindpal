@@ -270,7 +270,7 @@ mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_C
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
 mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
@@ -967,6 +967,24 @@ function patchOwnerUx(source) {
   );
   next = replaceOnce(
     next,
+    "(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})",
+    "(0,A.jsx)($r,{active:t===`Body, food and wellbeing`,onHelp:()=>I(`Get support`)}),t===`Body, food and wellbeing`&&(0,A.jsx)(mpAppointmentCompanionCard,{onCompanion:()=>I(`Companion`)}),(0,A.jsx)(ti,{active:t===`Reflect`,onHelp:()=>I(`Get support`),onDiary:()=>I(`My diary`)})",
+    "appointment-companion-entry",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsx)(`textarea`,{id:`companion-message`,value:o,maxLength:2e3,onChange:e=>s(e.target.value),placeholder:x?`Type a message for the AI companion, or leave blank for the demo…`:`Use sample text only…`})",
+    "(0,A.jsx)(`textarea`,{id:`companion-message`,\"data-mp-cta\":`companion-message`,value:o,maxLength:2e3,onChange:e=>s(e.target.value),onKeyDown:e=>{(e.key===`Enter`&&(e.metaKey||e.ctrlKey))&&(e.preventDefault(),D())},placeholder:x?`Type a message for the AI companion, or leave blank for the demo…`:`Use sample text only…`})",
+    "companion-send-enter",
+  );
+  next = replaceOnce(
+    next,
+    "(0,A.jsxs)(`button`,{className:`primary`,disabled:g,onClick:D,children:[g?x&&o.trim()?`Sending to the AI companion…`:`Preparing fixed choices…`:x&&o.trim()?`Send to AI companion`:`Show practice choices`",
+    "(0,A.jsxs)(`button`,{className:`primary`,type:`button`,disabled:g,onClick:D,\"data-mp-cta\":`companion-send`,children:[g?x&&o.trim()?`Sending to the AI companion…`:`Preparing fixed choices…`:x&&o.trim()?`Send to AI companion`:`Show practice choices`",
+    "companion-send-cta",
+  );
+  next = replaceOnce(
+    next,
     "{name:`Women’s wellbeing`,icon:fn}]",
     "{name:`Women’s wellbeing`,icon:fn},{name:`Struggling mothers`,icon:fn},{name:`Drugs & alcohol`,icon:fn},{name:`Mens health`,icon:fn},{name:`Appointment Questions`,icon:fn}]",
     "sidebar-mothers-nav",
@@ -1247,6 +1265,15 @@ function patchOwnerUx(source) {
   if (!next.includes("mpSetGateTick(e=>e+1)")) {
     throw new Error("faith-change must re-render the sign-in gate");
   }
+  if (!next.includes("mpAppointmentCompanionCard") || !next.includes("Talk this appointment through with Companion")) {
+    throw new Error("appointment companion entry is missing");
+  }
+  if (!next.includes("id:`youtube-search`") || !next.includes("applySearch")) {
+    throw new Error("YouTube directory search must be visible and have an apply handler");
+  }
+  if (!next.includes("onKeyDown:e=>{(e.key===`Enter`&&(e.metaKey||e.ctrlKey))&&(e.preventDefault(),D())}")) {
+    throw new Error("Companion Ctrl/Cmd+Enter send is missing");
+  }
   if (!next.includes("function mpGoHome(") || !next.includes("onClick:()=>mpGoHome(I)")) {
     throw new Error("MindPal brand is not wired to go home");
   }
@@ -1403,3 +1430,7 @@ updateServiceWorker(jsFile, cssFile, html, js, css);
 writeFileSync(join(root, "scripts", ".last-build.json"), `${JSON.stringify({ jsFile, cssFile }, null, 2)}\n`);
 console.log(`built /mindpal/assets/${jsFile} and /mindpal/assets/${cssFile}`);
 execFileSync("node", [join(root, "scripts/verify.mjs")], { cwd: root, stdio: "inherit" });
+execFileSync("node", ["--test", join(root, "tests/smoke/page-smoke.test.js")], {
+  cwd: root,
+  stdio: "inherit",
+});

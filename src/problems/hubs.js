@@ -89,6 +89,12 @@ export const AOD_ROUTE = "Drugs & alcohol";
 export const AOD_READING_LIMIT = 12;
 export const AOD_MADDY_IDS = ["maddy-welcome", "maddy-timed-breath"];
 export const AOD_MEDITATION_IDS = ["self-compassion", "anxiety", "stress"];
+export const APPOINTMENT_COMPANION_PROMPT =
+  "I'd like a short, educational next step for preparing questions for a health appointment. Please keep it practical and non-clinical — one or two questions I could ask, and remind me this is not medical advice and you cannot interpret reports.";
+
+export function appointmentCompanionPrompt() {
+  return APPOINTMENT_COMPANION_PROMPT;
+}
 
 export function isMothersProblem(id) {
   return id === MOTHERS_PROBLEM_ID;
