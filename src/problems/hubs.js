@@ -29,6 +29,21 @@ import {
   mensHealthStats,
   mensHealthYoutube,
 } from "./mens-health.js";
+import {
+  EVIDENCE_GUIDANCE_DISCLAIMER,
+  EVIDENCE_GUIDANCE_TEMPLATE,
+  HUB_ACCORDION_ORDER,
+  TRUSTED_EVIDENCE_HOSTS,
+  emptyEvidenceGuidance,
+  evidenceCatalog,
+  evidenceDisclaimer,
+  evidenceGuidanceFor,
+  evidenceNoteSourcesTrusted,
+  guidanceCountsOk,
+  isTrustedEvidenceUrl,
+  listEvidenceNotes,
+  listGuidanceBooks,
+} from "./evidence-guidance.js";
 
 export { GROWTH_THEME_TAGS, PROBLEM_GROUPS };
 export {
@@ -46,6 +61,21 @@ export {
   mensHealthYoutube,
 };
 export { MENS_SUPPORT_TAGS };
+export {
+  EVIDENCE_GUIDANCE_DISCLAIMER,
+  EVIDENCE_GUIDANCE_TEMPLATE,
+  HUB_ACCORDION_ORDER,
+  TRUSTED_EVIDENCE_HOSTS,
+  emptyEvidenceGuidance,
+  evidenceCatalog,
+  evidenceDisclaimer,
+  evidenceGuidanceFor,
+  evidenceNoteSourcesTrusted,
+  guidanceCountsOk,
+  isTrustedEvidenceUrl,
+  listEvidenceNotes,
+  listGuidanceBooks,
+};
 
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";

@@ -121,7 +121,8 @@ export function appendMessage(
 }
 
 export function downloadableTranscript(thread, title = "MindPal reflection — user-entered, not assessed") {
-  const current = normalizeThread(thread);
+  const rawDate = thread?.date ?? "";
+  const current = normalizeThread(thread, rawDate ? new Date(`${rawDate}T12:00:00`) : new Date());
   const lines = [
     title,
     `Date: ${current.date}`,

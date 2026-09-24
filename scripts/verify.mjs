@@ -61,6 +61,11 @@ const checks = [
   [js.includes("mpMothersFeelingsChip") && js.includes("mpMothersWomenCard"), "mothers Feelings and Women’s entries are present"],
   [js.includes("One small win amid caring for others"), "mothers journal prompt is present"],
   [js.includes("No speaker library dump here."), "mothers videos skip the speaker-dump default"],
+  [js.includes("mpFoldSection") && js.includes("mpHubAccordion"), "hub accordion folds are present"],
+  [js.includes("mpHubOpenableReadings") && (js.includes("DAILY READING · PACK A · DAY") || js.includes("SUPPORT READING · DAY")), "mothers readings open full bodies"],
+  [js.includes("Evidence & guidance") && js.includes("mpEvidenceGuidancePanel"), "evidence guidance panel is present"],
+  [js.includes("panda.org.au") && js.includes("beyondblue.org.au") && js.includes("healthdirect.gov.au") && js.includes("aihw.gov.au"), "mothers evidence notes use real AU sources"],
+  [js.includes("This Isn’t What I Expected") && js.includes("Dropping the Baby") && js.includes("The Happiness Trap"), "mothers guidance books are real titles"],
   [js.includes("Drugs & alcohol") && js.includes("mpAodHubPage"), "AOD hub is present"],
   [js.includes("dna-dopamine-loop-v1") && js.includes("mp-hub-featured"), "AOD featured talk-through is present"],
   [js.includes("globalThis.mpOwnerReadings=mpOwnerReadings"), "owner readings catalog is on globalThis for kit lookup"],
@@ -254,7 +259,10 @@ if (!css.includes(".mp-problem-chip") || !css.includes(".mp-problem-list-today")
 if (!css.includes(".mp-problem-group") || !css.includes(".mp-problem-chip-growth")) {
   throw new Error("Support/Growth group styles missing");
 }
-if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count") || !css.includes(".mp-fold-head")) {
+if (!css.includes(".mp-fold-head") || !css.includes(".mp-evidence-notes") || !css.includes(".mp-guidance-books")) {
+  throw new Error("hub fold or evidence guidance styles missing");
+}
+if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-clock") || !css.includes(".mp-team-breath-count")) {
   throw new Error("team morning ritual styles missing");
 }
 if (!css.includes(".mp-lane-mens") || !css.includes(".mp-hub-acc-toggle") || !css.includes(".mp-mens-compare")) {

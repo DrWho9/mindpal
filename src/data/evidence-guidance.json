@@ -1,0 +1,120 @@
+{
+  "version": "1.0.0",
+  "disclaimer": "Literacy and optional reading — not a diagnosis, not treatment, and not a replacement for a GP, midwife, maternal-child health nurse, or PANDA. AU urgent help: 000 / Lifeline 13 11 14.",
+  "trustedHosts": [
+    "panda.org.au",
+    "beyondblue.org.au",
+    "healthdirect.gov.au",
+    "aihw.gov.au"
+  ],
+  "hubs": {
+    "mothers": {
+      "lede": "A few plain notes from Australian perinatal services, then books clinicians actually use. Take what steadies you. Leave the rest. None of this replaces human care.",
+      "notes": [
+        {
+          "id": "mothers-common-load",
+          "title": "A hard stretch is more common than the highlight reel",
+          "body": "PANDA — Perinatal Anxiety & Depression Australia — says as many as one in five expecting or new mothers, and one in ten expecting or new fathers, will experience perinatal anxiety or depression. “Perinatal” here means pregnancy and the first year after birth.\n\nThat figure is literacy, not a label. It does not mean you have a diagnosis, and it does not mean you should wait until you can name it. It means the load of becoming a mother is heavier, more often, than the photos suggest. Isolation and shame make the same week feel like a private failure. It is usually not private, and it is not a verdict on how much you love your child.",
+          "source": {
+            "label": "PANDA — What is perinatal mental ill-health?",
+            "url": "https://www.panda.org.au/articles/what-is-perinatal-mental-ill-health"
+          }
+        },
+        {
+          "id": "mothers-blues-vs-pnd",
+          "title": "Baby blues and postnatal depression are not the same weather",
+          "body": "healthdirect, the Australian Government health information service, says about four in five new mothers get the “baby blues” in the first three to five days — tearful, sensitive, anxious, or overwhelmed. Those feelings usually pass on their own within about ten days.\n\nPostnatal depression is a different stretch. Symptoms last longer than two weeks, may be heavier, and usually get in the way of ordinary days. Unlike baby blues, it does not usually lift by itself. healthdirect estimates it affects about one in seven women in the first year, and up to one in ten fathers around this time.\n\nIf you cannot tell which weather you are in, that uncertainty is allowed. Check in with a GP or child health nurse. MindPal cannot tell the difference for you.",
+          "source": {
+            "label": "healthdirect — Postnatal depression",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        },
+        {
+          "id": "mothers-sleep-masks-mood",
+          "title": "Sleep debt can look like “I should be coping”",
+          "body": "Beyond Blue notes that postnatal depression and anxiety can develop from about a month to a year after birth, and that the same symptoms are harder to spot when you are already exhausted from caring for a baby.\n\nMany people who have given birth also get the baby blues in the first few days — teary, irritable, sensitive — and those usually ease with rest and company. When the low mood, numbness, dread, or “I cannot do an ordinary day” stays, or when sleep will not come even when the baby is sleeping, that is worth a human conversation.\n\nTiredness is not a character flaw. It is load. This page is not a diagnosis, and it will not sort clinical depression from a brutal fortnight of nights. A GP, midwife, or maternal-child health nurse can sit with that question beside you.",
+          "source": {
+            "label": "Beyond Blue — Caring for a baby and mental health",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/caring-for-a-baby"
+          }
+        },
+        {
+          "id": "mothers-screening-ordinary",
+          "title": "A check-in is ordinary care, not a court case",
+          "body": "The Australian Institute of Health and Welfare reports that national guidelines recommend every woman is offered mental-health and psychosocial screening in the perinatal period, so support can arrive earlier. In 2022, at least seven in ten women who gave birth in Queensland, Tasmania and the ACT had a recorded mental-health screen during pregnancy.\n\nA questionnaire — often the Edinburgh scale — is a conversation starter. It is not a diagnosis and it is not a score you pass or fail. Skipping a screen, or scoring “fine” while still struggling, does not close the door. You can still ask.\n\nPANDA also keeps a free mental-health checklist for expecting and new parents. It will not diagnose you. It can help you decide whether a GP, midwife, or the PANDA helpline is the next kind step.",
+          "source": {
+            "label": "AIHW — Perinatal mental health screening in Australia",
+            "url": "https://www.aihw.gov.au/reports/mothers-babies/perinatal-mental-health-screening-australia"
+          },
+          "related": {
+            "label": "PANDA mental health checklist",
+            "url": "https://www.panda.org.au/checklist"
+          }
+        },
+        {
+          "id": "mothers-ask-for-help",
+          "title": "Asking for help is part of looking after the baby",
+          "body": "healthdirect is plain about this: postnatal depression is common, treatable, and nothing to be ashamed of. See a doctor if low mood, hopelessness, sleep or appetite changes, or anxiety are hanging around. Help can include talk therapies, practical support, and — when a clinician recommends it — medicine. That decision belongs with you and a human clinician, not with an app.\n\nPANDA runs Australia’s only free National Perinatal Mental Health Helpline, for pregnancy through the first year, and for people around you. They are not a crisis line. If you are in immediate danger in Australia, call 000. For 24/7 crisis support, Lifeline is 13 11 14. Need support in MindPal lists those human options again.\n\nYou can be a loving mother and still need a quiet corner, a checklist, or a phone call. That is not a failure of care. It is care.",
+          "source": {
+            "label": "PANDA’s National Perinatal Mental Health Helpline",
+            "url": "https://www.panda.org.au/articles/pandas-national-perinatal-mental-health-helpline"
+          },
+          "related": {
+            "label": "healthdirect — Postnatal depression",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        }
+      ],
+      "books": [
+        {
+          "id": "kleiman-expected",
+          "title": "This Isn’t What I Expected",
+          "authors": "Karen R. Kleiman and Valerie Davis Raskin, MD",
+          "chapter": "Especially the early chapters that separate baby blues from postnatal depression, and the pages on asking for professional help.",
+          "why": "A long-standing, clinician-written guide to postnatal depression. Useful when the story in your head is “I should be grateful” and the body is saying otherwise. Literacy and coping — not a substitute for a GP.",
+          "url": "https://www.hachettebookgroup.com/titles/karen-r-kleiman/this-isnt-what-i-expected-2nd-edition/9780738216942/"
+        },
+        {
+          "id": "kleiman-scary-thoughts",
+          "title": "Dropping the Baby and Other Scary Thoughts",
+          "authors": "Karen Kleiman, Amy Wenzel, Hilary Waller and Abby Adler Mandel",
+          "chapter": "Part I on what these thoughts are, and the later chapters on stigma and telling someone.",
+          "why": "Intrusive, unwanted thoughts can show up in new parenthood and feel like a secret verdict. This book, written by perinatal clinicians, names the pattern and the difference between a scary thought and a plan. Optional company — not a substitute for a GP. If thoughts of harm are present, use human help / 000 — do not use a book as triage.",
+          "url": "https://www.routledge.com/Dropping-the-Baby-and-Other-Scary-Thoughts-Breaking-the-Cycle-of-Unwanted-Thoughts-in-Parenthood/Kleiman-Wenzel-Waller-Mandel/p/book/9780367223908"
+        },
+        {
+          "id": "sacks-matrescence",
+          "title": "What No One Tells You: A Guide to Your Emotions from Pregnancy to Motherhood",
+          "authors": "Alexandra Sacks, MD and Catherine Birndorf, MD",
+          "chapter": "The matrescence chapters — becoming a mother as a developmental stretch, not a personality test.",
+          "why": "Two reproductive psychiatrists on the emotional backstory of pregnancy and early motherhood: identity, mixed feeling, “is this normal?”. Kind company for the identity load. Not a clinic in paperback.",
+          "url": "https://www.simonandschuster.com/books/What-No-One-Tells-You/Alexandra-Sacks/9781501112577"
+        },
+        {
+          "id": "wiegartz-anxiety-workbook",
+          "title": "The Pregnancy and Postpartum Anxiety Workbook",
+          "authors": "Pamela S. Wiegartz, PhD and Kevin L. Gyoerkoe, PsyD",
+          "chapter": "The CBT skill chapters — noticing worry loops, and the pages written for partners.",
+          "why": "A New Harbinger workbook that teaches cognitive-behavioural skills for perinatal worry, panic and obsessive loops. Exercises, not a diagnosis. Skip any worksheet that tightens the day.",
+          "url": "https://www.newharbinger.com/9781572245891/the-pregnancy-and-postpartum-anxiety-workbook/"
+        },
+        {
+          "id": "harris-happiness-trap",
+          "title": "The Happiness Trap",
+          "authors": "Russ Harris",
+          "chapter": "The chapters on the happiness trap itself, willingness, and values — useful when “I should feel happier” has become another job.",
+          "why": "An Australian GP and ACT trainer. Not a perinatal textbook, but a clear, evidence-based way to stop wrestling every hard feeling. Good beside the mother-specific titles, not instead of clinical care.",
+          "url": "https://thehappinesstrap.com/"
+        },
+        {
+          "id": "neff-self-compassion",
+          "title": "Self-Compassion",
+          "authors": "Kristin Neff, PhD",
+          "chapter": "The early chapters on the three parts of self-compassion — kindness, common humanity, and mindfulness — when the inner critic is doing the night shift.",
+          "why": "Neff’s research-backed account of treating yourself as you would a friend. Guilt and “not enough” are loud in motherhood. This is general psychology, offered as optional company — not a postnatal protocol.",
+          "url": "https://self-compassion.org/"
+        }
+      ]
+    }
+  }
+}

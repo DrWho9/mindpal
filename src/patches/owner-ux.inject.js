@@ -600,10 +600,6 @@ function mpMothersWomenCard({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
   ]});
 }
-function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o}){
-  (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
-  return(0,A.jsx)(mpFeelingKitPage,{feelingId:`mothers`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o});
-}
 function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a}){
   (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
   return(0,A.jsx)(mpFeelingKitPage,{feelingId:`aod`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a});
@@ -617,6 +613,110 @@ function mpMensAccordion({id:e,title:t,lede:n,openId:r,onToggle:i,children:a}){
     ]}),
     n?(0,A.jsx)(`p`,{className:`muted`,children:n}):null,
     o?a:null
+  ]});
+}
+function mpHubAccordion({sections:e=[],initial:t=`readings`}={}){
+  let[n,r]=(0,_.useState)(t);
+  function i(e){r(t=>t===e?``:e)}
+  return(0,A.jsx)(A.Fragment,{children:e.map(t=>(0,A.jsx)(mpFoldSection,{id:t.id,title:t.title,meta:t.meta,className:t.className,open:n===t.id,onToggle:i,children:t.children},t.id))});
+}
+function mpHubChapterTags(reading){
+  if(mpReadings.readingTags)return mpReadings.readingTags(reading).map(mpReadings.formatTag).filter(Boolean);
+  return[];
+}function mpEvidenceOutbound({label:e,url:t}){
+  if(!e||!t)return null;
+  return(0,A.jsx)(`a`,{className:`mp-evidence-link`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:e});
+}
+function mpEvidenceGuidancePanel({hubId:e=`mothers`}={}){
+  let t=mpProblems.evidenceGuidanceFor?mpProblems.evidenceGuidanceFor(e):{notes:[],books:[],lede:``,disclaimer:mpProblems.EVIDENCE_GUIDANCE_DISCLAIMER||``};
+  if(!t.notes.length&&!t.books.length)return(0,A.jsx)(`p`,{className:`muted`,children:`Evidence and guidance for this hub is still being written.`});
+  return(0,A.jsxs)(`div`,{className:`mp-evidence-guidance`,children:[
+    t.lede?(0,A.jsx)(`p`,{children:t.lede}):null,
+    (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:t.disclaimer}),
+    t.notes.length?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Plain notes from Australian services`}),
+      (0,A.jsx)(`ul`,{className:`mp-evidence-notes`,children:t.notes.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`h4`,{children:e.title}),
+        e.body.split(`\n\n`).map((t,n)=>(0,A.jsx)(`p`,{children:t},n)),
+        (0,A.jsxs)(`p`,{className:`mp-evidence-source`,children:[`Source: `,(0,A.jsx)(mpEvidenceOutbound,{label:e.source.label,url:e.source.url})]}),
+        e.related?(0,A.jsxs)(`p`,{className:`mp-evidence-source`,children:[`Also: `,(0,A.jsx)(mpEvidenceOutbound,{label:e.related.label,url:e.related.url})]}):null
+      ]},e.id))})
+    ]}):null,
+    t.books.length?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Books and chapters — optional company`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Real titles, offered as guidance. They do not replace a GP, midwife, maternal-child health nurse, or PANDA.`}),
+      (0,A.jsx)(`ul`,{className:`mp-guidance-books`,children:t.books.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`h4`,{children:e.title}),
+        (0,A.jsx)(`p`,{className:`mp-guidance-authors`,children:e.authors}),
+        (0,A.jsx)(`p`,{children:e.why}),
+        e.chapter?(0,A.jsxs)(`p`,{className:`muted`,children:[`Start with: `,e.chapter]}):null,
+        e.url?(0,A.jsx)(mpEvidenceOutbound,{label:`Publisher / author page`,url:e.url}):null
+      ]},e.id))})
+    ]}):null
+  ]});
+}
+function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a}){
+  (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
+  let o=mpProblems.findProblem(mpProblemHubs,`mothers`);
+  if(!o)return(0,A.jsx)(`p`,{children:`The mothers space is not loaded yet.`});
+  let s=mpProblems.readingsForProblem(mpPackA,`mothers`),c=mpProblems.maddyForProblem(mpMaddy,`mothers`),l=mpMotherYtEntries(o);
+  let u=mpProblems.HUB_ACCORDION_ORDER||[`readings`,`evidence`,`videos`,`companion`];
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":`Struggling mothers`,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MOTHERS · OPTIONAL SUPPORT`}),
+    (0,A.jsx)(`h1`,{children:`Struggling mothers`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. Tap a section to open it — one at a time.`}),
+    (0,A.jsx)(mpHubAccordion,{initial:u[0]||`readings`,sections:[
+      {id:`readings`,title:`Readings`,meta:`Full Pack A chapters · #tags`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Open a full daily chapter — not a title card. Tags come from the Pack A chapter, the same controlled set used on Feelings. The morning path still unlocks one day at a time; opening here does not mark Done.`}),
+        (0,A.jsx)(mpHubOpenableReadings,{readings:s,emptyLabel:`No tagged mother readings yet.`,onExplore:n})
+      ]})},
+      {id:`evidence`,title:`Evidence & guidance`,meta:`AU notes · real books`,children:(0,A.jsx)(mpEvidenceGuidancePanel,{hubId:`mothers`})},
+      {id:`videos`,title:`Videos`,meta:`Maddy and YouTube · no speaker dump`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for overwhelm, sleep and self-compassion. No speaker library dump here.`}),
+        c.length?(0,A.jsxs)(A.Fragment,{children:[
+          (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
+          (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:c.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:`Maddy`,kind:`maddy`,src:e.src,videoUrl:e.src}),children:[
+            (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
+            (0,A.jsx)(`p`,{children:e.description}),
+            (0,A.jsx)(`span`,{className:`card-link`,children:`Play`})
+          ]},e.id))})
+        ]}):null,
+        l.length?(0,A.jsxs)(A.Fragment,{children:[
+          (0,A.jsx)(`h3`,{children:`Voice-guided on YouTube`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
+          (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:l.map(e=>{
+            let t=mpReadings.meditationOpenUrl(e);
+            return(0,A.jsxs)(`li`,{children:[
+              (0,A.jsx)(`strong`,{children:e.title}),
+              (0,A.jsx)(`span`,{className:`muted`,children:e.channel||``}),
+              t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
+            ]},e.id);
+          })})
+        ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
+      ]})},
+      {id:`companion`,title:`Companion`,meta:`Educational prompt · not a therapist`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Opens Companion with a mother-support prompt — educational and peer-like. It is software, not a therapist, and it cannot watch over you or treat postnatal depression.`}),
+        e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
+      ]})}
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Journal / wins`}),
+      (0,A.jsx)(`p`,{children:o.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small win amid caring for others: `):null)})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-safety`,children:[
+      (0,A.jsx)(`h2`,{children:`If this feels like too much`}),
+      (0,A.jsx)(`p`,{children:`MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline.`}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null,
+        a?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:a,children:`Women’s wellbeing`}):null
+      ]})
+    ]})
   ]});
 }
 function mpMensHealthHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){
