@@ -374,7 +374,7 @@ function patchJs(source) {
   next = replaceOnce(
     next,
     "function dt(e,t){if(ut(),!e?.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{let o=await it();if(!n){if(o)try{let o=await at(e,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(e,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
-    "function dt(e,t){let x=mpReadings.unwrapListenInput(e);if(!String(x.text||``).trim())return t?.(),()=>{};if(lt){let p=lt;lt=null;p()}let n=!1,ctrl=mpReadings.createListenController(x,{onEnd:()=>{n||(n=!0,lt===a&&(lt=null),t?.())}}),a=()=>{n||(n=!0,try{ctrl.stop()}catch{},lt===a&&(lt=null))};return lt=a,Promise.resolve(ctrl.play()).then(ok=>{ok===!1&&a()}).catch(()=>a()),a}",
+    "function dt(e,t){let x=mpReadings.unwrapListenInput(e);if(!String(x.text||``).trim())return t?.(),()=>{};if(lt){let p=lt;lt=null;p()}let n=!1,ctrl,a=()=>{if(!n){n=!0;try{ctrl.stop()}catch{}if(lt===a)lt=null}};ctrl=mpReadings.createListenController(x,{onEnd:()=>{if(!n){n=!0;if(lt===a)lt=null;t?.()}}});lt=a;Promise.resolve(ctrl.play()).then(ok=>{if(ok===!1){a();t?.()}}).catch(()=>{a();t?.()});return a}",
     "tts-listen-order",
   );
   next = replaceOnce(
