@@ -128,4 +128,22 @@ describe("individual growth path", () => {
     assert.match(build, /src\/today\/individual-growth\.js/);
     assert.match(build, /mpIndividualGrowth=/);
   });
+
+  it("shows the follow-along breath clip as a compact portrait thumbnail", () => {
+    const css = readFileSync(join(root, "../src/patches/styles.css"), "utf8");
+    const frame = css.match(/\.mp-team-breath-frame\{[^}]+\}/);
+    const video = css.match(/\.mp-team-breath-video video\{[^}]+\}/);
+    assert.ok(frame, "breath frame rule missing");
+    assert.ok(video, "breath video rule missing");
+    assert.match(frame[0], /width:160px/);
+    assert.match(video[0], /aspect-ratio:9\/16/);
+    assert.match(video[0], /object-fit:cover/);
+    assert.doesNotMatch(video[0], /aspect-ratio:16\/9/);
+    assert.match(inject, /className:`mp-team-breath-frame`/);
+    assert.match(inject, /"aria-label":`Timed breath with Maddy`/);
+    assert.match(inject, /controls:!0,playsInline:!0,preload:`metadata`,src:g/);
+    assert.match(inject, /onClick:D,children:o\?`Pause`:`Start the breath`/);
+    assert.match(inject, /onClick:\(\)=>E\(`settle`,`done`\),children:`I’m done`/);
+    assert.match(inject, /Skip this breath/);
+  });
 });
