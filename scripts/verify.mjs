@@ -99,6 +99,7 @@ const checks = [
   [js.includes("{name:`My diary`,icon:rn}"), "sidebar Journal item is present"],
   [js.includes("mindpal.todaySteps.v1"), "day-steps storage key is present"],
   [js.includes("mindpal.dailyWins.v1"), "daily wins storage key is present"],
+  [js.includes("variant:`winOfDay`") && js.includes("WIN_OF_THE_DAY_TITLE") && js.includes("mpWinsPanel,{variant:`winOfDay`}") && js.indexOf("mpWinsPanel,{variant:`winOfDay`}") < js.indexOf("mpIndividualGrowthCard,{onOpenJournal"), "Win of the day is mounted above Individual Growth"],
   [js.includes("Show Coptic calendar date"), "Coptic settings toggle is present"],
   [js.includes("mpSignInPage"), "sign-in page is present"],
   [js.includes("mp-lane-readings"), "Readings lane chrome is present"],
@@ -274,7 +275,7 @@ if (!css.includes(".mp-team-ritual-card") || !css.includes(".mp-team-breath-cloc
 if (!css.includes(".mp-lane-mens") || !css.includes(".mp-hub-acc-toggle") || !css.includes(".mp-mens-compare")) {
   throw new Error("Men's Health hub styles missing");
 }
-if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team")) {
+if (!css.includes(".mp-individual-growth") || !css.includes(".mp-band-team") || !css.includes(".mp-win-of-day")) {
   throw new Error("Individual Growth / Team Growth band styles missing");
 }
 if (!css.includes(".mp-v02-teaser") || !css.includes(".mp-captions-note")) {

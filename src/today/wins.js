@@ -2,6 +2,14 @@ import { civilDateKey } from "../calendar/civil.js";
 
 export const WINS_STORAGE_KEY = "mindpal.dailyWins.v1";
 export const WIN_TEXT_MAX = 280;
+
+/** Always-on Today control. Not a numbered step and not a STEP_IDS entry. */
+export const WIN_OF_THE_DAY_TITLE = "Win of the day";
+export const WIN_OF_THE_DAY_EYEBROW = "WIN OF THE DAY";
+export const WIN_OF_THE_DAY_LEDE =
+  "See today’s wins, or add one now — morning included. Small ones count. You’ll meet them again before sleep.";
+export const WIN_OF_THE_DAY_EMPTY =
+  "Nothing saved yet today. Add one whenever you like.";
 const MAX_DAYS = 60;
 
 export function emptyWinsDay(date = new Date()) {

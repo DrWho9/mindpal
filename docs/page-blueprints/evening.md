@@ -8,7 +8,7 @@
 
 ## Purpose
 
-Close the day: read today’s wins, add one more, then a short Journal wind-down.
+Close the day: read today’s wins, add one more, then a short Journal wind-down. Wins can already have been saved from **Win of the day** on Today; this page reviews the same `mindpal.dailyWins.v1` list.
 
 ## Expected UX
 
