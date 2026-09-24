@@ -245,11 +245,22 @@ dialog[open]>*{pointer-events:auto}
 .mp-mens-featured-help{background:#e8eef6}
 @media (width<=800px){.mp-mens-compare{grid-template-columns:1fr}}
 @media (width<=700px){.mp-problem-grid{grid-template-columns:1fr}}
+.mp-today-hub>.mp-win-of-day{margin:0}
+.mp-win-of-day{width:100%;box-sizing:border-box;display:flex;flex-direction:column;gap:8px;padding:14px 16px 16px}
+.mp-win-of-day h2,.mp-win-of-day p,.mp-win-of-day .eyebrow{margin:0}
+.mp-win-of-day p{max-width:46ch}
+.mp-win-of-day .mp-wins-list{margin:2px 0 0}
+.mp-win-of-day .mp-wins-list li{flex-wrap:wrap;align-items:baseline}
+.mp-win-of-day input{width:100%;min-height:44px;margin:2px 0 0;box-sizing:border-box}
+.mp-win-of-day .button-row{flex-wrap:wrap;margin:0}
+.mp-win-of-day .primary{min-height:44px}
 .mp-wins-panel h2{margin:.15em 0 .35em}
 .mp-wins-list{list-style:none;margin:10px 0 14px;padding:0}
 .mp-wins-list li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #e8e1cc}
 .mp-wins-list time{color:#6d6758;font-size:12px;white-space:nowrap}
 .mp-wins-panel input{width:100%;margin:6px 0 10px}
+.mp-win-of-day.mp-wins-panel h2{margin:0}
+.mp-win-of-day.mp-wins-panel input{width:100%;min-height:44px;margin:2px 0 0;box-sizing:border-box}
 
 .mp-day-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mp-day-step{border-radius:14px;padding:16px 18px;border:1px solid #dfe4d5;background:#fffef9}
