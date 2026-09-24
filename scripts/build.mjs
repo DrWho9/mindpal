@@ -184,6 +184,9 @@ function wrapRuntime() {
   const maddyListen = stripExports(
     readFileSync(join(root, "src/tts/maddy-listen.js"), "utf8"),
   );
+  const listenPlayer = stripExports(
+    readFileSync(join(root, "src/tts/listen-player.js"), "utf8"),
+  );
   const ytSection = readFileSync(
     join(root, "src/patches/yt-meditations.inject.js"),
     "utf8",
@@ -194,6 +197,10 @@ function wrapRuntime() {
   ).trim();
   const voicePicker = readFileSync(
     join(root, "src/patches/voice-picker.inject.js"),
+    "utf8",
+  ).trim();
+  const listenUi = readFileSync(
+    join(root, "src/patches/listen-player.inject.js"),
     "utf8",
   ).trim();
   const feelingsUi = readFileSync(
@@ -264,7 +271,7 @@ function wrapRuntime() {
     join(root, "src/patches/companion-demo.inject.js"),
     "utf8",
   ).trim();
-  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpMensHealth=${mensHealthCatalog.trim()};var mpEvidenceGuidance=${evidenceGuidanceCatalog.trim()};var mpSpeakersCatalog=${speakersCatalog.trim()};var mpFeelingKits=${feelingKitsJson.trim()};if(typeof globalThis<\`u\`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpEvidenceGuidance=mpEvidenceGuidance;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;globalThis.mpFeelingKits=mpFeelingKits;globalThis.mpMaddy=mpMaddy;globalThis.mpMeditationCatalog=mpMeditationCatalog;}var mpReadings=(function(){${progress}\n${ownerHelpers}\n${openReadingSrc}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${ytDirectory}\n${emotions}\n${feelingMedia}\n${feelingKits}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,videoDisplayTitle,videoDurationLabel,videoPresenterName,captionsDisclosure,captionsAvailable,featuredPlayableVideo,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,isNeuralOrNatural,warmSpeechVoices,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${mensHealth}\n${evidenceGuidance}\n${problems}
+  return `var mpPackA=${packA.trim()};var mpPackB=${packB.trim()};var mpOwnerReadings=${ownerReadings.trim()};var mpMaddy=${maddyCatalog.trim()};var mpVideoCatalog=${videoCatalog.trim()};globalThis.mpVideoCatalog=mpVideoCatalog;var mpMeditationCatalog=${meditationCatalog.trim()};var mpTtsAudio=${ttsCatalog};var mpProblemHubs=${problemHubs.trim()};var mpMensHealth=${mensHealthCatalog.trim()};var mpEvidenceGuidance=${evidenceGuidanceCatalog.trim()};var mpSpeakersCatalog=${speakersCatalog.trim()};var mpFeelingKits=${feelingKitsJson.trim()};if(typeof globalThis<\`u\`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpEvidenceGuidance=mpEvidenceGuidance;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;globalThis.mpFeelingKits=mpFeelingKits;globalThis.mpMaddy=mpMaddy;globalThis.mpMeditationCatalog=mpMeditationCatalog;}var mpReadings=(function(){${progress}\n${ownerHelpers}\n${openReadingSrc}\n${tags}\n${playback}\n${maddy}\n${cards}\n${coaches}\n${meditations}\n${ytDirectory}\n${emotions}\n${feelingMedia}\n${feelingKits}\n${share}\n${ttsVoices}\n${ttsAudio}\n${maddyListen}\n${listenPlayer}\nreturn{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,videoDisplayTitle,videoDurationLabel,videoPresenterName,captionsDisclosure,captionsAvailable,featuredPlayableVideo,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,isNeuralOrNatural,warmSpeechVoices,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,createListenController,createAudioListenController,createSpeechListenController,buildSpeechTimeline,formatListenClock,formatListenRemaining,listenTimes,listenPointerRatio,chunkIndexAt,LISTEN_SKIP_SEC,upgradeSpeechToBlob,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){${ux}\n${themeMap}\n${ownerHelpers}\n${mensHealth}\n${evidenceGuidance}\n${problems}
 mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCoptic,formatCopticDate,formatCopticLabel,COPTIC_MONTHS};
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
@@ -279,7 +286,7 @@ mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,de
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
 })();var mpCompanionDemo=(function(){${companionDemo}
 return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
-})();${ytSection}${sidebarShare}${voicePicker}${feelingsUi}${companionBaseUi}${reflectUi}${appointmentUi}${companionDemoUi}`;
+})();${ytSection}${sidebarShare}${voicePicker}${listenUi}${feelingsUi}${companionBaseUi}${reflectUi}${appointmentUi}${companionDemoUi}`;
 }
 
 function patchJs(source) {
@@ -367,25 +374,25 @@ function patchJs(source) {
   next = replaceOnce(
     next,
     "function dt(e,t){if(ut(),!e?.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{let o=await it();if(!n){if(o)try{let o=await at(e,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(e,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
-    "function dt(e,t){let x=mpReadings.unwrapListenInput(e),u=x.text,d=x.id;if(ut(),!u.trim())return t?.(),()=>{};let n=!1,r=()=>{},i=new AbortController,a=()=>{if(!n){if(n=!0,i.abort(),r(),typeof window<`u`&&window.speechSynthesis)try{window.speechSynthesis.cancel()}catch{}lt===a&&(lt=null)}};return lt=a,(async()=>{if(n)return;let p=mpReadings.resolveListenAudioUrl(x,typeof mpTtsAudio<`u`?mpTtsAudio:null);if(p){try{if(await mpReadings.playAudioUrl(p,{signal:i.signal})){n||(lt===a&&(lt=null),t?.());return}}catch{if(n)return}}let o=await it();if(!n){if(o)try{let o=await at(u,{signal:i.signal});if(n)return;let s=ot(o);r=s.stop,await s.play(),await s.ended,n||(lt===a&&(lt=null),t?.());return}catch{if(n)return}n||(r=ct(u,()=>{n||(lt===a&&(lt=null),t?.())}))}})(),a}",
+    "function dt(e,t){let x=mpReadings.unwrapListenInput(e);if(!String(x.text||``).trim())return t?.(),()=>{};if(lt){let p=lt;lt=null;p()}let n=!1,ctrl=mpReadings.createListenController(x,{onEnd:()=>{n||(n=!0,lt===a&&(lt=null),t?.())}}),a=()=>{n||(n=!0,try{ctrl.stop()}catch{},lt===a&&(lt=null))};return lt=a,Promise.resolve(ctrl.play()).then(ok=>{ok===!1&&a()}).catch(()=>a()),a}",
     "tts-listen-order",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`})",
-    "(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>s(c),children:a?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
+    "(0,A.jsx)(mpListenPlayer,{text:c,label:`Verse`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "verse-voice-picker",
   );
   next = replaceOnce(
     next,
     "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`})",
-    "(0,A.jsx)(`button`,{className:`secondary`,onClick:()=>E(e.weeklyFocus.text),children:w?`Pause`:`Listen`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
+    "(0,A.jsx)(mpListenPlayer,{text:e.weeklyFocus.text,label:`Focus`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "focus-voice-picker",
   );
   next = replaceOnce(
     next,
-    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`})",
-    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
+    "(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!e.trim()||n,onClick:()=>i(e),children:`Speak`}),(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:!n,onClick:a,children:`Stop`})",
+    "(0,A.jsx)(mpListenPlayer,{text:e,label:`Note`}),(0,A.jsx)(mpVoicePicker,{}),(0,A.jsx)(mpMaddyListenButtons,{})",
     "ttspad-voice-picker",
   );
 
@@ -616,6 +623,15 @@ function patchJs(source) {
   }
   if (!next.includes("speakBrowser") || !next.includes("prerenderedAudioUrl")) {
     throw new Error("Listen playback helpers missing");
+  }
+  if (!next.includes("function mpListenPlayer(") || !next.includes("Skip back 8 seconds") || !next.includes("mp-listen-handle")) {
+    throw new Error("Listen scrubber missing");
+  }
+  if (next.includes("()=>{m&&m()}")) {
+    throw new Error("Peaceful reading Listen is still cancelled on re-render");
+  }
+  if (!next.includes("label:`Peaceful reading`")) {
+    throw new Error("Peaceful reading Listen player missing");
   }
   if (!next.includes("mpTtsAudio") || !next.includes("mindpal.tts.voice.v1")) {
     throw new Error("TTS catalog or voice persistence missing");

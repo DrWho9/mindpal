@@ -54,19 +54,18 @@ export async function playAudioUrl(url, deps = {}) {
   };
   if (signal) signal.addEventListener("abort", stop, { once: true });
   try {
-    await new Promise((resolve, reject) => {
-      audio.addEventListener("canplaythrough", () => resolve(), { once: true });
+    const ended = new Promise((resolve, reject) => {
+      audio.addEventListener("ended", () => resolve(true), { once: true });
       audio.addEventListener("error", () => reject(new Error("audio-error")), {
         once: true,
       });
-      audio.load?.();
     });
-    if (signal?.aborted) return false;
-    const ended = new Promise((resolve) => {
-      audio.addEventListener("ended", resolve, { once: true });
-      audio.addEventListener("error", resolve, { once: true });
-    });
-    await audio.play();
+    const played = audio.play?.();
+    if (played && typeof played.then === "function") await played;
+    if (signal?.aborted) {
+      stop();
+      return false;
+    }
     await ended;
     return true;
   } catch {
