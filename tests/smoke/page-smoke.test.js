@@ -130,6 +130,84 @@ describe("route smoke (Playwright + system Chrome)", { skip: !browserEnabled }, 
     await box.waitFor({ state: "visible" });
     assert.equal((await box.inputValue()).trim(), APPOINTMENT_COMPANION_PROMPT);
   });
+
+  it("Peaceful reading Listen speaks and the scrubber seeks", async () => {
+    await goHash(page, "Today");
+    await page.evaluate(() => {
+      window.__mpSpoken = [];
+      const real = window.speechSynthesis;
+      const fake = {
+        speaking: false,
+        pending: false,
+        getVoices: () =>
+          real?.getVoices?.() || [{ name: "Karen", lang: "en-AU", voiceURI: "karen" }],
+        addEventListener: (...args) => real?.addEventListener?.(...args),
+        removeEventListener: (...args) => real?.removeEventListener?.(...args),
+        resume: () => real?.resume?.(),
+        cancel() {
+          this.speaking = false;
+          try {
+            real?.cancel?.();
+          } catch {
+            /* ignore */
+          }
+        },
+        speak(utterance) {
+          window.__mpSpoken.push(String(utterance?.text || ""));
+          this.speaking = true;
+          this.pending = false;
+        },
+      };
+      try {
+        Object.defineProperty(window, "speechSynthesis", {
+          configurable: true,
+          get: () => fake,
+        });
+      } catch {
+        if (real) real.speak = (utterance) => fake.speak(utterance);
+      }
+    });
+    await page.getByRole("button", { name: "Skip this breath" }).click();
+    await page.getByRole("button", { name: "Skip the verse" }).click();
+    const player = page.getByRole("group", { name: "Listen to Peaceful reading" });
+    await player.waitFor({ state: "visible" });
+    await player.scrollIntoViewIfNeeded();
+    await player.getByRole("button", { name: "Play" }).click();
+    await page.waitForFunction(() => (window.__mpSpoken || []).length > 0);
+    const opening = await page.evaluate(() => window.__mpSpoken[0]);
+    assert.ok(opening.length > 12, "Play did not speak the reading");
+    await player.getByRole("button", { name: "Pause" }).waitFor({ state: "visible" });
+    await player.getByRole("button", { name: "Skip forward 8 seconds" }).click();
+    await page.waitForFunction(() => (window.__mpSpoken || []).length > 1);
+    const skipped = await page.evaluate(() => window.__mpSpoken.at(-1));
+    assert.notEqual(skipped, opening);
+    const track = player.locator(".mp-listen-track");
+    const box = await track.boundingBox();
+    assert.ok(box, "scrubber track missing");
+    await page.mouse.move(box.x + 12, box.y + box.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(box.x + box.width * 0.72, box.y + box.height / 2, { steps: 8 });
+    await page.mouse.up();
+    await page.waitForFunction(() => (window.__mpSpoken || []).length > 2);
+    const scrubbed = await page.evaluate(() => window.__mpSpoken.at(-1));
+    assert.notEqual(scrubbed, skipped);
+    const times = await player.locator(".mp-listen-times").innerText();
+    assert.match(times, /\d{2}:\d{2}/);
+    assert.match(times, /-\d{2}:\d{2}/);
+    const valueNow = Number(await player.getByRole("slider").getAttribute("aria-valuenow"));
+    assert.ok(valueNow > 0, "scrubber handle did not move");
+    await page.locator(".mp-team-reading").screenshot({
+      path: "/opt/cursor/artifacts/peaceful-listen-scrubber.png",
+    });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await player.scrollIntoViewIfNeeded();
+    await page.locator(".mp-team-reading").screenshot({
+      path: "/opt/cursor/artifacts/peaceful-listen-scrubber-phone.png",
+    });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await player.getByRole("button", { name: "Pause" }).click();
+    await player.getByRole("button", { name: "Play" }).waitFor({ state: "visible" });
+  });
 });
 
 if (!browserEnabled) {

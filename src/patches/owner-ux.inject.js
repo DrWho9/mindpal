@@ -271,7 +271,6 @@ function mpMorningVerse(){
   let i=typeof Pt<`u`?Pt.entries:null;
   let a=r&&i?(i[(typeof It==`function`?It():``)]||i.default):null;
   let[o,s]=(0,_.useState)(``);
-  let{listening:c,listenStatus:l,toggle:u}=mt();
   let d=[n.verse.reference,n.verse.text,n.reflection,n.practice?.text?`1-min practice. ${n.practice.text}`:``,a?.prayer?.text?`Prayer. ${a.prayer.text}`:``].filter(Boolean).join(`
 
 `);
@@ -288,7 +287,7 @@ function mpMorningVerse(){
       a.prayer.note?(0,A.jsx)(`p`,{children:a.prayer.note}):null
     ]}):null,
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>u(d),children:c?`Pause`:`Listen`}),
+      (0,A.jsx)(mpListenPlayer,{text:d,label:`Verse`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let e=await ft(d+`
 
 — MindPal faith reading`);s(e===`copied`?`Copied.`:`Could not copy.`),setTimeout(()=>s(``),2e3)},children:`Copy`}),
@@ -296,7 +295,7 @@ function mpMorningVerse(){
 
 — MindPal faith reading`,`MindPal faith reading`);e!==`cancelled`&&(s(e===`shared`?`Shared.`:e===`copied`?`Copied for sharing.`:`Could not share.`),setTimeout(()=>s(``),2e3))},children:`Share`})
     ]}),
-    o||l?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:o||l}):null
+    o?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:o}):null
   ]});
 }
 function mpCollapsedVerse(){
@@ -327,7 +326,6 @@ function mpOpenBookReader(id,onNavigate){
 function mpBookReader({reading:e,readings:t,onBack:n,markGate:g=!0}){
   let[r,i]=(0,_.useState)(()=>mpReadings.loadProgress());
   let[a,o]=(0,_.useState)(``);
-  let{listening:s,listenStatus:c,toggle:l}=mt();
   if(!e)return(0,A.jsx)(`p`,{children:`No reading is loaded yet.`});
   let u=t||(mpReadings.mergeOwnerReadings?mpReadings.mergeOwnerReadings(mpPackA):mpReadings.orderedReadings(mpPackA));
   let d=e.pack===`owner`||e.gate===!1;
@@ -348,13 +346,13 @@ function mpBookReader({reading:e,readings:t,onBack:n,markGate:g=!0}){
     (0,A.jsx)(`p`,{className:`mindpal-reading-credit`,children:d?`MindPal original support reading — always open. Opening here does not mark a Pack A day Done.`:mpReadings.PACK_A_CREDIT}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       g&&!d?(0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:!f,onClick:m,children:r.completedIds.includes(e.id)?`Done`:`Done for today`}):null,
-      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>l({id:e.id,text:yt(e)}),children:s?`Pause`:`Listen`}),
+      (0,A.jsx)(mpListenPlayer,{id:e.id,text:yt(e),label:`Reading`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:async()=>{let t=await ft((typeof yt==`function`?yt(e):e.body||``)+`
 
 — MindPal daily reading`);o(t===`copied`?`Copied.`:`Could not copy.`);setTimeout(()=>o(``),2e3)},children:`Copy`}),
       n?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:n,children:`Back to list`}):null
     ]}),
-    a||c?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:a||c}):null
+    a?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:a}):null
   ]});
 }
 function mpHubOpenableReadings({readings:e=[],emptyLabel:t=`No tagged readings yet.`,onExplore:n}={}){
@@ -904,7 +902,6 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
   let[q,j]=(0,_.useState)(``);
   let[z,B]=(0,_.useState)(``);
   let u=(0,_.useRef)(null);
-  let{listening:d,listenStatus:f,toggle:p,stop:m}=mt();
   let h=mpTeamRitual.breathClip(mpMaddy);
   let g=mpReadings.maddyPublishedSrc(mpTeamRitual.breathClipSrc(mpMaddy));
   let v=mpIndividualGrowth.growthReading(mpPackA,n);
@@ -923,7 +920,6 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
   let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
   (0,_.useEffect)(()=>{function e(){r(mpIndividualGrowth.loadGrowth(mpPackA))}return window.addEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e),()=>window.removeEventListener(mpIndividualGrowth.GROWTH_CHANGE_EVENT,e)},[]);
   (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveGrowth(mpIndividualGrowth.markGrowth(mpIndividualGrowth.loadGrowth(mpPackA),`settle`,`done`));r(t);try{u.current&&u.current.pause()}catch{}a(`verse`);return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
-  (0,_.useEffect)(()=>()=>{m&&m()},[m]);
   function F(e){
     if(!mpIndividualGrowth.canOpenGrowthStep(n,e))return;
     a(e);
@@ -1005,7 +1001,7 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
       ]})
     ]}):(0,A.jsx)(`p`,{children:`Today’s verse is not loaded yet.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      N?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:N.id||`growth-verse`,text:J}),children:d?`Pause`:`Listen`}):null,
+      N?(0,A.jsx)(mpListenPlayer,{id:N.id||`growth-verse`,text:J,label:`Verse`}):null,
       Q===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`verse`,`done`),children:`I’m done`}):null,
       Q===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`skipped`),children:`Skip the verse`}):null,
       Q!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`todo`),children:`Undo verse`}):null
@@ -1015,7 +1011,6 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
       (0,A.jsx)(`p`,{children:`When you’re ready, open the peaceful reading.`}),
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`reading`),children:`Go to the peaceful reading`})
     ]}):null,
-    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
   ]});
   let readingBody=(0,A.jsxs)(`div`,{className:`mp-team-reading`,children:[
     (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_READING_HERO}),
@@ -1027,7 +1022,7 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
       v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
     ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
+      v?(0,A.jsx)(mpListenPlayer,{id:v.id,text:yt(v),label:`Peaceful reading`}):null,
       v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>mpOpenBookReader(v.id,R),children:`Open the book reader`}):null,
       b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`I’m done`}):null,
       b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
@@ -1038,7 +1033,6 @@ function mpIndividualGrowthCard({onOpenJournal:T,onOpenReadings:R}){
       (0,A.jsx)(`p`,{children:`When you’re ready, name one win or intention.`}),
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`win`),children:`Go to one win`})
     ]}):null,
-    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
   ]});
   let winBody=(0,A.jsxs)(`div`,{className:`mp-growth-win`,children:[
     (0,A.jsx)(`p`,{children:mpIndividualGrowth.GROWTH_WIN_HERO}),
@@ -1115,7 +1109,6 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
   let[q,j]=(0,_.useState)(``);
   let[z,B]=(0,_.useState)(``);
   let u=(0,_.useRef)(null);
-  let{listening:d,listenStatus:f,toggle:p,stop:m}=mt();
   let h=mpTeamRitual.breathClip(mpMaddy);
   let g=mpReadings.maddyPublishedSrc(mpTeamRitual.breathClipSrc(mpMaddy));
   let v=mpTeamRitual.ritualReading(mpPackA,n);
@@ -1132,7 +1125,6 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
   let w=mpTeamRitual.formatBreathClock(Math.max(0,mpTeamRitual.BREATH_DURATION_SEC-c));
   (0,_.useEffect)(()=>{function e(){r(mpTeamRitual.loadRitual(mpPackA))}return window.addEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e),()=>window.removeEventListener(mpTeamRitual.TEAM_RITUAL_CHANGE_EVENT,e)},[]);
   (0,_.useEffect)(()=>{if(!o)return;let e=setInterval(()=>{l(t=>{let n=t+.5;if(n>=mpTeamRitual.BREATH_DURATION_SEC){s(!1);let t=mpSaveRitual(mpTeamRitual.markRitual(mpTeamRitual.loadRitual(mpPackA),`breathe`,`done`));r(t);try{u.current&&u.current.pause()}catch{}a(`verse`);return mpTeamRitual.BREATH_DURATION_SEC}return n})},500);return()=>clearInterval(e)},[o]);
-  (0,_.useEffect)(()=>()=>{m&&m()},[m]);
   function F(e){
     if(!mpTeamRitual.canOpenRitualStep(n,e))return;
     a(e);
@@ -1211,7 +1203,7 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       ]})
     ]}):(0,A.jsx)(`p`,{children:`Today’s verse is not loaded yet.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      N?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:N.id||`ritual-verse`,text:J}),children:d?`Pause`:`Listen`}):null,
+      N?(0,A.jsx)(mpListenPlayer,{id:N.id||`ritual-verse`,text:J,label:`Verse`}):null,
       Q===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`verse`,`done`),children:`I’m done`}):null,
       Q===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`skipped`),children:`Skip the verse`}):null,
       Q!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`verse`,`todo`),children:`Undo verse`}):null
@@ -1221,7 +1213,6 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       (0,A.jsx)(`p`,{children:`When you’re ready, open the peaceful reading.`}),
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>F(`reading`),children:`Go to the peaceful reading`})
     ]}):null,
-    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
   ]});
   let readingBody=(0,A.jsxs)(`div`,{className:`mp-team-reading`,children:[
     (0,A.jsx)(`p`,{children:`One gentle Pack A piece for this morning. Opening here does not mark a Pack A day Done.`}),
@@ -1233,13 +1224,12 @@ function mpTeamRitualPage({onToday:e,onReadings:t}){
       v.practice?(0,A.jsxs)(`p`,{children:[(0,A.jsx)(`strong`,{children:`Practice:`}),` `,v.practice]}):null
     ]}):(0,A.jsx)(`p`,{children:`No peaceful reading is loaded yet.`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      v?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>p({id:v.id,text:yt(v)}),children:d?`Pause`:`Listen`}):null,
+      v?(0,A.jsx)(mpListenPlayer,{id:v.id,text:yt(v),label:`Peaceful reading`}):null,
       b===`todo`?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>E(`reading`,`done`),children:`That’s enough for this morning`}):null,
       b===`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`skipped`),children:`Skip the reading`}):null,
       b!==`todo`?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>E(`reading`,`todo`),children:`Undo reading`}):null,
       t?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:t,children:`Today’s pack reading`}):null
     ]}),
-    f?(0,A.jsx)(`p`,{role:`status`,"aria-live":`polite`,children:f}):null
   ]});
   let bodies={breathe:breathBody,verse:verseBody,reading:readingBody};
   return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-readings mp-lane-team-ritual`,"aria-label":`Work team morning ritual`,children:[
