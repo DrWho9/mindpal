@@ -91,8 +91,8 @@ describe("evidence guidance module", () => {
     assert.match(inject, /title:`Companion`/);
     assert.match(inject, /mpHubOpenableReadings/);
     assert.match(inject, /mpHubChapterTags/);
-    assert.match(inject, /SUPPORT READING · DAY/);
-    assert.match(inject, /c\.body\|\|``/);
+    assert.match(inject, /DAILY READING · PACK A · DAY|SUPPORT READING · DAY/);
+    assert.match(inject, /[ce]\.body\|\|``/);
     const mothers = readingsForProblem(packA, "mothers");
     assert.ok(mothers.length >= 8);
     for (const reading of mothers) {

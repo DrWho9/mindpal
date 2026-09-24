@@ -7702,6 +7702,125 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "blurb": "Immediate danger in Australia."
     }
   ]
+};var mpEvidenceGuidance={
+  "version": "1.0.0",
+  "disclaimer": "Literacy and optional reading — not a diagnosis, not treatment, and not a replacement for a GP, midwife, maternal-child health nurse, or PANDA. AU urgent help: 000 / Lifeline 13 11 14.",
+  "trustedHosts": [
+    "panda.org.au",
+    "beyondblue.org.au",
+    "healthdirect.gov.au",
+    "aihw.gov.au"
+  ],
+  "hubs": {
+    "mothers": {
+      "lede": "A few plain notes from Australian perinatal services, then books clinicians actually use. Take what steadies you. Leave the rest. None of this replaces human care.",
+      "notes": [
+        {
+          "id": "mothers-common-load",
+          "title": "A hard stretch is more common than the highlight reel",
+          "body": "PANDA — Perinatal Anxiety & Depression Australia — says as many as one in five expecting or new mothers, and one in ten expecting or new fathers, will experience perinatal anxiety or depression. “Perinatal” here means pregnancy and the first year after birth.\n\nThat figure is literacy, not a label. It does not mean you have a diagnosis, and it does not mean you should wait until you can name it. It means the load of becoming a mother is heavier, more often, than the photos suggest. Isolation and shame make the same week feel like a private failure. It is usually not private, and it is not a verdict on how much you love your child.",
+          "source": {
+            "label": "PANDA — What is perinatal mental ill-health?",
+            "url": "https://www.panda.org.au/articles/what-is-perinatal-mental-ill-health"
+          }
+        },
+        {
+          "id": "mothers-blues-vs-pnd",
+          "title": "Baby blues and postnatal depression are not the same weather",
+          "body": "healthdirect, the Australian Government health information service, says about four in five new mothers get the “baby blues” in the first three to five days — tearful, sensitive, anxious, or overwhelmed. Those feelings usually pass on their own within about ten days.\n\nPostnatal depression is a different stretch. Symptoms last longer than two weeks, may be heavier, and usually get in the way of ordinary days. Unlike baby blues, it does not usually lift by itself. healthdirect estimates it affects about one in seven women in the first year, and up to one in ten fathers around this time.\n\nIf you cannot tell which weather you are in, that uncertainty is allowed. Check in with a GP or child health nurse. MindPal cannot tell the difference for you.",
+          "source": {
+            "label": "healthdirect — Postnatal depression",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        },
+        {
+          "id": "mothers-sleep-masks-mood",
+          "title": "Sleep debt can look like “I should be coping”",
+          "body": "Beyond Blue notes that postnatal depression and anxiety can develop from about a month to a year after birth, and that the same symptoms are harder to spot when you are already exhausted from caring for a baby.\n\nMany people who have given birth also get the baby blues in the first few days — teary, irritable, sensitive — and those usually ease with rest and company. When the low mood, numbness, dread, or “I cannot do an ordinary day” stays, or when sleep will not come even when the baby is sleeping, that is worth a human conversation.\n\nTiredness is not a character flaw. It is load. This page is not a diagnosis, and it will not sort clinical depression from a brutal fortnight of nights. A GP, midwife, or maternal-child health nurse can sit with that question beside you.",
+          "source": {
+            "label": "Beyond Blue — Caring for a baby and mental health",
+            "url": "https://www.beyondblue.org.au/mental-health/parenting/caring-for-a-baby"
+          }
+        },
+        {
+          "id": "mothers-screening-ordinary",
+          "title": "A check-in is ordinary care, not a court case",
+          "body": "The Australian Institute of Health and Welfare reports that national guidelines recommend every woman is offered mental-health and psychosocial screening in the perinatal period, so support can arrive earlier. In 2022, at least seven in ten women who gave birth in Queensland, Tasmania and the ACT had a recorded mental-health screen during pregnancy.\n\nA questionnaire — often the Edinburgh scale — is a conversation starter. It is not a diagnosis and it is not a score you pass or fail. Skipping a screen, or scoring “fine” while still struggling, does not close the door. You can still ask.\n\nPANDA also keeps a free mental-health checklist for expecting and new parents. It will not diagnose you. It can help you decide whether a GP, midwife, or the PANDA helpline is the next kind step.",
+          "source": {
+            "label": "AIHW — Perinatal mental health screening in Australia",
+            "url": "https://www.aihw.gov.au/reports/mothers-babies/perinatal-mental-health-screening-australia"
+          },
+          "related": {
+            "label": "PANDA mental health checklist",
+            "url": "https://www.panda.org.au/checklist"
+          }
+        },
+        {
+          "id": "mothers-ask-for-help",
+          "title": "Asking for help is part of looking after the baby",
+          "body": "healthdirect is plain about this: postnatal depression is common, treatable, and nothing to be ashamed of. See a doctor if low mood, hopelessness, sleep or appetite changes, or anxiety are hanging around. Help can include talk therapies, practical support, and — when a clinician recommends it — medicine. That decision belongs with you and a human clinician, not with an app.\n\nPANDA runs Australia’s only free National Perinatal Mental Health Helpline, for pregnancy through the first year, and for people around you. They are not a crisis line. If you are in immediate danger in Australia, call 000. For 24/7 crisis support, Lifeline is 13 11 14. Need support in MindPal lists those human options again.\n\nYou can be a loving mother and still need a quiet corner, a checklist, or a phone call. That is not a failure of care. It is care.",
+          "source": {
+            "label": "PANDA’s National Perinatal Mental Health Helpline",
+            "url": "https://www.panda.org.au/articles/pandas-national-perinatal-mental-health-helpline"
+          },
+          "related": {
+            "label": "healthdirect — Postnatal depression",
+            "url": "https://www.healthdirect.gov.au/postnatal-depression"
+          }
+        }
+      ],
+      "books": [
+        {
+          "id": "kleiman-expected",
+          "title": "This Isn’t What I Expected",
+          "authors": "Karen R. Kleiman and Valerie Davis Raskin, MD",
+          "chapter": "Especially the early chapters that separate baby blues from postnatal depression, and the pages on asking for professional help.",
+          "why": "A long-standing, clinician-written guide to postnatal depression. Useful when the story in your head is “I should be grateful” and the body is saying otherwise. Literacy and coping — not a substitute for a GP.",
+          "url": "https://www.hachettebookgroup.com/titles/karen-r-kleiman/this-isnt-what-i-expected-2nd-edition/9780738216942/"
+        },
+        {
+          "id": "kleiman-scary-thoughts",
+          "title": "Dropping the Baby and Other Scary Thoughts",
+          "authors": "Karen Kleiman, Amy Wenzel, Hilary Waller and Abby Adler Mandel",
+          "chapter": "Part I on what these thoughts are, and the later chapters on stigma and telling someone.",
+          "why": "Intrusive, unwanted thoughts can show up in new parenthood and feel like a secret verdict. This book, written by perinatal clinicians, names the pattern and the difference between a scary thought and a plan. Optional company — not a substitute for a GP. If thoughts of harm are present, use human help / 000 — do not use a book as triage.",
+          "url": "https://www.routledge.com/Dropping-the-Baby-and-Other-Scary-Thoughts-Breaking-the-Cycle-of-Unwanted-Thoughts-in-Parenthood/Kleiman-Wenzel-Waller-Mandel/p/book/9780367223908"
+        },
+        {
+          "id": "sacks-matrescence",
+          "title": "What No One Tells You: A Guide to Your Emotions from Pregnancy to Motherhood",
+          "authors": "Alexandra Sacks, MD and Catherine Birndorf, MD",
+          "chapter": "The matrescence chapters — becoming a mother as a developmental stretch, not a personality test.",
+          "why": "Two reproductive psychiatrists on the emotional backstory of pregnancy and early motherhood: identity, mixed feeling, “is this normal?”. Kind company for the identity load. Not a clinic in paperback.",
+          "url": "https://www.simonandschuster.com/books/What-No-One-Tells-You/Alexandra-Sacks/9781501112577"
+        },
+        {
+          "id": "wiegartz-anxiety-workbook",
+          "title": "The Pregnancy and Postpartum Anxiety Workbook",
+          "authors": "Pamela S. Wiegartz, PhD and Kevin L. Gyoerkoe, PsyD",
+          "chapter": "The CBT skill chapters — noticing worry loops, and the pages written for partners.",
+          "why": "A New Harbinger workbook that teaches cognitive-behavioural skills for perinatal worry, panic and obsessive loops. Exercises, not a diagnosis. Skip any worksheet that tightens the day.",
+          "url": "https://www.newharbinger.com/9781572245891/the-pregnancy-and-postpartum-anxiety-workbook/"
+        },
+        {
+          "id": "harris-happiness-trap",
+          "title": "The Happiness Trap",
+          "authors": "Russ Harris",
+          "chapter": "The chapters on the happiness trap itself, willingness, and values — useful when “I should feel happier” has become another job.",
+          "why": "An Australian GP and ACT trainer. Not a perinatal textbook, but a clear, evidence-based way to stop wrestling every hard feeling. Good beside the mother-specific titles, not instead of clinical care.",
+          "url": "https://thehappinesstrap.com/"
+        },
+        {
+          "id": "neff-self-compassion",
+          "title": "Self-Compassion",
+          "authors": "Kristin Neff, PhD",
+          "chapter": "The early chapters on the three parts of self-compassion — kindness, common humanity, and mindfulness — when the inner critic is doing the night shift.",
+          "why": "Neff’s research-backed account of treating yourself as you would a friend. Guilt and “not enough” are loud in motherhood. This is general psychology, offered as optional company — not a postnatal protocol.",
+          "url": "https://self-compassion.org/"
+        }
+      ]
+    }
+  }
 };var mpSpeakersCatalog=[
   {
     "id": "tony-robbins",
@@ -8561,7 +8680,7 @@ If the true sentence is heavy, follow it with one soft breath and stop. Closing 
       "journalPrompt": "One ordinary thing I can thank… A small win I can name is…"
     }
   }
-};if(typeof globalThis<`u`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;globalThis.mpFeelingKits=mpFeelingKits;globalThis.mpMaddy=mpMaddy;globalThis.mpMeditationCatalog=mpMeditationCatalog;}var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
+};if(typeof globalThis<`u`){globalThis.mpMensHealth=mpMensHealth;globalThis.mpEvidenceGuidance=mpEvidenceGuidance;globalThis.mpOwnerReadings=mpOwnerReadings;globalThis.mpProblemHubs=mpProblemHubs;globalThis.mpPackA=mpPackA;globalThis.mpFeelingKits=mpFeelingKits;globalThis.mpMaddy=mpMaddy;globalThis.mpMeditationCatalog=mpMeditationCatalog;}var mpReadings=(function(){const PACK_A_ID = "mindpal-dstss-themes-paraphrase-v1";
 const PACK_B_ID = "mindpal-daily-soften-v1";
 const STORAGE_KEY = "mindpal.readings.v1";
 const LEGACY_STORAGE_KEY = "mindpal.reading.progress.v1";
@@ -13384,7 +13503,8 @@ function appendMessage(
 }
 
 function downloadableTranscript(thread, title = "MindPal reflection — user-entered, not assessed") {
-  const current = normalizeThread(thread);
+  const rawDate = thread?.date ?? "";
+  const current = normalizeThread(thread, rawDate ? new Date(`${rawDate}T12:00:00`) : new Date());
   const lines = [
     title,
     `Date: ${current.date}`,
@@ -13845,6 +13965,173 @@ function dedicatedProblemRoute(id) {
   return "Problem";
 }
 
+/** Reusable hub evidence & guidance catalog. Mothers is the first filled hub. */
+
+const HUB_ACCORDION_ORDER = ["readings", "evidence", "videos", "companion"];
+
+const EVIDENCE_GUIDANCE_DISCLAIMER =
+  "Literacy and optional reading — not a diagnosis, not treatment, and not a replacement for a GP, midwife, maternal-child health nurse, or PANDA. AU urgent help: 000 / Lifeline 13 11 14.";
+
+const TRUSTED_EVIDENCE_HOSTS = [
+  "panda.org.au",
+  "beyondblue.org.au",
+  "healthdirect.gov.au",
+  "aihw.gov.au",
+];
+
+/** Shape other hubs can copy. Leave notes/books empty until a content pass lands. */
+const EVIDENCE_GUIDANCE_TEMPLATE = {
+  lede: "",
+  notes: [
+    {
+      id: "",
+      title: "",
+      body: "",
+      source: { label: "", url: "" },
+    },
+  ],
+  books: [
+    {
+      id: "",
+      title: "",
+      authors: "",
+      chapter: "",
+      why: "",
+      url: "",
+    },
+  ],
+};
+
+const NOTE_COUNT = { min: 3, max: 5 };
+const BOOK_COUNT = { min: 4, max: 6 };
+
+function evidenceCatalog(override) {
+  if (override && typeof override === "object" && !Array.isArray(override)) {
+    if (override.hubs || override.disclaimer || override.trustedHosts) return override;
+  }
+  if (typeof globalThis.mpEvidenceGuidance !== "undefined" && globalThis.mpEvidenceGuidance) {
+    return globalThis.mpEvidenceGuidance;
+  }
+  return { version: "", disclaimer: EVIDENCE_GUIDANCE_DISCLAIMER, trustedHosts: TRUSTED_EVIDENCE_HOSTS, hubs: {} };
+}
+
+function evidenceDisclaimer(override) {
+  const text = evidenceCatalog(override).disclaimer;
+  return typeof text === "string" && text.trim() ? text.trim() : EVIDENCE_GUIDANCE_DISCLAIMER;
+}
+
+function hostFromUrl(url) {
+  if (typeof url !== "string" || !url.trim()) return "";
+  try {
+    return new URL(url).hostname.replace(/^www\./, "").toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function isTrustedEvidenceUrl(url, override) {
+  const host = hostFromUrl(url);
+  if (!host) return false;
+  const extra = evidenceCatalog(override).trustedHosts;
+  const allowed = new Set([
+    ...TRUSTED_EVIDENCE_HOSTS,
+    ...(Array.isArray(extra) ? extra.map((item) => String(item).replace(/^www\./, "").toLowerCase()) : []),
+  ]);
+  return allowed.has(host);
+}
+
+function cleanText(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizeNote(note) {
+  if (!note || typeof note !== "object") return null;
+  const id = cleanText(note.id);
+  const title = cleanText(note.title);
+  const body = cleanText(note.body);
+  const sourceLabel = cleanText(note.source?.label);
+  const sourceUrl = cleanText(note.source?.url);
+  if (!id || !title || !body || !sourceLabel || !sourceUrl) return null;
+  const relatedLabel = cleanText(note.related?.label);
+  const relatedUrl = cleanText(note.related?.url);
+  return {
+    id,
+    title,
+    body,
+    source: { label: sourceLabel, url: sourceUrl },
+    related: relatedLabel && relatedUrl ? { label: relatedLabel, url: relatedUrl } : null,
+  };
+}
+
+function normalizeBook(book) {
+  if (!book || typeof book !== "object") return null;
+  const id = cleanText(book.id);
+  const title = cleanText(book.title);
+  const authors = cleanText(book.authors);
+  const why = cleanText(book.why);
+  if (!id || !title || !authors || !why) return null;
+  return {
+    id,
+    title,
+    authors,
+    chapter: cleanText(book.chapter),
+    why,
+    url: cleanText(book.url),
+  };
+}
+
+function emptyEvidenceGuidance(hubId = "") {
+  return {
+    hubId: cleanText(hubId),
+    lede: "",
+    disclaimer: EVIDENCE_GUIDANCE_DISCLAIMER,
+    notes: [],
+    books: [],
+  };
+}
+
+function evidenceGuidanceFor(hubId, override) {
+  const id = cleanText(hubId);
+  if (!id) return emptyEvidenceGuidance("");
+  const catalog = evidenceCatalog(override);
+  const raw = catalog?.hubs?.[id];
+  if (!raw || typeof raw !== "object") return emptyEvidenceGuidance(id);
+  const notes = (Array.isArray(raw.notes) ? raw.notes : []).map(normalizeNote).filter(Boolean);
+  const books = (Array.isArray(raw.books) ? raw.books : []).map(normalizeBook).filter(Boolean);
+  return {
+    hubId: id,
+    lede: cleanText(raw.lede),
+    disclaimer: evidenceDisclaimer(override),
+    notes,
+    books,
+  };
+}
+
+function listEvidenceNotes(hubId, override) {
+  return evidenceGuidanceFor(hubId, override).notes;
+}
+
+function listGuidanceBooks(hubId, override) {
+  return evidenceGuidanceFor(hubId, override).books;
+}
+
+function guidanceCountsOk(guidance) {
+  const notes = guidance?.notes?.length || 0;
+  const books = guidance?.books?.length || 0;
+  return notes >= NOTE_COUNT.min && notes <= NOTE_COUNT.max && books >= BOOK_COUNT.min && books <= BOOK_COUNT.max;
+}
+
+function evidenceNoteSourcesTrusted(guidance, override) {
+  const notes = Array.isArray(guidance?.notes) ? guidance.notes : [];
+  return notes.every((note) => {
+    if (!isTrustedEvidenceUrl(note.source?.url, override)) return false;
+    if (note.related?.url && !isTrustedEvidenceUrl(note.related.url, override)) return false;
+    return true;
+  });
+}
+
+
+
 
 
 
@@ -14098,7 +14385,7 @@ mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_C
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
 mpWins={WINS_STORAGE_KEY,WIN_TEXT_MAX,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
-mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings};
+mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_ROUTE,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
 mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
@@ -15899,10 +16186,6 @@ function mpMothersWomenCard({onOpen:e}){
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
   ]});
 }
-function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o}){
-  (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
-  return(0,A.jsx)(mpFeelingKitPage,{feelingId:`mothers`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a,onSpeakers:o});
-}
 function mpAodHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a}){
   (0,_.useEffect)(()=>{mpOpenProblem(`aod`)},[]);
   return(0,A.jsx)(mpFeelingKitPage,{feelingId:`aod`,onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onSpeakers:a});
@@ -15916,6 +16199,110 @@ function mpMensAccordion({id:e,title:t,lede:n,openId:r,onToggle:i,children:a}){
     ]}),
     n?(0,A.jsx)(`p`,{className:`muted`,children:n}):null,
     o?a:null
+  ]});
+}
+function mpHubAccordion({sections:e=[],initial:t=`readings`}={}){
+  let[n,r]=(0,_.useState)(t);
+  function i(e){r(t=>t===e?``:e)}
+  return(0,A.jsx)(A.Fragment,{children:e.map(t=>(0,A.jsx)(mpFoldSection,{id:t.id,title:t.title,meta:t.meta,className:t.className,open:n===t.id,onToggle:i,children:t.children},t.id))});
+}
+function mpHubChapterTags(reading){
+  if(mpReadings.readingTags)return mpReadings.readingTags(reading).map(mpReadings.formatTag).filter(Boolean);
+  return[];
+}function mpEvidenceOutbound({label:e,url:t}){
+  if(!e||!t)return null;
+  return(0,A.jsx)(`a`,{className:`mp-evidence-link`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:e});
+}
+function mpEvidenceGuidancePanel({hubId:e=`mothers`}={}){
+  let t=mpProblems.evidenceGuidanceFor?mpProblems.evidenceGuidanceFor(e):{notes:[],books:[],lede:``,disclaimer:mpProblems.EVIDENCE_GUIDANCE_DISCLAIMER||``};
+  if(!t.notes.length&&!t.books.length)return(0,A.jsx)(`p`,{className:`muted`,children:`Evidence and guidance for this hub is still being written.`});
+  return(0,A.jsxs)(`div`,{className:`mp-evidence-guidance`,children:[
+    t.lede?(0,A.jsx)(`p`,{children:t.lede}):null,
+    (0,A.jsx)(`p`,{className:`mp-support-disclaimer`,children:t.disclaimer}),
+    t.notes.length?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Plain notes from Australian services`}),
+      (0,A.jsx)(`ul`,{className:`mp-evidence-notes`,children:t.notes.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`h4`,{children:e.title}),
+        e.body.split(`\n\n`).map((t,n)=>(0,A.jsx)(`p`,{children:t},n)),
+        (0,A.jsxs)(`p`,{className:`mp-evidence-source`,children:[`Source: `,(0,A.jsx)(mpEvidenceOutbound,{label:e.source.label,url:e.source.url})]}),
+        e.related?(0,A.jsxs)(`p`,{className:`mp-evidence-source`,children:[`Also: `,(0,A.jsx)(mpEvidenceOutbound,{label:e.related.label,url:e.related.url})]}):null
+      ]},e.id))})
+    ]}):null,
+    t.books.length?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`h3`,{children:`Books and chapters — optional company`}),
+      (0,A.jsx)(`p`,{className:`muted`,children:`Real titles, offered as guidance. They do not replace a GP, midwife, maternal-child health nurse, or PANDA.`}),
+      (0,A.jsx)(`ul`,{className:`mp-guidance-books`,children:t.books.map(e=>(0,A.jsxs)(`li`,{children:[
+        (0,A.jsx)(`h4`,{children:e.title}),
+        (0,A.jsx)(`p`,{className:`mp-guidance-authors`,children:e.authors}),
+        (0,A.jsx)(`p`,{children:e.why}),
+        e.chapter?(0,A.jsxs)(`p`,{className:`muted`,children:[`Start with: `,e.chapter]}):null,
+        e.url?(0,A.jsx)(mpEvidenceOutbound,{label:`Publisher / author page`,url:e.url}):null
+      ]},e.id))})
+    ]}):null
+  ]});
+}
+function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i,onWomen:a}){
+  (0,_.useEffect)(()=>{mpOpenProblem(`mothers`)},[]);
+  let o=mpProblems.findProblem(mpProblemHubs,`mothers`);
+  if(!o)return(0,A.jsx)(`p`,{children:`The mothers space is not loaded yet.`});
+  let s=mpProblems.readingsForProblem(mpPackA,`mothers`),c=mpProblems.maddyForProblem(mpMaddy,`mothers`),l=mpMotherYtEntries(o);
+  let u=mpProblems.HUB_ACCORDION_ORDER||[`readings`,`evidence`,`videos`,`companion`];
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":`Struggling mothers`,children:[
+    (0,A.jsx)(MpLibraryHost,{}),
+    (0,A.jsx)(`p`,{className:`eyebrow`,children:`MOTHERS · OPTIONAL SUPPORT`}),
+    (0,A.jsx)(`h1`,{children:`Struggling mothers`}),
+    (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. Tap a section to open it — one at a time.`}),
+    (0,A.jsx)(mpHubAccordion,{initial:u[0]||`readings`,sections:[
+      {id:`readings`,title:`Readings`,meta:`Full Pack A chapters · #tags`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Open a full daily chapter — not a title card. Tags come from the Pack A chapter, the same controlled set used on Feelings. The morning path still unlocks one day at a time; opening here does not mark Done.`}),
+        (0,A.jsx)(mpHubOpenableReadings,{readings:s,emptyLabel:`No tagged mother readings yet.`,onExplore:n})
+      ]})},
+      {id:`evidence`,title:`Evidence & guidance`,meta:`AU notes · real books`,children:(0,A.jsx)(mpEvidenceGuidancePanel,{hubId:`mothers`})},
+      {id:`videos`,title:`Videos`,meta:`Maddy and YouTube · no speaker dump`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Soothing Maddy clips and YouTube meditations for overwhelm, sleep and self-compassion. No speaker library dump here.`}),
+        c.length?(0,A.jsxs)(A.Fragment,{children:[
+          (0,A.jsx)(`h3`,{children:`Watch with Maddy`}),
+          (0,A.jsx)(`div`,{className:`maddy-video-grid`,children:c.map(e=>(0,A.jsxs)(`button`,{type:`button`,className:`maddy-video-card`,onClick:()=>mpReadings.activateLibraryVideo({...e,person:`Maddy`,kind:`maddy`,src:e.src,videoUrl:e.src}),children:[
+            (0,A.jsx)(`h3`,{children:e.cardTitle||e.title}),
+            (0,A.jsx)(`p`,{children:e.description}),
+            (0,A.jsx)(`span`,{className:`card-link`,children:`Play`})
+          ]},e.id))})
+        ]}):null,
+        l.length?(0,A.jsxs)(A.Fragment,{children:[
+          (0,A.jsx)(`h3`,{children:`Voice-guided on YouTube`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`Link-out only. MindPal does not host or embed this audio.`}),
+          (0,A.jsx)(`ul`,{className:`mp-hub-yt`,children:l.map(e=>{
+            let t=mpReadings.meditationOpenUrl(e);
+            return(0,A.jsxs)(`li`,{children:[
+              (0,A.jsx)(`strong`,{children:e.title}),
+              (0,A.jsx)(`span`,{className:`muted`,children:e.channel||``}),
+              t?(0,A.jsx)(`a`,{className:`secondary`,href:t,target:`_blank`,rel:`noopener noreferrer`,referrerPolicy:`no-referrer`,children:`Open on YouTube`}):null
+            ]},e.id);
+          })})
+        ]}):(0,A.jsx)(`p`,{className:`muted`,children:`YouTube meditation links for this theme are filling.`})
+      ]})},
+      {id:`companion`,title:`Companion`,meta:`Educational prompt · not a therapist`,children:(0,A.jsxs)(A.Fragment,{children:[
+        (0,A.jsx)(`p`,{children:`Opens Companion with a mother-support prompt — educational and peer-like. It is software, not a therapist, and it cannot watch over you or treat postnatal depression.`}),
+        e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>{mpProblems.saveCompanionPrompt(o.companionPrompt);e(o.companionPrompt)},children:`Talk this through with Companion`}):null
+      ]})}
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel`,children:[
+      (0,A.jsx)(`h2`,{children:`Journal / wins`}),
+      (0,A.jsx)(`p`,{children:o.journalPrompt}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        t?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>t(o.journalPrompt),children:`Write this in Journal`}):null
+      ]}),
+      (0,A.jsx)(mpWinsPanel,{variant:`problem`,onOpenJournal:r||(t?()=>t(`A small win amid caring for others: `):null)})
+    ]}),
+    (0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-safety`,children:[
+      (0,A.jsx)(`h2`,{children:`If this feels like too much`}),
+      (0,A.jsx)(`p`,{children:`MindPal does not monitor you. If you are in immediate danger in Australia, call 000. Need support lists human help, including Lifeline.`}),
+      (0,A.jsxs)(`div`,{className:`button-row`,children:[
+        i?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:i,children:`Need support`}):null,
+        a?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:a,children:`Women’s wellbeing`}):null
+      ]})
+    ]})
   ]});
 }
 function mpMensHealthHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHelp:i}){

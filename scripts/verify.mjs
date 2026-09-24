@@ -62,7 +62,7 @@ const checks = [
   [js.includes("One small win amid caring for others"), "mothers journal prompt is present"],
   [js.includes("No speaker library dump here."), "mothers videos skip the speaker-dump default"],
   [js.includes("mpFoldSection") && js.includes("mpHubAccordion"), "hub accordion folds are present"],
-  [js.includes("mpHubOpenableReadings") && js.includes("SUPPORT READING · DAY"), "mothers readings open full bodies"],
+  [js.includes("mpHubOpenableReadings") && (js.includes("DAILY READING · PACK A · DAY") || js.includes("SUPPORT READING · DAY")), "mothers readings open full bodies"],
   [js.includes("Evidence & guidance") && js.includes("mpEvidenceGuidancePanel"), "evidence guidance panel is present"],
   [js.includes("panda.org.au") && js.includes("beyondblue.org.au") && js.includes("healthdirect.gov.au") && js.includes("aihw.gov.au"), "mothers evidence notes use real AU sources"],
   [js.includes("This Isn’t What I Expected") && js.includes("Dropping the Baby") && js.includes("The Happiness Trap"), "mothers guidance books are real titles"],
