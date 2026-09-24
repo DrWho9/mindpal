@@ -23,7 +23,7 @@ Do **not** tick Companion / Diary AI as Live on github.io.
 
 | Route | Blueprint | Primary CTA | Enter / Send / search | Audit |
 |-------|-----------|-------------|-----------------------|-------|
-| `#Today` | [today.md](page-blueprints/today.md) | Step rows, Support/Growth chips, team ritual, Maddy teaser | Wins Enter on later surfaces; chips expand then Open hub | [ ] |
+| `#Today` | [today.md](page-blueprints/today.md) | Win of the day (above Step 1), step rows, Support/Growth chips, team ritual, Maddy teaser | Enter in Win of the day saves; Evening and Journal still save the same list; chips expand then Open hub | [ ] |
 | `#Readings` | [readings.md](page-blueprints/readings.md) | Done for today, Listen, Copy | Listen is TTS / Maddy; Done unlocks next Pack A day | [ ] |
 | `#Team morning` | [team-morning.md](page-blueprints/team-morning.md) | Breath timer → peaceful reading | Breath clock is local; reading is **not** Pack A Done | [ ] |
 | `#Later` | [later.md](page-blueprints/later.md) | Two-minute E01, Open Focus | Buttons only | [ ] |

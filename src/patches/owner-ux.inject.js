@@ -215,8 +215,12 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       t?(0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:t,children:`Add a win`}):null
     ]});
   }
-  return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-${e}`,"aria-label":`Daily wins`,children:[
-    e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):e===`nudge`?(0,A.jsxs)(A.Fragment,{children:[
+  return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-${e}${e===`winOfDay`?` mp-win-of-day`:``}`,"aria-label":e===`winOfDay`?mpWins.WIN_OF_THE_DAY_TITLE:`Daily wins`,children:[
+    e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
+      (0,A.jsx)(`p`,{className:`eyebrow`,children:mpWins.WIN_OF_THE_DAY_EYEBROW}),
+      (0,A.jsx)(`h2`,{children:mpWins.WIN_OF_THE_DAY_TITLE}),
+      (0,A.jsx)(`p`,{children:mpWins.WIN_OF_THE_DAY_LEDE})
+    ]}):e===`evening`?(0,A.jsx)(`h2`,{children:`Today’s wins`}):e===`nudge`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Add a daily win when something small goes well.`}),
       (0,A.jsx)(`p`,{className:`muted`,children:`Optional. Never a test.`})
     ]}):e===`growth`?(0,A.jsxs)(A.Fragment,{children:[
@@ -231,7 +235,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(e=>(0,A.jsxs)(`li`,{children:[
       (0,A.jsx)(`span`,{children:e.text}),
       (0,A.jsx)(`time`,{dateTime:e.at,children:new Date(e.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
-    ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:`Nothing saved yet today.`}),
+    ]},e.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
@@ -1317,6 +1321,7 @@ function Rr({name:e,onOpenVerse:t,onOpenFocus:n,onWriteJournal:r,onOpenLater:i,o
       (0,A.jsx)(`h1`,{children:c?`Good ${l}, ${c}.`:`Good ${l}.`}),
       (0,A.jsx)(`p`,{className:`lede mp-hub-flow`,children:mpTodaySteps.HUB_FLOW_LINE})
     ]}),
+    (0,A.jsx)(mpWinsPanel,{variant:`winOfDay`}),
     (0,A.jsx)(mpIndividualGrowthCard,{onOpenJournal:o||r,onOpenReadings:t}),
     (0,A.jsx)(mpTodayTalkRow,{onReflect:R,onAppointment:Q}),
     (0,A.jsx)(mpProblemHubList,{variant:`today`,onOpen:v}),

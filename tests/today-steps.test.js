@@ -70,6 +70,18 @@ describe("today steps pathway", () => {
     assert.equal(bandForStep("evening")?.id, "night");
   });
 
+  it("keeps Win of the day above the hub steps and out of the numbered pathway", () => {
+    const hub = inject.slice(inject.indexOf("function Rr("));
+    const win = hub.indexOf("(0,A.jsx)(mpWinsPanel,{variant:`winOfDay`})");
+    const growth = hub.indexOf("(0,A.jsx)(mpIndividualGrowthCard,{onOpenJournal");
+    const bands = hub.indexOf("mpTodaySteps.BANDS.filter(e=>e.id!==`morning`)");
+    assert.ok(win > 0 && growth > win && bands > growth);
+    assert.equal(STEP_IDS.includes("win"), false);
+    assert.equal(STEP_IDS.includes("winOfDay"), false);
+    assert.equal(STEP_IDS[0], "readings");
+    assert.match(inject, /Read today’s wins, then leave a short wind-down note in Journal/);
+  });
+
   it("orders Morning → Day → Night", () => {
     assert.deepEqual(STEP_IDS, ["readings", "focus", "later", "evening"]);
     assert.deepEqual(
