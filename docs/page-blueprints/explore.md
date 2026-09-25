@@ -13,6 +13,7 @@ Toolkit: verse, pack reading, video library, feeling/problem directories, Watch 
 ## Expected UX
 
 - Three accordion cards: Readings / Reading / Videos (labels patched).
+- A full-width **Book / Your books** card under those three opens `#Book`. It does not add a bottom tab.
 - **Videos** shows signed coaches + merged HeyGen library. **Search library** (`aria-label="Search library"`) filters titles as you type; empty → “No matches. Try a different word.”
 - Watch with Maddy plays published MP4s (no HeyGen draft gate).
 - Voice-guided YouTube meditations: category chips; **Open on YouTube** (no embed).
