@@ -367,8 +367,11 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 .mp-yt-dir-field{display:flex;flex-direction:column;gap:4px;flex:1 1 16rem}
 .mp-yt-dir-search input,.mp-yt-dir-search select{min-height:44px;width:100%}
 .mp-yt-dir-search button{min-height:44px;padding:0 18px}
+.mp-yt-dir-groups{display:grid;gap:22px;margin:8px 0 12px}
+.mp-yt-dir-category{margin:0 0 4px;font-size:1.2rem;line-height:1.3}
 .mp-yt-dir-results{display:grid;gap:16px;margin:12px 0 8px}
 .mp-yt-dir-card .mp-yt-open{margin-top:8px;display:inline-flex}
+.mp-yt-views{margin:2px 0 8px;font-weight:650}
 .mp-yt-badge{color:#5c6756;font-size:13px}
 
 .mp-brand-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 6px;padding:0 4px 0 0}

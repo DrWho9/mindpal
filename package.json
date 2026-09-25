@@ -7,6 +7,7 @@
     "test": "node --test tests/*.test.js",
     "smoke": "node --test tests/smoke/*.test.js",
     "build": "node scripts/build.mjs",
+    "yt:refresh-views": "node scripts/yt-refresh-views.mjs",
     "verify": "node scripts/verify.mjs"
   },
   "devDependencies": {

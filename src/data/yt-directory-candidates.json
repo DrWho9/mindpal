@@ -1,0 +1,1326 @@
+{
+  "version": 1,
+  "note": "Draft YouTube directory candidates for human review. Link-out only. A listing is a reference, not a recommendation or a diagnosis. View counts live in yt-directory-views.json.",
+  "entries": [
+    {
+      "id": "YT-CAND-ANX-01",
+      "title": "How to cope with anxiety | Olivia Remes | TEDxUHasselt",
+      "creator": "TEDx Talks",
+      "url": "https://www.youtube.com/watch?v=WWloIAQpMcQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=WWloIAQpMcQ",
+      "durationSeconds": null,
+      "category": "anxiety",
+      "topics": [
+        "anxious",
+        "anxiety",
+        "anxiety-education"
+      ],
+      "synopsis": "A university researcher outlines everyday coping ideas for anxiety, including being kinder to yourself. A public talk, not a personal plan.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Skip it if the talk’s coping ideas feel like a task list. This is a reference, not a recommendation or a diagnosis.",
+      "sourceContext": "TEDxUHasselt · Olivia Remes, University of Cambridge anxiety researcher",
+      "proposedRelevance": {
+        "feelingIds": [
+          "anxious"
+        ],
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ],
+        "reason": "Public TEDx talk on everyday anxiety coping from a Cambridge researcher."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANX-02",
+      "title": "What causes panic attacks, and how can you prevent them? - Cindy J. Aaronson",
+      "creator": "TED-Ed",
+      "url": "https://www.youtube.com/watch?v=IzFObkVRSV0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=IzFObkVRSV0",
+      "durationSeconds": null,
+      "category": "anxiety",
+      "topics": [
+        "anxious",
+        "anxiety",
+        "anxiety-education"
+      ],
+      "synopsis": "A short lesson on what a panic attack is and why the body can react that way. It mentions that clinical treatments exist.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It describes panic. Stop if that description is unhelpful. Not a diagnosis, and not a prevention plan for you.",
+      "sourceContext": "TED-Ed · Cindy J. Aaronson, clinical psychologist",
+      "proposedRelevance": {
+        "feelingIds": [
+          "anxious"
+        ],
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ],
+        "reason": "TED-Ed explainer of panic attacks by a clinical psychologist."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANX-03",
+      "title": "What’s Normal Anxiety – and What’s an Anxiety Disorder? | Body Stuff with Dr. Jen Gunter | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=xsEJ6GeAGb0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=xsEJ6GeAGb0",
+      "durationSeconds": null,
+      "category": "anxiety",
+      "topics": [
+        "anxious",
+        "anxiety",
+        "anxiety-education"
+      ],
+      "synopsis": "A physician contrasts everyday anxiety with what clinicians call an anxiety disorder, and when it can be worth speaking with a health professional.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. MindPal cannot tell which description fits you. Mention of clinical care is information, not a recommendation.",
+      "sourceContext": "TED · Dr. Jen Gunter, physician",
+      "proposedRelevance": {
+        "feelingIds": [
+          "anxious"
+        ],
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ],
+        "reason": "TED conversation distinguishing everyday anxiety from an anxiety disorder."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANX-04",
+      "title": "How to cope with anxiety - a relaxation technique | NHS",
+      "creator": "NHS",
+      "url": "https://www.youtube.com/watch?v=3cXGt2d1RyQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=3cXGt2d1RyQ",
+      "durationSeconds": null,
+      "category": "anxiety",
+      "topics": [
+        "anxious",
+        "anxiety",
+        "breathing"
+      ],
+      "synopsis": "An NHS doctor walks through an optional relaxation exercise for anxious feelings. You can stop at any point.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The exercise is optional. Stop if focusing on the body makes distress worse.",
+      "sourceContext": "NHS",
+      "proposedRelevance": {
+        "feelingIds": [
+          "anxious"
+        ],
+        "topics": [
+          "anxious",
+          "anxiety",
+          "breathing"
+        ],
+        "reason": "Official NHS relaxation technique for anxiety."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "anxious",
+          "anxiety",
+          "breathing"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANX-05",
+      "title": "Anxiety | NHS",
+      "creator": "NHS",
+      "url": "https://www.youtube.com/watch?v=xH2E9I7vn28",
+      "evidenceUrl": "https://www.youtube.com/watch?v=xH2E9I7vn28",
+      "durationSeconds": null,
+      "category": "anxiety",
+      "topics": [
+        "anxious",
+        "anxiety",
+        "anxiety-education"
+      ],
+      "synopsis": "An NHS consultant psychiatrist explains anxiety, when it becomes a problem, and that treatment decisions belong with a clinician.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The film mentions psychological therapies and medication. Those are clinical decisions, not suggestions from MindPal.",
+      "sourceContext": "NHS · consultant psychiatrist Lynne Drummond",
+      "proposedRelevance": {
+        "feelingIds": [
+          "anxious"
+        ],
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ],
+        "reason": "Official NHS explainer of anxiety by a consultant psychiatrist."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "anxious",
+          "anxiety",
+          "anxiety-education"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-STR-01",
+      "title": "How to stay calm when you know you'll be stressed | Daniel Levitin | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=8jPQjjsBbIc",
+      "evidenceUrl": "https://www.youtube.com/watch?v=8jPQjjsBbIc",
+      "durationSeconds": null,
+      "category": "stress",
+      "topics": [
+        "stress",
+        "overwhelmed"
+      ],
+      "synopsis": "A neuroscientist talks about preparing for stressful moments before they arrive, using ordinary planning rather than willpower in the moment.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Planning ideas are optional. This is a reference, not a recommendation.",
+      "sourceContext": "TED · Daniel Levitin, neuroscientist",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ],
+        "reason": "Widely watched TED talk on preparing for predictable stress."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-STR-02",
+      "title": "How to Make Stress Your Friend | Kelly McGonigal | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=RcGyVTAoXEU",
+      "evidenceUrl": "https://www.youtube.com/watch?v=RcGyVTAoXEU",
+      "durationSeconds": null,
+      "category": "stress",
+      "topics": [
+        "stress",
+        "overwhelmed"
+      ],
+      "synopsis": "A Stanford health psychologist discusses how people think about stress, including reaching out to other people when life is hard.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The talk does not mean stress is always harmless. Skip any claim that does not fit your situation.",
+      "sourceContext": "TED · Kelly McGonigal, Stanford University health psychologist",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ],
+        "reason": "Stanford psychologist’s TED talk on how people relate to stress."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-STR-03",
+      "title": "How stress affects your body - Sharon Horesh Bergquist",
+      "creator": "TED-Ed",
+      "url": "https://www.youtube.com/watch?v=v-t1Z5-oPtU",
+      "evidenceUrl": "https://www.youtube.com/watch?v=v-t1Z5-oPtU",
+      "durationSeconds": null,
+      "category": "stress",
+      "topics": [
+        "stress",
+        "overwhelmed"
+      ],
+      "synopsis": "A short lesson on how the body’s stress response works, and why ongoing strain can feel different from a brief burst of alertness.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. General education about the body. It cannot explain a symptom you are having.",
+      "sourceContext": "TED-Ed · Sharon Horesh Bergquist, Emory University physician",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ],
+        "reason": "TED-Ed lesson on the bodily stress response by a physician."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-STR-04",
+      "title": "How stress affects your brain - Madhumita Murgia",
+      "creator": "TED-Ed",
+      "url": "https://www.youtube.com/watch?v=WuyPuH9ojCE",
+      "evidenceUrl": "https://www.youtube.com/watch?v=WuyPuH9ojCE",
+      "durationSeconds": null,
+      "category": "stress",
+      "topics": [
+        "stress",
+        "overwhelmed"
+      ],
+      "synopsis": "An animated lesson on how stress can change attention and memory in the short term. Education, not a brain assessment.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It is not a test of your memory or a medical reading of your brain.",
+      "sourceContext": "TED-Ed · Madhumita Murgia",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ],
+        "reason": "TED-Ed lesson on stress and the brain."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-STR-05",
+      "title": "Stress | NHS",
+      "creator": "NHS",
+      "url": "https://www.youtube.com/watch?v=jXT0YtAl4YM",
+      "evidenceUrl": "https://www.youtube.com/watch?v=jXT0YtAl4YM",
+      "durationSeconds": null,
+      "category": "stress",
+      "topics": [
+        "stress",
+        "overwhelmed"
+      ],
+      "synopsis": "An NHS explainer of stress, some of the ways it can show up, and when it is worth asking for help.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A public health film, not a judgement of how you are coping.",
+      "sourceContext": "NHS",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ],
+        "reason": "Official NHS explainer of stress."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "stress",
+          "overwhelmed"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MOOD-01",
+      "title": "What is depression? - Helen M. Farrell",
+      "creator": "TED-Ed",
+      "url": "https://www.youtube.com/watch?v=z-IR48Mb3W0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=z-IR48Mb3W0",
+      "durationSeconds": null,
+      "category": "low-mood",
+      "topics": [
+        "sad",
+        "low-mood",
+        "mood"
+      ],
+      "synopsis": "A psychiatrist’s short lesson on what clinicians mean by depression, and how that differs from an ordinary low mood.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It is not a verdict on your mood. If low mood is heavy or lasting, a GP or another clinician is the right next step, not this video.",
+      "sourceContext": "TED-Ed · Helen M. Farrell, psychiatrist",
+      "proposedRelevance": {
+        "feelingIds": [
+          "sad"
+        ],
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ],
+        "reason": "TED-Ed lesson distinguishing depression from everyday low mood."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MOOD-02",
+      "title": "I had a black dog, his name was depression",
+      "creator": "World Health Organization (WHO)",
+      "url": "https://www.youtube.com/watch?v=XiCrniLQGYc",
+      "evidenceUrl": "https://www.youtube.com/watch?v=XiCrniLQGYc",
+      "durationSeconds": null,
+      "category": "low-mood",
+      "topics": [
+        "sad",
+        "low-mood",
+        "mood"
+      ],
+      "synopsis": "The World Health Organization’s animated story about living with depression, made to make the subject easier to talk about.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The animation is gentle, and you can stop if it feels too close. It is not a diagnosis.",
+      "sourceContext": "World Health Organization · written and illustrated by Matthew Johnstone",
+      "proposedRelevance": {
+        "feelingIds": [
+          "sad"
+        ],
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ],
+        "reason": "WHO public animation about depression."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MOOD-03",
+      "title": "How to practice emotional first aid | Guy Winch | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=F2hc2FLOdhI",
+      "evidenceUrl": "https://www.youtube.com/watch?v=F2hc2FLOdhI",
+      "durationSeconds": null,
+      "category": "low-mood",
+      "topics": [
+        "sad",
+        "low-mood",
+        "self-compassion"
+      ],
+      "synopsis": "A psychologist talks about looking after everyday emotional pain, including loneliness, failure and harsh self-talk, with the same care people give a physical injury.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The injury metaphor is a picture, not a medical claim. Skip it if the language feels too sharp.",
+      "sourceContext": "TED · Guy Winch, psychologist",
+      "proposedRelevance": {
+        "feelingIds": [
+          "sad"
+        ],
+        "topics": [
+          "sad",
+          "low-mood",
+          "self-compassion"
+        ],
+        "reason": "Psychologist’s TED talk on everyday emotional pain and self-kindness."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sad",
+          "low-mood",
+          "self-compassion"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MOOD-04",
+      "title": "Self-help for low mood and depression | NHS",
+      "creator": "NHS",
+      "url": "https://www.youtube.com/watch?v=qKcRUOWYQ9w",
+      "evidenceUrl": "https://www.youtube.com/watch?v=qKcRUOWYQ9w",
+      "durationSeconds": null,
+      "category": "low-mood",
+      "topics": [
+        "sad",
+        "low-mood",
+        "mood"
+      ],
+      "synopsis": "An NHS doctor describes a self-help way of noticing how thoughts, feelings and actions can loop together when mood is low.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It uses a cognitive-behavioural idea as education. It is not therapy and not a course of treatment.",
+      "sourceContext": "NHS",
+      "proposedRelevance": {
+        "feelingIds": [
+          "sad"
+        ],
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ],
+        "reason": "Official NHS self-help film for low mood."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MOOD-05",
+      "title": "What is depression? | APA",
+      "creator": "American Psychiatric Association",
+      "url": "https://www.youtube.com/watch?v=yEGVmiudF-o",
+      "evidenceUrl": "https://www.youtube.com/watch?v=yEGVmiudF-o",
+      "durationSeconds": null,
+      "category": "low-mood",
+      "topics": [
+        "sad",
+        "low-mood",
+        "mood"
+      ],
+      "synopsis": "The American Psychiatric Association’s public explanation of depression as a common, serious, and treatable illness.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. “Treatable” describes clinical care. MindPal does not recommend a treatment or decide whether the word applies to you.",
+      "sourceContext": "American Psychiatric Association",
+      "proposedRelevance": {
+        "feelingIds": [
+          "sad"
+        ],
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ],
+        "reason": "American Psychiatric Association public explainer of depression."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sad",
+          "low-mood",
+          "mood"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-REL-01",
+      "title": "What Makes a Good Life? Lessons from the Longest Study on Happiness | Robert Waldinger | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=8KkKuTCFvzI",
+      "evidenceUrl": "https://www.youtube.com/watch?v=8KkKuTCFvzI",
+      "durationSeconds": null,
+      "category": "relationships",
+      "topics": [
+        "relationships",
+        "connection"
+      ],
+      "synopsis": "The director of Harvard’s long study of adult development talks about close relationships and health over a lifetime.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A research talk, not a score for your relationships.",
+      "sourceContext": "TED · Robert Waldinger, psychiatrist and director of the Harvard Study of Adult Development",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "relationships",
+          "connection"
+        ],
+        "reason": "Harvard Study of Adult Development TED talk on relationships."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "relationships",
+          "connection"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-REL-02",
+      "title": "Celeste Headlee: 10 ways to have a better conversation | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=R1vskiVDwl4",
+      "evidenceUrl": "https://www.youtube.com/watch?v=R1vskiVDwl4",
+      "durationSeconds": null,
+      "category": "relationships",
+      "topics": [
+        "relationships",
+        "communication"
+      ],
+      "synopsis": "A long-time radio host offers practical ideas for listening and having a clearer conversation.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Conversation tips are optional. They are not a script you have to follow.",
+      "sourceContext": "TED · Celeste Headlee",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "relationships",
+          "communication"
+        ],
+        "reason": "TED talk on everyday conversation and listening."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "relationships",
+          "communication"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-REL-03",
+      "title": "The Easiest Way to Improve Your Relationship | The Gottman Institute",
+      "creator": "The Gottman Institute",
+      "url": "https://www.youtube.com/watch?v=ib7Ain2aVR0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=ib7Ain2aVR0",
+      "durationSeconds": null,
+      "category": "relationships",
+      "topics": [
+        "relationships",
+        "connection"
+      ],
+      "synopsis": "The Gottman Institute describes paying attention to a partner in small everyday moments.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A learning reference, not advice tailored to your relationship.",
+      "sourceContext": "The Gottman Institute",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "relationships",
+          "connection"
+        ],
+        "reason": "Gottman Institute film on everyday attention in a relationship."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "relationships",
+          "connection"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-REL-04",
+      "title": "Even Healthy Couples Fight — the Difference Is How | Julie and John Gottman | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=nBN9zG1JNPg",
+      "evidenceUrl": "https://www.youtube.com/watch?v=nBN9zG1JNPg",
+      "durationSeconds": null,
+      "category": "relationships",
+      "topics": [
+        "relationships",
+        "communication"
+      ],
+      "synopsis": "Relationship researchers talk about how couples handle conflict, including ways of speaking that make repair harder.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It is not a verdict on a relationship, and it is not couples therapy.",
+      "sourceContext": "TED · Julie and John Gottman, relationship researchers",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "relationships",
+          "communication"
+        ],
+        "reason": "TED talk by the Gottmans on conflict in couples."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "relationships",
+          "communication"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-REL-05",
+      "title": "Relationships: the missing piece of the wellbeing puzzle",
+      "creator": "Mental Health Foundation",
+      "url": "https://www.youtube.com/watch?v=B4ZxMECJobo",
+      "evidenceUrl": "https://www.youtube.com/watch?v=B4ZxMECJobo",
+      "durationSeconds": null,
+      "category": "relationships",
+      "topics": [
+        "relationships",
+        "connection"
+      ],
+      "synopsis": "The Mental Health Foundation on why relationships sit alongside other everyday supports for mental wellbeing.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A public-health message, not a measure of your social life.",
+      "sourceContext": "Mental Health Foundation",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "relationships",
+          "connection"
+        ],
+        "reason": "Mental Health Foundation film on relationships and wellbeing."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "relationships",
+          "connection"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANG-01",
+      "title": "Why we get mad -- and why it's healthy | Ryan Martin",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=0rAngiiXBAc",
+      "evidenceUrl": "https://www.youtube.com/watch?v=0rAngiiXBAc",
+      "durationSeconds": null,
+      "category": "anger",
+      "topics": [
+        "angry",
+        "anger"
+      ],
+      "synopsis": "An anger researcher explains some of the thinking behind anger, and why a measured feeling of anger can carry information.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It is not permission to hurt anyone, raise your voice, or act on anger. Stop if it stirs you up.",
+      "sourceContext": "TED · Ryan Martin, psychology professor and anger researcher",
+      "proposedRelevance": {
+        "feelingIds": [
+          "angry"
+        ],
+        "topics": [
+          "angry",
+          "anger"
+        ],
+        "reason": "TED talk by a psychology professor who studies anger."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "angry",
+          "anger"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANG-02",
+      "title": "5 philosophers on anger - Delaney Thull",
+      "creator": "TED-Ed",
+      "url": "https://www.youtube.com/watch?v=9xf1T7-t1ak",
+      "evidenceUrl": "https://www.youtube.com/watch?v=9xf1T7-t1ak",
+      "durationSeconds": null,
+      "category": "anger",
+      "topics": [
+        "angry",
+        "anger"
+      ],
+      "synopsis": "A short lesson on how several philosophers have thought about anger and what to do with it.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Ideas from philosophy, not a technique you must use.",
+      "sourceContext": "TED-Ed · Delaney Thull",
+      "proposedRelevance": {
+        "feelingIds": [
+          "angry"
+        ],
+        "topics": [
+          "angry",
+          "anger"
+        ],
+        "reason": "TED-Ed lesson on philosophical views of anger."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "angry",
+          "anger"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANG-03",
+      "title": "Why anger is overrated | BBC Ideas",
+      "creator": "BBC Ideas",
+      "url": "https://www.youtube.com/watch?v=JC7U4tA8ttQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=JC7U4tA8ttQ",
+      "durationSeconds": null,
+      "category": "anger",
+      "topics": [
+        "angry",
+        "anger"
+      ],
+      "synopsis": "A historian of emotions asks whether anger is as useful as it is sometimes said to be, and talks about keeping it in check.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. One historian’s view. It does not say your anger is wrong, and it is not advice to suppress a safety concern.",
+      "sourceContext": "BBC Ideas · historian Thomas Dixon",
+      "proposedRelevance": {
+        "feelingIds": [
+          "angry"
+        ],
+        "topics": [
+          "angry",
+          "anger"
+        ],
+        "reason": "BBC Ideas film on anger with historian Thomas Dixon."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "angry",
+          "anger"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-ANG-04",
+      "title": "Keep anger in check, with Howard Kassinove, PhD, and Raymond Tafrat, PhD | Speaking of Psychology",
+      "creator": "American Psychological Association",
+      "url": "https://www.youtube.com/watch?v=BNJPANGrNiI",
+      "evidenceUrl": "https://www.youtube.com/watch?v=BNJPANGrNiI",
+      "durationSeconds": null,
+      "category": "anger",
+      "topics": [
+        "angry",
+        "anger"
+      ],
+      "synopsis": "Two psychologists talk with the American Psychological Association about anger as a normal emotion, and about when it becomes harmful.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A professional conversation about keeping anger in bounds. Not a treatment session.",
+      "sourceContext": "American Psychological Association · Howard Kassinove, PhD, and Raymond Chip Tafrate, PhD",
+      "proposedRelevance": {
+        "feelingIds": [
+          "angry"
+        ],
+        "topics": [
+          "angry",
+          "anger"
+        ],
+        "reason": "American Psychological Association conversation on anger."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "angry",
+          "anger"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-SLP-01",
+      "title": "Sleep Is Your Superpower | Matt Walker | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=5MuIMqhT8DM",
+      "evidenceUrl": "https://www.youtube.com/watch?v=5MuIMqhT8DM",
+      "durationSeconds": null,
+      "category": "sleep",
+      "topics": [
+        "sleep"
+      ],
+      "synopsis": "A UC Berkeley sleep scientist’s TED talk on why a regular night’s sleep matters for learning and everyday functioning.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. One scientist’s talk, including strong health claims. It is not medical advice and not a sleep clinic.",
+      "sourceContext": "TED · Matthew Walker, UC Berkeley sleep scientist",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "sleep"
+        ],
+        "reason": "UC Berkeley sleep scientist’s TED talk on why sleep matters."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sleep"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-SLP-02",
+      "title": "Why do we sleep? | Russell Foster",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=LWULB9Aoopc",
+      "evidenceUrl": "https://www.youtube.com/watch?v=LWULB9Aoopc",
+      "durationSeconds": null,
+      "category": "sleep",
+      "topics": [
+        "sleep"
+      ],
+      "synopsis": "An Oxford neuroscientist explains what is known about why people sleep, and why a steady schedule helps.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Education about sleep, not a diagnosis of a sleep problem.",
+      "sourceContext": "TED · Russell Foster, University of Oxford circadian neuroscientist",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "sleep"
+        ],
+        "reason": "University of Oxford neuroscientist’s TED talk on sleep."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sleep"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-SLP-03",
+      "title": "Tips for better sleep",
+      "creator": "Every Mind Matters",
+      "url": "https://www.youtube.com/watch?v=nysjq8VIwI8",
+      "evidenceUrl": "https://www.youtube.com/watch?v=nysjq8VIwI8",
+      "durationSeconds": null,
+      "category": "sleep",
+      "topics": [
+        "sleep"
+      ],
+      "synopsis": "NHS Every Mind Matters offers a few ordinary ideas for getting to sleep.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Optional tips. Stop if trying to sleep becomes another task to worry about.",
+      "sourceContext": "NHS Every Mind Matters",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "sleep"
+        ],
+        "reason": "NHS Every Mind Matters sleep tips."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sleep"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-SLP-04",
+      "title": "Simple Tips for Better Sleep from Every Mind Matters",
+      "creator": "Every Mind Matters",
+      "url": "https://www.youtube.com/watch?v=OvQTjAlIvI8",
+      "evidenceUrl": "https://www.youtube.com/watch?v=OvQTjAlIvI8",
+      "durationSeconds": null,
+      "category": "sleep",
+      "topics": [
+        "sleep"
+      ],
+      "synopsis": "Another short NHS Every Mind Matters film of simple wind-down ideas for sleep.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Practical ideas only. Not a treatment for insomnia.",
+      "sourceContext": "NHS Every Mind Matters",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "sleep"
+        ],
+        "reason": "NHS Every Mind Matters film of simple sleep ideas."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sleep"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-SLP-05",
+      "title": "Sleep problems | NHS",
+      "creator": "NHS",
+      "url": "https://www.youtube.com/watch?v=TaLFBTvB1iQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=TaLFBTvB1iQ",
+      "durationSeconds": null,
+      "category": "sleep",
+      "topics": [
+        "sleep",
+        "insomnia"
+      ],
+      "synopsis": "An NHS doctor explains a self-help approach to common sleep problems.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. It uses a cognitive-behavioural idea as education. Ongoing sleep trouble is a reason to speak with a GP, not to keep watching.",
+      "sourceContext": "NHS",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "sleep",
+          "insomnia"
+        ],
+        "reason": "Official NHS film on common sleep problems."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "sleep",
+          "insomnia"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MIN-01",
+      "title": "All it takes is 10 mindful minutes | Andy Puddicombe | TED",
+      "creator": "TED",
+      "url": "https://www.youtube.com/watch?v=qzR62JJCMBQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=qzR62JJCMBQ",
+      "durationSeconds": null,
+      "category": "mindfulness",
+      "topics": [
+        "mindfulness",
+        "breathing"
+      ],
+      "synopsis": "A mindfulness teacher describes taking ten quiet minutes to notice the present moment, without special equipment.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Sitting still is optional. Stop if quiet attention makes you more distressed.",
+      "sourceContext": "TED · Andy Puddicombe",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ],
+        "reason": "TED talk introducing a short mindfulness practice."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MIN-02",
+      "title": "Breathing Meditation | UCLA Mindful Awareness Research Center",
+      "creator": "UCLA Health",
+      "url": "https://www.youtube.com/watch?v=YFSc7Ck0Ao0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=YFSc7Ck0Ao0",
+      "durationSeconds": null,
+      "category": "mindfulness",
+      "topics": [
+        "mindfulness",
+        "breathing",
+        "grounding"
+      ],
+      "synopsis": "A guided breathing meditation from UCLA’s Mindful Awareness Research Center. You can open your eyes or stop whenever you want.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A guided practice, not a treatment. Stop if attention on the breath feels unpleasant.",
+      "sourceContext": "UCLA Mindful Awareness Research Center · Diana Winston",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "mindfulness",
+          "breathing",
+          "grounding"
+        ],
+        "reason": "UCLA guided breathing meditation."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "mindfulness",
+          "breathing",
+          "grounding"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MIN-03",
+      "title": "Mindful Breathing Exercise",
+      "creator": "Every Mind Matters",
+      "url": "https://www.youtube.com/watch?v=wfDTp2GogaQ",
+      "evidenceUrl": "https://www.youtube.com/watch?v=wfDTp2GogaQ",
+      "durationSeconds": null,
+      "category": "mindfulness",
+      "topics": [
+        "mindfulness",
+        "breathing"
+      ],
+      "synopsis": "NHS Every Mind Matters leads a short mindful breathing exercise.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. Optional. Stop if slowing the breath feels wrong for your body.",
+      "sourceContext": "NHS Every Mind Matters",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ],
+        "reason": "NHS Every Mind Matters mindful breathing exercise."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MIN-04",
+      "title": "Jon Kabat-Zinn: What is Mindfulness?",
+      "creator": "Greater Good Science Center",
+      "url": "https://www.youtube.com/watch?v=xoLQ3qkh0w0",
+      "evidenceUrl": "https://www.youtube.com/watch?v=xoLQ3qkh0w0",
+      "durationSeconds": null,
+      "category": "mindfulness",
+      "topics": [
+        "mindfulness"
+      ],
+      "synopsis": "Jon Kabat-Zinn, speaking at UC Berkeley’s Greater Good Science Center, describes mindfulness as paying attention on purpose.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. A definition, not a course and not a medical therapy.",
+      "sourceContext": "Greater Good Science Center, UC Berkeley · Jon Kabat-Zinn",
+      "proposedRelevance": {
+        "feelingIds": [],
+        "topics": [
+          "mindfulness"
+        ],
+        "reason": "UC Berkeley recording of Jon Kabat-Zinn defining mindfulness."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "mindfulness"
+        ]
+      }
+    },
+    {
+      "id": "YT-CAND-MIN-05",
+      "title": "NHS Videos - Relaxation - Breathing Techniques",
+      "creator": "Coventry and Warwickshire Partnership NHS Trust",
+      "url": "https://www.youtube.com/watch?v=GqfrbGtorBE",
+      "evidenceUrl": "https://www.youtube.com/watch?v=GqfrbGtorBE",
+      "durationSeconds": null,
+      "category": "mindfulness",
+      "topics": [
+        "mindfulness",
+        "breathing"
+      ],
+      "synopsis": "An NHS trust film showing simple breathing techniques for relaxation. Made to be easy to follow.",
+      "reviewStatus": "draft",
+      "editorialHold": false,
+      "availability": "checked",
+      "checkedAt": "2026-09-25",
+      "coverage": "Title, channel and public view count were read from the YouTube watch page on 2026-09-25. Captions and the full audiovisual recording have not been reviewed by MindPal.",
+      "reviewNotes": "Draft candidate · human review pending. The trust made this film for a wide audience, including people with a learning disability. The breathing ideas are optional for anyone.",
+      "sourceContext": "Coventry and Warwickshire Partnership NHS Trust",
+      "proposedRelevance": {
+        "feelingIds": [
+          "overwhelmed"
+        ],
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ],
+        "reason": "NHS trust film of relaxation breathing techniques."
+      },
+      "selection": {
+        "state": "pending",
+        "captions": "unverified",
+        "topics": [
+          "mindfulness",
+          "breathing"
+        ]
+      }
+    }
+  ]
+}
