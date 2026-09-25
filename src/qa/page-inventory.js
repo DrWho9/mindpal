@@ -54,7 +54,15 @@ export const HASH_ROUTES = [
     blueprint: "explore.md",
     nav: ["bottom-tab"],
     heading: /A little something for today/i,
-    primaryCtas: ["Open verse", "Open reading", "Open videos", "Search library"],
+    primaryCtas: ["Open verse", "Open reading", "Open videos", "Search library", "Open your books"],
+  },
+  {
+    route: "Book",
+    title: "Your books",
+    blueprint: "book.md",
+    nav: ["explore-card"],
+    heading: /Your books/i,
+    primaryCtas: ["Choose a PDF", "Open the sample readings"],
   },
   {
     route: "My diary",

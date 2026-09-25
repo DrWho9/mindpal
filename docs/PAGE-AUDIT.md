@@ -28,7 +28,8 @@ Do **not** tick Companion / Diary AI as Live on github.io.
 | `#Team morning` | [team-morning.md](page-blueprints/team-morning.md) | Breath timer → peaceful reading | Breath clock is local; reading is **not** Pack A Done | [ ] |
 | `#Later` | [later.md](page-blueprints/later.md) | Two-minute E01, Open Focus | Buttons only | [ ] |
 | `#Evening` | [evening.md](page-blueprints/evening.md) | Save win, wind-down → Journal | Win input **Enter** saves | [ ] |
-| `#Explore` | [explore.md](page-blueprints/explore.md) | Verse / Reading / Videos accordion, library search | Library search filters titles as you type | [ ] |
+| `#Explore` | [explore.md](page-blueprints/explore.md) | Verse / Reading / Videos accordion, library search, Book card | Library search filters titles as you type. Book card opens `#Book` | [ ] |
+| `#Book` | [book.md](page-blueprints/book.md) | Choose a PDF, Open the sample readings | Chapter search filters the rail. PDF stays on the device | [ ] |
 | `#My diary` | [journal.md](page-blueprints/journal.md) | Save note, search, Talk to diary | Search filters on change; diary AI needs a server | [ ] |
 | `#Focus` | [focus.md](page-blueprints/focus.md) | Relationships ready; companion demo | Stress / Anger **coming soon** (disabled, expected) | [ ] |
 | `#Companion` | [companion.md](page-blueprints/companion.md) | Practice guide, safety chips, Show practice choices | **Ctrl/Cmd+Enter** sends; Enter in textarea is a newline. Live AI needs companion base | [ ] |

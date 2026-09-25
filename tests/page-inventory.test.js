@@ -33,6 +33,7 @@ function allowlistFromBuild() {
     "Problem",
     "Struggling mothers",
     "Drugs & alcohol",
+    "Book",
   ];
   const vendorNames = [...vendorList[1].matchAll(/`([^`]+)`/g)].map((item) => item[1]);
   return [...new Set([...vendorNames, ...extra])];

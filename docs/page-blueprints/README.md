@@ -11,6 +11,7 @@ How work ships: [`../BUILD-PIPELINE.md`](../BUILD-PIPELINE.md). Checklist: [`../
 | [later.md](later.md) | `#Later` |
 | [evening.md](evening.md) | `#Evening` |
 | [explore.md](explore.md) | `#Explore` |
+| [book.md](book.md) | `#Book` |
 | [journal.md](journal.md) | `#My diary` |
 | [focus.md](focus.md) | `#Focus` |
 | [companion.md](companion.md) | `#Companion` |
