@@ -1,0 +1,393 @@
+{
+  "version": 1,
+  "method": "youtube-watch-page",
+  "viewsCheckedAt": "2026-09-25",
+  "note": "Public YouTube view counts captured offline. null means the count could not be read. Do not invent a number.",
+  "videos": {
+    "tfkhkFwCtxs": {
+      "viewCount": 167530,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "hv9AwGuY0iU": {
+      "viewCount": 23598,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "IB029cWIy2s": {
+      "viewCount": 10650,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "NYzowu-EaPY": {
+      "viewCount": 102468,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "rCp1l16GCXI": {
+      "viewCount": 1602094,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "T-lRbuy4XtA": {
+      "viewCount": 941666,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "fch45RTDtAc": {
+      "viewCount": 47008,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "qSHgyAuWzJw": {
+      "viewCount": 120391,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "ENmtf9SZ7Kw": {
+      "viewCount": 93051,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "OdF6gtUTbhI": {
+      "viewCount": 11679,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "iCvmsMzlF7o": {
+      "viewCount": 25195127,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "RZWf2_2L2v8": {
+      "viewCount": 4443083,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "1Evwgu369Jw": {
+      "viewCount": 23989910,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "Tyl6YXp1Y6M": {
+      "viewCount": 321332,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "11U0h0DPu7k": {
+      "viewCount": 884132,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "IvtZBUSplr4": {
+      "viewCount": 3460273,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "NDQ1Mi5I4rg": {
+      "viewCount": 1868278,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "MxXzfpzh3uU": {
+      "viewCount": 6553,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "VOo5qE8oOPg": {
+      "viewCount": 40907,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "U_nzqnXWvSo": {
+      "viewCount": 2971004,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "UI8Mlh99QGg": {
+      "viewCount": 42806,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "BKPR5n3hWWQ": {
+      "viewCount": 63415,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "0Zypp6Ov73o": {
+      "viewCount": 133076,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "6n8i7ua0mSw": {
+      "viewCount": 5486414,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "kMtNkJcJn3M": {
+      "viewCount": 1694606,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "xjkRP2V3o7M": {
+      "viewCount": 37506,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "uVz9asI4Nx0": {
+      "viewCount": 94824,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "K1QDYuHGa_I": {
+      "viewCount": 6278443,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "TVUibwoVXZc": {
+      "viewCount": 482926,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "35lS7gJVTyA": {
+      "viewCount": 1640717,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "4AwyVTHEU3s": {
+      "viewCount": 3235883,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "-uLitAsfXkc": {
+      "viewCount": 177200,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "nf9GFhKO7Hs": {
+      "viewCount": 228882,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "r4ZdyS6v3qA": {
+      "viewCount": 652201,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "aGZTnRGe_qc": {
+      "viewCount": 182190,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "d6-wQUkJZxc": {
+      "viewCount": 50483,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "h69SwIn-bA4": {
+      "viewCount": 862228,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "drGfytizI6w": {
+      "viewCount": 83159,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "7V6jAZmDWsc": {
+      "viewCount": 89974,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "ybTj2QTRfIA": {
+      "viewCount": 2119954,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "Dri_W3dvd6Y": {
+      "viewCount": 94466,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "G57QInhSnJk": {
+      "viewCount": 1854244,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "rtufWBLOXgw": {
+      "viewCount": 3940016,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "WWloIAQpMcQ": {
+      "viewCount": 6151229,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "IzFObkVRSV0": {
+      "viewCount": 5499028,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "xsEJ6GeAGb0": {
+      "viewCount": 4146242,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "3cXGt2d1RyQ": {
+      "viewCount": 314647,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "xH2E9I7vn28": {
+      "viewCount": 58642,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "8jPQjjsBbIc": {
+      "viewCount": 19939377,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "RcGyVTAoXEU": {
+      "viewCount": 18054369,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "v-t1Z5-oPtU": {
+      "viewCount": 8977934,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "WuyPuH9ojCE": {
+      "viewCount": 8910478,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "jXT0YtAl4YM": {
+      "viewCount": 48440,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "z-IR48Mb3W0": {
+      "viewCount": 26588006,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "XiCrniLQGYc": {
+      "viewCount": 13251493,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "F2hc2FLOdhI": {
+      "viewCount": 5439547,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "qKcRUOWYQ9w": {
+      "viewCount": 279394,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "yEGVmiudF-o": {
+      "viewCount": 85738,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "8KkKuTCFvzI": {
+      "viewCount": 30223423,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "R1vskiVDwl4": {
+      "viewCount": 16132050,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "ib7Ain2aVR0": {
+      "viewCount": 651354,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "nBN9zG1JNPg": {
+      "viewCount": 436049,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "B4ZxMECJobo": {
+      "viewCount": 78050,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "0rAngiiXBAc": {
+      "viewCount": 448353,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "9xf1T7-t1ak": {
+      "viewCount": 392878,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "JC7U4tA8ttQ": {
+      "viewCount": 18083,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "BNJPANGrNiI": {
+      "viewCount": 6330,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "5MuIMqhT8DM": {
+      "viewCount": 17265388,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "LWULB9Aoopc": {
+      "viewCount": 2918905,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "nysjq8VIwI8": {
+      "viewCount": 55716,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "OvQTjAlIvI8": {
+      "viewCount": 40513,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "TaLFBTvB1iQ": {
+      "viewCount": 29617,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "qzR62JJCMBQ": {
+      "viewCount": 5643562,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "YFSc7Ck0Ao0": {
+      "viewCount": 1736133,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "wfDTp2GogaQ": {
+      "viewCount": 755225,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "xoLQ3qkh0w0": {
+      "viewCount": 441814,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    },
+    "GqfrbGtorBE": {
+      "viewCount": 69958,
+      "viewsCheckedAt": "2026-09-25",
+      "status": "ok"
+    }
+  }
+}

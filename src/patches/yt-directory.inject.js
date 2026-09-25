@@ -1,5 +1,6 @@
 function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
   let{state:a}=I();
+  let catalog=mpReadings.withDirectorySnapshot(t,typeof mpYtDirectoryCandidates<`u`?mpYtDirectoryCandidates:{entries:[]},typeof mpYtDirectoryViews<`u`?mpYtDirectoryViews:{videos:{}});
   let[c,l]=(0,_.useState)(``);
   let[Y,z]=(0,_.useState)(``);
   let[J,X]=(0,_.useState)(``);
@@ -7,10 +8,10 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
   let[m,h]=(0,_.useState)(``);
   let[b,x]=(0,_.useState)(()=>({...se,topic:e}));
   let S=(0,_.useRef)(null);
-  let te=mpReadings.directorySpeakerOptions(t,E);
+  let te=mpReadings.directorySpeakerOptions(catalog,E);
   let M={...b,favouriteIds:a.ids};
   let speakerIds=J?[]:(M.speakerMode===`discover`?[]:a.ids);
-  let ne=mpReadings.filterDirectoryEntries(t,{
+  let ne=mpReadings.filterDirectoryEntries(catalog,{
     query:Y,
     speakerId:J,
     speakerIds,
@@ -37,10 +38,12 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
   let re=(entry)=>(0,A.jsxs)(`article`,{className:`activity-detail mp-yt-dir-card`,"aria-label":entry.title,children:[
     (0,A.jsx)(`h3`,{children:entry.title}),
     (0,A.jsxs)(`p`,{children:[entry.creator,` · `,he(entry.durationSeconds)]}),
+    (0,A.jsx)(`p`,{className:`mp-yt-views`,children:mpReadings.formatDirectoryViews(entry)}),
     !!entry.speakerIds?.length&&(0,A.jsxs)(`p`,{children:[`Speaker:`,` `,entry.speakerIds.map(id=>E.find(s=>s.id===id)?.name||`Identity awaiting verification`).join(`, `)]}),
     (0,A.jsx)(`p`,{children:entry.synopsis}),
     (0,A.jsxs)(`details`,{children:[
       (0,A.jsx)(`summary`,{children:`Source and review context`}),
+      entry.sourceContext?(0,A.jsxs)(`p`,{children:[`Source: `,entry.sourceContext]}):null,
       entry.proposedRelevance?.reason&&(0,A.jsxs)(`p`,{children:[`Proposed topic connection: `,entry.proposedRelevance.reason,` This research note does not make the video eligible for a personalised suggestion.`]}),
       entry.reviewNotes?(0,A.jsx)(`p`,{children:entry.reviewNotes}):null,
       (0,A.jsx)(`p`,{children:entry.selection?.captions===`verified`?`Caption review recorded for this source version.`:`Captions and full audiovisual accessibility have not been verified by MindPal.`}),
@@ -54,7 +57,7 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
   ]},entry.id);
   return(0,A.jsxs)(`section`,{className:`simple-panel feelings-space mp-yt-directory`,"aria-label":`YouTube video directory`,children:[
     (0,A.jsx)(`h2`,{ref:S,tabIndex:-1,children:`YouTube video directory`}),
-    (0,A.jsx)(`p`,{children:`Search titles, creators, speakers and tags, then open a matching video on YouTube. A listing is a reference, not a recommendation or a diagnosis.`}),
+    (0,A.jsx)(`p`,{children:`Search titles, creators, speakers and tags, then open a matching video on YouTube. Videos are grouped by topic, with the highest public view count first in each group. A listing is a reference, not a recommendation or a diagnosis.`}),
     (0,A.jsxs)(`details`,{children:[
       (0,A.jsx)(`summary`,{children:`External videos and your privacy`}),
       (0,A.jsx)(`p`,{children:`YouTube opens only when you choose a link. Its ads, recommendations and privacy practices apply. MindPal does not load YouTube players or thumbnails here, or include your chosen feeling or diary text in the link.`})
@@ -75,7 +78,12 @@ function _e({initialTopic:e=``,entries:t=T,onPractice:n,onDiary:r,onHelp:i}){
     ]}),
     (0,A.jsx)(`p`,{role:`status`,"aria-label":`Directory entries`,children:ne.length?`${ne.length} director${ne.length===1?`y entry`:`y entries`}`:mpReadings.directoryEmptyCopy({query:Y,speakerId:J,speakerIds})}),
     ne.length
-      ?(0,A.jsx)(`div`,{className:`mp-yt-dir-results`,children:ne.map(entry=>re(entry))})
+      ?(String(Y||``).trim()||J
+        ?(0,A.jsx)(`div`,{className:`mp-yt-dir-results`,children:ne.map(entry=>re(entry))})
+        :(0,A.jsx)(`div`,{className:`mp-yt-dir-groups`,children:mpReadings.groupDirectoryByCategory(ne).map(group=>(0,A.jsxs)(`section`,{className:`mp-yt-dir-group`,"aria-label":group.title,children:[
+          (0,A.jsx)(`h3`,{className:`mp-yt-dir-category`,children:group.title}),
+          (0,A.jsx)(`div`,{className:`mp-yt-dir-results`,children:group.entries.map(entry=>re(entry))})
+        ]},group.id))}))
       :(0,A.jsx)(`p`,{className:`muted`,children:mpReadings.directoryEmptyCopy({query:Y,speakerId:J,speakerIds})}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,"aria-expanded":f,onClick:()=>p(e=>!e),children:`Choose or edit speakers`})

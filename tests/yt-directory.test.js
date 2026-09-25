@@ -4,16 +4,24 @@ import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import {
+  directoryCategoryId,
   directoryCtaLabel,
   directoryEmptyCopy,
   directoryHaystack,
   directoryOpenUrl,
   directorySpeakerOptions,
+  directoryViewCount,
   directoryWatchUrl,
   filterDirectoryEntries,
+  formatDirectoryViews,
+  formatViewCount,
+  groupDirectoryByCategory,
   isDirectoryHeld,
   isDirectoryOpenable,
+  sortDirectoryByViews,
+  withDirectorySnapshot,
 } from "../src/videos/yt-directory.js";
+import { parseWatchPageViewCount } from "../scripts/yt-refresh-views.mjs";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const inject = readFileSync(join(root, "../src/patches/yt-directory.inject.js"), "utf8");
@@ -158,8 +166,227 @@ describe("YouTube directory page chrome", () => {
     assert.match(inject, /directoryOpenUrl/);
     assert.match(inject, /filterDirectoryEntries/);
     assert.match(inject, /Draft candidate · human review pending/);
+    assert.match(inject, /formatDirectoryViews/);
+    assert.match(inject, /groupDirectoryByCategory/);
+    assert.match(inject, /mp-yt-dir-category/);
+    assert.match(inject, /withDirectorySnapshot/);
+    assert.match(inject, /reference, not a recommendation/);
+    assert.match(inject, /External videos and your privacy/);
     assert.doesNotMatch(inject, /draft-review/);
     assert.doesNotMatch(inject, /not available to open here\. You can browse another/);
     assert.doesNotMatch(inject, /<iframe|<video/);
+  });
+});
+
+const watch = (id) => `https://www.youtube.com/watch?v=${id}`;
+
+describe("YouTube directory view order", () => {
+  const ranked = [
+    {
+      id: "low",
+      title: "Low",
+      creator: "A",
+      url: watch("aaaaaaaaaaa"),
+      viewCount: 10,
+      viewsCheckedAt: "2026-09-25",
+      topics: ["anxious"],
+      editorialHold: false,
+    },
+    {
+      id: "none",
+      title: "None",
+      creator: "A",
+      url: watch("bbbbbbbbbbb"),
+      viewCount: null,
+      viewsCheckedAt: "2026-09-25",
+      viewCountStatus: "unavailable",
+      topics: ["anxious"],
+      editorialHold: false,
+    },
+    {
+      id: "high",
+      title: "High",
+      creator: "A",
+      url: watch("ccccccccccc"),
+      viewCount: 2_300_000,
+      viewsCheckedAt: "2026-09-25",
+      topics: ["stress"],
+      category: "stress",
+      editorialHold: false,
+    },
+    {
+      id: "held",
+      title: "Held",
+      creator: "A",
+      url: watch("ddddddddddd"),
+      viewCount: 9,
+      viewsCheckedAt: "2026-09-25",
+      topics: ["anxious"],
+      reviewStatus: "withheld",
+      editorialHold: true,
+    },
+    {
+      id: "guess",
+      title: "Guess",
+      creator: "A",
+      url: watch("eeeeeeeeeee"),
+      viewCount: "2.3M",
+      topics: ["anxious"],
+      editorialHold: false,
+    },
+  ];
+
+  it("sorts the highest view count first and leaves missing counts last", () => {
+    assert.deepEqual(
+      sortDirectoryByViews(ranked).map((row) => row.id),
+      ["high", "low", "held", "none", "guess"],
+    );
+    assert.equal(directoryViewCount(ranked[1]), null);
+    assert.equal(directoryViewCount(ranked[4]), null);
+    assert.deepEqual(
+      filterDirectoryEntries(ranked).map((row) => row.id),
+      ["high", "low", "none", "guess"],
+    );
+    assert.deepEqual(
+      filterDirectoryEntries(ranked, { query: "a" }).map((row) => row.id),
+      ["high", "low", "held", "none", "guess"],
+    );
+  });
+
+  it("keeps a speaker filter and still sorts that result by views", () => {
+    const rows = ranked.map((row, index) =>
+      index === 0 || index === 2 ? { ...row, speakerIds: ["russ-harris"] } : row,
+    );
+    assert.deepEqual(
+      filterDirectoryEntries(rows, { speakerId: "russ-harris", speakers }).map((row) => row.id),
+      ["high", "low"],
+    );
+  });
+
+  it("groups by topic and sorts inside each category", () => {
+    assert.equal(directoryCategoryId({ topics: ["unhelpful-thoughts", "anxious"] }), "anxiety");
+    assert.equal(
+      directoryCategoryId({
+        topics: ["grounding", "attention"],
+        proposedRelevance: { feelingIds: ["overwhelmed"] },
+      }),
+      "mindfulness",
+    );
+    assert.equal(directoryCategoryId({ topics: ["habits", "planning"] }), "habits");
+    const groups = groupDirectoryByCategory(ranked.filter((row) => !row.editorialHold));
+    assert.deepEqual(
+      groups.map((group) => group.id),
+      ["anxiety", "stress"],
+    );
+    assert.deepEqual(
+      groups[0].entries.map((row) => row.id),
+      ["low", "none", "guess"],
+    );
+    assert.deepEqual(
+      groups[1].entries.map((row) => row.id),
+      ["high"],
+    );
+  });
+
+  it("formats a real count and labels a missing one", () => {
+    assert.equal(formatViewCount(2_300_000), "2.3M views");
+    assert.equal(formatViewCount(17_265_325), "17.3M views");
+    assert.equal(formatViewCount(167_530), "167.5K views");
+    assert.equal(formatViewCount(999), "999 views");
+    assert.equal(formatDirectoryViews(ranked[2]), "2.3M views · checked 25 Sep 2026");
+    assert.equal(formatDirectoryViews(ranked[1]), "View count unavailable · checked 25 Sep 2026");
+    assert.equal(formatDirectoryViews({ viewCount: "2.3M" }), "View count unavailable");
+  });
+
+  it("does not invent a count when the snapshot missed a video", () => {
+    const merged = withDirectorySnapshot(
+      [{ id: "keep", url: watch("aaaaaaaaaaa"), title: "Keep", viewCount: 4 }],
+      {
+        entries: [
+          { id: "new", url: watch("bbbbbbbbbbb"), title: "New", category: "sleep", topics: ["sleep"] },
+        ],
+      },
+      {
+        videos: {
+          bbbbbbbbbbb: { viewCount: null, viewsCheckedAt: "2026-09-25", status: "unavailable" },
+          ccccccccccc: { viewCount: 12.5, viewsCheckedAt: "2026-09-25", status: "ok" },
+        },
+      },
+    );
+    const added = merged.find((row) => row.id === "new");
+    assert.equal(added.viewCount, null);
+    assert.equal(added.viewCountStatus, "unavailable");
+    assert.equal(merged.find((row) => row.id === "keep").viewCount, 4);
+    const floated = withDirectorySnapshot(
+      [{ id: "bad", url: watch("ccccccccccc"), title: "Bad" }],
+      null,
+      { videos: { ccccccccccc: { viewCount: 12.5, viewsCheckedAt: "2026-09-25", status: "ok" } } },
+    );
+    assert.equal(floated[0].viewCount, null);
+    assert.equal(floated[0].viewCountStatus, "unavailable");
+  });
+
+  it("refuses abbreviated watch-page labels instead of expanding them", () => {
+    assert.equal(
+      parseWatchPageViewCount(
+        `"videoViewCountRenderer":{"viewCount":{"simpleText":"167,530 views"},"shortViewCount":{"simpleText":"167K views"}`,
+      ),
+      167530,
+    );
+    assert.equal(
+      parseWatchPageViewCount(`"videoViewCountRenderer":{"viewCount":{"simpleText":"2.3M views"}`),
+      null,
+    );
+    assert.equal(parseWatchPageViewCount(`"shortViewCount":{"simpleText":"17M views"}`), null);
+  });
+});
+
+describe("committed YouTube view snapshot", () => {
+  const candidates = JSON.parse(
+    readFileSync(join(root, "../src/data/yt-directory-candidates.json"), "utf8"),
+  );
+  const snapshot = JSON.parse(
+    readFileSync(join(root, "../src/data/yt-directory-views.json"), "utf8"),
+  );
+
+  it("stores only integers or an explicit miss, and covers every candidate", () => {
+    assert.ok(["youtube-data-api", "yt-dlp", "youtube-watch-page"].includes(snapshot.method));
+    const perCategory = {};
+    for (const entry of candidates.entries) {
+      assert.equal(entry.reviewStatus, "draft");
+      assert.equal(entry.editorialHold, false);
+      assert.match(entry.sourceContext, /\S/);
+      assert.match(entry.reviewNotes, /human review pending/);
+      perCategory[entry.category] = (perCategory[entry.category] || 0) + 1;
+      const id = new URL(entry.url).searchParams.get("v");
+      const snap = snapshot.videos[id];
+      assert.ok(snap, entry.id);
+      assert.equal(snap.status, "ok");
+      assert.equal(Number.isInteger(snap.viewCount), true);
+      assert.ok(snap.viewCount >= 0);
+      assert.match(snap.viewsCheckedAt, /^\d{4}-\d{2}-\d{2}$/);
+    }
+    for (const count of Object.values(perCategory)) assert.ok(count <= 5);
+    assert.ok(perCategory.anxiety >= 4);
+    assert.ok(perCategory.anger >= 3);
+    for (const snap of Object.values(snapshot.videos)) {
+      if (snap.status === "ok") assert.equal(Number.isInteger(snap.viewCount), true);
+      else assert.equal(snap.viewCount, null);
+    }
+    const merged = withDirectorySnapshot([], candidates, snapshot);
+    for (const group of groupDirectoryByCategory(merged)) {
+      let last = Infinity;
+      let seenMissing = false;
+      for (const entry of group.entries) {
+        const count = directoryViewCount(entry);
+        if (count == null) {
+          seenMissing = true;
+          continue;
+        }
+        assert.equal(seenMissing, false);
+        assert.ok(count <= last);
+        last = count;
+      }
+    }
   });
 });
