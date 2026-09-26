@@ -67,7 +67,7 @@ function mpAppointmentChat({onHelp:t}){
         h(k);
         return;
       }
-      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.UNAVAILABLE_NOTE,at:new Date().toISOString()},globalThis.localStorage,new Date(),mpAppointment.APPOINTMENT_THREAD_STORAGE_KEY));
+      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.companionFailureCopy(R&&R.reason),at:new Date().toISOString()},globalThis.localStorage,new Date(),mpAppointment.APPOINTMENT_THREAD_STORAGE_KEY));
     }finally{
       u(!1);
     }

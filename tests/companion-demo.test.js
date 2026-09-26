@@ -40,6 +40,7 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 const inject = readFileSync(join(root, "../src/patches/companion-demo.inject.js"), "utf8");
+const baseCard = readFileSync(join(root, "../src/patches/companion-base.inject.js"), "utf8");
 const build = readFileSync(join(root, "../scripts/build.mjs"), "utf8");
 
 function memoryStorage(initial = {}) {
@@ -199,29 +200,48 @@ describe("companion demo choices", () => {
   });
 
   it("builds a policy-versioned chat payload and accepts a matching reply", () => {
+    const kept = "abc-123-request-id";
     const payload = companionChatPayload({
       safetyState: "ordinary",
       message: "  hello  ",
-      requestId: "req-1",
+      requestId: kept,
     });
-    assert.deepEqual(payload, {
-      requestId: "req-1",
-      policyVersion: COMPANION_POLICY_VERSION,
+    assert.deepEqual(Object.keys(payload).sort(), [
+      "message",
+      "policyVersion",
+      "requestId",
+      "safetyState",
+    ]);
+    assert.equal(payload.requestId, kept);
+    assert.equal(payload.policyVersion, COMPANION_POLICY_VERSION);
+    assert.equal(payload.safetyState, "ordinary");
+    assert.equal(payload.message, "hello");
+    assert.match(payload.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+    const generated = companionChatPayload({
       safetyState: "ordinary",
-      message: "hello",
+      message: "hi",
+      requestId: "companion-demo",
     });
+    assert.notEqual(generated.requestId, "companion-demo");
+    assert.match(generated.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+    assert.deepEqual(Object.keys(generated).sort(), [
+      "message",
+      "policyVersion",
+      "requestId",
+      "safetyState",
+    ]);
     const reply = parseCompanionReply(
       {
-        requestId: "req-1",
+        requestId: kept,
         policyVersion: COMPANION_POLICY_VERSION,
         kind: "reply",
         reply: "A small next step.",
         modelDisclosure: "xAI Grok",
       },
-      "req-1",
+      kept,
     );
     assert.equal(reply.kind, "reply");
-    assert.equal(parseCompanionReply({ requestId: "nope" }, "req-1"), null);
+    assert.equal(parseCompanionReply({ requestId: "nope" }, kept), null);
   });
 
   it("wires the Companion page so every control is a real handler", () => {
@@ -244,6 +264,10 @@ describe("companion demo choices", () => {
     assert.match(inject, /MindPal is writing a reply/);
     assert.match(inject, /Check again/);
     assert.match(inject, /Save the MindPal address/);
+    assert.match(inject, /Save the address from this link/);
+    assert.match(baseCard, /companionBaseFromSearch/);
+    assert.match(baseCard, /Save the address from this link/);
+    assert.match(baseCard, /persistCompanionBase\(fromLink\)/);
     assert.match(inject, /onKeyDown:onKey/);
     assert.doesNotMatch(inject, /No audio or microphone/);
     assert.doesNotMatch(inject, /Preparing fixed choices/);

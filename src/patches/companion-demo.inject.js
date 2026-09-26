@@ -247,7 +247,7 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
         (0,A.jsxs)(`details`,{className:`mp-companion-setup`,open:!live,children:[
           (0,A.jsx)(`summary`,{children:`Live companion address`}),
           (0,A.jsx)(`p`,{children:`On this phone, tap Save the MindPal address. Until you do, this page stays a practice guide and does not send what you type.`}),
-          (0,A.jsx)(`p`,{className:`muted`,children:`This build does not invent a public tunnel. You can also paste another address, or open the app with ?companionBase=.`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`This build does not invent a public tunnel. If you opened a link with ?companionBase= and it still says practice mode, tap Save the address from this link.`}),
           (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(tick=>tick+1)})
         ]})
       ]})

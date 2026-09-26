@@ -14,6 +14,7 @@ import {
   companionFailureCopy,
   companionStatusCopy,
   buildChatRequest,
+  companionWireBody,
   companionUrl,
   fetchCompanionStatus,
   parseCompanionReply,
@@ -130,22 +131,24 @@ describe("companion client", () => {
     assert.equal(live.model, "xAI Grok");
   });
 
-  it("sends the Reflect system prompt on the companion chat contract and does not invent replies", async () => {
-    const requestId = "req-1";
+  it("sends only the four companion fields and does not invent replies", async () => {
+    const requestId = "abc-123-request-id";
     const calls = [];
     const result = await sendCompanionChat({
       message: "i had a tough argument with my wife",
       system: REFLECT_SYSTEM_PROMPT,
       lane: "reflect",
+      messages: [{ role: "user", content: "earlier note" }],
       requestId,
       fetchImpl: async (url, init) => {
         calls.push({ url, init });
+        const sent = JSON.parse(init.body);
         return {
           ok: true,
           headers: { get: () => "application/json" },
           text: async () =>
             JSON.stringify({
-              requestId,
+              requestId: sent.requestId,
               policyVersion: COMPANION_POLICY_VERSION,
               kind: "reply",
               reply: "That sounds raw. A fight with someone you love can leave you shaken.",
@@ -156,8 +159,11 @@ describe("companion client", () => {
     });
     assert.equal(calls[0].url, "/mindpal/api/companion/chat");
     const body = JSON.parse(calls[0].init.body);
-    assert.equal(body.lane, "reflect");
-    assert.match(body.system, /not a psychologist/);
+    assert.deepEqual(Object.keys(body).sort(), ["message", "policyVersion", "requestId", "safetyState"]);
+    assert.equal(body.requestId, requestId);
+    assert.equal(body.lane, undefined);
+    assert.equal(body.system, undefined);
+    assert.equal(body.messages, undefined);
     assert.equal(body.message, "i had a tough argument with my wife");
     assert.equal(result.kind, "reply");
     assert.match(result.value.reply, /shaken/);
@@ -165,15 +171,34 @@ describe("companion client", () => {
     const missing = await sendCompanionChat({
       message: "hello",
       requestId: "req-2",
-      fetchImpl: async () => ({
-        ok: false,
-        headers: { get: () => "text/html" },
-        text: async () => "<html>404</html>",
-      }),
+      fetchImpl: async (_url, init) => {
+        const sent = JSON.parse(init.body);
+        assert.notEqual(sent.requestId, "req-2");
+        assert.notEqual(sent.requestId, "companion-demo");
+        assert.match(sent.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+        assert.deepEqual(Object.keys(sent).sort(), ["message", "policyVersion", "requestId", "safetyState"]);
+        return {
+          ok: false,
+          headers: { get: () => "text/html" },
+          text: async () => "<html>404</html>",
+        };
+      },
     });
     assert.equal(missing.kind, "unavailable");
     assert.equal(missing.reason, "unavailable");
+    const schema = await sendCompanionChat({
+      message: "hello again",
+      fetchImpl: async () => ({
+        ok: false,
+        headers: { get: () => "application/json" },
+        text: async () => JSON.stringify({ error: "schema" }),
+      }),
+    });
+    assert.equal(schema.reason, "schema");
     assert.match(UNAVAILABLE_NOTE, /not live/);
+    assert.match(companionFailureCopy("schema"), /Live chat is on/);
+    assert.match(companionFailureCopy("schema"), /not accepted/);
+    assert.match(companionFailureCopy("unavailable"), /Live chat is on/);
     assert.match(companionFailureCopy("timeout"), /too long/);
     assert.match(companionFailureCopy("offline"), /offline/);
     assert.match(companionStatusCopy({ reason: "pending" }).detail, /Looking for live chat/);
@@ -207,6 +232,13 @@ describe("companion client", () => {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
     );
     assert.equal(request.message, "today was hard");
+    const wire = companionWireBody({ ...request, requestId: "companion-demo", lane: "reflect", system: "x" });
+    assert.deepEqual(Object.keys(wire).sort(), ["message", "policyVersion", "requestId", "safetyState"]);
+    assert.notEqual(wire.requestId, "companion-demo");
+    assert.match(wire.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+    const short = buildChatRequest({ message: "hi", requestId: "req-1" });
+    assert.notEqual(short.requestId, "req-1");
+    assert.match(short.requestId, /^[a-zA-Z0-9-]{16,80}$/);
   });
 });
 

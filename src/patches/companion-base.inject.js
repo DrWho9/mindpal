@@ -1,5 +1,6 @@
 function mpCompanionBaseCard({onChanged:e}){
-  let[t,n]=(0,_.useState)(()=>mpCompanion.storedCompanionBase());
+  let fromLink=mpCompanion.companionBaseFromSearch((typeof location!==`undefined`&&location.search)||``);
+  let[t,n]=(0,_.useState)(()=>mpCompanion.storedCompanionBase()||fromLink);
   let[r,i]=(0,_.useState)(``);
   function a(s){
     s&&s.preventDefault&&s.preventDefault();
@@ -12,6 +13,13 @@ function mpCompanionBaseCard({onChanged:e}){
     let o=mpCompanion.persistCompanionBase(mpCompanion.SUGGESTED_COMPANION_BASE);
     n(o);
     i(`Saved the MindPal address on this phone. Checking live chat now.`);
+    e&&e(o);
+  }
+  function saveLink(){
+    if(!fromLink)return;
+    let o=mpCompanion.persistCompanionBase(fromLink);
+    n(o);
+    i(`Saved the address from this link. Checking live chat now.`);
     e&&e(o);
   }
   function o(){
@@ -27,6 +35,7 @@ function mpCompanionBaseCard({onChanged:e}){
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       (0,A.jsx)(`button`,{className:`primary`,type:`submit`,children:`Save address`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:known,children:`Save the MindPal address`}),
+      fromLink?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:saveLink,children:`Save the address from this link`}):null,
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:o,children:`Turn live chat off`})
     ]}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Saved only on this phone. This build does not invent a public tunnel. Practice mode stays on until live chat answers.`}),

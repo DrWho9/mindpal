@@ -67,7 +67,7 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
         h(k);
         return;
       }
-      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.UNAVAILABLE_NOTE,at:new Date().toISOString()}));
+      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.companionFailureCopy(R&&R.reason),at:new Date().toISOString()}));
     }finally{
       u(!1);
     }

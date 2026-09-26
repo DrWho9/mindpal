@@ -22,6 +22,10 @@ export function companionFailureCopy(reason) {
       return "That took too long, so no reply was written. Your message is back in the box — tap Send to try again.";
     case "offline":
       return "You look offline, so this was not sent. It stays on this phone until you are back online.";
+    case "schema":
+      return "Live chat is on, but this message was not accepted. Nothing was invented. Your words are back in the box — tap Send to try again.";
+    case "unavailable":
+      return "Live chat is on, but MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
     default:
       return "MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
   }
@@ -227,6 +231,8 @@ export function parseCompanionReply(raw, request) {
   };
 }
 
+const REQUEST_ID_RE = /^[a-zA-Z0-9-]{16,80}$/;
+
 function randomRequestId() {
   try {
     if (typeof globalThis.crypto?.randomUUID === "function") return globalThis.crypto.randomUUID();
@@ -244,6 +250,23 @@ function randomRequestId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+/** Worker parseCompanionAiRequest accepts only ids of 16–80 [a-zA-Z0-9-]. */
+export function companionRequestId(existing) {
+  const given = typeof existing === "string" ? existing.trim() : "";
+  if (REQUEST_ID_RE.test(given)) return given;
+  return randomRequestId();
+}
+
+/** Exact keys the Worker accepts: message, policyVersion, requestId, safetyState. */
+export function companionWireBody(request = {}) {
+  return {
+    message: typeof request.message === "string" ? request.message : "",
+    policyVersion: request.policyVersion || COMPANION_POLICY_VERSION,
+    requestId: companionRequestId(request.requestId),
+    safetyState: SAFETY_STATES.includes(request.safetyState) ? request.safetyState : "ordinary",
+  };
+}
+
 export function buildChatRequest({
   message,
   messages = [],
@@ -255,7 +278,7 @@ export function buildChatRequest({
   const text = typeof message === "string" ? message.trim() : "";
   const state = SAFETY_STATES.includes(safetyState) ? safetyState : "ordinary";
   return {
-    requestId: requestId || randomRequestId(),
+    requestId: companionRequestId(requestId),
     policyVersion: COMPANION_POLICY_VERSION,
     safetyState: state,
     message: text.slice(0, 2000),
@@ -296,9 +319,19 @@ export async function sendCompanionChat(options = {}) {
       redirect: "error",
       signal,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
+      body: JSON.stringify(companionWireBody(request)),
     });
-    if (!response.ok || !response.headers.get("Content-Type")?.includes("application/json")) {
+    if (!response.ok) {
+      let reason = "unavailable";
+      try {
+        const errText = await response.text();
+        if (typeof errText === "string" && errText.includes("schema")) reason = "schema";
+      } catch {
+        /* body already consumed or empty */
+      }
+      return { kind: "unavailable", reason, request };
+    }
+    if (!response.headers.get("Content-Type")?.includes("application/json")) {
       return { kind: "unavailable", reason: "unavailable", request };
     }
     const text = await response.text();

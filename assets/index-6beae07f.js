@@ -13916,6 +13916,10 @@ function companionFailureCopy(reason) {
       return "That took too long, so no reply was written. Your message is back in the box — tap Send to try again.";
     case "offline":
       return "You look offline, so this was not sent. It stays on this phone until you are back online.";
+    case "schema":
+      return "Live chat is on, but this message was not accepted. Nothing was invented. Your words are back in the box — tap Send to try again.";
+    case "unavailable":
+      return "Live chat is on, but MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
     default:
       return "MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
   }
@@ -14121,6 +14125,8 @@ function parseCompanionReply(raw, request) {
   };
 }
 
+const REQUEST_ID_RE = /^[a-zA-Z0-9-]{16,80}$/;
+
 function randomRequestId() {
   try {
     if (typeof globalThis.crypto?.randomUUID === "function") return globalThis.crypto.randomUUID();
@@ -14138,6 +14144,23 @@ function randomRequestId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
+/** Worker parseCompanionAiRequest accepts only ids of 16–80 [a-zA-Z0-9-]. */
+function companionRequestId(existing) {
+  const given = typeof existing === "string" ? existing.trim() : "";
+  if (REQUEST_ID_RE.test(given)) return given;
+  return randomRequestId();
+}
+
+/** Exact keys the Worker accepts: message, policyVersion, requestId, safetyState. */
+function companionWireBody(request = {}) {
+  return {
+    message: typeof request.message === "string" ? request.message : "",
+    policyVersion: request.policyVersion || COMPANION_POLICY_VERSION,
+    requestId: companionRequestId(request.requestId),
+    safetyState: SAFETY_STATES.includes(request.safetyState) ? request.safetyState : "ordinary",
+  };
+}
+
 function buildChatRequest({
   message,
   messages = [],
@@ -14149,7 +14172,7 @@ function buildChatRequest({
   const text = typeof message === "string" ? message.trim() : "";
   const state = SAFETY_STATES.includes(safetyState) ? safetyState : "ordinary";
   return {
-    requestId: requestId || randomRequestId(),
+    requestId: companionRequestId(requestId),
     policyVersion: COMPANION_POLICY_VERSION,
     safetyState: state,
     message: text.slice(0, 2000),
@@ -14190,9 +14213,19 @@ async function sendCompanionChat(options = {}) {
       redirect: "error",
       signal,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(request),
+      body: JSON.stringify(companionWireBody(request)),
     });
-    if (!response.ok || !response.headers.get("Content-Type")?.includes("application/json")) {
+    if (!response.ok) {
+      let reason = "unavailable";
+      try {
+        const errText = await response.text();
+        if (typeof errText === "string" && errText.includes("schema")) reason = "schema";
+      } catch {
+        /* body already consumed or empty */
+      }
+      return { kind: "unavailable", reason, request };
+    }
+    if (!response.headers.get("Content-Type")?.includes("application/json")) {
       return { kind: "unavailable", reason: "unavailable", request };
     }
     const text = await response.text();
@@ -15603,12 +15636,33 @@ async function probeCompanionStatus({
   }
 }
 
+const REQUEST_ID_RE = /^[a-zA-Z0-9-]{16,80}$/;
+
+function companionRequestId(existing) {
+  const given = typeof existing === "string" ? existing.trim() : "";
+  if (REQUEST_ID_RE.test(given)) return given;
+  try {
+    if (typeof globalThis.crypto?.randomUUID === "function") return globalThis.crypto.randomUUID();
+  } catch {
+    /* insecure context */
+  }
+  const bytes = new Uint8Array(16);
+  if (typeof globalThis.crypto?.getRandomValues === "function") globalThis.crypto.getRandomValues(bytes);
+  else {
+    for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 function companionChatPayload({ safetyState, message, requestId }) {
   return {
-    requestId: requestId || "companion-demo",
-    policyVersion: COMPANION_POLICY_VERSION,
-    safetyState: isCrisisChoice(safetyState) ? "urgent" : safetyState || "ordinary",
     message: String(message || "").trim(),
+    policyVersion: COMPANION_POLICY_VERSION,
+    requestId: companionRequestId(requestId),
+    safetyState: isCrisisChoice(safetyState) ? "urgent" : safetyState || "ordinary",
   };
 }
 
@@ -16139,7 +16193,8 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     (0,A.jsx)(`p`,{children:`If this makes things harder, stop. You can take a break or seek human support. “Need support?” lists human-support options independently of this activity. In immediate danger in Australia, call 000. MindPal does not monitor you or contact help for you.`})
   ]});
 }function mpCompanionBaseCard({onChanged:e}){
-  let[t,n]=(0,_.useState)(()=>mpCompanion.storedCompanionBase());
+  let fromLink=mpCompanion.companionBaseFromSearch((typeof location!==`undefined`&&location.search)||``);
+  let[t,n]=(0,_.useState)(()=>mpCompanion.storedCompanionBase()||fromLink);
   let[r,i]=(0,_.useState)(``);
   function a(s){
     s&&s.preventDefault&&s.preventDefault();
@@ -16152,6 +16207,13 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     let o=mpCompanion.persistCompanionBase(mpCompanion.SUGGESTED_COMPANION_BASE);
     n(o);
     i(`Saved the MindPal address on this phone. Checking live chat now.`);
+    e&&e(o);
+  }
+  function saveLink(){
+    if(!fromLink)return;
+    let o=mpCompanion.persistCompanionBase(fromLink);
+    n(o);
+    i(`Saved the address from this link. Checking live chat now.`);
     e&&e(o);
   }
   function o(){
@@ -16167,6 +16229,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       (0,A.jsx)(`button`,{className:`primary`,type:`submit`,children:`Save address`}),
       (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:known,children:`Save the MindPal address`}),
+      fromLink?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:saveLink,children:`Save the address from this link`}):null,
       (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:o,children:`Turn live chat off`})
     ]}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Saved only on this phone. This build does not invent a public tunnel. Practice mode stays on until live chat answers.`}),
@@ -16241,7 +16304,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
         h(k);
         return;
       }
-      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.UNAVAILABLE_NOTE,at:new Date().toISOString()}));
+      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.companionFailureCopy(R&&R.reason),at:new Date().toISOString()}));
     }finally{
       u(!1);
     }
@@ -16385,7 +16448,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
         h(k);
         return;
       }
-      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.UNAVAILABLE_NOTE,at:new Date().toISOString()},globalThis.localStorage,new Date(),mpAppointment.APPOINTMENT_THREAD_STORAGE_KEY));
+      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.companionFailureCopy(R&&R.reason),at:new Date().toISOString()},globalThis.localStorage,new Date(),mpAppointment.APPOINTMENT_THREAD_STORAGE_KEY));
     }finally{
       u(!1);
     }
@@ -16688,7 +16751,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
         (0,A.jsxs)(`details`,{className:`mp-companion-setup`,open:!live,children:[
           (0,A.jsx)(`summary`,{children:`Live companion address`}),
           (0,A.jsx)(`p`,{children:`On this phone, tap Save the MindPal address. Until you do, this page stays a practice guide and does not send what you type.`}),
-          (0,A.jsx)(`p`,{className:`muted`,children:`This build does not invent a public tunnel. You can also paste another address, or open the app with ?companionBase=.`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`This build does not invent a public tunnel. If you opened a link with ?companionBase= and it still says practice mode, tap Save the address from this link.`}),
           (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(tick=>tick+1)})
         ]})
       ]})
