@@ -158,6 +158,7 @@ describe("companion client", () => {
       },
     });
     assert.equal(calls[0].url, "/mindpal/api/companion/chat");
+    assert.equal(calls[0].init.redirect, "manual");
     const body = JSON.parse(calls[0].init.body);
     assert.deepEqual(Object.keys(body).sort(), ["message", "policyVersion", "requestId", "safetyState"]);
     assert.equal(body.requestId, requestId);
@@ -195,8 +196,21 @@ describe("companion client", () => {
       }),
     });
     assert.equal(schema.reason, "schema");
+    const server = await sendCompanionChat({
+      message: "hello after a worker error",
+      fetchImpl: async () => ({
+        ok: false,
+        status: 502,
+        headers: { get: () => "text/plain" },
+        text: async () => "Invalid redirect value",
+      }),
+    });
+    assert.equal(server.reason, "server");
     assert.match(UNAVAILABLE_NOTE, /not live/);
     assert.match(companionFailureCopy("schema"), /Live chat is on/);
+    assert.match(companionFailureCopy("server"), /Live chat is still on/);
+    assert.match(companionFailureCopy("server"), /could not answer/);
+    assert.match(companionFailureCopy("server"), /back in the box/);
     assert.match(companionFailureCopy("schema"), /not accepted/);
     assert.match(companionFailureCopy("unavailable"), /Live chat is on/);
     assert.match(companionFailureCopy("timeout"), /too long/);
@@ -338,6 +352,7 @@ describe("Reflect chat inject", () => {
     assert.match(inject, /shouldSendOnKey/);
     assert.match(inject, /fetchCompanionStatus/);
     assert.match(inject, /sendCompanionChat/);
+    assert.match(inject, /o\(w\);\s*h\(mpReflect\.appendMessage/);
     assert.match(inject, /REFLECT_SYSTEM_PROMPT/);
     assert.match(inject, /Clear reflection & finish/);
     assert.match(inject, /Help me now/);

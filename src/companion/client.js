@@ -24,6 +24,8 @@ export function companionFailureCopy(reason) {
       return "You look offline, so this was not sent. It stays on this phone until you are back online.";
     case "schema":
       return "Live chat is on, but this message was not accepted. Nothing was invented. Your words are back in the box — tap Send to try again.";
+    case "server":
+      return "Live chat is still on, but MindPal could not answer just now. Nothing was invented. Your words are back in the box — tap Send to try again.";
     case "unavailable":
       return "Live chat is on, but MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
     default:
@@ -316,16 +318,20 @@ export async function sendCompanionChat(options = {}) {
       method: "POST",
       credentials: "same-origin",
       cache: "no-store",
-      redirect: "error",
+      redirect: "manual",
       signal,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(companionWireBody(request)),
     });
+    const redirected =
+      response.type === "opaqueredirect" || (response.status >= 300 && response.status < 400);
+    if (redirected) return { kind: "unavailable", reason: "server", request };
     if (!response.ok) {
-      let reason = "unavailable";
+      let reason = response.status >= 500 ? "server" : "unavailable";
       try {
         const errText = await response.text();
         if (typeof errText === "string" && errText.includes("schema")) reason = "schema";
+        else if (typeof errText === "string" && /invalid redirect/i.test(errText)) reason = "server";
       } catch {
         /* body already consumed or empty */
       }
