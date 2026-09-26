@@ -6,9 +6,80 @@ export const BASE_STORAGE_KEY = "mindpal.companion.base";
 export const BASE_WINDOW_KEY = "MINDPAL_COMPANION_BASE";
 export const SAFETY_STATES = ["ordinary", "distress", "concern_uncertain", "urgent"];
 export const LIVE_LABEL = "Live";
-export const DEMO_LABEL = "Demo · companion API not connected";
+export const DEMO_LABEL = "Demo · live chat is off";
+export const SUGGESTED_COMPANION_BASE =
+  "https://mindpal-companion.steps2life-and-flawless-aesthestics.workers.dev/";
+export const DEMO_HOLD_NOTE =
+  "That note stays on this phone. Live chat is off, so it was not sent and no reply was written. Practice choices are below.";
 export const UNAVAILABLE_NOTE =
-  "Not sent — MindPal is not live on this page, so no reply was generated. Messages stay on this device.";
+  "Not sent — MindPal is not live on this phone, so no reply was written. Your message stays on this device.";
+
+export function companionFailureCopy(reason) {
+  switch (reason) {
+    case "empty":
+      return "Type a message first, or use the practice choices.";
+    case "timeout":
+      return "That took too long, so no reply was written. Your message is back in the box — tap Send to try again.";
+    case "offline":
+      return "You look offline, so this was not sent. It stays on this phone until you are back online.";
+    default:
+      return "MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
+  }
+}
+
+export function companionStatusCopy(status = {}, options = {}) {
+  const surface = options.surface || "companion";
+  const saved = String(options.savedBase || "").trim();
+  const available = status?.available === true;
+  const reason = status?.reason || (available ? "ok" : "pending");
+  if (reason === "pending" || status?.status === "checking") {
+    return {
+      label: "Checking…",
+      detail: "Looking for live chat. You can keep going while this finishes.",
+    };
+  }
+  if (available) {
+    const model = typeof status.model === "string" && status.model.trim() ? status.model.trim() : "";
+    const where = surface === "appointment" ? "Appointment chat is on" : "Live chat is on";
+    return {
+      label: LIVE_LABEL,
+      detail: model
+        ? `${where} (${model}). Your message is sent only when you tap Send.`
+        : `${where}. Your message is sent only when you tap Send.`,
+    };
+  }
+  if (reason === "offline") {
+    return {
+      label: "Offline",
+      detail:
+        surface === "appointment"
+          ? "You look offline. Nothing is sent, and this screen will not invent a medical reply."
+          : "You look offline. Nothing is sent. Try again when this phone is back online.",
+    };
+  }
+  if (reason === "timeout") {
+    return {
+      label: "Demo",
+      detail: "Live chat did not answer in time. Tap Check again. Nothing was invented.",
+    };
+  }
+  if (saved) {
+    return {
+      label: "Demo",
+      detail:
+        surface === "appointment"
+          ? "The saved address did not answer. Check it below. This screen will not invent a medical reply."
+          : "The saved address did not answer. Check it below, or tap Check again. Nothing was sent.",
+    };
+  }
+  const off =
+    surface === "appointment"
+      ? "Live chat is off on this phone until you save the companion address below. This screen will not invent a medical reply."
+      : surface === "reflect"
+        ? "Live chat is off on this phone until you save the companion address below. Your words stay here until you do."
+        : "Live chat is off on this phone until you save the companion address below. Practice choices still work, and nothing you type is sent.";
+  return { label: "Demo", detail: off };
+}
 
 export function normalizeCompanionBase(value) {
   const raw = String(value || "").trim();
@@ -103,12 +174,12 @@ export function parseCompanionStatus(raw) {
 export async function fetchCompanionStatus(options = {}) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const base = options.base ?? resolveCompanionBase(options.source ?? globalThis);
-  const timeoutMs = options.timeoutMs ?? 1500;
+  const timeoutMs = options.timeoutMs ?? 8000;
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
-    return { available: false, model: null, reason: "offline" };
+    return { available: false, model: null, medicalKey: false, reason: "offline" };
   }
   if (typeof fetchImpl !== "function") {
-    return { available: false, model: null, reason: "unavailable" };
+    return { available: false, model: null, medicalKey: false, reason: "unavailable" };
   }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -119,11 +190,17 @@ export async function fetchCompanionStatus(options = {}) {
       cache: "no-store",
       headers: { Accept: "application/json" },
     });
-    if (!response.ok) return { available: false, model: null, reason: "unavailable" };
+    if (!response.ok) return { available: false, model: null, medicalKey: false, reason: "unavailable" };
     const parsed = parseCompanionStatus(await response.json());
     return { ...parsed, reason: parsed.available ? "ok" : "unavailable" };
-  } catch {
-    return { available: false, model: null, reason: "unavailable" };
+  } catch (error) {
+    const timedOut = error?.name === "AbortError";
+    return {
+      available: false,
+      model: null,
+      medicalKey: false,
+      reason: timedOut ? "timeout" : "unavailable",
+    };
   } finally {
     clearTimeout(timer);
   }
@@ -183,10 +260,13 @@ export function buildChatRequest({
 export async function sendCompanionChat(options = {}) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const base = options.base ?? resolveCompanionBase(options.source ?? globalThis);
-  const timeoutMs = options.timeoutMs ?? 15000;
+  const timeoutMs = options.timeoutMs ?? 20000;
   const request = buildChatRequest(options);
-  if (!request.message) return { kind: "unavailable", request };
-  if (typeof fetchImpl !== "function") return { kind: "unavailable", request };
+  if (!request.message) return { kind: "unavailable", reason: "empty", request };
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    return { kind: "unavailable", reason: "offline", request };
+  }
+  if (typeof fetchImpl !== "function") return { kind: "unavailable", reason: "unavailable", request };
 
   const controller = options.signal ? null : new AbortController();
   const signal = options.signal ?? controller.signal;
@@ -202,14 +282,17 @@ export async function sendCompanionChat(options = {}) {
       body: JSON.stringify(request),
     });
     if (!response.ok || !response.headers.get("Content-Type")?.includes("application/json")) {
-      return { kind: "unavailable", request };
+      return { kind: "unavailable", reason: "unavailable", request };
     }
     const text = await response.text();
-    if (text.length > 6000) return { kind: "unavailable", request };
+    if (text.length > 6000) return { kind: "unavailable", reason: "unavailable", request };
     const parsed = parseCompanionReply(JSON.parse(text), request);
-    return parsed ? { kind: "reply", value: parsed, request } : { kind: "unavailable", request };
-  } catch {
-    return { kind: "unavailable", request };
+    return parsed
+      ? { kind: "reply", value: parsed, request }
+      : { kind: "unavailable", reason: "unavailable", request };
+  } catch (error) {
+    const timedOut = !options.signal && error?.name === "AbortError";
+    return { kind: "unavailable", reason: timedOut ? "timeout" : "unavailable", request };
   } finally {
     if (timer) clearTimeout(timer);
   }

@@ -9,7 +9,10 @@ import {
   DEFAULT_PAGES_BASE,
   DEMO_LABEL,
   LIVE_LABEL,
+  SUGGESTED_COMPANION_BASE,
   UNAVAILABLE_NOTE,
+  companionFailureCopy,
+  companionStatusCopy,
   buildChatRequest,
   companionUrl,
   fetchCompanionStatus,
@@ -169,7 +172,25 @@ describe("companion client", () => {
       }),
     });
     assert.equal(missing.kind, "unavailable");
+    assert.equal(missing.reason, "unavailable");
     assert.match(UNAVAILABLE_NOTE, /not live/);
+    assert.match(companionFailureCopy("timeout"), /too long/);
+    assert.match(companionFailureCopy("offline"), /offline/);
+    assert.match(companionStatusCopy({ reason: "pending" }).detail, /Looking for live chat/);
+    assert.match(
+      companionStatusCopy({ available: false, reason: "unavailable" }).detail,
+      /until you save the companion address/,
+    );
+    assert.match(
+      companionStatusCopy(
+        { available: false, reason: "unavailable" },
+        { savedBase: SUGGESTED_COMPANION_BASE, surface: "appointment" },
+      ).detail,
+      /did not answer/,
+    );
+    assert.equal(companionStatusCopy({ available: true, model: "grok-4.6" }).label, "Live");
+    assert.notEqual(SUGGESTED_COMPANION_BASE, DEFAULT_PAGES_BASE);
+    assert.doesNotMatch(DEFAULT_PAGES_BASE, /workers\.dev/);
     assert.equal(parseCompanionReply({ reply: "invented" }, { requestId: "x", policyVersion: COMPANION_POLICY_VERSION }), null);
   });
 

@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { BASE_STORAGE_KEY } from "../src/companion/client.js";
 import {
   BREATH_EXERCISE_ID,
+  CHECKING_BANNER,
   CHOICES,
   COMPANION_BASE_KEY,
   COMPANION_POLICY_VERSION,
@@ -126,14 +127,20 @@ describe("companion demo choices", () => {
   it("keeps the DEMO banner until Live, then offers chat without dropping crisis", () => {
     const demo = emptyCompanionState();
     assert.equal(companionBanner(demo), DEMO_BANNER);
+    assert.match(DEMO_BANNER, /live chat is off/i);
+    assert.equal(companionBanner({ ...demo, status: "checking" }), CHECKING_BANNER);
     assert.equal(openLiveChat(demo).chatOpen, false);
-    const live = setCompanionLive(demo, { available: true, model: "grok" });
+    const live = setCompanionLive(demo, { available: true, model: "grok", reason: "ok" });
     assert.equal(live.status, "live");
+    assert.equal(live.reason, "ok");
     assert.equal(companionBanner(live), LIVE_BANNER);
     assert.equal(openLiveChat(live).chatOpen, true);
     const stillCrisis = applyChoice(live, "urgent");
     assert.equal(stillCrisis.navigate, HELP_ROUTE);
-    assert.equal(setCompanionLive(live, { available: false }).status, "demo");
+    assert.equal(setCompanionLive(live, { available: false, reason: "unavailable" }).status, "demo");
+    assert.equal(primaryCtaLabel(live, { hasMessage: true }), "Send to MindPal");
+    assert.equal(primaryCtaLabel(live, { hasMessage: true, sending: true }), "Sending…");
+    assert.equal(primaryCtaLabel(demo, { hasMessage: true }), "Show practice choices");
   });
 
   it("resolves a configurable companion base URL without inventing a tunnel", () => {
@@ -232,6 +239,13 @@ describe("companion demo choices", () => {
     assert.match(inject, /Live companion address/);
     assert.match(inject, /does not invent a public tunnel/);
     assert.match(inject, /mp-practice-card/);
+    assert.match(inject, /Hear this/);
+    assert.match(inject, /Use microphone/);
+    assert.match(inject, /MindPal is writing a reply/);
+    assert.match(inject, /Check again/);
+    assert.match(inject, /Save the MindPal address/);
+    assert.match(inject, /onKeyDown:onKey/);
+    assert.doesNotMatch(inject, /No audio or microphone/);
     assert.doesNotMatch(inject, /Preparing fixed choices/);
     assert.doesNotMatch(inject, /trycloudflare\.com|127\.0\.0\.1:8787/);
     assert.match(build, /src\/companion\/demo\.js/);

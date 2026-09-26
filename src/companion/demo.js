@@ -8,8 +8,9 @@ export const HELP_ROUTE = "Get support";
 export const REFLECT_ROUTE = "Reflect";
 export const BREATH_EXERCISE_ID = "E01";
 
-export const DEMO_BANNER = "DETERMINISTIC DEMO · NO LIVE AI";
-export const LIVE_BANNER = "LIVE AI COMPANION · XAI GROK";
+export const DEMO_BANNER = "Practice guide · live chat is off on this phone";
+export const LIVE_BANNER = "Live chat is on";
+export const CHECKING_BANNER = "Checking live chat…";
 
 export const CHOICES = [
   { id: "ordinary", label: "A small exercise", kind: "practice" },
@@ -104,6 +105,7 @@ export function emptyCompanionState() {
 }
 
 export function companionBanner(state) {
+  if (state?.status === "checking") return CHECKING_BANNER;
   return state?.status === "live" ? LIVE_BANNER : DEMO_BANNER;
 }
 
@@ -113,6 +115,7 @@ export function setCompanionLive(state, status) {
     ...state,
     status: available ? "live" : "demo",
     model: typeof status?.model === "string" ? status.model : null,
+    reason: typeof status?.reason === "string" ? status.reason : available ? "ok" : "unavailable",
     chatOpen: available ? state.chatOpen : false,
   };
 }
@@ -213,10 +216,12 @@ export function openLiveChat(state) {
   };
 }
 
-export function primaryCtaLabel(state) {
+export function primaryCtaLabel(state, options = {}) {
   if (isCrisisChoice(state.choiceId) || state.panel === "crisis") {
     return "Open Help now";
   }
+  if (options.sending) return "Sending…";
+  if (state?.status === "live" && options.hasMessage) return "Send to MindPal";
   return "Show practice choices";
 }
 

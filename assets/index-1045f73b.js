@@ -10770,6 +10770,47 @@ function splitSpeakChunks(text) {
     .filter(Boolean);
 }
 
+/** Keep each spoken piece short enough that mobile browsers do not drop it. */
+function prepareSpeakChunks(text, maxChars = 140) {
+  const limit = maxChars > 40 ? maxChars : 140;
+  const pieces = [];
+  for (const paragraph of splitSpeakChunks(text)) {
+    if (paragraph.length <= limit) {
+      pieces.push(paragraph);
+      continue;
+    }
+    const sentences = paragraph.match(/[^.!?]+[.!?]+(?:["')\]]+)?|[^.!?]+$/g) || [paragraph];
+    let buf = "";
+    const flush = () => {
+      const next = buf.trim();
+      if (next) pieces.push(next);
+      buf = "";
+    };
+    for (const sentence of sentences) {
+      const bit = sentence.trim();
+      if (!bit) continue;
+      if (bit.length > limit) {
+        flush();
+        let wordBuf = "";
+        for (const word of bit.split(/\s+/)) {
+          if (wordBuf && wordBuf.length + word.length + 1 > limit) {
+            pieces.push(wordBuf);
+            wordBuf = word;
+          } else {
+            wordBuf = wordBuf ? `${wordBuf} ${word}` : word;
+          }
+        }
+        if (wordBuf) pieces.push(wordBuf);
+        continue;
+      }
+      if (buf && buf.length + bit.length + 1 > limit) flush();
+      buf = buf ? `${buf} ${bit}` : bit;
+    }
+    flush();
+  }
+  return pieces;
+}
+
 function speakBrowser(text, onEnd, deps = {}) {
   const synth =
     deps.speechSynthesis ||
@@ -10779,7 +10820,7 @@ function speakBrowser(text, onEnd, deps = {}) {
     (typeof SpeechSynthesisUtterance !== "undefined"
       ? SpeechSynthesisUtterance
       : null);
-  const chunks = splitSpeakChunks(text);
+  const chunks = prepareSpeakChunks(text, deps.maxChars);
   if (!chunks.length || !synth || !Utterance) {
     onEnd?.();
     return () => {};
@@ -10792,8 +10833,17 @@ function speakBrowser(text, onEnd, deps = {}) {
   let cancelled = false;
   let timer = 0;
   let index = 0;
+  let awake = 0;
+  const keepAliveMs =
+    deps.keepAliveMs !== undefined ? deps.keepAliveMs : typeof window !== "undefined" ? 8000 : 0;
+
+  const stopAwake = () => {
+    if (awake) clearInterval(awake);
+    awake = 0;
+  };
 
   const finish = () => {
+    stopAwake();
     if (!cancelled) onEnd?.();
   };
 
@@ -10821,18 +10871,54 @@ function speakBrowser(text, onEnd, deps = {}) {
         finish();
       }
     };
-    utterance.onerror = () => finish();
-    synth.speak(utterance);
+    utterance.onerror = (event) => {
+      if (cancelled) return;
+      const reason = event?.error || event?.message || "";
+      if (reason === "interrupted" || reason === "canceled" || reason === "cancelled") return;
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      stopAwake();
+      deps.onError?.(reason || "speech-error");
+      onEnd?.();
+    };
+    try {
+      synth.resume?.();
+    } catch {
+      /* ignore */
+    }
+    try {
+      synth.speak(utterance);
+    } catch {
+      cancelled = true;
+      stopAwake();
+      deps.onError?.("speech-error");
+      onEnd?.();
+    }
   };
 
   const start = () => {
     if (cancelled) return;
     warmSpeechVoices(synth);
-    if ((synth.getVoices?.() || []).length) speakNext();
-    else if (typeof synth.addEventListener === "function") {
-      synth.addEventListener("voiceschanged", speakNext, { once: true });
-    } else {
-      synth.onvoiceschanged = speakNext;
+    try {
+      synth.resume?.();
+    } catch {
+      /* ignore */
+    }
+    // Speak in the same tap. Waiting for voiceschanged drops the gesture on iOS
+    // and can hang forever when that event never arrives.
+    speakNext();
+    if (keepAliveMs) {
+      awake = setInterval(() => {
+        if (cancelled) {
+          stopAwake();
+          return;
+        }
+        try {
+          synth.resume?.();
+        } catch {
+          /* ignore */
+        }
+      }, keepAliveMs);
     }
   };
   start();
@@ -10840,11 +10926,133 @@ function speakBrowser(text, onEnd, deps = {}) {
   return () => {
     cancelled = true;
     if (timer) clearTimeout(timer);
+    stopAwake();
     try {
       synth.cancel();
     } catch {
       /* ignore */
     }
+  };
+}
+
+/** Browser speech-to-text for the Companion composer. Fails closed to typing. */
+
+function speechRecognitionConstructor(root = globalThis) {
+  if (!root) return null;
+  return root.SpeechRecognition || root.webkitSpeechRecognition || null;
+}
+
+function micSupported(root = globalThis) {
+  return typeof speechRecognitionConstructor(root) === "function";
+}
+
+function micUnsupportedCopy() {
+  return "This phone can't use the microphone in the browser. Type your message instead.";
+}
+
+function micErrorCopy(code) {
+  const key = String(code || "").toLowerCase();
+  if (key === "not-allowed" || key === "service-not-allowed") {
+    return "Microphone permission is off. Allow the mic for this site, or type instead.";
+  }
+  if (key === "no-speech") {
+    return "No speech was heard. Move a little closer and try again, or type instead.";
+  }
+  if (key === "audio-capture") {
+    return "No microphone was found on this phone. Type your message instead.";
+  }
+  if (key === "network") {
+    return "Speech recognition needs a connection. Type your message, or try again in a moment.";
+  }
+  if (key === "aborted") return "";
+  if (key === "start-failed" || key === "unsupported") return micUnsupportedCopy();
+  return "The microphone didn't catch that. Type your message, or try again.";
+}
+
+function transcriptFromResult(event) {
+  const results = event?.results;
+  if (!results || typeof results.length !== "number") return { text: "", isFinal: false };
+  const start = Number(event.resultIndex) || 0;
+  let text = "";
+  let isFinal = false;
+  for (let i = start; i < results.length; i += 1) {
+    text += results[i]?.[0]?.transcript || "";
+    if (results[i]?.isFinal) isFinal = true;
+  }
+  return { text: text.trim(), isFinal };
+}
+
+/**
+ * One-shot capture. start() must run from a tap. stop() always clears listening,
+ * including when the browser ends the session itself.
+ */
+function createMicCapture(handlers = {}, deps = {}) {
+  const Ctor = deps.Ctor !== undefined ? deps.Ctor : speechRecognitionConstructor(deps.root);
+  let recognition = null;
+  let listening = false;
+
+  function fail(code) {
+    listening = false;
+    handlers.onError?.(code);
+  }
+
+  return {
+    supported: typeof Ctor === "function",
+    isListening: () => listening,
+    start() {
+      if (typeof Ctor !== "function") {
+        fail("unsupported");
+        return false;
+      }
+      if (listening) return true;
+      let rec;
+      try {
+        rec = new Ctor();
+      } catch {
+        fail("start-failed");
+        return false;
+      }
+      recognition = rec;
+      rec.lang = deps.lang || "en-AU";
+      rec.interimResults = true;
+      rec.continuous = false;
+      rec.maxAlternatives = 1;
+      rec.onresult = (event) => {
+        const heard = transcriptFromResult(event);
+        if (!heard.text) return;
+        if (heard.isFinal) handlers.onFinal?.(heard.text);
+        else handlers.onPartial?.(heard.text);
+      };
+      rec.onerror = (event) => {
+        const code = event?.error || "error";
+        if (code === "aborted") return;
+        fail(code);
+      };
+      rec.onend = () => {
+        const was = listening;
+        listening = false;
+        if (was) handlers.onEnd?.();
+      };
+      try {
+        listening = true;
+        handlers.onStart?.();
+        rec.start();
+        return true;
+      } catch {
+        fail("start-failed");
+        return false;
+      }
+    },
+    stop() {
+      const was = listening;
+      listening = false;
+      try {
+        recognition?.stop?.();
+      } catch {
+        /* already stopped */
+      }
+      if (was) handlers.onEnd?.();
+    },
   };
 }
 
@@ -11280,13 +11488,37 @@ function createSpeechListenController(text, deps = {}) {
       : typeof SpeechSynthesisUtterance !== "undefined"
         ? SpeechSynthesisUtterance
         : null;
-  const later = deps.later || ((fn) => setTimeout(fn, 40));
+  const later = deps.later || ((fn) => setTimeout(fn, 150));
   const now = deps.now || (() => Date.now());
+  const keepAliveMs =
+    deps.keepAliveMs !== undefined ? deps.keepAliveMs : typeof window !== "undefined" ? 8000 : 0;
   let playing = false;
   let offset = 0;
   let startedAt = 0;
   let token = 0;
   let disposed = false;
+  let fault = "";
+  let awake = 0;
+
+  function stopAwake() {
+    if (awake) clearInterval(awake);
+    awake = 0;
+  }
+
+  function startAwake() {
+    if (!keepAliveMs || awake) return;
+    awake = setInterval(() => {
+      if (!playing || disposed) {
+        stopAwake();
+        return;
+      }
+      try {
+        synth?.resume?.();
+      } catch {
+        /* ignore */
+      }
+    }, keepAliveMs);
+  }
 
   function elapsed() {
     if (!playing) return offset;
@@ -11298,8 +11530,8 @@ function createSpeechListenController(text, deps = {}) {
     const unavailable = !chunks.length
       ? ""
       : !synth || !Utterance
-        ? "Listen isn’t available in this browser."
-        : "";
+        ? "Listen isn’t available in this browser. You can still read the words."
+        : fault;
     return snapshotFrom("speech", "chunks", playing, current, duration, unavailable);
   }
 
@@ -11351,6 +11583,8 @@ function createSpeechListenController(text, deps = {}) {
       const reason = event?.error || event?.message || "";
       if (reason === "interrupted" || reason === "canceled" || reason === "cancelled") return;
       playing = false;
+      fault = "Speech stopped on this phone. Tap play to try again.";
+      stopAwake();
       emit();
     };
     const fire = () => {
@@ -11364,6 +11598,8 @@ function createSpeechListenController(text, deps = {}) {
         synth.speak(utterance);
       } catch {
         playing = false;
+        fault = "Speech stopped on this phone. Tap play to try again.";
+        stopAwake();
       }
       emit();
     };
@@ -11372,6 +11608,7 @@ function createSpeechListenController(text, deps = {}) {
     } catch {
       /* ignore */
     }
+    startAwake();
     if (synth.speaking || synth.pending) {
       try {
         synth.cancel();
@@ -11396,6 +11633,7 @@ function createSpeechListenController(text, deps = {}) {
     },
     snapshot,
     play() {
+      fault = "";
       if (disposed || !chunks.length || !synth || !Utterance) {
         emit();
         return false;
@@ -11409,6 +11647,7 @@ function createSpeechListenController(text, deps = {}) {
       offset = clampListenTime(elapsed(), duration);
       playing = false;
       token += 1;
+      stopAwake();
       try {
         synth?.cancel?.();
       } catch {
@@ -11451,6 +11690,7 @@ function createSpeechListenController(text, deps = {}) {
       playing = false;
       token += 1;
       offset = 0;
+      stopAwake();
       try {
         synth?.cancel?.();
       } catch {
@@ -11553,7 +11793,7 @@ async function upgradeSpeechToBlob(speechCtrl, blob, deps = {}) {
   }
 }
 
-return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,videoDisplayTitle,videoDurationLabel,videoPresenterName,captionsDisclosure,captionsAvailable,featuredPlayableVideo,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,isNeuralOrNatural,warmSpeechVoices,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,createListenController,createAudioListenController,createSpeechListenController,buildSpeechTimeline,formatListenClock,formatListenRemaining,listenTimes,listenPointerRatio,chunkIndexAt,LISTEN_SKIP_SEC,upgradeSpeechToBlob,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
+return{PACK_A_ID,PACK_B_ID,PACK_A_TOTAL,PACK_A_CREDIT,PACK_A_PROGRESS_LINE,STORAGE_KEY,emptyProgress,normalizeProgress,parseProgressJson,orderedReadings,isDayUnlocked,nextIncomplete,canMarkDone,markReadingDone,packAComplete,dailyDefaultPackId,loadProgress,saveProgress,pickRandom,hasPlayableMediaUrl,isVideoPlayable,publishedLibrarySrc,overlayCatalogVideo,mergedLibraryVideos,videoCardCta,videoCardAriaLabel,videoDisplayTitle,videoDurationLabel,videoPresenterName,captionsDisclosure,captionsAvailable,featuredPlayableVideo,libraryCardModel,activateLibraryVideo,activateCoachCard,dispatchLibraryVideo,LIBRARY_OPEN_EVENT,MADDY_PACK_ID,MADDY_CORE_IDS,hasMaddyMediaUrl,isMaddyCompanionPlayable,maddyPublishedSrc,maddyDurationLabel,maddyCompanionVideos,videosForCoach,coachKeys,visibleCoachFields,isYoutubeOutboundUrl,isMeditationOpenable,meditationOpenUrl,meditationCtaLabel,MEDITATION_CATEGORY_IDS,meditationCategories,entriesForCategory,formatMeditationViews,categoryFillNote,directoryWatchUrl,directoryOpenUrl,isDirectoryOpenable,directoryCtaLabel,isDirectoryHeld,directorySpeakerIds,directorySpeakerNames,directoryTags,directoryHaystack,directoryDurationBand,directorySpeakerOptions,filterDirectoryEntries,directoryEmptyCopy,EMOTION_IDS,FEELING_EMOTIONS,FEELING_SUPPORT,EMOTION_ALIASES,BROWSE_SPEAKERS_LABEL,CURATED_VIDEO_LIMIT,normalizeEmotionId,emotionLabel,normalizeEmotionList,entryEmotions,entryMatchesEmotion,curatedVideosForEmotion,videosForIds,emotionBreadcrumb,emotionVideoCta,TAG_VOCAB,TAG_LABELS,TAG_ALIASES,PROBLEM_HUB_TAGS,AOD_FEELING_TAGS,FEELING_TO_TAGS,THEME_LABEL_TO_TAGS,SUPPORT_DISCLAIMER,formatTag,canonicalizeTag,normalizeTags,tagsForThemeLabel,tagsForFeeling,readingTags,readingHasAnyTag,readingsForTags,usedTags,supportUnlockMessage,applyControlledTags,VIDEO_DIRECTORY_LIMIT,itemTags,mediaForTags,mediaForFeeling,mediaSourceLabel,collectFeelingMedia,mindpalShareUrl,shareMindPalApp,MINDPAL_PAGES_URL,pickVoice,pickBrowserVoice,listPickerVoices,loadSavedVoiceURI,saveVoiceURI,speakBrowser,splitSpeakChunks,prepareSpeakChunks,micSupported,micUnsupportedCopy,micErrorCopy,createMicCapture,transcriptFromResult,isNeuralOrNatural,warmSpeechVoices,prerenderedAudioUrl,playAudioUrl,unwrapListenInput,createListenController,createAudioListenController,createSpeechListenController,buildSpeechTimeline,formatListenClock,formatListenRemaining,listenTimes,listenPointerRatio,chunkIndexAt,LISTEN_SKIP_SEC,upgradeSpeechToBlob,resolveListenAudioUrl,playMaddyClip,companionLinkedClip,effectiveListenPref,isMaddyVoicePref,MADDY_PREF_URI,MADDY_PREF_LABEL,TTS_RATE,TTS_PITCH,AOD_FEATURED_READING_ID,ownerReadingsCatalog,isOwnerReading,listOwnerReadings,findOwnerReading,featuredOwnerReadings,mergeOwnerReadings,ownerCompanionOpener,KIT_READING_LIMIT,KIT_BROWSE_TAG_LIMIT,KIT_SECTION_IDS,feelingKitsCatalog,canonicalizeFeelingKitId,findFeelingKitSpec,curatedReadingIdsForHub,chapterTags,chapterTagChips,resolveKitReadings,feelingKit,OPEN_READING_KEY,OPEN_READING_EVENT,openReading,findReadingById,peekOpenReadingId,takeOpenReadingId}})();var mpCalendar,mpFaith,mpProfile,mpTodaySteps,mpWins,mpProblems,mpNav,mpTeamRitual,mpIndividualGrowth,mpCompanion,mpReflect,mpAppointment;(function(){/** Device-locale civil date helpers. AU-friendly when the device is en-AU. */
 
 function civilDateKey(date = new Date()) {
   const y = date.getFullYear();
@@ -13660,9 +13900,80 @@ const BASE_STORAGE_KEY = "mindpal.companion.base";
 const BASE_WINDOW_KEY = "MINDPAL_COMPANION_BASE";
 const SAFETY_STATES = ["ordinary", "distress", "concern_uncertain", "urgent"];
 const LIVE_LABEL = "Live";
-const DEMO_LABEL = "Demo · companion API not connected";
+const DEMO_LABEL = "Demo · live chat is off";
+const SUGGESTED_COMPANION_BASE =
+  "https://mindpal-companion.steps2life-and-flawless-aesthestics.workers.dev/";
+const DEMO_HOLD_NOTE =
+  "That note stays on this phone. Live chat is off, so it was not sent and no reply was written. Practice choices are below.";
 const UNAVAILABLE_NOTE =
-  "Not sent — MindPal is not live on this page, so no reply was generated. Messages stay on this device.";
+  "Not sent — MindPal is not live on this phone, so no reply was written. Your message stays on this device.";
+
+function companionFailureCopy(reason) {
+  switch (reason) {
+    case "empty":
+      return "Type a message first, or use the practice choices.";
+    case "timeout":
+      return "That took too long, so no reply was written. Your message is back in the box — tap Send to try again.";
+    case "offline":
+      return "You look offline, so this was not sent. It stays on this phone until you are back online.";
+    default:
+      return "MindPal could not get a reply just now. Nothing was invented. Your message stays on this phone — try again, or use the practice choices.";
+  }
+}
+
+function companionStatusCopy(status = {}, options = {}) {
+  const surface = options.surface || "companion";
+  const saved = String(options.savedBase || "").trim();
+  const available = status?.available === true;
+  const reason = status?.reason || (available ? "ok" : "pending");
+  if (reason === "pending" || status?.status === "checking") {
+    return {
+      label: "Checking…",
+      detail: "Looking for live chat. You can keep going while this finishes.",
+    };
+  }
+  if (available) {
+    const model = typeof status.model === "string" && status.model.trim() ? status.model.trim() : "";
+    const where = surface === "appointment" ? "Appointment chat is on" : "Live chat is on";
+    return {
+      label: LIVE_LABEL,
+      detail: model
+        ? `${where} (${model}). Your message is sent only when you tap Send.`
+        : `${where}. Your message is sent only when you tap Send.`,
+    };
+  }
+  if (reason === "offline") {
+    return {
+      label: "Offline",
+      detail:
+        surface === "appointment"
+          ? "You look offline. Nothing is sent, and this screen will not invent a medical reply."
+          : "You look offline. Nothing is sent. Try again when this phone is back online.",
+    };
+  }
+  if (reason === "timeout") {
+    return {
+      label: "Demo",
+      detail: "Live chat did not answer in time. Tap Check again. Nothing was invented.",
+    };
+  }
+  if (saved) {
+    return {
+      label: "Demo",
+      detail:
+        surface === "appointment"
+          ? "The saved address did not answer. Check it below. This screen will not invent a medical reply."
+          : "The saved address did not answer. Check it below, or tap Check again. Nothing was sent.",
+    };
+  }
+  const off =
+    surface === "appointment"
+      ? "Live chat is off on this phone until you save the companion address below. This screen will not invent a medical reply."
+      : surface === "reflect"
+        ? "Live chat is off on this phone until you save the companion address below. Your words stay here until you do."
+        : "Live chat is off on this phone until you save the companion address below. Practice choices still work, and nothing you type is sent.";
+  return { label: "Demo", detail: off };
+}
 
 function normalizeCompanionBase(value) {
   const raw = String(value || "").trim();
@@ -13757,12 +14068,12 @@ function parseCompanionStatus(raw) {
 async function fetchCompanionStatus(options = {}) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const base = options.base ?? resolveCompanionBase(options.source ?? globalThis);
-  const timeoutMs = options.timeoutMs ?? 1500;
+  const timeoutMs = options.timeoutMs ?? 8000;
   if (typeof navigator !== "undefined" && navigator.onLine === false) {
-    return { available: false, model: null, reason: "offline" };
+    return { available: false, model: null, medicalKey: false, reason: "offline" };
   }
   if (typeof fetchImpl !== "function") {
-    return { available: false, model: null, reason: "unavailable" };
+    return { available: false, model: null, medicalKey: false, reason: "unavailable" };
   }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -13773,11 +14084,17 @@ async function fetchCompanionStatus(options = {}) {
       cache: "no-store",
       headers: { Accept: "application/json" },
     });
-    if (!response.ok) return { available: false, model: null, reason: "unavailable" };
+    if (!response.ok) return { available: false, model: null, medicalKey: false, reason: "unavailable" };
     const parsed = parseCompanionStatus(await response.json());
     return { ...parsed, reason: parsed.available ? "ok" : "unavailable" };
-  } catch {
-    return { available: false, model: null, reason: "unavailable" };
+  } catch (error) {
+    const timedOut = error?.name === "AbortError";
+    return {
+      available: false,
+      model: null,
+      medicalKey: false,
+      reason: timedOut ? "timeout" : "unavailable",
+    };
   } finally {
     clearTimeout(timer);
   }
@@ -13837,10 +14154,13 @@ function buildChatRequest({
 async function sendCompanionChat(options = {}) {
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   const base = options.base ?? resolveCompanionBase(options.source ?? globalThis);
-  const timeoutMs = options.timeoutMs ?? 15000;
+  const timeoutMs = options.timeoutMs ?? 20000;
   const request = buildChatRequest(options);
-  if (!request.message) return { kind: "unavailable", request };
-  if (typeof fetchImpl !== "function") return { kind: "unavailable", request };
+  if (!request.message) return { kind: "unavailable", reason: "empty", request };
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    return { kind: "unavailable", reason: "offline", request };
+  }
+  if (typeof fetchImpl !== "function") return { kind: "unavailable", reason: "unavailable", request };
 
   const controller = options.signal ? null : new AbortController();
   const signal = options.signal ?? controller.signal;
@@ -13856,14 +14176,17 @@ async function sendCompanionChat(options = {}) {
       body: JSON.stringify(request),
     });
     if (!response.ok || !response.headers.get("Content-Type")?.includes("application/json")) {
-      return { kind: "unavailable", request };
+      return { kind: "unavailable", reason: "unavailable", request };
     }
     const text = await response.text();
-    if (text.length > 6000) return { kind: "unavailable", request };
+    if (text.length > 6000) return { kind: "unavailable", reason: "unavailable", request };
     const parsed = parseCompanionReply(JSON.parse(text), request);
-    return parsed ? { kind: "reply", value: parsed, request } : { kind: "unavailable", request };
-  } catch {
-    return { kind: "unavailable", request };
+    return parsed
+      ? { kind: "reply", value: parsed, request }
+      : { kind: "unavailable", reason: "unavailable", request };
+  } catch (error) {
+    const timedOut = !options.signal && error?.name === "AbortError";
+    return { kind: "unavailable", reason: timedOut ? "timeout" : "unavailable", request };
   } finally {
     if (timer) clearTimeout(timer);
   }
@@ -14943,7 +15266,7 @@ mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
 mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_SHORT,GROWTH_EYEBROW,GROWTH_OPEN,GROWTH_LEDE,GROWTH_HINT,GROWTH_FLOW,GROWTH_BREATH_HERO,GROWTH_VERSE_HERO,GROWTH_READING_HERO,GROWTH_WIN_HERO,GROWTH_CHAPTER_SUMMARY,GROWTH_STEP_IDS,GROWTH_STEPS,emptyGrowth,normalizeGrowth,parseGrowthJson,loadGrowth,saveGrowth,growthStepStatus,canOpenGrowthVerse,canOpenGrowthReading,canOpenGrowthWin,canOpenGrowthStep,markGrowth,nextGrowthStep,growthReading,notifyGrowthChange};
-mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_WINDOW_KEY,SAFETY_STATES,LIVE_LABEL,DEMO_LABEL,UNAVAILABLE_NOTE,normalizeCompanionBase,storedCompanionBase,persistCompanionBase,joinCompanionUrl,companionBaseFromSearch,resolveCompanionBase,companionUrl,parseCompanionStatus,fetchCompanionStatus,parseCompanionReply,buildChatRequest,sendCompanionChat};
+mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_WINDOW_KEY,SAFETY_STATES,LIVE_LABEL,DEMO_LABEL,SUGGESTED_COMPANION_BASE,DEMO_HOLD_NOTE,UNAVAILABLE_NOTE,companionFailureCopy,companionStatusCopy,normalizeCompanionBase,storedCompanionBase,persistCompanionBase,joinCompanionUrl,companionBaseFromSearch,resolveCompanionBase,companionUrl,parseCompanionStatus,fetchCompanionStatus,parseCompanionReply,buildChatRequest,sendCompanionChat};
 mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,detectCrisisIntent,safetyStateForText,THREAD_STORAGE_KEY,MESSAGE_TEXT_MAX,emptyThread,normalizeMessage,normalizeThread,parseThreadJson,loadThread,saveThread,clearThread,appendMessage,downloadableTranscript,canSendText,shouldSendOnKey};
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
 })();var mpCompanionDemo=(function(){/** Local Companion demo — works without Live AI. Bryan owns the proxy. */
@@ -14956,8 +15279,9 @@ const HELP_ROUTE = "Get support";
 const REFLECT_ROUTE = "Reflect";
 const BREATH_EXERCISE_ID = "E01";
 
-const DEMO_BANNER = "DETERMINISTIC DEMO · NO LIVE AI";
-const LIVE_BANNER = "LIVE AI COMPANION · XAI GROK";
+const DEMO_BANNER = "Practice guide · live chat is off on this phone";
+const LIVE_BANNER = "Live chat is on";
+const CHECKING_BANNER = "Checking live chat…";
 
 const CHOICES = [
   { id: "ordinary", label: "A small exercise", kind: "practice" },
@@ -15052,6 +15376,7 @@ function emptyCompanionState() {
 }
 
 function companionBanner(state) {
+  if (state?.status === "checking") return CHECKING_BANNER;
   return state?.status === "live" ? LIVE_BANNER : DEMO_BANNER;
 }
 
@@ -15061,6 +15386,7 @@ function setCompanionLive(state, status) {
     ...state,
     status: available ? "live" : "demo",
     model: typeof status?.model === "string" ? status.model : null,
+    reason: typeof status?.reason === "string" ? status.reason : available ? "ok" : "unavailable",
     chatOpen: available ? state.chatOpen : false,
   };
 }
@@ -15161,10 +15487,12 @@ function openLiveChat(state) {
   };
 }
 
-function primaryCtaLabel(state) {
+function primaryCtaLabel(state, options = {}) {
   if (isCrisisChoice(state.choiceId) || state.panel === "crisis") {
     return "Open Help now";
   }
+  if (options.sending) return "Sending…";
+  if (state?.status === "live" && options.hasMessage) return "Send to MindPal";
   return "Show practice choices";
 }
 
@@ -15281,7 +15609,7 @@ function parseCompanionReply(payload, requestId) {
   };
 }
 
-return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
+return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHECKING_BANNER,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
 })();function mpYtMeditationsSection(){
   let e=mpMeditationCatalog||{},t=mpReadings.meditationCategories(e),[n,r]=(0,_.useState)(`sleep`),i=t.find(e=>e.id===n)||t[0],a=i?mpReadings.entriesForCategory(i):[],o=i?mpReadings.categoryFillNote(i):`This category is filling.`;
   return(0,A.jsxs)(`section`,{className:`simple-panel mindpal-yt-meditations`,"aria-label":`Voice-guided meditations on YouTube`,children:[
@@ -15800,23 +16128,31 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     s&&s.preventDefault&&s.preventDefault();
     let o=mpCompanion.persistCompanionBase(t);
     n(o);
-    i(o?`Saved on this device. MindPal will re-check Live status.`:`Cleared. Using the default /mindpal/ path until a public URL is pasted.`);
+    i(o?`Saved on this phone. Checking live chat now.`:`Cleared. Live chat stays off until an address is saved.`);
+    e&&e(o);
+  }
+  function known(){
+    let o=mpCompanion.persistCompanionBase(mpCompanion.SUGGESTED_COMPANION_BASE);
+    n(o);
+    i(`Saved the MindPal address on this phone. Checking live chat now.`);
     e&&e(o);
   }
   function o(){
     n(``);
     mpCompanion.persistCompanionBase(``);
-    i(`Cleared. Using the default /mindpal/ path until a public URL is pasted.`);
+    i(`Cleared. Live chat stays off until an address is saved.`);
     e&&e(``);
   }
   return(0,A.jsxs)(`form`,{className:`mp-companion-base`,onSubmit:a,children:[
-    (0,A.jsx)(`label`,{htmlFor:`mp-companion-base`,children:`Companion API base · paste when Live is up`}),
-    (0,A.jsx)(`input`,{id:`mp-companion-base`,type:`text`,inputMode:`url`,autoComplete:`off`,spellCheck:!1,value:t,placeholder:`https://your-proxy.example/mindpal/`,onChange:s=>n(s.target.value)}),
+    (0,A.jsx)(`p`,{children:`Live chat stays off until this phone saves an address. One save is enough.`}),
+    (0,A.jsx)(`label`,{htmlFor:`mp-companion-base`,children:`Companion address`}),
+    (0,A.jsx)(`input`,{id:`mp-companion-base`,type:`url`,inputMode:`url`,autoComplete:`off`,spellCheck:!1,value:t,placeholder:mpCompanion.SUGGESTED_COMPANION_BASE,onChange:s=>n(s.target.value)}),
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`secondary`,type:`submit`,children:`Save base on this device`}),
-      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:o,children:`Use default /mindpal/`})
+      (0,A.jsx)(`button`,{className:`primary`,type:`submit`,children:`Save address`}),
+      (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:known,children:`Save the MindPal address`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:o,children:`Turn live chat off`})
     ]}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Overrides stay in this browser (localStorage mindpal.companion.base, or window.MINDPAL_COMPANION_BASE). No public tunnel is baked into the app. Demo stays up until status returns available.`}),
+    (0,A.jsx)(`p`,{className:`muted`,children:`Saved only on this phone. This build does not invent a public tunnel. Practice mode stays on until live chat answers.`}),
     r?(0,A.jsx)(`p`,{role:`status`,children:r}):null
   ]});
 }function mpReflectPage({active:e,onHelp:t,onDiary:n}){
@@ -15908,22 +16244,22 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     setTimeout(()=>URL.revokeObjectURL(t),1e3);
   }
   let S=r.messages.some(e=>e.role===`user`||e.role===`assistant`);
+  let statusCopy=mpCompanion.companionStatusCopy(s,{savedBase:mpCompanion.storedCompanionBase(),surface:`reflect`});
   return(0,A.jsxs)(`section`,{hidden:!e,className:`reflection-space mp-reflect-chat`,"aria-label":`Talk with MindPal`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`TALK WITH MINDPAL`}),
     (0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),
     (0,A.jsx)(`h1`,{children:`Talk with MindPal`}),
     (0,A.jsxs)(`p`,{className:`lede`,children:[`A conversation about your day — reflective listening, a gentle reframe if it fits, and one small next step. You can stop anytime.`] }),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer mp-reflect-disclaimer`,children:mpReflect.CLINICAL_DISCLAIMER}),
-    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:``}`,role:`status`,children:[
-      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:m?mpCompanion.LIVE_LABEL:mpCompanion.DEMO_LABEL}),
-      m
-        ?(0,A.jsx)(`span`,{children:s.model?` Companion connected · ${s.model}.`:` Companion connected. Your message is sent only when you press Send.`} )
-        :(0,A.jsx)(`span`,{children:` GitHub Pages cannot host the live proxy. Set a companion API base to enable replies — this screen will not invent them.`})
+    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:s.reason===`pending`?` is-checking`:``}`,role:`status`,children:[
+      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:statusCopy.label}),
+      (0,A.jsx)(`span`,{children:` ${statusCopy.detail}`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(e=>e+1),children:`Check again`})
     ]}),
     (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
-      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(`summary`,{children:`Live companion address`}),
       (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
-      (0,A.jsx)(`p`,{children:`Live needs GET {base}api/companion/status ({"available":true}) and POST {base}api/companion/chat. Default base is /mindpal/. Paste a public proxy URL when Bryan marks it UP — do not bake a dead tunnel into the app.`})
+      (0,A.jsx)(`p`,{children:`Live chat is off on this phone until you save the companion address. Tap Save the MindPal address, or paste another one. Nothing is invented if it does not answer.`})
     ]}),
     (0,A.jsxs)(`details`,{children:[
       (0,A.jsx)(`summary`,{children:`A thought to reflect on`}),
@@ -15943,7 +16279,8 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
       r.messages.length?r.messages.map(e=>(0,A.jsxs)(`article`,{className:`mp-reflect-msg mp-reflect-msg-${e.role}${e.kind?` is-${e.kind}`:``}`,children:[
         (0,A.jsx)(`p`,{className:`mp-reflect-who`,children:e.role===`user`?`You`:e.role===`assistant`?`MindPal`:`MindPal note`}),
         (0,A.jsx)(`p`,{children:e.text})
-      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Your conversation with MindPal will appear here. Enter sends · Shift+Enter starts a new line.`})
+      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Your conversation with MindPal will appear here. Enter sends · Shift+Enter starts a new line.`}),
+      l?(0,A.jsx)(`p`,{className:`muted mp-reflect-pending`,role:`status`,children:`MindPal is writing a reply…`}):null
     ]}),
     (0,A.jsxs)(`form`,{className:`mp-reflect-composer`,onSubmit:e=>{e.preventDefault();y()},children:[
       (0,A.jsx)(`label`,{htmlFor:`mp-reflect-input`,children:`Message MindPal`}),
@@ -16043,20 +16380,20 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     }
   }
   let S=r.messages.some(e=>e.role===`user`||e.role===`assistant`);
+  let statusCopy=mpCompanion.companionStatusCopy(s,{savedBase:mpCompanion.storedCompanionBase(),surface:`appointment`});
   return(0,A.jsxs)(`div`,{className:`mp-reflect-chat mp-appoint-chat`,"aria-label":`Talk with MindPal about your appointment`,children:[
     (0,A.jsx)(`h3`,{children:`Talk with MindPal about your appointment`}),
     (0,A.jsx)(`p`,{children:`A back-and-forth to help you phrase questions for your clinician. MindPal does not read reports or decide treatment.`}),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer mp-reflect-disclaimer`,children:mpAppointment.APPOINTMENT_DISCLAIMER}),
-    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:``}`,role:`status`,children:[
-      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:m?mpCompanion.LIVE_LABEL:mpCompanion.DEMO_LABEL}),
-      m
-        ?(0,A.jsx)(`span`,{children:s.medicalKey?` Medical literacy companion connected${s.model?` · ${s.model}`:``}.`:` Companion connected${s.model?` · ${s.model}`:``}. Your message is sent only when you press Send.`} )
-        :(0,A.jsx)(`span`,{children:` Offline or Demo until a companion API base is set. This screen will not invent medical replies.`})
+    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:s.reason===`pending`?` is-checking`:``}`,role:`status`,children:[
+      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:statusCopy.label}),
+      (0,A.jsx)(`span`,{children:` ${statusCopy.detail}`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(e=>e+1),children:`Check again`})
     ]}),
     (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
-      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(`summary`,{children:`Live companion address`}),
       (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
-      (0,A.jsx)(`p`,{children:`Same companion path as Reflect. Paste a public URL when it is UP. A local loopback companion works only on this machine and is not baked into Pages.`})
+      (0,A.jsx)(`p`,{children:`Same address as Reflect. Tap Save the MindPal address on this phone. This screen will not invent a medical reply.`})
     ]}),
     r.crisis?(0,A.jsxs)(`div`,{className:`urgent-box mp-reflect-crisis`,role:`alert`,children:[
       (0,A.jsx)(`strong`,{children:mpReflect.CRISIS_COPY.title}),
@@ -16071,7 +16408,8 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
       r.messages.length?r.messages.map(e=>(0,A.jsxs)(`article`,{className:`mp-reflect-msg mp-reflect-msg-${e.role}${e.kind?` is-${e.kind}`:``}`,children:[
         (0,A.jsx)(`p`,{className:`mp-reflect-who`,children:e.role===`user`?`You`:e.role===`assistant`?`MindPal`:`MindPal note`}),
         (0,A.jsx)(`p`,{children:e.text})
-      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Ask MindPal to help you word a question for your clinician. Enter sends · Shift+Enter starts a new line.`})
+      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Ask MindPal to help you word a question for your clinician. Enter sends · Shift+Enter starts a new line.`}),
+      l?(0,A.jsx)(`p`,{className:`muted mp-reflect-pending`,role:`status`,children:`MindPal is writing a reply…`}):null
     ]}),
     (0,A.jsxs)(`form`,{className:`mp-reflect-composer`,onSubmit:e=>{e.preventDefault();y()},children:[
       (0,A.jsx)(`label`,{htmlFor:`mp-appoint-input`,children:`Message MindPal`}),
@@ -16085,13 +16423,19 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     ]})
   ]});
 }function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
-  let[i,a]=(0,_.useState)(()=>mpCompanionDemo.emptyCompanionState());
+  let[i,a]=(0,_.useState)(()=>({...mpCompanionDemo.emptyCompanionState(),status:`checking`,reason:`pending`}));
   let[o,s]=(0,_.useState)(()=>typeof mpProblems<`u`&&mpProblems.takeCompanionPrompt?mpProblems.takeCompanionPrompt()||``:``);
   let[c,l]=(0,_.useState)(!1);
-  let[u,d]=(0,_.useState)(``);
   let[f,p]=(0,_.useState)([]);
   let[m,h]=(0,_.useState)(!1);
   let[k,j]=(0,_.useState)(0);
+  let[listening,setListening]=(0,_.useState)(!1);
+  let[hearNote,setHearNote]=(0,_.useState)(``);
+  let[micNote,setMicNote]=(0,_.useState)(``);
+  let threadRef=(0,_.useRef)(null);
+  let micRef=(0,_.useRef)(null);
+  let stopHear=(0,_.useRef)(()=>{});
+  let sendGen=(0,_.useRef)(0);
   (0,_.useEffect)(()=>{
     let cancelled=!1;
     mpCompanion.fetchCompanionStatus().then(status=>{
@@ -16099,6 +16443,13 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     });
     return()=>{cancelled=!0};
   },[k]);
+  (0,_.useEffect)(()=>{
+    if(threadRef.current)threadRef.current.scrollTop=threadRef.current.scrollHeight;
+  },[f.length,m]);
+  (0,_.useEffect)(()=>()=>{
+    try{micRef.current&&micRef.current.stop()}catch{}
+    try{stopHear.current()}catch{}
+  },[]);
   function C(choiceId){
     let next=mpCompanionDemo.applyChoice(i,choiceId);
     a(next);
@@ -16120,40 +16471,120 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
     let next=mpCompanionDemo.openLiveChat(i);
     a(next);
   }
-  async function O(){
+  function hear(text){
+    try{stopHear.current()}catch{}
+    let body=String(text||``).trim();
+    if(!body){
+      setHearNote(`Nothing to read aloud yet.`);
+      return;
+    }
+    if(typeof window>`u`||!window.speechSynthesis||typeof SpeechSynthesisUtterance>`u`){
+      setHearNote(`This phone can't speak from the browser. You can still read the words.`);
+      return;
+    }
+    let failed=!1;
+    setHearNote(`Speaking…`);
+    let stop=mpReadings.speakBrowser(body,()=>{if(!failed)setHearNote(``)},{
+      onError:()=>{
+        failed=!0;
+        setHearNote(`Speech didn't start. Tap Hear this again, or just read the words.`);
+      }
+    });
+    stopHear.current=typeof stop===`function`?stop:()=>{};
+  }
+  function toggleMic(){
+    try{stopHear.current()}catch{}
+    setHearNote(``);
+    if(!mpReadings.micSupported()){
+      setMicNote(mpReadings.micUnsupportedCopy());
+      return;
+    }
+    if(!micRef.current){
+      micRef.current=mpReadings.createMicCapture({
+        onStart:()=>{setListening(!0);setMicNote(`Listening… speak, then pause.`);},
+        onPartial:text=>{if(text)s(text)},
+        onFinal:text=>{
+          if(text)s(text);
+          setMicNote(`Heard you. Read it, then tap Send or Show practice choices.`);
+        },
+        onError:code=>{
+          setListening(!1);
+          setMicNote(mpReadings.micErrorCopy(code)||mpReadings.micUnsupportedCopy());
+        },
+        onEnd:()=>setListening(!1)
+      });
+    }
+    if(micRef.current.isListening())micRef.current.stop();
+    else if(!micRef.current.start())setListening(!1);
+  }
+  async function sendLive(message){
     if(m)return;
-    if(mpCompanionDemo.isCrisisChoice(i.choiceId)){
-      e&&e();
-      return;
-    }
-    let message=u.trim();
-    if(!message){
-      p(prev=>[...prev,{role:`guide`,text:`A typed message is optional. The local demo still works — show practice choices, or use Help if you need a person.`}]);
-      return;
-    }
+    let prior=f.filter(msg=>(msg.role===`you`||msg.role===`guide`)&&!msg.pending&&msg.text).map(msg=>({role:msg.role===`you`?`user`:`assistant`,content:msg.text}));
+    let gen=++sendGen.current;
+    let waitId=`wait-${gen}`;
+    p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`MindPal is writing a reply…`,pending:!0,id:waitId}]);
+    s(``);
     h(!0);
     try{
       let result=await mpCompanion.sendCompanionChat({
         message,
-        safetyState:i.choiceId,
-        lane:`companion`,
+        messages:prior,
+        safetyState:i.choiceId||`ordinary`,
+        lane:`companion`
       });
-      if(result.kind!==`reply`||!result.value||!result.value.reply){
-        p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`Live chat is not available yet. Practice cards and Help still work on this page.`}]);
-      }else{
-        p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:result.value.reply,disclosure:result.value.modelDisclosure}]);
-        if(result.value.kind===`human_help`)e&&e();
-      }
-      d(``);
+      if(gen!==sendGen.current)return;
+      let reply=result&&result.kind===`reply`&&result.value&&result.value.reply?result.value.reply:``;
+      p(prev=>prev.filter(msg=>msg.id!==waitId).concat([{
+        role:`guide`,
+        text:reply||mpCompanion.companionFailureCopy(result&&result.reason),
+        disclosure:reply&&result.value&&result.value.modelDisclosure||``
+      }]));
+      if(!reply)s(message);
+      if(reply&&result.value&&result.value.kind===`human_help`)e&&e();
     }catch{
-      p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`Could not reach the companion proxy. Local practice choices and Help remain available.`}]);
+      if(gen!==sendGen.current)return;
+      p(prev=>prev.filter(msg=>msg.id!==waitId).concat([{role:`guide`,text:mpCompanion.companionFailureCopy(`unavailable`)}]));
+      s(message);
     }finally{
-      h(!1);
+      if(gen===sendGen.current)h(!1);
+    }
+  }
+  function onPrimary(){
+    if(m)return;
+    if(mpCompanionDemo.isCrisisChoice(i.choiceId)||i.panel===`crisis`){
+      e&&e();
+      return;
+    }
+    let message=o.trim();
+    if(i.status===`live`&&message){
+      if(!i.chatOpen)a(prev=>mpCompanionDemo.openLiveChat(prev));
+      sendLive(message);
+      return;
+    }
+    w();
+    if(message){
+      p(prev=>{
+        let last=prev[prev.length-1];
+        if(last&&last.text===mpCompanion.DEMO_HOLD_NOTE)return prev;
+        return [...prev,{role:`note`,text:mpCompanion.DEMO_HOLD_NOTE}];
+      });
+    }
+  }
+  function onKey(ev){
+    if(ev.key===`Enter`&&(ev.metaKey||ev.ctrlKey)){
+      ev.preventDefault();
+      onPrimary();
     }
   }
   let live=i.status===`live`;
   let panel=mpCompanionDemo.INTENT_PANELS[i.choiceId]||mpCompanionDemo.INTENT_PANELS.ordinary;
   let crisis=i.panel===`crisis`||mpCompanionDemo.isCrisisChoice(i.choiceId);
+  let statusCopy=mpCompanion.companionStatusCopy({
+    available:live,
+    model:i.model,
+    reason:i.reason||(i.status===`checking`?`pending`:`unavailable`),
+    status:i.status
+  },{savedBase:mpCompanion.storedCompanionBase(),surface:`companion`});
   return(0,A.jsxs)(`div`,{className:`mp-companion-page`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`A LITTLE COMPANY, WITH CLEAR BOUNDARIES`}),
     (0,A.jsx)(`h1`,{children:`At your pace.`}),
@@ -16164,10 +16595,15 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
         (0,A.jsx)(`h2`,{children:`Your MindPal companion`}),
         (0,A.jsx)(`p`,{children:`Interactive practice preview`}),
         (0,A.jsx)(Wi,{children:mpCompanionDemo.companionBanner(i)}),
+        (0,A.jsx)(`p`,{className:`muted`,role:`status`,children:statusCopy.detail}),
         (0,A.jsxs)(`div`,{className:`button-row`,children:[
           (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:()=>l(!c),children:c?`Show character`:`Text-only view`}),
-          (0,A.jsxs)(`span`,{className:`muted`,children:[(0,A.jsx)(En,{size:16}),`No audio or microphone`]})
-        ]})
+          (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:()=>hear(`${panel.title}. ${panel.body}`),children:hearNote===`Speaking…`?`Speaking…`:`Hear this`}),
+          (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,"aria-pressed":listening,onClick:toggleMic,children:listening?`Stop microphone`:`Use microphone`}),
+          (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(tick=>tick+1),children:`Check again`})
+        ]}),
+        hearNote&&hearNote!==`Speaking…`?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:hearNote}):null,
+        micNote?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:micNote}):null
       ]}),
       (0,A.jsxs)(`section`,{className:`companion-chat`,children:[
         (0,A.jsx)(`h2`,{children:`A guide, with you in control.`}),
@@ -16204,37 +16640,38 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
             i.expandedCardId===card.id&&card.action.type===`expand`?(0,A.jsx)(`p`,{className:`mp-practice-expand`,children:card.body}):null
           ]},card.id))
         ]}):null,
-        live&&i.chatOpen?(0,A.jsxs)(`div`,{className:`mp-companion-live-chat`,children:[
+        (f.length||(live&&i.chatOpen))?(0,A.jsxs)(`div`,{className:`mp-companion-live-chat`,ref:threadRef,role:`log`,"aria-live":`polite`,"aria-relevant":`additions`,children:[
           (0,A.jsx)(`h3`,{children:`Talk with MindPal`}),
-          (0,A.jsx)(`p`,{className:`muted`,children:`Live replies go through a private server proxy. Crisis paths stay on this page.`}),
-          f.map((msg,idx)=>(0,A.jsxs)(`p`,{className:`mp-chat-line mp-chat-${msg.role}`,children:[
-            (0,A.jsx)(`strong`,{children:msg.role===`you`?`You`:`MindPal`}),
-            ` · `,
-            msg.text,
-            msg.disclosure?(0,A.jsx)(`span`,{className:`muted`,children:` ${msg.disclosure}`}):null
-          ]},idx)),
-          (0,A.jsx)(`label`,{htmlFor:`mp-live-chat`,children:`Message the AI companion`}),
-          (0,A.jsx)(`textarea`,{id:`mp-live-chat`,value:u,maxLength:2e3,onChange:ev=>d(ev.target.value),placeholder:`Type a message, or leave blank and use the demo.`}),
-          (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:m,onClick:O,children:m?`Sending…`:`Send to AI companion`})
+          live?(0,A.jsx)(`p`,{className:`muted`,children:`Your words are sent only when you tap Send. If you need a person, use Help — that path stays on this page.`}):(0,A.jsx)(`p`,{className:`muted`,children:`Practice mode. Nothing below was sent.`}),
+          f.map((msg,idx)=>(0,A.jsxs)(`div`,{className:`mp-chat-line mp-chat-${msg.role}${msg.pending?` mp-chat-pending`:``}`,children:[
+            (0,A.jsx)(`p`,{children:[
+              (0,A.jsx)(`strong`,{children:msg.role===`you`?`You`:msg.role===`note`?`Note`:`MindPal`}),
+              ` · `,
+              msg.text
+            ]}),
+            msg.disclosure?(0,A.jsx)(`p`,{className:`muted`,children:msg.disclosure}):null,
+            msg.role===`guide`&&!msg.pending?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>hear(msg.text),children:`Hear this`}):null
+          ]},msg.id||idx))
         ]}):null,
         (0,A.jsxs)(`label`,{htmlFor:`companion-message`,children:[
-          `Sample message`,
+          live?`Message MindPal`:`Note for yourself`,
           ` `,
-          (0,A.jsx)(`span`,{className:`muted`,children:`optional · demo does not interpret this`})
+          (0,A.jsx)(`span`,{className:`muted`,children:live?`sent only when you tap Send`:`optional · not sent until live chat is on`})
         ]}),
-        (0,A.jsx)(`textarea`,{id:`companion-message`,value:o,maxLength:2e3,onChange:ev=>s(ev.target.value),placeholder:`Use sample text only…`}),
+        (0,A.jsx)(`textarea`,{id:`companion-message`,"data-mp-cta":`companion-message`,value:o,maxLength:2e3,disabled:m,onChange:ev=>s(ev.target.value),onKeyDown:onKey,placeholder:live?`Type a message, or use the microphone.`:`Write a note if you like. It stays on this phone until live chat is on.`}),
         (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          (0,A.jsxs)(`button`,{className:`primary`,type:`button`,onClick:w,children:[
-            mpCompanionDemo.primaryCtaLabel(i),
-            ` →`
+          (0,A.jsxs)(`button`,{className:`primary`,type:`button`,disabled:m,"data-mp-cta":`companion-send`,onClick:onPrimary,children:[
+            mpCompanionDemo.primaryCtaLabel(i,{hasMessage:!!String(o||``).trim(),sending:m}),
+            m?``:` →`
           ]}),
           live?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:E,children:`Talk with MindPal`}):null,
           (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>e&&e(),children:`Reach human support`})
         ]}),
-        (0,A.jsx)(`p`,{className:`muted`,children:`Local demo · no automatic retries · Help is always available`}),
+        (0,A.jsx)(`p`,{className:`muted`,children:live?`Ctrl+Enter or Cmd+Enter also sends. Enter on its own starts a new line.`:`Ctrl+Enter or Cmd+Enter shows practice choices. Enter on its own starts a new line. Local practice · Help is always available`}),
         (0,A.jsxs)(`details`,{className:`mp-companion-setup`,open:!live,children:[
-          (0,A.jsx)(`summary`,{children:`Live companion address (optional)`}),
-          (0,A.jsx)(`p`,{children:`Paste a companion base URL when a private proxy is up. This build does not invent a public tunnel. You can also set ?companionBase=, localStorage mindpal.companion.base, or window.MINDPAL_COMPANION_BASE.`}),
+          (0,A.jsx)(`summary`,{children:`Live companion address`}),
+          (0,A.jsx)(`p`,{children:`On this phone, tap Save the MindPal address. Until you do, this page stays a practice guide and does not send what you type.`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`This build does not invent a public tunnel. You can also paste another address, or open the app with ?companionBase=.`}),
           (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(tick=>tick+1)})
         ]})
       ]})

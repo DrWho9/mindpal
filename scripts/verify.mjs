@@ -214,7 +214,7 @@ const checks = [
   [js.includes("api/companion/") && js.includes("COMPANION_POLICY_VERSION") && js.includes("/mindpal/"), "Reflect uses the existing companion API path"],
   [js.includes("not a psychologist") && js.includes("Lifeline 13 11 14"), "Reflect prompt and crisis copy stay non-clinical"],
   [js.includes("Clear reflection & finish") && js.includes("mindpal.reflect.thread.v1"), "Reflect thread can be cleared and persisted"],
-  [js.includes("GitHub Pages cannot host the live proxy") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion API base"],
+  [js.includes("Live chat is off on this phone until you save the companion address") && js.includes("MINDPAL_COMPANION_BASE"), "Demo state documents the companion address step"],
   [js.includes("function mpAppointmentChat(") && js.includes("`h1`,{children:`Body, food and wellbeing`}),(0,A.jsx)(mpAppointmentChat,{onHelp:t})"), "Appointment Questions page mounts medical companion chat at the top"],
   [js.includes("appointment_health_literacy") && js.includes("mindpal.appointment.thread.v1"), "Appointment chat uses the health-literacy lane and persists a day thread"],
   [js.includes("Clear appointment chat") && js.includes("mp-appoint-input"), "Appointment chat has Send/Enter composer and a clear control"],
@@ -225,7 +225,7 @@ const checks = [
   [js.includes("function mpCompanionPage(") && js.includes("mp-practice-card"), "interactive Companion demo is present"],
   [js.includes("t===`Companion`&&(0,A.jsx)(mpCompanionPage,{onHelp:()=>I(`Get support`),onExercise:y,onReflect:()=>I(`Reflect`)}"), "Companion route mounts the interactive demo"],
   [!js.includes("t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y})"), "vendor Companion no-op is no longer the live route"],
-  [js.includes("DETERMINISTIC DEMO · NO LIVE AI") && js.includes("mpCompanionDemo"), "Companion keeps the DEMO banner until Live"],
+  [js.includes("Practice guide · live chat is off on this phone") && js.includes("mpCompanionDemo"), "Companion keeps the practice-guide banner until Live"],
   [js.includes("Lifeline on 13 11 14") && js.includes("Call 000"), "Companion crisis paths list Lifeline and 000"],
   [js.includes("does not invent a public tunnel") && js.includes("companionBase"), "Companion base URL is configurable without a tunnel"],
   [js.includes("mpAppointmentCompanionCard") && js.includes("Talk this appointment through with Companion"), "appointment companion entry is present"],
@@ -233,7 +233,7 @@ const checks = [
   [js.includes("id:`youtube-search`") && js.includes("applySearch"), "YouTube directory search is always visible (inject replaces _e)"],
   [js.includes("id:`companion-message`") && js.includes("e.metaKey||e.ctrlKey"), "Companion Ctrl/Cmd+Enter send is wired"],
   [js.includes("data-mp-cta:`companion-send`") || js.includes('"data-mp-cta":`companion-send`'), "Companion send CTA is marked"],
-  [js.includes("DETERMINISTIC DEMO · NO LIVE AI") && js.includes("api/companion/${e}"), "Companion live-AI probe stays server-gated"],
+  [js.includes("Practice guide · live chat is off on this phone") && js.includes("api/companion/${e}"), "Companion live-AI probe stays server-gated"],
 ];
 
 const maddyFiles = [

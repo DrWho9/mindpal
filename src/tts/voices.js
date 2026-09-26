@@ -157,6 +157,47 @@ export function splitSpeakChunks(text) {
     .filter(Boolean);
 }
 
+/** Keep each spoken piece short enough that mobile browsers do not drop it. */
+export function prepareSpeakChunks(text, maxChars = 140) {
+  const limit = maxChars > 40 ? maxChars : 140;
+  const pieces = [];
+  for (const paragraph of splitSpeakChunks(text)) {
+    if (paragraph.length <= limit) {
+      pieces.push(paragraph);
+      continue;
+    }
+    const sentences = paragraph.match(/[^.!?]+[.!?]+(?:["')\]]+)?|[^.!?]+$/g) || [paragraph];
+    let buf = "";
+    const flush = () => {
+      const next = buf.trim();
+      if (next) pieces.push(next);
+      buf = "";
+    };
+    for (const sentence of sentences) {
+      const bit = sentence.trim();
+      if (!bit) continue;
+      if (bit.length > limit) {
+        flush();
+        let wordBuf = "";
+        for (const word of bit.split(/\s+/)) {
+          if (wordBuf && wordBuf.length + word.length + 1 > limit) {
+            pieces.push(wordBuf);
+            wordBuf = word;
+          } else {
+            wordBuf = wordBuf ? `${wordBuf} ${word}` : word;
+          }
+        }
+        if (wordBuf) pieces.push(wordBuf);
+        continue;
+      }
+      if (buf && buf.length + bit.length + 1 > limit) flush();
+      buf = buf ? `${buf} ${bit}` : bit;
+    }
+    flush();
+  }
+  return pieces;
+}
+
 export function speakBrowser(text, onEnd, deps = {}) {
   const synth =
     deps.speechSynthesis ||
@@ -166,7 +207,7 @@ export function speakBrowser(text, onEnd, deps = {}) {
     (typeof SpeechSynthesisUtterance !== "undefined"
       ? SpeechSynthesisUtterance
       : null);
-  const chunks = splitSpeakChunks(text);
+  const chunks = prepareSpeakChunks(text, deps.maxChars);
   if (!chunks.length || !synth || !Utterance) {
     onEnd?.();
     return () => {};
@@ -179,8 +220,17 @@ export function speakBrowser(text, onEnd, deps = {}) {
   let cancelled = false;
   let timer = 0;
   let index = 0;
+  let awake = 0;
+  const keepAliveMs =
+    deps.keepAliveMs !== undefined ? deps.keepAliveMs : typeof window !== "undefined" ? 8000 : 0;
+
+  const stopAwake = () => {
+    if (awake) clearInterval(awake);
+    awake = 0;
+  };
 
   const finish = () => {
+    stopAwake();
     if (!cancelled) onEnd?.();
   };
 
@@ -208,18 +258,54 @@ export function speakBrowser(text, onEnd, deps = {}) {
         finish();
       }
     };
-    utterance.onerror = () => finish();
-    synth.speak(utterance);
+    utterance.onerror = (event) => {
+      if (cancelled) return;
+      const reason = event?.error || event?.message || "";
+      if (reason === "interrupted" || reason === "canceled" || reason === "cancelled") return;
+      cancelled = true;
+      if (timer) clearTimeout(timer);
+      stopAwake();
+      deps.onError?.(reason || "speech-error");
+      onEnd?.();
+    };
+    try {
+      synth.resume?.();
+    } catch {
+      /* ignore */
+    }
+    try {
+      synth.speak(utterance);
+    } catch {
+      cancelled = true;
+      stopAwake();
+      deps.onError?.("speech-error");
+      onEnd?.();
+    }
   };
 
   const start = () => {
     if (cancelled) return;
     warmSpeechVoices(synth);
-    if ((synth.getVoices?.() || []).length) speakNext();
-    else if (typeof synth.addEventListener === "function") {
-      synth.addEventListener("voiceschanged", speakNext, { once: true });
-    } else {
-      synth.onvoiceschanged = speakNext;
+    try {
+      synth.resume?.();
+    } catch {
+      /* ignore */
+    }
+    // Speak in the same tap. Waiting for voiceschanged drops the gesture on iOS
+    // and can hang forever when that event never arrives.
+    speakNext();
+    if (keepAliveMs) {
+      awake = setInterval(() => {
+        if (cancelled) {
+          stopAwake();
+          return;
+        }
+        try {
+          synth.resume?.();
+        } catch {
+          /* ignore */
+        }
+      }, keepAliveMs);
     }
   };
   start();
@@ -227,6 +313,7 @@ export function speakBrowser(text, onEnd, deps = {}) {
   return () => {
     cancelled = true;
     if (timer) clearTimeout(timer);
+    stopAwake();
     try {
       synth.cancel();
     } catch {

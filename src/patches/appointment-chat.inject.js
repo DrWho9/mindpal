@@ -79,20 +79,20 @@ function mpAppointmentChat({onHelp:t}){
     }
   }
   let S=r.messages.some(e=>e.role===`user`||e.role===`assistant`);
+  let statusCopy=mpCompanion.companionStatusCopy(s,{savedBase:mpCompanion.storedCompanionBase(),surface:`appointment`});
   return(0,A.jsxs)(`div`,{className:`mp-reflect-chat mp-appoint-chat`,"aria-label":`Talk with MindPal about your appointment`,children:[
     (0,A.jsx)(`h3`,{children:`Talk with MindPal about your appointment`}),
     (0,A.jsx)(`p`,{children:`A back-and-forth to help you phrase questions for your clinician. MindPal does not read reports or decide treatment.`}),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer mp-reflect-disclaimer`,children:mpAppointment.APPOINTMENT_DISCLAIMER}),
-    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:``}`,role:`status`,children:[
-      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:m?mpCompanion.LIVE_LABEL:mpCompanion.DEMO_LABEL}),
-      m
-        ?(0,A.jsx)(`span`,{children:s.medicalKey?` Medical literacy companion connected${s.model?` · ${s.model}`:``}.`:` Companion connected${s.model?` · ${s.model}`:``}. Your message is sent only when you press Send.`} )
-        :(0,A.jsx)(`span`,{children:` Offline or Demo until a companion API base is set. This screen will not invent medical replies.`})
+    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:s.reason===`pending`?` is-checking`:``}`,role:`status`,children:[
+      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:statusCopy.label}),
+      (0,A.jsx)(`span`,{children:` ${statusCopy.detail}`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(e=>e+1),children:`Check again`})
     ]}),
     (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
-      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(`summary`,{children:`Live companion address`}),
       (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
-      (0,A.jsx)(`p`,{children:`Same companion path as Reflect. Paste a public URL when it is UP. A local loopback companion works only on this machine and is not baked into Pages.`})
+      (0,A.jsx)(`p`,{children:`Same address as Reflect. Tap Save the MindPal address on this phone. This screen will not invent a medical reply.`})
     ]}),
     r.crisis?(0,A.jsxs)(`div`,{className:`urgent-box mp-reflect-crisis`,role:`alert`,children:[
       (0,A.jsx)(`strong`,{children:mpReflect.CRISIS_COPY.title}),
@@ -107,7 +107,8 @@ function mpAppointmentChat({onHelp:t}){
       r.messages.length?r.messages.map(e=>(0,A.jsxs)(`article`,{className:`mp-reflect-msg mp-reflect-msg-${e.role}${e.kind?` is-${e.kind}`:``}`,children:[
         (0,A.jsx)(`p`,{className:`mp-reflect-who`,children:e.role===`user`?`You`:e.role===`assistant`?`MindPal`:`MindPal note`}),
         (0,A.jsx)(`p`,{children:e.text})
-      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Ask MindPal to help you word a question for your clinician. Enter sends · Shift+Enter starts a new line.`})
+      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Ask MindPal to help you word a question for your clinician. Enter sends · Shift+Enter starts a new line.`}),
+      l?(0,A.jsx)(`p`,{className:`muted mp-reflect-pending`,role:`status`,children:`MindPal is writing a reply…`}):null
     ]}),
     (0,A.jsxs)(`form`,{className:`mp-reflect-composer`,onSubmit:e=>{e.preventDefault();y()},children:[
       (0,A.jsx)(`label`,{htmlFor:`mp-appoint-input`,children:`Message MindPal`}),
