@@ -67,7 +67,8 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
         h(k);
         return;
       }
-      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.UNAVAILABLE_NOTE,at:new Date().toISOString()}));
+      o(w);
+      h(mpReflect.appendMessage(T,{role:`note`,kind:`unavailable`,text:mpCompanion.companionFailureCopy(R&&R.reason),at:new Date().toISOString()}));
     }finally{
       u(!1);
     }
@@ -87,22 +88,22 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
     setTimeout(()=>URL.revokeObjectURL(t),1e3);
   }
   let S=r.messages.some(e=>e.role===`user`||e.role===`assistant`);
+  let statusCopy=mpCompanion.companionStatusCopy(s,{savedBase:mpCompanion.storedCompanionBase(),surface:`reflect`});
   return(0,A.jsxs)(`section`,{hidden:!e,className:`reflection-space mp-reflect-chat`,"aria-label":`Talk with MindPal`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`TALK WITH MINDPAL`}),
     (0,A.jsx)(`img`,{className:`section-photo`,src:Ge(`/journal-scene.jpg`),alt:`A woman taking a quiet moment with tea`,loading:`lazy`}),
     (0,A.jsx)(`h1`,{children:`Talk with MindPal`}),
     (0,A.jsxs)(`p`,{className:`lede`,children:[`A conversation about your day — reflective listening, a gentle reframe if it fits, and one small next step. You can stop anytime.`] }),
     (0,A.jsx)(`p`,{className:`mp-support-disclaimer mp-reflect-disclaimer`,children:mpReflect.CLINICAL_DISCLAIMER}),
-    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:``}`,role:`status`,children:[
-      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:m?mpCompanion.LIVE_LABEL:mpCompanion.DEMO_LABEL}),
-      m
-        ?(0,A.jsx)(`span`,{children:s.model?` Companion connected · ${s.model}.`:` Companion connected. Your message is sent only when you press Send.`} )
-        :(0,A.jsx)(`span`,{children:` GitHub Pages cannot host the live proxy. Set a companion API base to enable replies — this screen will not invent them.`})
+    (0,A.jsxs)(`p`,{className:`mp-reflect-status${m?` is-live`:s.reason===`pending`?` is-checking`:``}`,role:`status`,children:[
+      (0,A.jsx)(`span`,{className:`mp-reflect-pill`,children:statusCopy.label}),
+      (0,A.jsx)(`span`,{children:` ${statusCopy.detail}`}),
+      (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(e=>e+1),children:`Check again`})
     ]}),
     (0,A.jsxs)(`details`,{className:`mp-reflect-setup`,open:!m,children:[
-      (0,A.jsx)(`summary`,{children:`Companion API base`}),
+      (0,A.jsx)(`summary`,{children:`Live companion address`}),
       (0,A.jsx)(mpCompanionBaseCard,{onChanged:()=>j(e=>e+1)}),
-      (0,A.jsx)(`p`,{children:`Live needs GET {base}api/companion/status ({"available":true}) and POST {base}api/companion/chat. Default base is /mindpal/. Paste a public proxy URL when Bryan marks it UP — do not bake a dead tunnel into the app.`})
+      (0,A.jsx)(`p`,{children:`Live chat is off on this phone until you save the companion address. Tap Save the MindPal address, or paste another one. Nothing is invented if it does not answer.`})
     ]}),
     (0,A.jsxs)(`details`,{children:[
       (0,A.jsx)(`summary`,{children:`A thought to reflect on`}),
@@ -122,7 +123,8 @@ function mpReflectPage({active:e,onHelp:t,onDiary:n}){
       r.messages.length?r.messages.map(e=>(0,A.jsxs)(`article`,{className:`mp-reflect-msg mp-reflect-msg-${e.role}${e.kind?` is-${e.kind}`:``}`,children:[
         (0,A.jsx)(`p`,{className:`mp-reflect-who`,children:e.role===`user`?`You`:e.role===`assistant`?`MindPal`:`MindPal note`}),
         (0,A.jsx)(`p`,{children:e.text})
-      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Your conversation with MindPal will appear here. Enter sends · Shift+Enter starts a new line.`})
+      ]},e.id)):(0,A.jsx)(`p`,{className:`muted mp-reflect-empty`,children:`Your conversation with MindPal will appear here. Enter sends · Shift+Enter starts a new line.`}),
+      l?(0,A.jsx)(`p`,{className:`muted mp-reflect-pending`,role:`status`,children:`MindPal is writing a reply…`}):null
     ]}),
     (0,A.jsxs)(`form`,{className:`mp-reflect-composer`,onSubmit:e=>{e.preventDefault();y()},children:[
       (0,A.jsx)(`label`,{htmlFor:`mp-reflect-input`,children:`Message MindPal`}),

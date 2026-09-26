@@ -548,6 +548,21 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
 .mp-chat-line{margin:0}
 .mp-companion-setup{margin:16px 0 0}
 .mp-companion-setup summary{cursor:pointer;min-height:40px;font-weight:650}
+.mp-companion-page .button-row{flex-wrap:wrap}
+.mp-companion-page .mp-companion-live-chat{max-height:none;overflow:visible}
+.mp-companion-talk{scroll-margin-top:12px}
+.mp-companion-talk .mp-companion-log,.mp-companion-talk [role="log"]{max-height:min(42vh,320px);overflow:auto}
+.mp-speak-button{min-height:48px;width:100%;font-weight:700;margin:8px 0}
+.companion-stage .mp-speak-button{max-width:280px}
+.mp-companion-badge-note{margin:6px 0 0}
+.mp-companion-composer .primary{min-height:48px;flex:1 1 160px}
+.mp-chat-line{margin:0;border-radius:12px;padding:8px 10px}
+.mp-chat-you{align-self:flex-end;background:#e7efe6}
+.mp-chat-guide{align-self:flex-start;background:#fff}
+.mp-chat-note{align-self:stretch;background:#f3f1e7}
+.mp-chat-pending{font-style:italic}
+.mp-reflect-pending{margin:0}
+.mp-reflect-status.is-checking .mp-reflect-pill{background:#f7f1df;color:#6a5420;border-color:#e3d3a4}
 .mp-crisis-panel .button-row{flex-wrap:wrap}
 
 .mp-listen-player{

@@ -8,8 +8,14 @@ export const HELP_ROUTE = "Get support";
 export const REFLECT_ROUTE = "Reflect";
 export const BREATH_EXERCISE_ID = "E01";
 
-export const DEMO_BANNER = "DETERMINISTIC DEMO · NO LIVE AI";
-export const LIVE_BANNER = "LIVE AI COMPANION · XAI GROK";
+export const DEMO_BANNER = "Practice guide · live chat is off on this phone";
+export const LIVE_BANNER = "Live chat is on";
+export const CHECKING_BANNER = "Checking live chat…";
+export const THINKING_LABEL = "Thinking…";
+export const LIVE_BADGE_NOTE =
+  "Live chat is on means MindPal can answer. This is not a practice script.";
+export const PRACTICE_BADGE_NOTE =
+  "Practice only means nothing was sent. It is not a live reply. Live chat is on is a different label.";
 
 export const CHOICES = [
   { id: "ordinary", label: "A small exercise", kind: "practice" },
@@ -104,16 +110,26 @@ export function emptyCompanionState() {
 }
 
 export function companionBanner(state) {
-  return state?.status === "live" ? LIVE_BANNER : DEMO_BANNER;
+  if (state?.status === "live" || state?.liveReply) return LIVE_BANNER;
+  if (state?.status === "checking") return CHECKING_BANNER;
+  return DEMO_BANNER;
+}
+
+export function noteLiveReply(state) {
+  return { ...state, liveReply: true, status: "live", chatOpen: true };
 }
 
 export function setCompanionLive(state, status) {
   const available = status?.available === true;
+  const keep = state?.liveReply === true;
+  const live = available || keep;
+  const nextModel = typeof status?.model === "string" ? status.model : null;
   return {
     ...state,
-    status: available ? "live" : "demo",
-    model: typeof status?.model === "string" ? status.model : null,
-    chatOpen: available ? state.chatOpen : false,
+    status: live ? "live" : "demo",
+    model: nextModel || (keep ? state.model : null),
+    reason: typeof status?.reason === "string" ? status.reason : available ? "ok" : "unavailable",
+    chatOpen: live ? state.chatOpen : false,
   };
 }
 
@@ -213,10 +229,12 @@ export function openLiveChat(state) {
   };
 }
 
-export function primaryCtaLabel(state) {
+export function primaryCtaLabel(state, options = {}) {
   if (isCrisisChoice(state.choiceId) || state.panel === "crisis") {
     return "Open Help now";
   }
+  if (options.sending) return THINKING_LABEL;
+  if (state?.status === "live" && options.hasMessage) return "Send to MindPal";
   return "Show practice choices";
 }
 
@@ -310,12 +328,33 @@ export async function probeCompanionStatus({
   }
 }
 
+const REQUEST_ID_RE = /^[a-zA-Z0-9-]{16,80}$/;
+
+function companionRequestId(existing) {
+  const given = typeof existing === "string" ? existing.trim() : "";
+  if (REQUEST_ID_RE.test(given)) return given;
+  try {
+    if (typeof globalThis.crypto?.randomUUID === "function") return globalThis.crypto.randomUUID();
+  } catch {
+    /* insecure context */
+  }
+  const bytes = new Uint8Array(16);
+  if (typeof globalThis.crypto?.getRandomValues === "function") globalThis.crypto.getRandomValues(bytes);
+  else {
+    for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 export function companionChatPayload({ safetyState, message, requestId }) {
   return {
-    requestId: requestId || "companion-demo",
-    policyVersion: COMPANION_POLICY_VERSION,
-    safetyState: isCrisisChoice(safetyState) ? "urgent" : safetyState || "ordinary",
     message: String(message || "").trim(),
+    policyVersion: COMPANION_POLICY_VERSION,
+    requestId: companionRequestId(requestId),
+    safetyState: isCrisisChoice(safetyState) ? "urgent" : safetyState || "ordinary",
   };
 }
 

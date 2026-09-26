@@ -12,6 +12,7 @@ import {
   loadSavedVoiceURI,
   pickVoice,
   saveVoiceURI,
+  prepareSpeakChunks,
   speakBrowser,
   splitSpeakChunks,
 } from "../src/tts/voices.js";
@@ -159,6 +160,39 @@ describe("softer browser speech", () => {
     assert.equal(spoken[0].lang, "en-AU");
     assert.ok(timers.includes(420));
     assert.deepEqual(splitSpeakChunks("One\n\nTwo\n\n"), ["One", "Two"]);
+  });
+
+  it("speaks immediately when the voice list is still empty", async () => {
+    const spoken = [];
+    await new Promise((resolve) => {
+      speakBrowser("A short calm line for this phone.", resolve, {
+        speechSynthesis: {
+          getVoices: () => [],
+          addEventListener() {
+            throw new Error("must not wait for voiceschanged");
+          },
+          cancel() {},
+          resume() {},
+          speak(utterance) {
+            spoken.push(utterance.text);
+            utterance.onend?.();
+          },
+        },
+        Utterance: class {
+          constructor(text) {
+            this.text = text;
+          }
+        },
+      });
+    });
+    assert.deepEqual(spoken, ["A short calm line for this phone."]);
+  });
+
+  it("splits a long paragraph so one utterance cannot run on for fifteen seconds", () => {
+    const paragraph = Array.from({ length: 40 }, (_, index) => `Calm word ${index + 1}.`).join(" ");
+    const chunks = prepareSpeakChunks(paragraph, 140);
+    assert.ok(chunks.length >= 3);
+    assert.ok(chunks.every((chunk) => chunk.length <= 140));
   });
 });
 

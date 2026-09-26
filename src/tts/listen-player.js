@@ -264,13 +264,37 @@ export function createSpeechListenController(text, deps = {}) {
       : typeof SpeechSynthesisUtterance !== "undefined"
         ? SpeechSynthesisUtterance
         : null;
-  const later = deps.later || ((fn) => setTimeout(fn, 40));
+  const later = deps.later || ((fn) => setTimeout(fn, 150));
   const now = deps.now || (() => Date.now());
+  const keepAliveMs =
+    deps.keepAliveMs !== undefined ? deps.keepAliveMs : typeof window !== "undefined" ? 8000 : 0;
   let playing = false;
   let offset = 0;
   let startedAt = 0;
   let token = 0;
   let disposed = false;
+  let fault = "";
+  let awake = 0;
+
+  function stopAwake() {
+    if (awake) clearInterval(awake);
+    awake = 0;
+  }
+
+  function startAwake() {
+    if (!keepAliveMs || awake) return;
+    awake = setInterval(() => {
+      if (!playing || disposed) {
+        stopAwake();
+        return;
+      }
+      try {
+        synth?.resume?.();
+      } catch {
+        /* ignore */
+      }
+    }, keepAliveMs);
+  }
 
   function elapsed() {
     if (!playing) return offset;
@@ -282,8 +306,8 @@ export function createSpeechListenController(text, deps = {}) {
     const unavailable = !chunks.length
       ? ""
       : !synth || !Utterance
-        ? "Listen isn’t available in this browser."
-        : "";
+        ? "Listen isn’t available in this browser. You can still read the words."
+        : fault;
     return snapshotFrom("speech", "chunks", playing, current, duration, unavailable);
   }
 
@@ -335,6 +359,8 @@ export function createSpeechListenController(text, deps = {}) {
       const reason = event?.error || event?.message || "";
       if (reason === "interrupted" || reason === "canceled" || reason === "cancelled") return;
       playing = false;
+      fault = "Speech stopped on this phone. Tap play to try again.";
+      stopAwake();
       emit();
     };
     const fire = () => {
@@ -348,6 +374,8 @@ export function createSpeechListenController(text, deps = {}) {
         synth.speak(utterance);
       } catch {
         playing = false;
+        fault = "Speech stopped on this phone. Tap play to try again.";
+        stopAwake();
       }
       emit();
     };
@@ -356,6 +384,7 @@ export function createSpeechListenController(text, deps = {}) {
     } catch {
       /* ignore */
     }
+    startAwake();
     if (synth.speaking || synth.pending) {
       try {
         synth.cancel();
@@ -380,6 +409,7 @@ export function createSpeechListenController(text, deps = {}) {
     },
     snapshot,
     play() {
+      fault = "";
       if (disposed || !chunks.length || !synth || !Utterance) {
         emit();
         return false;
@@ -393,6 +423,7 @@ export function createSpeechListenController(text, deps = {}) {
       offset = clampListenTime(elapsed(), duration);
       playing = false;
       token += 1;
+      stopAwake();
       try {
         synth?.cancel?.();
       } catch {
@@ -435,6 +466,7 @@ export function createSpeechListenController(text, deps = {}) {
       playing = false;
       token += 1;
       offset = 0;
+      stopAwake();
       try {
         synth?.cancel?.();
       } catch {

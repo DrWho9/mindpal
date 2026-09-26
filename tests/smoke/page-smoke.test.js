@@ -75,7 +75,10 @@ describe("route smoke (Playwright + system Chrome)", { skip: !browserEnabled }, 
     await practiceGrid.waitFor({ state: "visible" });
     const copy = (await practiceGrid.innerText()).trim();
     assert.ok(copy.length > 12, "Show practice choices returned no copy");
-    assert.match(await page.locator("body").innerText(), /DETERMINISTIC DEMO|LIVE AI COMPANION/);
+    assert.match(
+      await page.locator("body").innerText(),
+      /Practice guide · live chat is off|Checking live chat|Live chat is on/,
+    );
   });
 
   it("YouTube Search filters the directory", async () => {

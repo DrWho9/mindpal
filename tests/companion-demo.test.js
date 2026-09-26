@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { BASE_STORAGE_KEY } from "../src/companion/client.js";
 import {
   BREATH_EXERCISE_ID,
+  CHECKING_BANNER,
   CHOICES,
   COMPANION_BASE_KEY,
   COMPANION_POLICY_VERSION,
@@ -14,7 +15,10 @@ import {
   DEMO_BANNER,
   HELP_ROUTE,
   INTENT_PANELS,
+  LIVE_BADGE_NOTE,
   LIVE_BANNER,
+  PRACTICE_BADGE_NOTE,
+  THINKING_LABEL,
   PRACTICE_CARDS,
   REFLECT_ROUTE,
   activatePracticeCard,
@@ -25,6 +29,7 @@ import {
   companionStatusUrl,
   emptyCompanionState,
   isCrisisChoice,
+  noteLiveReply,
   normalizeCompanionBase,
   openLiveChat,
   parseCompanionReply,
@@ -39,6 +44,7 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 const inject = readFileSync(join(root, "../src/patches/companion-demo.inject.js"), "utf8");
+const baseCard = readFileSync(join(root, "../src/patches/companion-base.inject.js"), "utf8");
 const build = readFileSync(join(root, "../scripts/build.mjs"), "utf8");
 
 function memoryStorage(initial = {}) {
@@ -126,14 +132,27 @@ describe("companion demo choices", () => {
   it("keeps the DEMO banner until Live, then offers chat without dropping crisis", () => {
     const demo = emptyCompanionState();
     assert.equal(companionBanner(demo), DEMO_BANNER);
+    assert.match(DEMO_BANNER, /live chat is off/i);
+    assert.equal(companionBanner({ ...demo, status: "checking" }), CHECKING_BANNER);
     assert.equal(openLiveChat(demo).chatOpen, false);
-    const live = setCompanionLive(demo, { available: true, model: "grok" });
+    const live = setCompanionLive(demo, { available: true, model: "grok", reason: "ok" });
     assert.equal(live.status, "live");
+    assert.equal(live.reason, "ok");
     assert.equal(companionBanner(live), LIVE_BANNER);
     assert.equal(openLiveChat(live).chatOpen, true);
     const stillCrisis = applyChoice(live, "urgent");
     assert.equal(stillCrisis.navigate, HELP_ROUTE);
-    assert.equal(setCompanionLive(live, { available: false }).status, "demo");
+    assert.equal(setCompanionLive(live, { available: false, reason: "unavailable" }).status, "demo");
+    const replied = noteLiveReply(demo);
+    assert.equal(replied.status, "live");
+    assert.equal(companionBanner(replied), LIVE_BANNER);
+    assert.equal(setCompanionLive(replied, { available: false, reason: "unavailable" }).status, "live");
+    assert.match(LIVE_BADGE_NOTE, /not a practice script/i);
+    assert.match(PRACTICE_BADGE_NOTE, /not a live reply/i);
+    assert.equal(THINKING_LABEL, "Thinking…");
+    assert.equal(primaryCtaLabel(live, { hasMessage: true }), "Send to MindPal");
+    assert.equal(primaryCtaLabel(live, { hasMessage: true, sending: true }), THINKING_LABEL);
+    assert.equal(primaryCtaLabel(demo, { hasMessage: true }), "Show practice choices");
   });
 
   it("resolves a configurable companion base URL without inventing a tunnel", () => {
@@ -192,29 +211,48 @@ describe("companion demo choices", () => {
   });
 
   it("builds a policy-versioned chat payload and accepts a matching reply", () => {
+    const kept = "abc-123-request-id";
     const payload = companionChatPayload({
       safetyState: "ordinary",
       message: "  hello  ",
-      requestId: "req-1",
+      requestId: kept,
     });
-    assert.deepEqual(payload, {
-      requestId: "req-1",
-      policyVersion: COMPANION_POLICY_VERSION,
+    assert.deepEqual(Object.keys(payload).sort(), [
+      "message",
+      "policyVersion",
+      "requestId",
+      "safetyState",
+    ]);
+    assert.equal(payload.requestId, kept);
+    assert.equal(payload.policyVersion, COMPANION_POLICY_VERSION);
+    assert.equal(payload.safetyState, "ordinary");
+    assert.equal(payload.message, "hello");
+    assert.match(payload.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+    const generated = companionChatPayload({
       safetyState: "ordinary",
-      message: "hello",
+      message: "hi",
+      requestId: "companion-demo",
     });
+    assert.notEqual(generated.requestId, "companion-demo");
+    assert.match(generated.requestId, /^[a-zA-Z0-9-]{16,80}$/);
+    assert.deepEqual(Object.keys(generated).sort(), [
+      "message",
+      "policyVersion",
+      "requestId",
+      "safetyState",
+    ]);
     const reply = parseCompanionReply(
       {
-        requestId: "req-1",
+        requestId: kept,
         policyVersion: COMPANION_POLICY_VERSION,
         kind: "reply",
         reply: "A small next step.",
         modelDisclosure: "xAI Grok",
       },
-      "req-1",
+      kept,
     );
     assert.equal(reply.kind, "reply");
-    assert.equal(parseCompanionReply({ requestId: "nope" }, "req-1"), null);
+    assert.equal(parseCompanionReply({ requestId: "nope" }, kept), null);
   });
 
   it("wires the Companion page so every control is a real handler", () => {
@@ -232,6 +270,25 @@ describe("companion demo choices", () => {
     assert.match(inject, /Live companion address/);
     assert.match(inject, /does not invent a public tunnel/);
     assert.match(inject, /mp-practice-card/);
+    assert.match(inject, /Hear this/);
+    assert.equal((inject.match(/companion-speak/g) || []).length, 2);
+    assert.match(inject, /`Speak`/);
+    assert.match(inject, /THINKING_LABEL/);
+    assert.match(inject, /noteLiveReply/);
+    assert.match(inject, /busyRef/);
+    assert.match(inject, /"aria-label":`Talk with MindPal`/);
+    assert.doesNotMatch(inject, /messages:prior/);
+    assert.doesNotMatch(inject, /lane:`companion`/);
+    assert.doesNotMatch(inject, /Use microphone/);
+    assert.doesNotMatch(inject, /THE DEMO DOES NOT ASSESS TEXT/);
+    assert.match(inject, /Check again/);
+    assert.match(inject, /Save the MindPal address/);
+    assert.match(inject, /Save the address from this link/);
+    assert.match(baseCard, /companionBaseFromSearch/);
+    assert.match(baseCard, /Save the address from this link/);
+    assert.match(baseCard, /persistCompanionBase\(fromLink\)/);
+    assert.match(inject, /onKeyDown:onKey/);
+    assert.doesNotMatch(inject, /No audio or microphone/);
     assert.doesNotMatch(inject, /Preparing fixed choices/);
     assert.doesNotMatch(inject, /trycloudflare\.com|127\.0\.0\.1:8787/);
     assert.match(build, /src\/companion\/demo\.js/);
