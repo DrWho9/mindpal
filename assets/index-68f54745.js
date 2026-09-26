@@ -14121,6 +14121,23 @@ function parseCompanionReply(raw, request) {
   };
 }
 
+function randomRequestId() {
+  try {
+    if (typeof globalThis.crypto?.randomUUID === "function") return globalThis.crypto.randomUUID();
+  } catch {
+    /* insecure context */
+  }
+  const bytes = new Uint8Array(16);
+  if (typeof globalThis.crypto?.getRandomValues === "function") globalThis.crypto.getRandomValues(bytes);
+  else {
+    for (let i = 0; i < bytes.length; i += 1) bytes[i] = Math.floor(Math.random() * 256);
+  }
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
 function buildChatRequest({
   message,
   messages = [],
@@ -14132,7 +14149,7 @@ function buildChatRequest({
   const text = typeof message === "string" ? message.trim() : "";
   const state = SAFETY_STATES.includes(safetyState) ? safetyState : "ordinary";
   return {
-    requestId: requestId || (globalThis.crypto?.randomUUID?.() ?? `mp-${Date.now()}`),
+    requestId: requestId || randomRequestId(),
     policyVersion: COMPANION_POLICY_VERSION,
     safetyState: state,
     message: text.slice(0, 2000),

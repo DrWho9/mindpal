@@ -202,7 +202,10 @@ describe("companion client", () => {
     });
     assert.equal(request.policyVersion, "companion-ai-v1");
     assert.equal(request.safetyState, "ordinary");
-    assert.ok(request.requestId);
+    assert.match(
+      request.requestId,
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
+    );
     assert.equal(request.message, "today was hard");
   });
 });
