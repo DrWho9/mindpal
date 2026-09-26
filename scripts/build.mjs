@@ -301,7 +301,7 @@ mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_W
 mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,detectCrisisIntent,safetyStateForText,THREAD_STORAGE_KEY,MESSAGE_TEXT_MAX,emptyThread,normalizeMessage,normalizeThread,parseThreadJson,loadThread,saveThread,clearThread,appendMessage,downloadableTranscript,canSendText,shouldSendOnKey};
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
 })();var mpCompanionDemo=(function(){${companionDemo}
-return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHECKING_BANNER,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
+return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHECKING_BANNER,THINKING_LABEL,LIVE_BADGE_NOTE,PRACTICE_BADGE_NOTE,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,noteLiveReply,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
 })();${ytSection}${sidebarShare}${voicePicker}${listenUi}${feelingsUi}${companionBaseUi}${reflectUi}${appointmentUi}${companionDemoUi}${bookRuntime}`;
 }
 
@@ -1341,8 +1341,14 @@ function patchOwnerUx(source) {
   if (next.includes("t===`Companion`&&(0,A.jsx)(Xi,{onHelp:()=>I(`Get support`),onExercise:y})")) {
     throw new Error("vendor Companion page is still the live route");
   }
+  const reviewBanner = "Local preview · wellbeing content is awaiting qualified review. Use sample notes only.";
+  const reviewClear = "Content review only · this bar is not Companion chat. Live chat has its own label on that page.";
+  if (next.includes(reviewBanner)) next = next.replaceAll(reviewBanner, reviewClear);
   if (!next.includes("Practice guide · live chat is off on this phone") || !next.includes("mpCompanionDemo=")) {
     throw new Error("Companion demo banner or runtime missing");
+  }
+  if (!next.includes("companion-speak") || !next.includes("Thinking…") || !next.includes("Live chat is on means MindPal can answer")) {
+    throw new Error("Companion Speak control or live/practice badge missing");
   }
   if (!next.includes("Lifeline on 13 11 14") || !next.includes("Call 000")) {
     throw new Error("Companion crisis routes missing Lifeline / 000");

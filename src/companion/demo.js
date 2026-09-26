@@ -11,6 +11,11 @@ export const BREATH_EXERCISE_ID = "E01";
 export const DEMO_BANNER = "Practice guide · live chat is off on this phone";
 export const LIVE_BANNER = "Live chat is on";
 export const CHECKING_BANNER = "Checking live chat…";
+export const THINKING_LABEL = "Thinking…";
+export const LIVE_BADGE_NOTE =
+  "Live chat is on means MindPal can answer. This is not a practice script.";
+export const PRACTICE_BADGE_NOTE =
+  "Practice only means nothing was sent. It is not a live reply. Live chat is on is a different label.";
 
 export const CHOICES = [
   { id: "ordinary", label: "A small exercise", kind: "practice" },
@@ -105,18 +110,26 @@ export function emptyCompanionState() {
 }
 
 export function companionBanner(state) {
+  if (state?.status === "live" || state?.liveReply) return LIVE_BANNER;
   if (state?.status === "checking") return CHECKING_BANNER;
-  return state?.status === "live" ? LIVE_BANNER : DEMO_BANNER;
+  return DEMO_BANNER;
+}
+
+export function noteLiveReply(state) {
+  return { ...state, liveReply: true, status: "live", chatOpen: true };
 }
 
 export function setCompanionLive(state, status) {
   const available = status?.available === true;
+  const keep = state?.liveReply === true;
+  const live = available || keep;
+  const nextModel = typeof status?.model === "string" ? status.model : null;
   return {
     ...state,
-    status: available ? "live" : "demo",
-    model: typeof status?.model === "string" ? status.model : null,
+    status: live ? "live" : "demo",
+    model: nextModel || (keep ? state.model : null),
     reason: typeof status?.reason === "string" ? status.reason : available ? "ok" : "unavailable",
-    chatOpen: available ? state.chatOpen : false,
+    chatOpen: live ? state.chatOpen : false,
   };
 }
 
@@ -220,7 +233,7 @@ export function primaryCtaLabel(state, options = {}) {
   if (isCrisisChoice(state.choiceId) || state.panel === "crisis") {
     return "Open Help now";
   }
-  if (options.sending) return "Sending…";
+  if (options.sending) return THINKING_LABEL;
   if (state?.status === "live" && options.hasMessage) return "Send to MindPal";
   return "Show practice choices";
 }

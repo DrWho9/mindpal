@@ -15,7 +15,10 @@ import {
   DEMO_BANNER,
   HELP_ROUTE,
   INTENT_PANELS,
+  LIVE_BADGE_NOTE,
   LIVE_BANNER,
+  PRACTICE_BADGE_NOTE,
+  THINKING_LABEL,
   PRACTICE_CARDS,
   REFLECT_ROUTE,
   activatePracticeCard,
@@ -26,6 +29,7 @@ import {
   companionStatusUrl,
   emptyCompanionState,
   isCrisisChoice,
+  noteLiveReply,
   normalizeCompanionBase,
   openLiveChat,
   parseCompanionReply,
@@ -139,8 +143,15 @@ describe("companion demo choices", () => {
     const stillCrisis = applyChoice(live, "urgent");
     assert.equal(stillCrisis.navigate, HELP_ROUTE);
     assert.equal(setCompanionLive(live, { available: false, reason: "unavailable" }).status, "demo");
+    const replied = noteLiveReply(demo);
+    assert.equal(replied.status, "live");
+    assert.equal(companionBanner(replied), LIVE_BANNER);
+    assert.equal(setCompanionLive(replied, { available: false, reason: "unavailable" }).status, "live");
+    assert.match(LIVE_BADGE_NOTE, /not a practice script/i);
+    assert.match(PRACTICE_BADGE_NOTE, /not a live reply/i);
+    assert.equal(THINKING_LABEL, "Thinking…");
     assert.equal(primaryCtaLabel(live, { hasMessage: true }), "Send to MindPal");
-    assert.equal(primaryCtaLabel(live, { hasMessage: true, sending: true }), "Sending…");
+    assert.equal(primaryCtaLabel(live, { hasMessage: true, sending: true }), THINKING_LABEL);
     assert.equal(primaryCtaLabel(demo, { hasMessage: true }), "Show practice choices");
   });
 
@@ -260,8 +271,16 @@ describe("companion demo choices", () => {
     assert.match(inject, /does not invent a public tunnel/);
     assert.match(inject, /mp-practice-card/);
     assert.match(inject, /Hear this/);
-    assert.match(inject, /Use microphone/);
-    assert.match(inject, /MindPal is writing a reply/);
+    assert.equal((inject.match(/companion-speak/g) || []).length, 2);
+    assert.match(inject, /`Speak`/);
+    assert.match(inject, /THINKING_LABEL/);
+    assert.match(inject, /noteLiveReply/);
+    assert.match(inject, /busyRef/);
+    assert.match(inject, /"aria-label":`Talk with MindPal`/);
+    assert.doesNotMatch(inject, /messages:prior/);
+    assert.doesNotMatch(inject, /lane:`companion`/);
+    assert.doesNotMatch(inject, /Use microphone/);
+    assert.doesNotMatch(inject, /THE DEMO DOES NOT ASSESS TEXT/);
     assert.match(inject, /Check again/);
     assert.match(inject, /Save the MindPal address/);
     assert.match(inject, /Save the address from this link/);

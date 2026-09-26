@@ -12,6 +12,10 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
   let micRef=(0,_.useRef)(null);
   let stopHear=(0,_.useRef)(()=>{});
   let sendGen=(0,_.useRef)(0);
+  let stateRef=(0,_.useRef)(i);
+  let sendRef=(0,_.useRef)(()=>{});
+  let busyRef=(0,_.useRef)(!1);
+  stateRef.current=i;
   (0,_.useEffect)(()=>{
     let cancelled=!1;
     mpCompanion.fetchCompanionStatus().then(status=>{
@@ -43,10 +47,6 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
     if(next.navigate===mpCompanionDemo.REFLECT_ROUTE)n&&n();
     if(next.navigate===mpCompanionDemo.HELP_ROUTE)e&&e();
   }
-  function E(){
-    let next=mpCompanionDemo.openLiveChat(i);
-    a(next);
-  }
   function hear(text){
     try{stopHear.current()}catch{}
     let body=String(text||``).trim();
@@ -69,6 +69,7 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
     stopHear.current=typeof stop===`function`?stop:()=>{};
   }
   function toggleMic(){
+    if(busyRef.current)return;
     try{stopHear.current()}catch{}
     setHearNote(``);
     if(!mpReadings.micSupported()){
@@ -80,8 +81,26 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
         onStart:()=>{setListening(!0);setMicNote(`Listening… speak, then pause.`);},
         onPartial:text=>{if(text)s(text)},
         onFinal:text=>{
-          if(text)s(text);
-          setMicNote(`Heard you. Read it, then tap Send or Show practice choices.`);
+          let heard=String(text||``).trim();
+          if(heard)s(heard);
+          setListening(!1);
+          let state=stateRef.current||{};
+          let crisis=mpCompanionDemo.isCrisisChoice(state.choiceId)||state.panel===`crisis`;
+          if(crisis){
+            setMicNote(`Heard you. That stays on this phone. Use Help if you need a person.`);
+            return;
+          }
+          if(busyRef.current){
+            setMicNote(`Still waiting on the last message. Your new words are in the box.`);
+            return;
+          }
+          if(state.status===`live`&&heard){
+            setMicNote(``);
+            if(!state.chatOpen)a(prev=>mpCompanionDemo.openLiveChat(prev));
+            sendRef.current(heard,{spoken:!0});
+            return;
+          }
+          setMicNote(heard?`Heard you. Live chat is off, so this stays in the box and was not sent.`:`No speech was heard. Try again, or type.`);
         },
         onError:code=>{
           setListening(!1);
@@ -93,20 +112,21 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
     if(micRef.current.isListening())micRef.current.stop();
     else if(!micRef.current.start())setListening(!1);
   }
-  async function sendLive(message){
-    if(m)return;
-    let prior=f.filter(msg=>(msg.role===`you`||msg.role===`guide`)&&!msg.pending&&msg.text).map(msg=>({role:msg.role===`you`?`user`:`assistant`,content:msg.text}));
+  async function sendLive(message, opts){
+    let text=String(message||``).trim();
+    if(!text||busyRef.current)return;
+    busyRef.current=!0;
+    let spoken=!!(opts&&opts.spoken);
+    let safety=stateRef.current&&stateRef.current.choiceId||`ordinary`;
     let gen=++sendGen.current;
     let waitId=`wait-${gen}`;
-    p(prev=>[...prev,{role:`you`,text:message},{role:`guide`,text:`MindPal is writing a reply…`,pending:!0,id:waitId}]);
+    p(prev=>[...prev,{role:`you`,text,id:`you-${gen}`},{role:`guide`,text:mpCompanionDemo.THINKING_LABEL,pending:!0,id:waitId}]);
     s(``);
     h(!0);
     try{
       let result=await mpCompanion.sendCompanionChat({
-        message,
-        messages:prior,
-        safetyState:i.choiceId||`ordinary`,
-        lane:`companion`
+        message:text,
+        safetyState:safety
       });
       if(gen!==sendGen.current)return;
       let reply=result&&result.kind===`reply`&&result.value&&result.value.reply?result.value.reply:``;
@@ -115,18 +135,24 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
         text:reply||mpCompanion.companionFailureCopy(result&&result.reason),
         disclosure:reply&&result.value&&result.value.modelDisclosure||``
       }]));
-      if(!reply)s(message);
+      if(reply)a(prev=>mpCompanionDemo.noteLiveReply(prev));
+      if(!reply)s(text);
+      if(reply&&spoken)hear(reply);
       if(reply&&result.value&&result.value.kind===`human_help`)e&&e();
     }catch{
       if(gen!==sendGen.current)return;
       p(prev=>prev.filter(msg=>msg.id!==waitId).concat([{role:`guide`,text:mpCompanion.companionFailureCopy(`unavailable`)}]));
-      s(message);
+      s(text);
     }finally{
-      if(gen===sendGen.current)h(!1);
+      if(gen===sendGen.current){
+        busyRef.current=!1;
+        h(!1);
+      }
     }
   }
+  sendRef.current=sendLive;
   function onPrimary(){
-    if(m)return;
+    if(m||busyRef.current)return;
     if(mpCompanionDemo.isCrisisChoice(i.choiceId)||i.panel===`crisis`){
       e&&e();
       return;
@@ -169,23 +195,23 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
       (0,A.jsxs)(`section`,{className:`companion-stage`,children:[
         !c&&(0,A.jsx)(Ui,{}),
         (0,A.jsx)(`h2`,{children:`Your MindPal companion`}),
-        (0,A.jsx)(`p`,{children:`Interactive practice preview`}),
+        (0,A.jsx)(`p`,{children:live?`Live chat is separate from these practice buttons.`:`Interactive practice preview`}),
         (0,A.jsx)(Wi,{children:mpCompanionDemo.companionBanner(i)}),
+        (0,A.jsx)(`p`,{className:`muted mp-companion-badge-note`,children:live||i.liveReply?mpCompanionDemo.LIVE_BADGE_NOTE:mpCompanionDemo.PRACTICE_BADGE_NOTE}),
         (0,A.jsx)(`p`,{className:`muted`,role:`status`,children:statusCopy.detail}),
+        (0,A.jsx)(`button`,{className:`secondary mp-speak-button`,type:`button`,"data-mp-cta":`companion-speak`,"aria-pressed":listening,disabled:m,onClick:toggleMic,children:listening?`Listening… tap to stop`:`Speak`}),
         (0,A.jsxs)(`div`,{className:`button-row`,children:[
           (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:()=>l(!c),children:c?`Show character`:`Text-only view`}),
           (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,onClick:()=>hear(`${panel.title}. ${panel.body}`),children:hearNote===`Speaking…`?`Speaking…`:`Hear this`}),
-          (0,A.jsx)(`button`,{className:`secondary small-button`,type:`button`,"aria-pressed":listening,onClick:toggleMic,children:listening?`Stop microphone`:`Use microphone`}),
           (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>j(tick=>tick+1),children:`Check again`})
         ]}),
-        hearNote&&hearNote!==`Speaking…`?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:hearNote}):null,
-        micNote?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:micNote}):null
+        hearNote&&hearNote!==`Speaking…`?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:hearNote}):null
       ]}),
       (0,A.jsxs)(`section`,{className:`companion-chat`,children:[
         (0,A.jsx)(`h2`,{children:`A guide, with you in control.`}),
         (0,A.jsx)(`p`,{children:`This character offers fixed practice choices. It is not a person, therapist or emergency service. Your diary is never accessed automatically.`}),
         (0,A.jsxs)(`div`,{className:`support-choices`,children:[
-          (0,A.jsx)(`p`,{className:`eyebrow`,children:`CHOOSE WHAT FITS · THE DEMO DOES NOT ASSESS TEXT`}),
+          (0,A.jsx)(`p`,{className:`eyebrow`,children:`CHOOSE WHAT FITS · THESE BUTTONS DO NOT READ YOUR MESSAGE`}),
           mpCompanionDemo.CHOICES.map(choice=>(0,A.jsx)(`button`,{
             type:`button`,
             className:i.choiceId===choice.id?`selected`:``,
@@ -216,10 +242,10 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
             i.expandedCardId===card.id&&card.action.type===`expand`?(0,A.jsx)(`p`,{className:`mp-practice-expand`,children:card.body}):null
           ]},card.id))
         ]}):null,
-        (f.length||(live&&i.chatOpen))?(0,A.jsxs)(`div`,{className:`mp-companion-live-chat`,ref:threadRef,role:`log`,"aria-live":`polite`,"aria-relevant":`additions`,children:[
+        (0,A.jsxs)(`div`,{className:`mp-companion-live-chat mp-companion-talk`,"aria-label":`Talk with MindPal`,children:[
           (0,A.jsx)(`h3`,{children:`Talk with MindPal`}),
-          live?(0,A.jsx)(`p`,{className:`muted`,children:`Your words are sent only when you tap Send. If you need a person, use Help — that path stays on this page.`}):(0,A.jsx)(`p`,{className:`muted`,children:`Practice mode. Nothing below was sent.`}),
-          f.map((msg,idx)=>(0,A.jsxs)(`div`,{className:`mp-chat-line mp-chat-${msg.role}${msg.pending?` mp-chat-pending`:``}`,children:[
+          (0,A.jsx)(`p`,{className:`muted`,children:live?`Tap Speak to talk. When you pause, those words are sent. Or type and tap Send. If you need a person, use Help.`:`Practice only. Speak and typing stay on this phone until live chat is on. Nothing here is a live reply.`}),
+          f.length?(0,A.jsx)(`div`,{ref:threadRef,role:`log`,"aria-live":`polite`,"aria-relevant":`additions`,children:f.map((msg,idx)=>(0,A.jsxs)(`div`,{className:`mp-chat-line mp-chat-${msg.role}${msg.pending?` mp-chat-pending`:``}`,children:[
             (0,A.jsx)(`p`,{children:[
               (0,A.jsx)(`strong`,{children:msg.role===`you`?`You`:msg.role===`note`?`Note`:`MindPal`}),
               ` · `,
@@ -227,21 +253,22 @@ function mpCompanionPage({onHelp:e,onExercise:t,onReflect:n}){
             ]}),
             msg.disclosure?(0,A.jsx)(`p`,{className:`muted`,children:msg.disclosure}):null,
             msg.role===`guide`&&!msg.pending?(0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>hear(msg.text),children:`Hear this`}):null
-          ]},msg.id||idx))
-        ]}):null,
-        (0,A.jsxs)(`label`,{htmlFor:`companion-message`,children:[
-          live?`Message MindPal`:`Note for yourself`,
-          ` `,
-          (0,A.jsx)(`span`,{className:`muted`,children:live?`sent only when you tap Send`:`optional · not sent until live chat is on`})
-        ]}),
-        (0,A.jsx)(`textarea`,{id:`companion-message`,"data-mp-cta":`companion-message`,value:o,maxLength:2e3,disabled:m,onChange:ev=>s(ev.target.value),onKeyDown:onKey,placeholder:live?`Type a message, or use the microphone.`:`Write a note if you like. It stays on this phone until live chat is on.`}),
-        (0,A.jsxs)(`div`,{className:`button-row`,children:[
-          (0,A.jsxs)(`button`,{className:`primary`,type:`button`,disabled:m,"data-mp-cta":`companion-send`,onClick:onPrimary,children:[
-            mpCompanionDemo.primaryCtaLabel(i,{hasMessage:!!String(o||``).trim(),sending:m}),
-            m?``:` →`
+          ]},msg.id||idx))}):null,
+          (0,A.jsx)(`button`,{className:`secondary mp-speak-button`,type:`button`,"data-mp-cta":`companion-speak`,"aria-pressed":listening,disabled:m,onClick:toggleMic,children:listening?`Listening… tap to stop`:`Speak`}),
+          micNote?(0,A.jsx)(`p`,{className:`muted`,role:`status`,children:micNote}):(0,A.jsx)(`p`,{className:`muted`,children:`Speak uses this phone’s microphone. On Chrome, you can talk instead of typing.`}),
+          (0,A.jsxs)(`label`,{htmlFor:`companion-message`,children:[
+            live?`Message MindPal`:`Note for yourself`,
+            ` `,
+            (0,A.jsx)(`span`,{className:`muted`,children:live?`sent when you tap Send, or when Speak finishes`:`optional · not sent until live chat is on`})
           ]}),
-          live?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:E,children:`Talk with MindPal`}):null,
-          (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>e&&e(),children:`Reach human support`})
+          (0,A.jsx)(`textarea`,{id:`companion-message`,"data-mp-cta":`companion-message`,value:o,maxLength:2e3,disabled:m,onChange:ev=>s(ev.target.value),onKeyDown:onKey,placeholder:live?`Type, or tap Speak.`:`Write a note if you like. It stays on this phone until live chat is on.`}),
+          (0,A.jsxs)(`div`,{className:`button-row mp-companion-composer`,children:[
+            (0,A.jsxs)(`button`,{className:`primary`,type:`button`,disabled:m,"data-mp-cta":`companion-send`,onClick:onPrimary,children:[
+              mpCompanionDemo.primaryCtaLabel(i,{hasMessage:!!String(o||``).trim(),sending:m}),
+              m?``:` →`
+            ]}),
+            (0,A.jsx)(`button`,{className:`text-button`,type:`button`,onClick:()=>e&&e(),children:`Reach human support`})
+          ]})
         ]}),
         (0,A.jsx)(`p`,{className:`muted`,children:live?`Ctrl+Enter or Cmd+Enter also sends. Enter on its own starts a new line.`:`Ctrl+Enter or Cmd+Enter shows practice choices. Enter on its own starts a new line. Local practice · Help is always available`}),
         (0,A.jsxs)(`details`,{className:`mp-companion-setup`,open:!live,children:[

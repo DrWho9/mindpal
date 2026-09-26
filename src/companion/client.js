@@ -6,7 +6,7 @@ export const BASE_STORAGE_KEY = "mindpal.companion.base";
 export const BASE_WINDOW_KEY = "MINDPAL_COMPANION_BASE";
 export const SAFETY_STATES = ["ordinary", "distress", "concern_uncertain", "urgent"];
 export const LIVE_LABEL = "Live";
-export const DEMO_LABEL = "Demo · live chat is off";
+export const DEMO_LABEL = "Practice only · Demo means live chat is off";
 export const SUGGESTED_COMPANION_BASE =
   "https://mindpal-companion.steps2life-and-flawless-aesthestics.workers.dev/";
 export const DEMO_HOLD_NOTE =
@@ -50,8 +50,8 @@ export function companionStatusCopy(status = {}, options = {}) {
     return {
       label: LIVE_LABEL,
       detail: model
-        ? `${where} (${model}). Your message is sent only when you tap Send.`
-        : `${where}. Your message is sent only when you tap Send.`,
+        ? `${where} (${model}). Tap Send, or Speak and pause, to send. This label means a real reply, not a practice script.`
+        : `${where}. Tap Send, or Speak and pause, to send. This label means a real reply, not a practice script.`,
     };
   }
   if (reason === "offline") {
@@ -65,17 +65,17 @@ export function companionStatusCopy(status = {}, options = {}) {
   }
   if (reason === "timeout") {
     return {
-      label: "Demo",
-      detail: "Live chat did not answer in time. Tap Check again. Nothing was invented.",
+      label: "Practice only",
+      detail: "Live chat did not answer in time. Tap Check again. Nothing was invented. This is not a live reply.",
     };
   }
   if (saved) {
     return {
-      label: "Demo",
+      label: "Practice only",
       detail:
         surface === "appointment"
           ? "The saved address did not answer. Check it below. This screen will not invent a medical reply."
-          : "The saved address did not answer. Check it below, or tap Check again. Nothing was sent.",
+          : "The saved address did not answer. Check it below, or tap Check again. Nothing was sent. This is not a live reply.",
     };
   }
   const off =
@@ -84,7 +84,7 @@ export function companionStatusCopy(status = {}, options = {}) {
       : surface === "reflect"
         ? "Live chat is off on this phone until you save the companion address below. Your words stay here until you do."
         : "Live chat is off on this phone until you save the companion address below. Practice choices still work, and nothing you type is sent.";
-  return { label: "Demo", detail: off };
+  return { label: "Practice only", detail: off };
 }
 
 export function normalizeCompanionBase(value) {
