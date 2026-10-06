@@ -154,10 +154,10 @@ export const HASH_ROUTES = [
   },
   {
     route: "Struggling mothers",
-    title: "Struggling mothers",
+    title: "Mothers",
     blueprint: "struggling-mothers.md",
     nav: ["sidebar", "feelings", "womens"],
-    heading: /Struggling mothers/i,
+    heading: /^Mothers$/,
     primaryCtas: ["Talk this through with Companion", "Write this in Journal"],
   },
   {

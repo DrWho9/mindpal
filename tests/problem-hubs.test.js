@@ -112,7 +112,7 @@ describe("problem hubs", () => {
         "Stress / overwhelm",
         "Heavy / low mood",
         "Faith / prayer & meaning",
-        "Struggling mothers",
+        "Mothers",
         "Drugs & alcohol",
         "Men's Health",
         "Positive mindset",

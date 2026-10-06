@@ -13,7 +13,7 @@ Vendor women’s topics plus a door into the mothers hub.
 ## Expected UX
 
 - Topic exercises and diary hooks from `Zi`.
-- **Struggling mothers** card: **Open the mothers space** → `#Struggling mothers`.
+- **Mothers** card (display only): **Open the mothers space** → `#Struggling mothers`.
 - Card states medical pathways still wait for specialist review.
 
 ## Enter / Send / search

@@ -195,6 +195,10 @@ dialog[open]>*{pointer-events:auto}
 .mp-problem-chip:hover,.mp-problem-chip.is-open{background:#2f5a3d;color:#f7f8f2;border-color:#2f5a3d}
 .mp-problem-chip-growth{border-color:#b8864a}
 .mp-problem-chip-growth:hover,.mp-problem-chip-growth.is-open{background:#8a5a28;color:#fffef9;border-color:#8a5a28}
+.mp-growth-held{margin:14px 0 4px;padding:12px 14px;background:#f6ecd8;border:1px dashed #b8864a;border-radius:14px}
+.mp-growth-held-list{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:8px}
+.mp-growth-held-list li{display:flex;justify-content:space-between;gap:12px;align-items:baseline;background:#fffef9;border-radius:10px;padding:8px 12px}
+.mp-growth-held-flag{font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#7a5a28;white-space:nowrap}
 .mp-problem-expand{background:#fffef9;border:1px solid #d5dccb;border-radius:14px;padding:14px 16px;margin:8px 0 2px}
 .mp-hub-readings,.mp-hub-videos,.mp-hub-yt{list-style:none;margin:10px 0 14px;padding:0;display:grid;gap:10px}
 .mp-hub-readings li,.mp-hub-yt li{background:#f7f8f2;border:1px solid #dfe4d5;border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
@@ -779,4 +783,24 @@ button.mp-support-row{font:inherit;color:inherit;cursor:pointer}
   .mp-book-prose{margin:0 1.6rem}
   .mp-book-top{flex-wrap:wrap}
   .mp-book-title-block{order:-1;flex-basis:100%}
+}
+/* Phone bottom bar is 1px border + 4px pad + 52px tab + 4px pad = 61px, plus safe area.
+   The 3px ring sits 4px outside the box, so focus scroll keeps 68px clear of the viewport edge. */
+@media (width<=900px){
+  html{
+    scroll-padding-bottom:calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+  button,a,input,textarea,select,summary,details,[tabindex]{
+    scroll-margin-bottom:calc(68px + env(safe-area-inset-bottom, 0px));
+  }
+}
+summary:focus-visible,details:focus-visible{
+  outline:3px solid #a05a32;
+  outline-offset:4px;
+}
+/* Sticky phone header is 64px tall at this width. The 3px ring sits 4px outside the box. */
+@media (width<=640px){
+  button,a,input,textarea,select,summary,details,[tabindex]{
+    scroll-margin-top:calc(71px + env(safe-area-inset-top, 0px));
+  }
 }/*mp-styles-end*/

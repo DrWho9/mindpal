@@ -80,7 +80,42 @@ export {
 export const COMPANION_PROMPT_KEY = "mindpal.companionPrompt.v1";
 export const SELECTED_PROBLEM_KEY = "mindpal.selectedProblem.v1";
 export const MOTHERS_PROBLEM_ID = "mothers";
+/** Visible name. The hash route stays MOTHERS_ROUTE. */
+export const MOTHERS_DISPLAY = "Mothers";
+/** Hash alias. Do not rename: bookmarks and sidebar navigation use this string. */
 export const MOTHERS_ROUTE = "Struggling mothers";
+/**
+ * Seven Growth labels from the course resource guide, sections 1–7.
+ * Held on screen as Coming soon. They are not hash routes and open no page.
+ */
+export const HELD_GROWTH_LABELS = [
+  { id: "ego-defensiveness", label: "Ego, defensiveness and needing to be right" },
+  { id: "always-wanting-more", label: "Always wanting more" },
+  { id: "sexual-urges", label: "Sexual urges, choices and boundaries" },
+  { id: "envy-jealousy", label: "Envy and jealousy" },
+  { id: "overindulgence-eating", label: "Overindulgence and excessive eating" },
+  { id: "anger-resentment", label: "Anger and resentment" },
+  { id: "avoidance-laziness", label: "Avoidance and laziness" },
+];
+
+export function isHeldGrowthLabel(value) {
+  const raw = String(value ?? "").trim();
+  return HELD_GROWTH_LABELS.some((item) => item.id === raw || item.label === raw);
+}
+
+/** Map a hash to a published route. The mothers alias stays. Held labels resolve to null. */
+export function resolveHashAlias(hash) {
+  const raw = String(hash ?? "").replace(/^#/, "").trim();
+  let decoded = raw;
+  try {
+    decoded = decodeURIComponent(raw);
+  } catch {
+    decoded = raw;
+  }
+  if (decoded === MOTHERS_ROUTE) return MOTHERS_ROUTE;
+  if (isHeldGrowthLabel(decoded)) return null;
+  return decoded;
+}
 export const MOTHERS_READING_LIMIT = 12;
 export const MOTHERS_MADDY_IDS = ["maddy-welcome", "maddy-timed-breath"];
 export const MOTHERS_MEDITATION_IDS = ["sleep", "self-compassion", "anxiety"];

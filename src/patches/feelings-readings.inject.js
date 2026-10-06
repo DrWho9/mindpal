@@ -211,7 +211,7 @@ function mpExploreFeelingChoice({onSpeakers:e}={}){
       (0,A.jsx)(`option`,{value:`guilty`,children:`Guilty or ashamed`}),
       (0,A.jsx)(`option`,{value:`numb`,children:`Numb or flat`}),
       (0,A.jsx)(`option`,{value:`unsure`,children:`Not sure`}),
-      (0,A.jsx)(`option`,{value:`mothers`,children:`Struggling mothers`}),
+      (0,A.jsx)(`option`,{value:`mothers`,children:mpProblems.MOTHERS_DISPLAY||`Mothers`}),
       (0,A.jsx)(`option`,{value:`aod`,children:`Drugs & alcohol`}),
       (0,A.jsx)(`option`,{value:`mens-health`,children:`Men's Health`})
     ]}),
@@ -222,7 +222,7 @@ function mpFeelingsPage({onDiary:e,onPractice:t,onLeave:n,onDirectory:r,onSpeake
   let[c,l]=(0,_.useState)(``);
   let u=(0,_.useRef)(null);
   let d=mpReadings.FEELING_EMOTIONS;
-  let f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,`Struggling mothers`],[`aod`,`Drugs & alcohol`],[`mens-health`,`Men's Health`]];
+  let f=[[`lonely`,`Lonely or disconnected`],[`guilty`,`Guilty or ashamed`],[`numb`,`Numb or flat`],[`unsure`,`Not sure`],[`mothers`,mpProblems.MOTHERS_DISPLAY||`Mothers`],[`aod`,`Drugs & alcohol`],[`mens-health`,`Men's Health`]];
   let p=mpReadings.feelingKit&&c?mpReadings.feelingKit(c,{pack:mpPackA,hubs:mpProblemHubs}):null;
   return(0,A.jsxs)(`section`,{className:`simple-panel feelings-space`,children:[
     (0,A.jsx)(`h1`,{children:`Help with how I’m feeling`}),

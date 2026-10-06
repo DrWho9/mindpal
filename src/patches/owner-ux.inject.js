@@ -501,7 +501,7 @@ function mpAccountFooter(){
 }
 function mpDedicatedProblemRoute(id){
   if(mpProblems.dedicatedProblemRoute)return mpProblems.dedicatedProblemRoute(id);
-  if(id===`mothers`)return`Struggling mothers`;
+  if(id===`mothers`)return mpProblems.MOTHERS_ROUTE||`Struggling mothers`;
   if(id===`aod`)return`Drugs & alcohol`;
   if(id===`mens-health`)return mpProblems.MENS_HEALTH_ROUTE||`Mens health`;
   return`Problem`;
@@ -558,9 +558,14 @@ function mpProblemHubList({onOpen:e,variant:t=`explore`}){
           return(0,A.jsx)(`button`,{type:`button`,className:mpProblemChipClass(t,a),"aria-expanded":a,onClick:()=>i(a?null:t.id),children:t.shortTitle||t.title},t.id);
         })}),
         open?(0,A.jsxs)(`div`,{className:`mp-problem-expand`,children:[
-          (0,A.jsx)(`h3`,{children:open.title}),
+          (0,A.jsx)(`h3`,{children:open.id===`mothers`?(mpProblems.MOTHERS_DISPLAY||`Mothers`):open.title}),
           (0,A.jsx)(`p`,{children:open.intro}),
           (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:()=>mpOpenProblem(r,e),children:`Open hub`})
+        ]}):null,
+        g.id===`growth`?(0,A.jsxs)(`div`,{className:`mp-growth-held`,"aria-label":`Coming soon`,children:[
+          (0,A.jsx)(`h3`,{className:`mp-problem-group-title`,children:`Coming soon`}),
+          (0,A.jsx)(`p`,{className:`muted`,children:`These labels are held. They do not open a page.`}),
+          (0,A.jsx)(`ul`,{className:`mp-growth-held-list`,children:(mpProblems.HELD_GROWTH_LABELS||[]).map(item=>(0,A.jsxs)(`li`,{children:[item.label,(0,A.jsx)(`span`,{className:`mp-growth-held-flag`,children:`Coming soon`})]},item.id))})
         ]}):null
       ]},g.id);
     })
@@ -580,9 +585,9 @@ function mpMotherYtEntries(problem){
   return n.slice(0,6);
 }
 function mpMothersFeelingsChip({onOpen:e}){
-  return(0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-feelings`,"aria-label":`Struggling mothers`,children:[
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-feelings`,"aria-label":mpProblems.MOTHERS_DISPLAY||`Mothers`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`A SITUATION, NOT A DIAGNOSIS`}),
-    (0,A.jsx)(`h2`,{children:`Struggling mothers`}),
+    (0,A.jsx)(`h2`,{children:mpProblems.MOTHERS_DISPLAY||`Mothers`}),
     (0,A.jsx)(`p`,{children:`If the hard part is caring for little ones — tired, stretched, a bit guilty — there is a quiet space for that. Optional support, not medical care.`}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
   ]});
@@ -604,9 +609,9 @@ function mpMensHealthFeelingsChip({onOpen:e}){
   ]});
 }
 function mpMothersWomenCard({onOpen:e}){
-  return(0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-women`,"aria-label":`Struggling mothers`,children:[
+  return(0,A.jsxs)(`section`,{className:`simple-panel mp-mothers-women`,"aria-label":mpProblems.MOTHERS_DISPLAY||`Mothers`,children:[
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`WOMEN’S WELLBEING`}),
-    (0,A.jsx)(`h2`,{children:`Struggling mothers`}),
+    (0,A.jsx)(`h2`,{children:mpProblems.MOTHERS_DISPLAY||`Mothers`}),
     (0,A.jsx)(`p`,{children:`Pregnancy and postnatal medical pathways still wait for specialist review. If you are a mother under pressure — exhausted, guilty, or short of space — this is optional company, not a clinic.`}),
     e?(0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:e,children:`Open the mothers space`}):null
   ]});
@@ -672,10 +677,10 @@ function mpMothersHubPage({onCompanion:e,onJournal:t,onExplore:n,onAddWin:r,onHe
   if(!o)return(0,A.jsx)(`p`,{children:`The mothers space is not loaded yet.`});
   let s=mpProblems.readingsForProblem(mpPackA,`mothers`),c=mpProblems.maddyForProblem(mpMaddy,`mothers`),l=mpMotherYtEntries(o);
   let u=mpProblems.HUB_ACCORDION_ORDER||[`readings`,`evidence`,`videos`,`companion`];
-  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":`Struggling mothers`,children:[
+  return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem mp-lane-mothers`,"aria-label":mpProblems.MOTHERS_DISPLAY||`Mothers`,children:[
     (0,A.jsx)(MpLibraryHost,{}),
     (0,A.jsx)(`p`,{className:`eyebrow`,children:`MOTHERS · OPTIONAL SUPPORT`}),
-    (0,A.jsx)(`h1`,{children:`Struggling mothers`}),
+    (0,A.jsx)(`h1`,{children:mpProblems.MOTHERS_DISPLAY||`Mothers`}),
     (0,A.jsx)(`p`,{className:`lede`,children:o.intro}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Warm company for a hard stretch. Not a diagnosis, not therapy, and not a replacement for a GP, midwife or maternal-child nurse. Tap a section to open it — one at a time.`}),
     (0,A.jsx)(mpHubAccordion,{initial:u[0]||`readings`,sections:[

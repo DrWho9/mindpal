@@ -2,7 +2,8 @@
 
 | | |
 |---|---|
-| **Route** | `#Struggling mothers` |
+| **Route** | `#Struggling mothers` (hash alias unchanged) |
+| **Display** | Mothers |
 | **Nav** | Sidebar, Feelings chip, Women’s wellbeing card |
 | **Sources** | `mpMothersHubPage`; problem id `mothers` |
 
