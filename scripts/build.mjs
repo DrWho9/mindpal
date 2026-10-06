@@ -963,7 +963,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(MpWatchWithMaddy,{}),",
-    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpYourBooksCard,{}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:e=>I(mpDedicatedProblemRoute(e))}),(0,A.jsx)(MpWatchWithMaddy,{}),",
+    "(0,A.jsx)(`p`,{className:`lede`,children:`Three quiet places to look: a verse, a short reading, or a video. Looking for your diary? That’s moved to the Journal tab.`}),(0,A.jsx)(mpYourBooksCard,{}),(0,A.jsx)(mpExploreFeelingChoice,{onSpeakers:()=>n(`videos`)}),(0,A.jsx)(mpProblemHubList,{onOpen:e=>mpOpenHash(mpDedicatedProblemRoute(e))}),(0,A.jsx)(MpWatchWithMaddy,{}),",
     "explore-problem-hubs",
   );
   next = replaceOnce(
@@ -993,7 +993,7 @@ function patchOwnerUx(source) {
   next = replaceOnce(
     next,
     "a===`adult`&&t===`Feelings`&&(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`)})",
-    "a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpMothersFeelingsChip,{onOpen:()=>{mpOpenProblem(`mothers`),I(`Struggling mothers`)}}),(0,A.jsx)(mpAodFeelingsChip,{onOpen:()=>{mpOpenProblem(`aod`),I(`Drugs & alcohol`)}}),(0,A.jsx)(mpMensHealthFeelingsChip,{onOpen:()=>{mpOpenProblem(`mens-health`),I(`Mens health`)}}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`),onCompanion:()=>I(`Companion`),onHelp:()=>I(`Get support`),onJournal:e=>{C(e),I(`My diary`)}})]})",
+    "a===`adult`&&t===`Feelings`&&(0,A.jsxs)(A.Fragment,{children:[(0,A.jsx)(mpProblemHubList,{onOpen:e=>I(mpDedicatedProblemRoute(e))}),(0,A.jsx)(ve,{onDiary:()=>I(`My diary`),onPractice:()=>y(`E01`),onLeave:()=>I(`Today`),onDirectory:()=>I(`YouTube directory`),onSpeakers:()=>I(`Explore`),onCompanion:()=>I(`Companion`),onHelp:()=>I(`Get support`),onJournal:e=>{C(e),I(`My diary`)}})]})",
     "feelings-mothers-chip",
   );
   next = replaceOnce(

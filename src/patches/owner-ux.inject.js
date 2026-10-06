@@ -500,6 +500,7 @@ function mpAccountFooter(){
   ]});
 }
 function mpDedicatedProblemRoute(id){
+  if(id===`womens-wellbeing`)return `Women’s wellbeing`;
   if(mpProblems.dedicatedProblemRoute)return mpProblems.dedicatedProblemRoute(id);
   if(id===`mothers`)return mpProblems.MOTHERS_ROUTE||`Struggling mothers`;
   if(id===`aod`)return`Drugs & alcohol`;
@@ -528,6 +529,7 @@ function mpProblemChipClass(item,open){
 }
 function mpVisibleProblemGroups(){
   let e=mpProblems.listProblemGroups?mpProblems.listProblemGroups(mpProblemHubs):[{id:`support`,title:`Support`,lede:`When it's heavy`,problems:mpProblems.listProblems(mpProblemHubs)},{id:`growth`,title:`Growth`,lede:`Build strength`,problems:[]}];
+  e=e.map(t=>t.id===`support`?{...t,problems:[...(t.problems||[]),{id:`womens-wellbeing`,title:`Women’s wellbeing`,shortTitle:`Women’s wellbeing`,group:`support`,intro:`Opens the existing Women’s wellbeing page.`}]}:t);
   if(mpFaith.shouldShowFaithModules(mpFaith.sessionPreferences()||{}))return e;
   return e.map(t=>({...t,problems:(t.problems||[]).filter(t=>t.id!==`faith`)})).filter(t=>(t.problems||[]).length);
 }
@@ -853,7 +855,7 @@ function mpProblemHubPage({onOpenVideo:e,onCompanion:t,onJournal:n,onExplore:r,o
   let l=mpProblems.findProblem(mpProblemHubs,s);
   if(!l)return(0,A.jsxs)(`section`,{className:`mp-lane mp-lane-problem`,"aria-label":`Problem hub`,children:[
     (0,A.jsx)(`h1`,{children:`What do you need help with?`}),
-    (0,A.jsx)(mpProblemHubList,{onOpen:e=>{c(e)}})
+    (0,A.jsx)(mpProblemHubList,{onOpen:e=>{if(e===`womens-wellbeing`){o&&o();return}c(e)}})
   ]});
   if(mpReadings.feelingKit&&mpReadings.feelingKit(l.id,{pack:mpPackA,hubs:mpProblemHubs})){
     return(0,A.jsx)(mpFeelingKitPage,{feelingId:l.id,onCompanion:t,onJournal:n,onExplore:r,onAddWin:i,onHelp:a,onWomen:o,onSpeakers:v});
