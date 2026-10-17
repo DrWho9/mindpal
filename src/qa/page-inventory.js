@@ -9,6 +9,14 @@ export const HOME_ROUTE = "Today";
 /** Hash routes accepted by the SPA allowlist after build patches. */
 export const HASH_ROUTES = [
   {
+    route: "Brain",
+    title: "Brain",
+    blueprint: "brain.md",
+    nav: ["sidebar"],
+    heading: /^Brain$/,
+    primaryCtas: ["Start quiz", "Back to MindPal"],
+  },
+  {
     route: "Today",
     title: "Today",
     blueprint: "today.md",

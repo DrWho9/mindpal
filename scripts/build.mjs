@@ -18,6 +18,7 @@ import {
 } from "../src/speakers/order.js";
 import { mergeTtsAudioCatalog } from "../src/tts/audio.js";
 import { THEME_LABEL_TO_TAGS } from "../src/problems/theme-map.js";
+import { brainRuntime, brainStyles, patchBrainRoutes } from "../src/brain/build-extension.mjs";
 
 const root = dirname(fileURLToPath(new URL(".", import.meta.url)));
 const vendorDir = join(root, "vendor", "daystart-8f78bb0");
@@ -302,7 +303,7 @@ mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,de
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
 })();var mpCompanionDemo=(function(){${companionDemo}
 return{COMPANION_BASE_KEY,DEFAULT_COMPANION_BASE,COMPANION_POLICY_VERSION,HELP_ROUTE,REFLECT_ROUTE,BREATH_EXERCISE_ID,DEMO_BANNER,LIVE_BANNER,CHECKING_BANNER,THINKING_LABEL,LIVE_BADGE_NOTE,PRACTICE_BADGE_NOTE,CHOICES,INTENT_PANELS,CRISIS_LINES,PRACTICE_CARDS,choiceById,isCrisisChoice,practiceCardById,emptyCompanionState,companionBanner,noteLiveReply,setCompanionLive,applyChoice,revealPractices,activatePracticeCard,openLiveChat,primaryCtaLabel,normalizeCompanionBase,companionBaseLookup,resolveCompanionBaseUrl,saveCompanionBase,companionStatusUrl,companionChatUrl,parseCompanionStatus,probeCompanionStatus,companionChatPayload,parseCompanionReply};
-})();${ytSection}${sidebarShare}${voicePicker}${listenUi}${feelingsUi}${companionBaseUi}${reflectUi}${appointmentUi}${companionDemoUi}${bookRuntime}`;
+})();${ytSection}${sidebarShare}${voicePicker}${listenUi}${feelingsUi}${companionBaseUi}${reflectUi}${appointmentUi}${companionDemoUi}${bookRuntime}${brainRuntime(root)}`;
 }
 
 function patchJs(source) {
@@ -509,6 +510,7 @@ function patchJs(source) {
   );
   next = patchFeelingsVideos(next, feelingsUi);
   next = patchOwnerUx(next);
+  next = patchBrainRoutes(next);
 
   if (!next.includes("mindpal-dstss-themes-paraphrase-v1")) {
     throw new Error("Pack A id missing from bundle");
@@ -1399,7 +1401,7 @@ function patchOwnerUx(source) {
 }
 
 function patchCss(source) {
-  const extra = readFileSync(join(root, "src/patches/styles.css"), "utf8").trim();
+  const extra = readFileSync(join(root, "src/patches/styles.css"), "utf8").trim() + "\n" + brainStyles(root);
   const block = `/*mp-styles-start*/${extra}/*mp-styles-end*/`;
   if (source.includes("/*mp-styles-start*/")) {
     return replaceMarkedOrOnce(

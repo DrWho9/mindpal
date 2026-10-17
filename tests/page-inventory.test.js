@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { patchBrainRoutes } from "../src/brain/build-extension.mjs";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { describe, it } from "node:test";
 import { dirname, join } from "node:path";
@@ -36,7 +37,15 @@ function allowlistFromBuild() {
     "Book",
   ];
   const vendorNames = [...vendorList[1].matchAll(/`([^`]+)`/g)].map((item) => item[1]);
-  return [...new Set([...vendorNames, ...extra])];
+  // Exercise the production adapter against the exact post-owner build seam.
+  const patched = patchBrainRoutes([
+    match[0], '\"route.book\":`Book`', 'Book:`route.book`,',
+    'zi=[{name:`Feelings`,icon:fn},{name:`Appointment Questions`,icon:fn}]',
+    't===`Book`&&(0,A.jsx)(mpYourBooksPage,{})',
+  ].join("\n"));
+  const adapted = [...patched.match(/Ii=\[([^\n]+)/)[1].matchAll(/`([^`]+)`/g)].map(item => item[1]);
+  const prior = [...match[0].matchAll(/`([^`]+)`/g)].map(item => item[1]);
+  return [...new Set([...vendorNames, ...extra, ...adapted.filter(name => !prior.includes(name))])];
 }
 
 describe("page inventory", () => {
