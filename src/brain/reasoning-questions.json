@@ -1,0 +1,510 @@
+{
+  "schemaVersion": "1.0",
+  "title": "Brain",
+  "questions": [
+    {
+      "id": "brain-umat-001",
+      "level": 1,
+      "position": 1,
+      "difficulty": "umat",
+      "skill": "Ordering and necessary conclusions",
+      "prompt": "Five reports, Atlas, Birch, Cedar, Dune and Elm, are presented once each in five consecutive slots.\n• Atlas is presented before Cedar, and Cedar before Elm.\n• Birch is presented immediately before Dune.\n• Dune is not presented last.\n\nWhich statement must be true?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Atlas is first."
+        },
+        {
+          "id": "B",
+          "text": "Birch is second."
+        },
+        {
+          "id": "C",
+          "text": "Cedar is presented before Birch."
+        },
+        {
+          "id": "D",
+          "text": "Elm is last."
+        }
+      ],
+      "correctOptionId": "D",
+      "explanation": "Elm must be last. It has to follow both Atlas and Cedar. If Elm were earlier than fifth, Birch and Dune would have to occupy the remaining places, but their consecutive pair could not end with Dune in the last slot. More explicitly, the only valid orders are Atlas–Birch–Dune–Cedar–Elm, Atlas–Cedar–Birch–Dune–Elm, and Birch–Dune–Atlas–Cedar–Elm. Elm is fifth in all three."
+    },
+    {
+      "id": "brain-umat-002",
+      "level": 1,
+      "position": 2,
+      "difficulty": "umat",
+      "skill": "Evaluating a causal claim",
+      "prompt": "A city library began opening at 8 a.m. instead of 9 a.m. Its visitor count the following month was 20% higher than in the previous month. The following month also included university exam preparation. The manager concludes that opening earlier caused most of the increase.\n\nWhich finding would most weaken that conclusion?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Many visitors said they liked the earlier opening time."
+        },
+        {
+          "id": "B",
+          "text": "Otherwise comparable libraries with the same exam calendar, but unchanged opening hours, had visitor increases of about 21%."
+        },
+        {
+          "id": "C",
+          "text": "The library advertised the earlier opening time throughout the month."
+        },
+        {
+          "id": "D",
+          "text": "Some people who visited between 8 and 9 a.m. had never visited the library before."
+        }
+      ],
+      "correctOptionId": "B",
+      "explanation": "Comparable libraries grew by about the same amount without changing their hours. That provides a plausible explanation for most of the increase, such as the shared exam period, that does not depend on earlier opening. It weakens the manager’s attribution without proving that the extra hour had no effect. The other findings concern approval, awareness or possible additional visitors; none supplies a comparable increase without the change."
+    },
+    {
+      "id": "brain-umat-003",
+      "level": 1,
+      "position": 3,
+      "difficulty": "umat",
+      "skill": "Combining counts without double counting",
+      "prompt": "At a professional conference, 120 delegates could attend an analysis workshop, a writing workshop, both, or neither. Seventy attended analysis, 60 attended writing, and 25 attended neither.\n\nHow many delegates attended exactly one of the two workshops?",
+      "options": [
+        {
+          "id": "A",
+          "text": "60"
+        },
+        {
+          "id": "B",
+          "text": "35"
+        },
+        {
+          "id": "C",
+          "text": "95"
+        },
+        {
+          "id": "D",
+          "text": "105"
+        }
+      ],
+      "correctOptionId": "A",
+      "explanation": "There were 120 − 25 = 95 delegates in at least one workshop. The two attendance totals add to 130, so 130 − 95 = 35 delegates were counted twice because they attended both. Exactly one workshop therefore accounts for 95 − 35 = 60 delegates. Equivalently, 35 attended analysis only and 25 attended writing only."
+    },
+    {
+      "id": "brain-umat-004",
+      "level": 1,
+      "position": 4,
+      "difficulty": "umat",
+      "skill": "Conditional deduction and exceptions",
+      "prompt": "A parcel service follows these rules without exception:\n• Every express parcel is tracked.\n• A parcel is sent by air only if it is tracked and below the weight limit.\n• Every tracked parcel below the weight limit is sent by air unless it has a battery label.\n• No parcel with a battery label is express.\n\nParcel R is express but was not sent by air. What must be true of R?",
+      "options": [
+        {
+          "id": "A",
+          "text": "R is not tracked."
+        },
+        {
+          "id": "B",
+          "text": "R has a battery label."
+        },
+        {
+          "id": "C",
+          "text": "R is not below the weight limit."
+        },
+        {
+          "id": "D",
+          "text": "The rules leave it impossible to tell whether R is below the weight limit."
+        }
+      ],
+      "correctOptionId": "C",
+      "explanation": "Express status establishes two facts: R is tracked, and R has no battery label. If R were also below the weight limit, the third rule would require it to travel by air. It did not, so it cannot be below the limit. “Not below” includes a parcel exactly at the limit. The rules do not establish its exact weight."
+    },
+    {
+      "id": "brain-umat-005",
+      "level": 1,
+      "position": 5,
+      "difficulty": "umat",
+      "skill": "Break-even reasoning",
+      "prompt": "A team must process exactly 100 jobs. Every job is either routine or complex. Method A takes 4 minutes per routine job and 10 minutes per complex job. Method B takes 6 minutes per routine job and 7 minutes per complex job. Jobs are processed one at a time, with no setup time.\n\nWhat is the smallest number of routine jobs that would make Method A take strictly less total time than Method B?",
+      "options": [
+        {
+          "id": "A",
+          "text": "40"
+        },
+        {
+          "id": "B",
+          "text": "60"
+        },
+        {
+          "id": "C",
+          "text": "61"
+        },
+        {
+          "id": "D",
+          "text": "75"
+        }
+      ],
+      "correctOptionId": "C",
+      "explanation": "A saves 2 minutes on each routine job but costs an extra 3 minutes on each complex job. If there are r routine jobs, the time saved is 2r and the extra time is 3(100 − r). A is faster only when 2r > 300 − 3r, or r > 60. At 60 routine jobs the methods tie; with whole jobs, the first strictly faster case is 61."
+    },
+    {
+      "id": "brain-umat-006",
+      "level": 1,
+      "position": 6,
+      "difficulty": "umat",
+      "skill": "Data sufficiency",
+      "prompt": "Three project phases, North, East and West, take distinct positive whole numbers of hours. Together they take 45 hours, and North is the longest.\n\nYou need to determine East’s exact duration. Consider these additional statements:\n1. North takes twice as long as West.\n2. East takes 5 hours longer than West.\n\nWhich assessment is correct?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Statement 1 alone is sufficient, but statement 2 alone is not."
+        },
+        {
+          "id": "B",
+          "text": "Statement 2 alone is sufficient, but statement 1 alone is not."
+        },
+        {
+          "id": "C",
+          "text": "Either statement alone is sufficient."
+        },
+        {
+          "id": "D",
+          "text": "The two statements together are sufficient, but neither alone is."
+        }
+      ],
+      "correctOptionId": "D",
+      "explanation": "Together, the statements give North = 2 × West and East = West + 5. The total is therefore 4 × West + 5 = 45, giving West = 10, East = 15 and North = 20. Statement 1 alone permits, for example, (North, East, West) = (20, 15, 10) or (22, 12, 11). Statement 2 alone permits (20, 15, 10) or (22, 14, 9). Each pair obeys the original conditions but gives a different East duration."
+    },
+    {
+      "id": "brain-umat-007",
+      "level": 1,
+      "position": 7,
+      "difficulty": "umat",
+      "skill": "Reasoning under partial reliability",
+      "prompt": "A test system has two indicators, D and C. Each is either on or off. It displays three messages about their current states:\n1. D is on.\n2. D is off and C is on.\n3. C is on.\n\nExactly two of these three messages are true. What can be concluded?",
+      "options": [
+        {
+          "id": "A",
+          "text": "D is on and C is off."
+        },
+        {
+          "id": "B",
+          "text": "D is off and C is on."
+        },
+        {
+          "id": "C",
+          "text": "Both D and C are on."
+        },
+        {
+          "id": "D",
+          "text": "C is on, but D’s state cannot be determined."
+        }
+      ],
+      "correctOptionId": "D",
+      "explanation": "If C were off, messages 2 and 3 would both be false, so there could not be two true messages. C must therefore be on. Once C is on, message 3 is true and exactly one of messages 1 and 2 is true, whichever state D has. Both (D off, C on) and (D on, C on) satisfy the information, so D cannot be determined."
+    },
+    {
+      "id": "brain-umat-008",
+      "level": 1,
+      "position": 8,
+      "difficulty": "umat",
+      "skill": "Timetable and cost optimisation",
+      "prompt": "You leave a depot at 8:00 a.m. and must reach a venue by 8:50 a.m., inclusive. These are the only routes:\n• Red shuttle: leaves the depot at 8:00, reaches the hub in 15 minutes, fare $4.\n• Blue shuttle: leaves the depot at 8:00, reaches the hub in 25 minutes, fare $2.\n• From the hub, a bus leaves at 8:20 and 8:40. It takes 20 minutes to reach the venue and costs $3.\n• Alternatively, walking from the hub to the venue takes 35 minutes and is free.\n• A direct taxi leaves the depot at 8:00, takes 30 minutes and costs $9.\nTransfers take no additional time.\n\nWhat is the lowest total fare for an on-time arrival?",
+      "options": [
+        {
+          "id": "A",
+          "text": "$4"
+        },
+        {
+          "id": "B",
+          "text": "$5"
+        },
+        {
+          "id": "C",
+          "text": "$7"
+        },
+        {
+          "id": "D",
+          "text": "$9"
+        }
+      ],
+      "correctOptionId": "A",
+      "explanation": "Take the Red shuttle, arriving at the hub at 8:15, then walk 35 minutes to arrive at 8:50. Total fare: $4. Blue plus walking arrives at 9:00, and Blue plus the 8:40 bus also arrives at 9:00. Red plus the 8:20 bus is on time at 8:40 but costs $7. The $9 taxi is on time but dearer."
+    },
+    {
+      "id": "brain-umat-009",
+      "level": 1,
+      "position": 9,
+      "difficulty": "umat",
+      "skill": "Combining rules and identifying change",
+      "prompt": "An organisation changes its expense policy. All decisions follow the relevant rule exactly.\n\nOld policy: Reimburse an expense if it is an emergency, or if it costs no more than $80 and was approved in advance.\nNew policy: Reimburse an expense if it costs no more than $120 and either was approved in advance or is an emergency.\n\nWhich expense would be rejected under the old policy but reimbursed under the new one?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A $70 non-emergency expense that was not approved in advance."
+        },
+        {
+          "id": "B",
+          "text": "A $100 non-emergency expense that was approved in advance."
+        },
+        {
+          "id": "C",
+          "text": "A $130 emergency expense that was approved in advance."
+        },
+        {
+          "id": "D",
+          "text": "A $100 emergency expense that was not approved in advance."
+        }
+      ],
+      "correctOptionId": "B",
+      "explanation": "The $100 pre-approved, non-emergency expense exceeds the old $80 limit, so the old rule rejects it. It is within the new $120 limit and has prior approval, so the new rule accepts it. The $70 unapproved non-emergency expense fails both rules. The $130 emergency expense moves in the opposite direction, from accepted to rejected. The $100 emergency expense is accepted under both."
+    },
+    {
+      "id": "brain-challenge-001",
+      "level": 1,
+      "position": 1,
+      "difficulty": "challenge",
+      "skill": "Constraint interaction and systematic counting",
+      "prompt": "Six briefings, A, B, C, D, E and F, are scheduled once each in six consecutive slots.\n• A is before D, and D is before F.\n• D is also before C.\n• B is immediately before E.\n• C is neither first nor last.\n\nHow many different briefing orders satisfy every rule?",
+      "options": [
+        {
+          "id": "A",
+          "text": "4"
+        },
+        {
+          "id": "B",
+          "text": "6"
+        },
+        {
+          "id": "C",
+          "text": "8"
+        },
+        {
+          "id": "D",
+          "text": "10"
+        }
+      ],
+      "correctOptionId": "B",
+      "explanation": "Treat B–E as one two-briefing block. Among the other four briefings, A must precede D, and D must precede both C and F. Their only two relative orders are A–D–C–F and A–D–F–C. Insert the B–E block in any of five positions in each order: 10 possibilities. In A–D–F–C, four insertions leave C last and are invalid. The fifth insertion puts the block after C and is valid. All five insertions into A–D–C–F are valid. Total: 5 + 1 = 6."
+    },
+    {
+      "id": "brain-challenge-002",
+      "level": 1,
+      "position": 2,
+      "difficulty": "challenge",
+      "skill": "Conditional proportions and overlapping groups",
+      "prompt": "A warehouse checks 1,000 parcels; exactly 100 contain a fragile item and 900 do not. Two automated checks, P and Q, flag parcels for manual handling.\n\nAmong the 100 fragile parcels:\n• P flags 80; Q flags 70; both flag 60.\nAmong the 900 non-fragile parcels:\n• P flags 90; Q flags 180; both flag 30.\n\nA parcel is selected uniformly at random from those flagged by exactly one check. What is the chance it contains a fragile item?",
+      "options": [
+        {
+          "id": "A",
+          "text": "1 in 10"
+        },
+        {
+          "id": "B",
+          "text": "1 in 8"
+        },
+        {
+          "id": "C",
+          "text": "3 in 11"
+        },
+        {
+          "id": "D",
+          "text": "5 in 14"
+        }
+      ],
+      "correctOptionId": "B",
+      "explanation": "For fragile parcels, P-only contributes 80 − 60 = 20 and Q-only contributes 70 − 60 = 10, giving 30. For non-fragile parcels, the corresponding counts are 90 − 30 = 60 and 180 − 30 = 150, giving 210. The selected group therefore contains 30 fragile parcels out of 30 + 210 = 240. The chance is 30/240 = 1/8. Parcels flagged by both checks are excluded from both groups."
+    },
+    {
+      "id": "brain-challenge-003",
+      "level": 1,
+      "position": 3,
+      "difficulty": "challenge",
+      "skill": "Evaluating aggregate and subgroup evidence",
+      "prompt": "Two couriers report the following results:\n\nCourier A:\n• Local: 9 on-time deliveries out of 10.\n• Remote: 60 on-time deliveries out of 100.\nCourier B:\n• Local: 80 on-time deliveries out of 100.\n• Remote: 5 on-time deliveries out of 10.\n\nAn overall on-time rate uses all of a courier’s deliveries. A tender also calculates an equal-weight score: the average of that courier’s local on-time percentage and remote on-time percentage.\n\nWhich courier has the higher overall rate, and which has the higher equal-weight score?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A has the higher overall rate; A has the higher equal-weight score."
+        },
+        {
+          "id": "B",
+          "text": "A has the higher overall rate; B has the higher equal-weight score."
+        },
+        {
+          "id": "C",
+          "text": "B has the higher overall rate; A has the higher equal-weight score."
+        },
+        {
+          "id": "D",
+          "text": "B has the higher overall rate; B has the higher equal-weight score."
+        }
+      ],
+      "correctOptionId": "C",
+      "explanation": "Overall, A has 69 on-time deliveries out of 110, while B has 85 out of 110, so B has the higher overall rate. A’s local and remote rates are 90% and 60%, averaging 75%. B’s are 80% and 50%, averaging 65%, so A has the higher equal-weight score. A is better within each category, but it handled many more remote deliveries, the harder category for both couriers. The differing mixes explain why the overall ranking reverses."
+    },
+    {
+      "id": "brain-challenge-004",
+      "level": 1,
+      "position": 4,
+      "difficulty": "challenge",
+      "skill": "Lower bounds and feasible constructions",
+      "prompt": "Eighty people register for a professional development day. Of them, 50 attend Planning, 45 attend Budgeting and 35 attend Risk. Exactly 20 attend none of these three sessions. A person may attend any combination of sessions.\n\nWhat is the smallest possible number who attend all three?",
+      "options": [
+        {
+          "id": "A",
+          "text": "0"
+        },
+        {
+          "id": "B",
+          "text": "5"
+        },
+        {
+          "id": "C",
+          "text": "10"
+        },
+        {
+          "id": "D",
+          "text": "20"
+        }
+      ],
+      "correctOptionId": "C",
+      "explanation": "Sixty people attend at least one session, while the session attendance counts total 50 + 45 + 35 = 130. If none of those 60 people attended all three, each could contribute at most two attendances, giving at most 120. Each all-three attendee can add only one attendance above that limit, so at least 10 are needed. This bound is attainable: 25 attend Planning and Budgeting only, 15 Planning and Risk only, 10 Budgeting and Risk only, and 10 all three. Those groups reproduce every stated total."
+    },
+    {
+      "id": "brain-challenge-005",
+      "level": 1,
+      "position": 5,
+      "difficulty": "challenge",
+      "skill": "Distinguishing competing hypotheses",
+      "prompt": "A coating may fade when exposed to ultraviolet light (UV), heat, both, or neither. Exactly one of these four deterministic rules is correct:\n1. It fades if and only if UV is present.\n2. It fades if and only if heat is present.\n3. It fades if and only if both UV and heat are present.\n4. It fades if and only if at least one of UV and heat is present.\n\nExisting tests show fading when both are present and no fading when neither is present. Tests have no measurement error, and all other conditions are held constant.\n\nWhich pair of additional conditions would distinguish all four rules, whatever the results?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Both UV and heat; neither UV nor heat."
+        },
+        {
+          "id": "B",
+          "text": "UV without heat; both UV and heat."
+        },
+        {
+          "id": "C",
+          "text": "Heat without UV; neither UV nor heat."
+        },
+        {
+          "id": "D",
+          "text": "UV without heat; heat without UV."
+        }
+      ],
+      "correctOptionId": "D",
+      "explanation": "Test UV alone and heat alone. Their two results are different for every rule: rule 1 predicts fade/no fade; rule 2 predicts no fade/fade; rule 3 predicts no fade/no fade; rule 4 predicts fade/fade. Either single-factor condition alone leaves two rules with the same prediction. Repeating both-present or neither-present conditions adds no distinction because all four rules already predict the same result for those conditions."
+    },
+    {
+      "id": "brain-challenge-006",
+      "level": 1,
+      "position": 6,
+      "difficulty": "challenge",
+      "skill": "Constrained optimisation",
+      "prompt": "An exhibition can include any subset of six modules. Each module can be selected at most once. Costs and benefit scores add. The budget is 11 units.\n\nModule A: cost 5, benefit 12; may be selected only if D is also selected.\nModule B: cost 4, benefit 9; cannot be selected with C.\nModule C: cost 4, benefit 10; cannot be selected with B.\nModule D: cost 3, benefit 5.\nModule E: cost 2, benefit 6; may be selected only if B or C is also selected.\nModule F: cost 3, benefit 7.\n\nWhat is the highest achievable total benefit?",
+      "options": [
+        {
+          "id": "A",
+          "text": "22"
+        },
+        {
+          "id": "B",
+          "text": "23"
+        },
+        {
+          "id": "C",
+          "text": "24"
+        },
+        {
+          "id": "D",
+          "text": "28"
+        }
+      ],
+      "correctOptionId": "C",
+      "explanation": "A, D and F cost 5 + 3 + 3 = 11 and give benefit 12 + 5 + 7 = 24. To show this is best, split on A. If A is selected, D is required, leaving 3 budget units. B and C are unaffordable, so E is ineligible; F is the best addition. Without A, B and C cannot both be chosen. Choosing C with E and F gives 23; adding D as well would cost 12. Among any two of D, E and F, E and F give the greatest benefit. Choosing B with E and F gives 22. With neither B nor C, E is ineligible and only D and F remain. Thus no feasible selection exceeds 24."
+    },
+    {
+      "id": "brain-challenge-007",
+      "level": 1,
+      "position": 7,
+      "difficulty": "challenge",
+      "skill": "Necessary conclusions from interacting constraints",
+      "prompt": "A review panel must contain exactly four people chosen from A, B, C, D, E, F and G. These rules all apply:\n• Exactly one of A and B must be selected.\n• If C is selected, D must also be selected.\n• D and E cannot both be selected.\n• F may be selected only if A is selected.\n• Exactly one of B, C and E must be selected.\n\nWhich person must be on every valid panel?",
+      "options": [
+        {
+          "id": "A",
+          "text": "B"
+        },
+        {
+          "id": "B",
+          "text": "A"
+        },
+        {
+          "id": "C",
+          "text": "D"
+        },
+        {
+          "id": "D",
+          "text": "G"
+        }
+      ],
+      "correctOptionId": "B",
+      "explanation": "Suppose B were selected. A would then be excluded by the first rule. C and E would be excluded because exactly one of B, C and E is allowed, and F would be excluded because it requires A. That leaves only B, D and G, too few for a four-person panel. B is therefore impossible, so A must be selected. The valid panels are A–C–D–F, A–C–D–G and A–E–F–G. D is absent from the last, and G from the first, so neither is necessary."
+    },
+    {
+      "id": "brain-challenge-008",
+      "level": 1,
+      "position": 8,
+      "difficulty": "challenge",
+      "skill": "Eliminating hypotheses with one false constraint",
+      "prompt": "Exactly two of six backup archives, A, B, C, D, E and F, have a damaged index. An audit produces five reports, each counting damaged indexes within a named group:\n\n1. Among A, B and C, exactly two have damaged indexes.\n2. Among C, D and E, none has a damaged index.\n3. Among B, E and F, exactly two have damaged indexes.\n4. Among A, D and F, exactly one has a damaged index.\n5. Among A, C and E, exactly one has a damaged index.\n\nExactly one of these five reports is wrong; the other four are correct. Which two archives have damaged indexes?",
+      "options": [
+        {
+          "id": "A",
+          "text": "A and B"
+        },
+        {
+          "id": "B",
+          "text": "B and F"
+        },
+        {
+          "id": "C",
+          "text": "B and E"
+        },
+        {
+          "id": "D",
+          "text": "A and C"
+        }
+      ],
+      "correctOptionId": "A",
+      "explanation": "Reports 1 and 3 cannot both be true: with only two damaged indexes in total, both damaged archives would have to belong to both groups, but their only shared archive is B. One of those reports is therefore the sole wrong report, so reports 2, 4 and 5 are correct. Report 2 excludes C, D and E. Report 5 then forces A to be damaged. Report 4, with A damaged and D clear, excludes F. The second damaged archive must be B. This makes report 3 the only wrong report. B–F contradicts reports 1 and 5; B–E and A–C each contradict three reports."
+    },
+    {
+      "id": "brain-challenge-009",
+      "level": 1,
+      "position": 9,
+      "difficulty": "challenge",
+      "skill": "Resource-constrained scheduling",
+      "prompt": "Two specialists must complete six tasks. Either specialist can do any task, but each can work on only one task at a time. A task needs one specialist, cannot be interrupted, and cannot be split between them. Work can start at hour 0; there is no travel or setup time.\n\nA: 4 hours; no prerequisite.\nB: 3 hours; no prerequisite.\nC: 2 hours; no prerequisite.\nD: 3 hours; starts only after A and B are complete.\nE: 4 hours; starts only after B and C are complete.\nF: 2 hours; starts only after D and E are complete.\n\nWhat is the earliest time at which all tasks can be complete?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Hour 11"
+        },
+        {
+          "id": "B",
+          "text": "Hour 10"
+        },
+        {
+          "id": "C",
+          "text": "Hour 12"
+        },
+        {
+          "id": "D",
+          "text": "Hour 9"
+        }
+      ],
+      "correctOptionId": "A",
+      "explanation": "Hour 11 is achievable: specialist 1 does A from 0–4, D from 4–7, then F from 9–11; specialist 2 does B from 0–3, C from 3–5, then E from 5–9. Any finish before hour 11 would require E to start before 5 and D before 6, so B and C must be complete before 5 and A before 6. A must therefore start before 2 and finish no earlier than 4. Neither B nor C fits on A’s specialist before A starts, or after A finishes but before hour 5. The other specialist would have to complete both B and C before hour 5, which is impossible because they require 5 hours. Thus hour 11 is optimal."
+    }
+  ]
+}

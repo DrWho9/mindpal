@@ -1,9 +1,10 @@
 import {
-  validateBank, createProgressStore, PROVISIONAL_STORAGE_KEY, STORAGE_KEY,
+  createProgressStore, PROVISIONAL_STORAGE_KEY, STORAGE_KEY,
   getProgress, createQuizStore, QUIZ_STORAGE_KEY, PROVISIONAL_QUIZ_STORAGE_KEY,
   startQuizSession, getQuizView, chooseQuizAnswer, submitQuizAnswer,
   nextQuizQuestion, previousQuizQuestion, submitQuizBatch, recordQuizProgress,
 } from "./core.js";
+import { BRAIN_DIFFICULTIES, createBrainBank, difficultyBank, sessionDifficulty } from "./difficulty.js";
 
 let instanceId = 0;
 
@@ -11,10 +12,11 @@ let instanceId = 0;
  * A local-only quiz. Lifetime practice and the active round have separate stores.
  * Questions are rendered only through the core's reveal-safe presentation view.
  * @param {HTMLElement} container
- * @param {{bank:any,provisional?:boolean,storage?:any,onExit?:()=>void}} options
+ * @param {{bank:any,reasoningBank?:any,provisional?:boolean,storage?:any,onExit?:()=>void}} options
  */
-export function mountBrain(container, { bank: input, provisional = false, storage, onExit }) {
-  const bank = validateBank(input, { provisional });
+export function mountBrain(container, { bank: input, reasoningBank, provisional = false, storage, onExit }) {
+  const bank = createBrainBank(input, reasoningBank, { provisional });
+  const difficulties = BRAIN_DIFFICULTIES.filter(choice => bank.questions.some(question => (question.difficulty || "foundation") === choice.value));
   const doc = container.ownerDocument;
   const prefix = `mp-brain-${++instanceId}`;
   const historyStore = createProgressStore({ bank, storage, key: provisional ? PROVISIONAL_STORAGE_KEY : STORAGE_KEY });
@@ -25,9 +27,11 @@ export function mountBrain(container, { bank: input, provisional = false, storag
   // Pending batches contribute nothing; existing first answers remain intact.
   const restoredProgress = recordQuizProgress(history, session, bank);
   if (restoredProgress !== history) history = historyStore.save(restoredProgress);
+  const initialDifficulty = sessionDifficulty(session, bank) || (reasoningBank ? "umat" : "foundation");
   let settings = {
+    difficulty: initialDifficulty,
     mode: session?.mode || "immediate",
-    count: String(session?.questionIds.length || Math.min(10, bank.questions.length)),
+    count: String(session?.questionIds.length || Math.min(10, difficultyBank(bank, initialDifficulty).questions.length)),
   };
   let destroyed = false;
   let generation = 0;
@@ -137,7 +141,7 @@ export function mountBrain(container, { bank: input, provisional = false, storag
   }
 
   function newRound() {
-    if (session) settings = { mode: session.mode, count: String(session.questionIds.length) };
+    if (session) settings = { difficulty: sessionDifficulty(session, bank), mode: session.mode, count: String(session.questionIds.length) };
     if (session?.status === "active") {
       confirmingDiscard = true;
       render("confirm");
@@ -186,7 +190,7 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     else renderQuestion(view, target);
 
     const footer = element("footer", "", "mp-brain-footer");
-    footer.append(element("p", "Educational practice. Stages follow an editorial difficulty order; this is not a calibrated assessment."));
+    footer.append(element("p", "Educational practice. Difficulty labels are editorial, not a calibrated assessment. UMAT-level questions are original UMAT-style practice, not official exam questions or an exam-score prediction."));
     screen.append(footer);
   }
 
@@ -195,9 +199,46 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     const title = element("h2", "Make this round yours");
     title.id = `${prefix}-setup-title`;
     card.setAttribute("aria-labelledby", title.id);
-    card.append(title, element("p", "Choose when you’d like the explanations, then pick a comfortable number of questions.", "mp-brain-card-intro"));
+    card.append(title, element("p", "Choose a difficulty, when you’d like the explanations, and how many questions to practise.", "mp-brain-card-intro"));
     const form = element("form");
     form.noValidate = true;
+    let selectedBank = difficultyBank(bank, settings.difficulty);
+    const difficultyField = element("fieldset");
+    difficultyField.append(element("legend", "Choose your difficulty"));
+    const difficultyGrid = element("div", "", "mp-brain-modes mp-brain-difficulties");
+    for (const choice of difficulties) {
+      const label = element("label", "", "mp-brain-mode");
+      const radio = element("input");
+      radio.type = "radio";
+      radio.name = `${prefix}-difficulty`;
+      radio.value = choice.value;
+      radio.id = `${prefix}-difficulty-${choice.value}`;
+      radio.checked = settings.difficulty === choice.value;
+      label.htmlFor = radio.id;
+      const copy = element("span", "", "mp-brain-mode-copy");
+      copy.append(element("span", choice.title, "mp-brain-mode-title"), element("span", choice.description, "mp-brain-mode-description"));
+      label.append(radio, copy);
+      listen(radio, "change", () => {
+        if (!radio.checked) return;
+        settings.difficulty = choice.value;
+        selectedBank = difficultyBank(bank, choice.value);
+        const limit = selectedBank.questions.length;
+        const count = Number(settings.count);
+        if (!/^\d+$/.test(settings.count) || !Number.isSafeInteger(count) || count < 1 || count > limit) settings.count = String(Math.min(10, limit));
+        countInput.value = settings.count;
+        countInput.max = String(limit);
+        for (const preset of presetInputs) {
+          preset.disabled = preset.value !== "custom" && Number(preset.value) > limit;
+          preset.checked = preset.value === "custom" ? ![5, 10, 20].includes(Number(settings.count)) : preset.value === settings.count && !preset.disabled;
+        }
+        help.textContent = countHelp();
+        clearSetupError();
+        announce(`${choice.title}: ${limit} questions available. This round has ${settings.count} questions.`);
+      });
+      difficultyGrid.append(label);
+    }
+    difficultyField.append(difficultyGrid);
+    form.append(difficultyField);
     const modes = element("fieldset");
     modes.append(element("legend", "When would you like the answers?"));
     const modeGrid = element("div", "", "mp-brain-modes");
@@ -226,12 +267,12 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     counts.append(element("legend", "How many questions?"));
     const presets = element("div", "", "mp-brain-presets");
     const presetInputs = [];
-    const isPreset = [5, 10, 20].some(value => String(value) === settings.count && value <= bank.questions.length);
+    const isPreset = [5, 10, 20].some(value => String(value) === settings.count && value <= selectedBank.questions.length);
     const countInput = element("input", "", "mp-brain-count-input");
     countInput.type = "number";
     countInput.inputMode = "numeric";
     countInput.min = "1";
-    countInput.max = String(bank.questions.length);
+    countInput.max = String(selectedBank.questions.length);
     countInput.step = "1";
     countInput.required = true;
     countInput.value = settings.count;
@@ -244,7 +285,7 @@ export function mountBrain(container, { bank: input, provisional = false, storag
       radio.name = `${prefix}-count-preset`;
       radio.value = String(value);
       radio.id = `${prefix}-preset-${value}`;
-      radio.disabled = typeof value === "number" && value > bank.questions.length;
+      radio.disabled = typeof value === "number" && value > selectedBank.questions.length;
       radio.checked = value === "custom" ? !isPreset : String(value) === settings.count && !radio.disabled;
       label.htmlFor = radio.id;
       label.append(radio, element("span", value === "custom" ? "Custom" : String(value)));
@@ -262,7 +303,11 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     const countLabel = element("label", "Questions in this round", "mp-brain-count-label");
     countLabel.htmlFor = countInput.id;
     countRow.append(countLabel, countInput);
-    const help = element("p", `Choose a whole number from 1 to ${bank.questions.length}. Every round follows the bank’s ordered stages.`, "mp-brain-count-help");
+    function countHelp() {
+      const label = difficulties.find(choice => choice.value === settings.difficulty).title;
+      return `${label}: ${selectedBank.questions.length} questions available. Choose a whole number from 1 to ${selectedBank.questions.length}. Every round uses only this difficulty.`;
+    }
+    const help = element("p", countHelp(), "mp-brain-count-help");
     help.id = `${prefix}-count-help`;
     counts.append(presets, countRow, help);
     form.append(counts);
@@ -288,8 +333,8 @@ export function mountBrain(container, { bank: input, provisional = false, storag
       event.preventDefault();
       const value = countInput.value.trim();
       const count = Number(value);
-      if (!/^\d+$/.test(value) || !Number.isSafeInteger(count) || count < 1 || count > bank.questions.length) {
-        const message = `Enter a whole number from 1 to ${bank.questions.length} before starting.`;
+      if (!/^\d+$/.test(value) || !Number.isSafeInteger(count) || count < 1 || count > selectedBank.questions.length) {
+        const message = `Enter a whole number from 1 to ${selectedBank.questions.length} before starting.`;
         error.textContent = message;
         error.hidden = false;
         countInput.setAttribute("aria-invalid", "true");
@@ -298,10 +343,10 @@ export function mountBrain(container, { bank: input, provisional = false, storag
         return;
       }
       settings.count = value;
-      session = quizStore.start(startQuizSession(bank, {
+      session = quizStore.start(startQuizSession(selectedBank, {
         mode: settings.mode,
         count,
-        startId: getProgress(history, bank).nextId || bank.questions[0].id,
+        startId: getProgress(history, selectedBank).nextId || selectedBank.questions[0].id,
       }));
       render("prompt");
     });
@@ -317,7 +362,7 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     card.setAttribute("aria-labelledby", title.id);
     card.append(title,
       element("p", "Your current round and any unsubmitted choices will be cleared. Answers already recorded in lifetime practice will stay saved."),
-      element("p", "You can choose a different feedback mode and question count for the new round.", "mp-brain-note"));
+      element("p", "You can choose a different difficulty, feedback mode and question count for the new round.", "mp-brain-note"));
     const actions = element("div", "", "mp-brain-actions");
     actions.append(button("Keep this round", () => {
       confirmingDiscard = false;
@@ -338,7 +383,8 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     const last = view.cursor === view.count - 1;
     const card = element("article", "", "mp-brain-card");
     const meta = element("div", "", "mp-brain-session-meta");
-    meta.append(element("span", batch ? "Answers after batch" : "Answers after each question", "mp-brain-chip"),
+    meta.append(element("span", difficulties.find(choice => choice.value === sessionDifficulty(session, bank)).title, "mp-brain-chip"),
+      element("span", batch ? "Answers after batch" : "Answers after each question", "mp-brain-chip"),
       element("span", `Question ${view.cursor + 1} of ${view.count}`, "mp-brain-chip mp-brain-chip-neutral"));
     const roundProgress = progressBar(
       batch ? `${view.answeredCount} of ${view.count} choices saved` : `${view.revealedCount} of ${view.count} answers submitted`,
@@ -507,6 +553,7 @@ export function mountBrain(container, { bank: input, provisional = false, storag
     card.setAttribute("aria-labelledby", title.id);
     titleRow.append(mark, title);
     card.append(titleRow, element("p", `You’ve worked through ${view.count} ${view.count === 1 ? "question" : "questions"}. Here’s every answer and explanation, in the same order.`, "mp-brain-card-intro"));
+    card.append(element("p", difficulties.find(choice => choice.value === sessionDifficulty(session, bank)).title, "mp-brain-chip"));
     const correct = view.results.filter(question => question.feedback.isCorrect).length;
     const summary = element("div", "", "mp-brain-result-summary");
     summary.append(element("span", `${correct} / ${view.count}`, "mp-brain-result-total"), element("span", "correct in this round"));

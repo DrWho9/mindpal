@@ -11,7 +11,7 @@ const snapshot = fileURLToPath(new URL("../../", import.meta.url));
 function withSyntheticSource(run) {
   const root = mkdtempSync(join(tmpdir(), "brain-extension-"));
   mkdirSync(join(root, "src/brain"), { recursive: true });
-  for (const file of ["core.js", "index.js", "react-bridge.inject.js", "styles.css"]) {
+  for (const file of ["core.js", "difficulty.js", "index.js", "react-bridge.inject.js", "styles.css"]) {
     copyFileSync(join(snapshot, "src/brain", file), join(root, "src/brain", file));
   }
   try { run(root); } finally { rmSync(root, { recursive: true, force: true }); }
@@ -34,11 +34,17 @@ test("proposed runtime rejects a fixture and packages a complete synthetic bank 
     assert.throws(() => brainRuntime(root), /complete bank/);
     bank.questions = Array.from({ length: 320 }, (_, i) => ({ ...question, id: `brain-${String(i + 1).padStart(3, "0")}`, level: Math.floor(i / 20) + 1, position: i % 20 + 1 }));
     writeFileSync(path, JSON.stringify(bank));
+    assert.throws(() => brainRuntime(root), /ENOENT/);
+    const reasoning = { schemaVersion: "1.0", title: "Brain", questions: ["umat", "challenge"].flatMap(difficulty => Array.from({ length: 9 }, (_, i) => ({
+      ...question, id: `brain-${difficulty}-${String(i + 1).padStart(3, "0")}`, difficulty, level: 1, position: i + 1,
+    }))) };
+    writeFileSync(join(root, "src/brain/reasoning-questions.json"), JSON.stringify(reasoning));
     const runtime = brainRuntime(root);
     const script = new vm.Script(runtime);
     const context = vm.createContext({});
     script.runInContext(context);
     assert.equal(context.mpBrainBank.questions.length, 320);
+    assert.equal(context.mpBrainReasoningBank.questions.length, 18);
     assert.equal(typeof context.mpBrain.mountBrain, "function");
     assert.equal(typeof context.mpBrainPage, "function");
     assert.equal(runtime.includes("developmentFixture"), false);
@@ -66,4 +72,14 @@ test("route adapter adds Brain only at known pinned shell seams and rejects drif
   const build = readFileSync(join(snapshot, "scripts/build.mjs"), "utf8");
   assert.ok(build.includes("  next = patchOwnerUx(next);"));
   assert.ok(build.includes("t===`Book`&&(0,A.jsx)(mpYourBooksPage,{})"));
+});
+
+
+test("production runtime contains both accepted reasoning pools and remains valid JavaScript", () => {
+  const context = vm.createContext({});
+  new vm.Script(brainRuntime(snapshot)).runInContext(context);
+  assert.equal(context.mpBrainBank.questions.length, 320);
+  assert.equal(context.mpBrainReasoningBank.questions.filter(q => q.difficulty === "umat").length, 9);
+  assert.equal(context.mpBrainReasoningBank.questions.filter(q => q.difficulty === "challenge").length, 9);
+  assert.equal(typeof context.mpBrain.mountBrain, "function");
 });

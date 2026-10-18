@@ -4,7 +4,7 @@ function mpBrainPage({onExit}) {
   (0, _.useEffect)(() => {
     if (!ref.current) return;
     try {
-      const mounted = mpBrain.mountBrain(ref.current, { bank: mpBrainBank, onExit });
+      const mounted = mpBrain.mountBrain(ref.current, { bank: mpBrainBank, reasoningBank: mpBrainReasoningBank, onExit });
       return () => mounted.destroy();
     } catch {
       const message = document.createElement("p");

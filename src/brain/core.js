@@ -1,5 +1,5 @@
 /** @typedef {{id:string,text:string}} BrainOption */
-/** @typedef {{id:string,level:number,position:number,skill:string,prompt:string,options:BrainOption[],correctOptionId:string,explanation:string}} BrainQuestion */
+/** @typedef {{id:string,level:number,position:number,difficulty?:'umat'|'challenge',skill:string,prompt:string,options:BrainOption[],correctOptionId:string,explanation:string}} BrainQuestion */
 /** @typedef {{schemaVersion:string,title:string,questions:BrainQuestion[]}} BrainBank */
 /** @typedef {{optionId:string,questionKey:string}} BrainAnswer */
 /** @typedef {{version:1,currentId:string,view:'question'|'review'|'complete',answers:Record<string,BrainAnswer>,drafts:Record<string,BrainAnswer>}} BrainState */
@@ -18,18 +18,22 @@ function text(value, label, max) {
 }
 
 /** Fail closed before changing the DOM or reading/writing progress. */
-export function validateBank(input, { provisional = false } = {}) {
+export function validateBank(input, { provisional = false, difficulty = "foundation" } = {}) {
+  if (!["foundation", "umat", "challenge"].includes(difficulty)) throw new Error("Brain content: unknown difficulty.");
   if (!input || input.schemaVersion !== "1.0" || input.title !== "Brain" || !Array.isArray(input.questions)) {
     throw new Error("Brain content: expected schemaVersion 1.0, title Brain, and questions.");
   }
   const count = input.questions.length;
-  if (count < 1 || count > FULL_BANK_SIZE || (!provisional && count !== FULL_BANK_SIZE)) {
+  const reasoning = difficulty !== "foundation";
+  if (reasoning && count !== 9) throw new Error(`Brain content: ${difficulty} bank must contain 9 questions.`);
+  if (!reasoning && (count < 1 || count > FULL_BANK_SIZE || (!provisional && count !== FULL_BANK_SIZE))) {
     throw new Error(provisional ? "Brain content: preview needs 1–320 questions." : "Brain content: the complete bank must contain 320 questions.");
   }
   const seen = new Set();
   const questions = input.questions.map((item, index) => {
-    const expectedId = `brain-${String(index + 1).padStart(3, "0")}`;
-    if (!item || seen.has(item.id) || item.id !== expectedId || item.level !== Math.floor(index / STAGE_SIZE) + 1 || item.position !== index % STAGE_SIZE + 1) {
+    const expectedId = `brain-${reasoning ? `${difficulty}-` : ""}${String(index + 1).padStart(3, "0")}`;
+    if (!item || seen.has(item.id) || item.id !== expectedId || item.level !== Math.floor(index / STAGE_SIZE) + 1 || item.position !== index % STAGE_SIZE + 1 ||
+        (reasoning && item.difficulty !== difficulty)) {
       throw new Error(`Brain content: invalid or duplicate ID, level, or position at ${expectedId}.`);
     }
     seen.add(item.id);
@@ -43,6 +47,7 @@ export function validateBank(input, { provisional = false } = {}) {
     }
     return Object.freeze({
       id: expectedId, level: item.level, position: item.position,
+      ...(reasoning ? { difficulty } : {}),
       skill: text(item.skill, `${expectedId} skill`, 100),
       prompt: text(item.prompt, `${expectedId} prompt`, 2000),
       options: Object.freeze(options), correctOptionId: item.correctOptionId,
@@ -189,6 +194,7 @@ export function startQuizSession(bank, { mode = "immediate", count = 10, startId
   const start = startId === undefined ? 0 : bank.questions.findIndex(question => question.id === startId);
   if (start < 0) throw new Error("The starting question is not in this bank.");
   const questions = Array.from({ length: count }, (_, offset) => bank.questions[(start + offset) % bank.questions.length]);
+  if (new Set(questions.map(question => question.difficulty || "foundation")).size !== 1) throw new Error("A round must use one difficulty.");
   const id = sessionId ?? globalThis.crypto?.randomUUID?.() ?? `round-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   if (typeof id !== "string" || !id || id.length > 128) throw new Error("Invalid quiz session identity.");
   return {
@@ -214,6 +220,7 @@ export function normalizeQuizSession(raw, bank) {
       !Array.isArray(raw.revealed) || new Set(raw.revealed).size !== raw.revealed.length) return null;
   const byId = new Map(bank.questions.map(question => [question.id, question]));
   if (raw.questionIds.some(id => typeof id !== "string" || !byId.has(id)) ||
+      new Set(raw.questionIds.map(id => byId.get(id)?.difficulty || "foundation")).size !== 1 ||
       Object.keys(raw.choices).some(id => !raw.questionIds.includes(id) || !OPTION_IDS.includes(raw.choices[id])) ||
       raw.revealed.some(id => !raw.questionIds.includes(id) || !OPTION_IDS.includes(raw.choices[id])) ||
       (raw.mode === "batch" && raw.revealed.length)) return null;

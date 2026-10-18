@@ -1474,7 +1474,10 @@ function clearOldHashedAssets(keep) {
   }
 }
 
-execFileSync("node", ["--test", ...readdirSync(join(root, "tests")).filter((name) => name.endsWith(".test.js")).map((name) => join("tests", name))], {
+execFileSync("node", ["--test",
+  ...readdirSync(join(root, "tests")).filter((name) => name.endsWith(".test.js")).map((name) => join("tests", name)),
+  ...readdirSync(join(root, "tests/brain")).filter((name) => name.endsWith(".test.mjs")).map((name) => join("tests/brain", name)),
+], {
   cwd: root,
   stdio: "inherit",
 });

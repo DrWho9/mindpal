@@ -1,7 +1,8 @@
-/** PROPOSED integration adapter. Not called by the existing MindPal build. */
+/** Integration adapter for the pinned MindPal shell. */
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { validateBank } from "./core.js";
+import { createBrainBank } from "./difficulty.js";
 
 function stripModule(source) {
   return source
@@ -12,10 +13,13 @@ function stripModule(source) {
 export function brainRuntime(root) {
   // No fallback to dev-fixture.js: a missing or incomplete bank must stop integration.
   const bank = validateBank(JSON.parse(readFileSync(join(root, "src/brain/questions.json"), "utf8")));
+  const reasoningBank = JSON.parse(readFileSync(join(root, "src/brain/reasoning-questions.json"), "utf8"));
+  createBrainBank(bank, reasoningBank); // A missing or incomplete difficulty must stop the build.
   const core = stripModule(readFileSync(join(root, "src/brain/core.js"), "utf8"));
+  const difficulty = stripModule(readFileSync(join(root, "src/brain/difficulty.js"), "utf8"));
   const page = stripModule(readFileSync(join(root, "src/brain/index.js"), "utf8"));
   const bridge = readFileSync(join(root, "src/brain/react-bridge.inject.js"), "utf8");
-  return `var mpBrainBank=${JSON.stringify(bank)};var mpBrain=(function(){\n${core}\n${page}\nreturn {mountBrain};\n})();\n${bridge}`;
+  return `var mpBrainBank=${JSON.stringify(bank)};var mpBrainReasoningBank=${JSON.stringify(reasoningBank)};var mpBrain=(function(){\n${core}\n${difficulty}\n${page}\nreturn {mountBrain};\n})();\n${bridge}`;
 }
 
 export function brainStyles(root) {
