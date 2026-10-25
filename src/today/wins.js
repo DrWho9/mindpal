@@ -5,9 +5,13 @@ export const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
 export const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
 /**
  * Prefix for a copy of an unreadable v2 payload.
- * Each copy adds a timestamp suffix, so an older backup is left as it is.
+ * A save reuses a copy that already holds the same text.
+ * Timestamped copies stop at MAX_CORRUPT_BACKUPS.
+ * A plain load does not write a copy.
  */
 export const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
+/** Timestamped copies only. The unsuffixed backup key is left alone. */
+export const MAX_CORRUPT_BACKUPS = 3;
 export const WINS_STORE_VERSION = 2;
 export const WIN_SAVED_LABEL = "Saved on this device for today.";
 export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
@@ -141,12 +145,45 @@ function migratedV1(storage) {
   return migrateV1WinsJson(v1Text);
 }
 
+function backupKeys(storage) {
+  const keys = [];
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  const consider = (key) =>
+    typeof key === "string" && (key === WINS_STORAGE_KEY_V2_BACKUP || key.startsWith(prefix));
+  if (typeof storage.length === "number" && typeof storage.key === "function") {
+    for (let i = 0; i < storage.length; i += 1) {
+      const key = storage.key(i);
+      if (consider(key)) keys.push(key);
+    }
+    return keys;
+  }
+  const bag = storage.store;
+  if (bag && typeof bag.keys === "function") {
+    for (const key of bag.keys()) if (consider(key)) keys.push(key);
+    return keys;
+  }
+  if (bag && typeof bag === "object") {
+    for (const key of Object.keys(bag)) if (consider(key)) keys.push(key);
+  }
+  return keys;
+}
+
 function quarantineCorruptWins(storage, v2Text, now = new Date()) {
+  let keys;
+  try {
+    keys = backupKeys(storage);
+  } catch {
+    return null;
+  }
+  for (const key of keys) {
+    if (readKey(storage, key) === v2Text) return key;
+  }
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  const stamped = keys.filter((key) => key.startsWith(prefix));
+  if (stamped.length >= MAX_CORRUPT_BACKUPS) return null;
   const stamp = now.getTime();
   for (let n = 0; n < 50; n += 1) {
-    const key = n === 0
-      ? `${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}`
-      : `${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}.${n}`;
+    const key = n === 0 ? `${prefix}${stamp}` : `${prefix}${stamp}.${n}`;
     let existing;
     try {
       existing = storage.getItem(key);
@@ -165,28 +202,13 @@ function quarantineCorruptWins(storage, v2Text, now = new Date()) {
   return null;
 }
 
-function replaceCorruptV2(storage, v2Text, now) {
-  const backupKey = quarantineCorruptWins(storage, v2Text, now);
-  if (!backupKey || readKey(storage, backupKey) !== v2Text) return false;
-  const base = migratedV1(storage) || emptyWinsStore();
-  try {
-    storage.setItem(WINS_STORAGE_KEY, JSON.stringify(base));
-  } catch {
-    return false;
-  }
-  return readWinsStoreText(readKey(storage, WINS_STORAGE_KEY)) !== null
-    && readKey(storage, backupKey) === v2Text;
-}
-
 export function loadWinsStore(storage = globalThis.localStorage, now = new Date()) {
+  void now;
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
   if (typeof v2Text === "string" && v2Text.length > 0) {
     const parsed = readWinsStoreText(v2Text);
     if (parsed) return parsed;
-    if (replaceCorruptV2(storage, v2Text, now)) {
-      return readWinsStoreText(readKey(storage, WINS_STORAGE_KEY)) || emptyWinsStore();
-    }
     return migratedV1(storage) || emptyWinsStore();
   }
   const migrated = migratedV1(storage);
@@ -213,7 +235,8 @@ function persistWins(store, storage, now = new Date()) {
   if (!storage) return { store: next, saved: true };
   const current = readKey(storage, WINS_STORAGE_KEY);
   if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
-    if (!replaceCorruptV2(storage, current, now)) return { store: next, saved: false };
+    const backupKey = quarantineCorruptWins(storage, current, now);
+    if (!backupKey || readKey(storage, backupKey) !== current) return { store: next, saved: false };
   }
   let serial;
   try {
