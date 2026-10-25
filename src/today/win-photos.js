@@ -306,23 +306,33 @@ export async function readWinPhoto(id) {
 }
 
 async function winPhotoEntries(db) {
-  const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
-  const store = tx.objectStore(WIN_PHOTO_STORE);
-  if (typeof store.getAllKeys !== "function" || typeof store.getAll !== "function") {
+  let tx = null;
+  try {
+    tx = db.transaction(WIN_PHOTO_STORE, "readonly");
+    const store = tx.objectStore(WIN_PHOTO_STORE);
+    if (typeof store.getAllKeys !== "function" || typeof store.getAll !== "function") {
+      await winPhotoTxDone(tx);
+      return null;
+    }
+    const keysRequest = store.getAllKeys();
+    const valuesRequest = store.getAll();
+    const keys = await winPhotoRequest(keysRequest);
+    const values = await winPhotoRequest(valuesRequest);
     await winPhotoTxDone(tx);
+    if (!Array.isArray(keys) || !Array.isArray(values) || keys.length !== values.length) return null;
+    const entries = [];
+    for (let i = 0; i < keys.length; i += 1) {
+      if (typeof keys[i] === "string" && keys[i]) entries.push({ id: keys[i], value: values[i] });
+    }
+    return entries;
+  } catch {
+    try {
+      if (tx && tx.abort) tx.abort();
+    } catch {
+      /* the list already failed */
+    }
     return null;
   }
-  const keysRequest = store.getAllKeys();
-  const valuesRequest = store.getAll();
-  const keys = await winPhotoRequest(keysRequest);
-  const values = await winPhotoRequest(valuesRequest);
-  await winPhotoTxDone(tx);
-  if (!Array.isArray(keys) || !Array.isArray(values) || keys.length !== values.length) return null;
-  const entries = [];
-  for (let i = 0; i < keys.length; i += 1) {
-    if (typeof keys[i] === "string" && keys[i]) entries.push({ id: keys[i], value: values[i] });
-  }
-  return entries;
 }
 
 /**

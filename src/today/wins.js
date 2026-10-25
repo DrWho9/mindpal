@@ -71,10 +71,22 @@ export const WIN_RESET_DONE =
   "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. A placeholder image another tab started saving in the last " +
   WIN_PHOTO_PENDING_SECONDS +
   " seconds can stay. A new win can be saved on this device.";
+export const WIN_RESET_IMAGES_LEFT =
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images could not be removed from this device. A new win can be saved on this device.";
 export const WIN_RESET_UNNEEDED =
   "Reset was not needed. The wins record on this device can already be read.";
 export const WIN_RESET_FAILED =
   "Reset did not happen. The unreadable record is still on this device.";
+
+/**
+ * The done line after a reset that cleared the wins record.
+ * WIN_RESET_DONE only when image cleanup finished.
+ * A missing cleanup, a skipped database, or a failed list says the images could not be removed.
+ */
+export function winResetDoneLabel(cleanup) {
+  if (!cleanup || cleanup.failed === true || cleanup.unavailable === true) return WIN_RESET_IMAGES_LEFT;
+  return WIN_RESET_DONE;
+}
 /**
  * Stored when a win has no time of its own.
  * This is not the moment the record was read. The card says so.

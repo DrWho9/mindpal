@@ -239,11 +239,13 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
     finally{F.current=!1;T(!1)}
   }
-  function d(){
+  async function d(){
     let y=mpWins.resetBlockedWins();
     x(!1);
     if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
-    h(!1),s(mpWins.WIN_RESET_DONE),r(mpWins.winsForDate(mpWins.loadWinsStore()));
+    let photos=null;
+    try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
+    h(!1),s(mpWins.winResetDoneLabel(photos)),r(mpWins.winsForDate(mpWins.loadWinsStore()));
     try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
   }
   if(e===`hub`){

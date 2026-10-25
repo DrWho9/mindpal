@@ -26,6 +26,8 @@ import {
   WINS_STORAGE_KEY_V1,
   WINS_STORAGE_KEY_V2_BACKUP,
   WIN_PLACEHOLDER_PHOTO,
+  WIN_RESET_DONE,
+  WIN_RESET_IMAGES_LEFT,
   addWin,
   addWinPhoto,
   exportV1,
@@ -33,6 +35,7 @@ import {
   readWinsStore,
   removeWin,
   resetBlockedWins,
+  winResetDoneLabel,
 } from "../src/today/wins.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -417,5 +420,60 @@ describe("win photo blobs", () => {
     assert.equal(day[1].photo, WIN_PLACEHOLDER_PHOTO);
     assert.equal(await (await readWinPhoto("same")).text(), WIN_PLACEHOLDER_SVG);
     assert.equal(await readWinPhoto(day[1].id), null);
+  });
+
+  it("says the placeholder images could not be removed when reset cannot list them", async () => {
+    const old = new Date(Date.now() - WIN_PHOTO_PENDING_MS - 1000);
+    assert.equal((await putWinPhoto("stuck", placeholderPhotoBlob(), old)).ok, true);
+    setWinPhotoDatabaseFactory({
+      open(name, version) {
+        const request = indexedDB.open(name, version);
+        request.addEventListener("success", () => {
+          const db = request.result;
+          const transaction = db.transaction.bind(db);
+          db.transaction = (storeNames, mode) => {
+            const tx = transaction(storeNames, mode);
+            const objectStore = tx.objectStore.bind(tx);
+            tx.objectStore = (storeName) => {
+              const store = objectStore(storeName);
+              if (mode === "readonly") {
+                store.getAll = () => {
+                  throw new Error("cannot list");
+                };
+                store.getAllKeys = () => {
+                  throw new Error("cannot list");
+                };
+              }
+              return store;
+            };
+            return tx;
+          };
+        });
+        return request;
+      },
+      deleteDatabase(name) {
+        return indexedDB.deleteDatabase(name);
+      },
+    });
+    const storage = memoryStorage({
+      [WINS_STORAGE_KEY]: "corrupt-list",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.1`]: "old-a",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.2`]: "old-b",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.3`]: "old-c",
+    });
+    const reset = resetBlockedWins(storage, morning);
+    assert.equal(reset.cleared, true);
+    const cleanup = await reset.photoCleanup;
+    assert.equal(cleanup.failed, true);
+    assert.equal(cleanup.deleted.length, 0);
+    assert.equal(winResetDoneLabel(cleanup), WIN_RESET_IMAGES_LEFT);
+    assert.match(WIN_RESET_IMAGES_LEFT, /could not be removed from this device/);
+    assert.doesNotMatch(WIN_RESET_IMAGES_LEFT, /were removed|—|–/);
+    assert.equal(winResetDoneLabel(undefined), WIN_RESET_IMAGES_LEFT);
+    assert.equal(winResetDoneLabel({ deleted: [], unavailable: true }), WIN_RESET_IMAGES_LEFT);
+    assert.equal(winResetDoneLabel({ deleted: ["stuck"] }), WIN_RESET_DONE);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal((await readWinPhoto("stuck")).type, "image/svg+xml");
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), null);
   });
 });

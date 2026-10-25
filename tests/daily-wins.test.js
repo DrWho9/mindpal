@@ -15,6 +15,7 @@ import {
   WIN_RESET_CONFIRM,
   WIN_RESET_DONE,
   WIN_RESET_FAILED,
+  WIN_RESET_IMAGES_LEFT,
   WIN_RESET_LABEL,
   WIN_RESET_NOTE,
   WIN_RESET_UNNEEDED,
@@ -650,7 +651,7 @@ describe("daily wins", () => {
     assert.match(build, /WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL/);
     assert.match(build, /migrateV1WinsJson/);
     assert.match(build, /exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins/);
-    assert.match(build, /WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL/);
+    assert.match(build, /WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL/);
     assert.match(css, /\.mp-win-of-day \.mp-win-reset\{/);
     assert.match(css, /\.mp-win-of-day \.mp-win-reset button\{[^}]*min-height:44px/);
     assert.equal(panel.split("e===`winOfDay`&&b?").length - 1, 1);
@@ -663,11 +664,12 @@ describe("daily wins", () => {
     assert.match(panel, /onClick:\(\)=>x\(!1\),children:mpWins\.WIN_RESET_CANCEL/);
     assert.match(panel, /mpWins\.resetBlockedWins\(\)/);
     assert.match(panel, /y&&y\.needed===false\?mpWins\.WIN_RESET_UNNEEDED:mpWins\.WIN_RESET_FAILED/);
-    assert.match(panel, /s\(mpWins\.WIN_RESET_DONE\)/);
+    assert.match(panel, /photos=y\.photoCleanup\?await y\.photoCleanup:\{failed:!0\}/);
+    assert.match(panel, /s\(mpWins\.winResetDoneLabel\(photos\)\)/);
     assert.match(panel, /w\.at===mpWins\.WIN_UNKNOWN_TIME\?/);
     assert.match(panel, /children:mpWins\.WIN_UNKNOWN_TIME_LABEL/);
     assert.doesNotMatch(
-      `${WIN_RESET_LABEL} ${WIN_RESET_NOTE} ${WIN_RESET_CONFIRM} ${WIN_RESET_CANCEL} ${WIN_RESET_DONE} ${WIN_RESET_UNNEEDED} ${WIN_RESET_FAILED} ${WIN_UNKNOWN_TIME_LABEL} ${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL} ${WIN_PHOTO_CHECKING_LABEL}`,
+      `${WIN_RESET_LABEL} ${WIN_RESET_NOTE} ${WIN_RESET_CONFIRM} ${WIN_RESET_CANCEL} ${WIN_RESET_DONE} ${WIN_RESET_IMAGES_LEFT} ${WIN_RESET_UNNEEDED} ${WIN_RESET_FAILED} ${WIN_UNKNOWN_TIME_LABEL} ${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL} ${WIN_PHOTO_CHECKING_LABEL}`,
       /—|–/,
     );
     assert.match(build, /src\/today\/win-photos\.js/);
