@@ -96,7 +96,7 @@ const checks = [
   [js.includes("mpNeedsFaithSetup()||mpNeedsProfileSetup()"), "first-run gate waits for age and gender"],
   [!js.includes("(0,A.jsx)(Nt,{})"), "mid-page LOCAL ACCOUNT card is unmounted"],
   [js.includes("theme_tags"), "Pack A theme tags are in the bundle"],
-  [js.includes("Wins, photos and friends stay on this device"), "Settings notes future backend for wins/photos/friends"],
+  [js.includes("not real private photo storage") && js.includes("Prototype: placeholder image, not real private storage.") && !js.includes("Wins, photos and friends stay on this device"), "Settings no longer promises private photo storage"],
   [js.includes("Before you sleep"), "evening step is present"],
   [js.includes("function mpNightBand(") && js.includes("Open Journal"), "Today Night journal band is present"],
   [js.includes("function mpBookReader(") && js.includes("mpHubOpenableReadings"), "reusable book reader is present"],
