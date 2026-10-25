@@ -199,7 +199,7 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({});
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1);
   function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
   function k(){r(mpWins.winsForDate(mpWins.readWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlockedQuiet())}
@@ -224,7 +224,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     })();
     return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
   },[n,e]);
+  // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   async function l(){
+    if(F.current)return;
+    F.current=!0;
+    T(!0);
     try{
       let u=e===`winOfDay`&&p?await mpWins.addWinPhoto(i):mpWins.addWin(i);
       if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
@@ -233,6 +237,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       a(``),s(u.photoError?mpWins.WIN_PHOTO_NOT_SAVED_LABEL:u.photoFallback?mpWins.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins.WIN_SAVED_LABEL),r(u.items);
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
     }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
+    finally{F.current=!1;T(!1)}
   }
   function d(){
     let y=mpWins.resetBlockedWins();
@@ -279,7 +284,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
     ]},w.id);})}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
-    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
+    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsxs)(`label`,{className:`mp-win-photo-opt`,htmlFor:`mp-win-photo-${e}`,children:[
         (0,A.jsx)(`input`,{id:`mp-win-photo-${e}`,type:`checkbox`,checked:p,onChange:n=>g(!!n.target.checked)}),
@@ -288,7 +293,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
     ]}):null,
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:S,onClick:l,children:`Save this win`}),
       t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[

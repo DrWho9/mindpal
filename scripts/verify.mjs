@@ -97,7 +97,7 @@ const checks = [
   [!js.includes("(0,A.jsx)(Nt,{})"), "mid-page LOCAL ACCOUNT card is unmounted"],
   [js.includes("theme_tags"), "Pack A theme tags are in the bundle"],
   [js.includes("not real private photo storage") && js.includes("Prototype: placeholder image, not real private storage.") && !js.includes("Wins, photos and friends stay on this device"), "Settings no longer promises private photo storage"],
-  [js.includes("mindpal-photos") && js.includes("winPhotos") && js.includes("Photo not saved.") && js.includes("winsSaveBlockedQuiet") && js.includes("listenForWinsChanges"), "win photos stay in IndexedDB and other tabs only read"],
+  [js.includes("mindpal-photos") && js.includes("winPhotos") && js.includes("Placeholder image not saved.") && js.includes("winsSaveBlockedQuiet") && js.includes("listenForWinsChanges") && js.includes("MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory") && js.includes("MINDPAL_PHOTO_TEST)globalThis.mpWins=mpWins") && !js.includes("typeof globalThis<`u`)globalThis.mpWins=mpWins"), "win photos stay in IndexedDB and other tabs only read"],
   [js.includes("Before you sleep"), "evening step is present"],
   [js.includes("function mpNightBand(") && js.includes("Open Journal"), "Today Night journal band is present"],
   [js.includes("function mpBookReader(") && js.includes("mpHubOpenableReadings"), "reusable book reader is present"],

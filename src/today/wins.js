@@ -6,6 +6,7 @@ import {
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
+  WIN_PHOTO_PENDING_MS,
   WIN_PHOTO_REF,
   WIN_PHOTO_STORE,
   WIN_PHOTO_UNAVAILABLE_LABEL,
@@ -59,12 +60,17 @@ export const WIN_SAVED_LABEL = "Saved on this device for today.";
 export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 /** Shown on Win of the day only while a save cannot be stored. */
 export const WIN_RESET_LABEL = "Reset wins on this device";
+const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
 export const WIN_RESET_NOTE =
-  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
+  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Placeholder images stored for wins on this device are removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
 export const WIN_RESET_CONFIRM = "Confirm reset on this device";
 export const WIN_RESET_CANCEL = "Keep the record";
 export const WIN_RESET_DONE =
-  "Reset on this device. The unreadable record was kept as a backup. A new win can be saved on this device.";
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. A new win can be saved on this device.";
 export const WIN_RESET_UNNEEDED =
   "Reset was not needed. The wins record on this device can already be read.";
 export const WIN_RESET_FAILED =
@@ -174,6 +180,12 @@ function withUniqueIds(list) {
         next = stableWinId(index, win.at, win.text, salt);
       }
       win.id = next;
+      /*
+       * Both copies named one blob. The first id keeps it.
+       * This copy uses the bundled placeholder path, so it does not claim that blob.
+       * Load does not write. The next save stores the path.
+       */
+      if (win.photo === WIN_PHOTO_REF) win.photo = WIN_PLACEHOLDER_PHOTO;
     }
     seen.add(win.id);
     out.push(win);
@@ -412,11 +424,12 @@ function persistWins(store, storage, now = new Date()) {
   const current = readKey(storage, WINS_STORAGE_KEY);
   const readable = typeof current === "string" && current.length > 0 ? readWinsStoreText(current) : null;
   /*
-   * Read the previous record before the write. A later cleanup only deletes photos
-   * for ids that readable record named and this save dropped. It does not sweep
-   * unknown keys, so a blob another tab has stored but not yet referenced can stay.
-   * An unreadable record has no ids. After it is replaced, blobs the new record
-   * does not name are removed. A plain load never reaches this function.
+   * Read the previous record before the write. A later cleanup only deletes placeholder
+   * images for ids that readable record named and this save dropped. It does not sweep
+   * unknown keys, so an image another tab has stored but not yet referenced can stay.
+   * An unreadable record has no ids. After it is replaced, images the new record
+   * does not name are removed, except one stored in the last WIN_PHOTO_PENDING_MS.
+   * A plain load never reaches this function.
    */
   if (typeof current === "string" && current.length > 0 && !readable) {
     const backupKey = quarantineCorruptWins(storage, current, now);
@@ -700,9 +713,11 @@ function placeCorruptBackup(storage, text, now) {
  * the unsuffixed backup key, and the v1 key are not removed.
  * If the keys cannot be listed, or the copy cannot be written, nothing is cleared.
  * Does nothing when saving is not blocked, so a readable store stays put.
- * After the v2 key is cleared, every win photo blob is deleted. The unreadable text
+ * After the v2 key is cleared, stored placeholder images are deleted. The unreadable text
  * cannot name those ids, and the live record no longer references them.
- * If the reset does not clear the key, the blobs stay.
+ * An image stored in the last WIN_PHOTO_PENDING_MS stays, so another tab can finish saving it.
+ * If the photo database cannot be listed, the images stay.
+ * If the reset does not clear the key, the images stay.
  */
 export function resetBlockedWins(storage = globalThis.localStorage, now = new Date()) {
   const idle = { cleared: false, needed: false, kept: [] };

@@ -12725,10 +12725,10 @@ function bandForStep(stepId) {
 }
 
 /**
- * Prototype win photos on this device.
+ * Prototype placeholder images on this device.
  * Database mindpal-photos, object store winPhotos, key is the win id.
- * The value is a Blob of the bundled fake placeholder. It is not a user photo
- * and not real private storage. Nothing is uploaded.
+ * The stored value is the bundled fake placeholder image plus the time it was stored.
+ * It is not a user photo and not real private storage. Nothing is uploaded.
  * A plain load of the wins record does not open this database and does not delete blobs.
  */
 
@@ -12739,14 +12739,20 @@ const WIN_PHOTO_REF = "idb";
 /** BroadcastChannel name. Messages only ask other tabs to read again. */
 const WIN_PHOTO_CHANNEL = "mindpal-photos";
 
-const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Photo not saved.";
+const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Placeholder image not saved.";
 const WIN_PHOTO_UNAVAILABLE_LABEL =
-  "Saved on this device for today. Photo storage is not available on this device, so this win uses the prototype placeholder.";
+  "Saved on this device for today. Placeholder image storage is not available on this device, so this win uses the bundled placeholder.";
 const WIN_PHOTO_MISSING_LABEL =
-  "This photo is not on this device. Showing the prototype placeholder.";
+  "This placeholder image is not on this device. Showing the bundled placeholder.";
 const WIN_PHOTO_ON_DEVICE_LABEL =
-  "Prototype photo stored on this device only. Not real private storage.";
-const WIN_PHOTO_CHECKING_LABEL = "Checking this photo on this device.";
+  "Prototype placeholder image stored on this device only. Not real private storage.";
+const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this device.";
+/**
+ * A blob newer than this is still being saved by this tab or another tab.
+ * Reset and an unreadable-record sweep leave it in place.
+ * An ordinary save of a readable record does not use this window. It deletes only ids that record dropped.
+ */
+const WIN_PHOTO_PENDING_MS = 15000;
 
 /** Same bytes as win-placeholder.svg. The only image this prototype stores. */
 const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Prototype placeholder, not a private photo">
@@ -12763,6 +12769,8 @@ const WIN_PHOTO_MAX_BYTES = 4096;
 
 let winPhotoFactoryOverride;
 let winPhotoOpened = null;
+let winPhotoCachedDb = null;
+let winPhotoGeneration = 0;
 
 function winPhotoCurrentFactory() {
   if (winPhotoFactoryOverride !== undefined) return winPhotoFactoryOverride;
@@ -12777,10 +12785,44 @@ function winPhotoCurrentFactory() {
  * Tests pass a fake IndexedDB factory. Null means photo storage is unavailable.
  * Undefined uses the browser database. Closes a cached connection so the next open is fresh.
  */
+function winPhotoDropCached(db) {
+  if (!db || winPhotoCachedDb !== db) return;
+  winPhotoCachedDb = null;
+  winPhotoOpened = null;
+}
+
+function winPhotoWatchConnection(db, generation) {
+  if (!db || generation !== winPhotoGeneration) {
+    if (db && typeof db.close === "function") {
+      try {
+        db.close();
+      } catch {
+        /* a replaced connection is already closed */
+      }
+    }
+    return;
+  }
+  winPhotoCachedDb = db;
+  db.onversionchange = () => {
+    if (generation === winPhotoGeneration) winPhotoDropCached(db);
+    try {
+      db.close();
+    } catch {
+      /* the connection is already closed */
+    }
+  };
+  db.onclose = () => {
+    if (generation !== winPhotoGeneration) return;
+    winPhotoDropCached(db);
+  };
+}
+
 function setWinPhotoDatabaseFactory(factory) {
   const previous = winPhotoOpened;
+  winPhotoGeneration += 1;
   winPhotoFactoryOverride = factory;
   winPhotoOpened = null;
+  winPhotoCachedDb = null;
   if (previous) {
     previous.then((db) => {
       if (db && typeof db.close === "function") {
@@ -12797,7 +12839,9 @@ function setWinPhotoDatabaseFactory(factory) {
 async function resetWinPhotoDatabase() {
   const factory = winPhotoCurrentFactory();
   const pending = winPhotoOpened;
+  winPhotoGeneration += 1;
   winPhotoOpened = null;
+  winPhotoCachedDb = null;
   if (pending) {
     const db = await pending.catch(() => null);
     if (db && typeof db.close === "function") {
@@ -12838,7 +12882,7 @@ function winPhotoTxDone(tx) {
   });
 }
 
-function winPhotoOpenDatabase(factory) {
+function winPhotoOpenDatabase(factory, generation) {
   return new Promise((resolve) => {
     let request;
     try {
@@ -12860,6 +12904,7 @@ function winPhotoOpenDatabase(factory) {
         return;
       }
       settled = true;
+      if (db) winPhotoWatchConnection(db, generation);
       resolve(db || null);
     };
     request.onupgradeneeded = () => {
@@ -12879,16 +12924,20 @@ function winPhotoOpenDb() {
   const factory = winPhotoCurrentFactory();
   if (!factory || typeof factory.open !== "function") return Promise.resolve(null);
   if (!winPhotoOpened) {
-    winPhotoOpened = winPhotoOpenDatabase(factory).then(
+    const generation = winPhotoGeneration;
+    let pending;
+    pending = winPhotoOpenDatabase(factory, generation).then(
       (db) => {
-        if (!db) winPhotoOpened = null;
+        if (winPhotoOpened === pending && (!db || generation !== winPhotoGeneration)) winPhotoOpened = null;
+        if (generation !== winPhotoGeneration) return null;
         return db;
       },
       () => {
-        winPhotoOpened = null;
+        if (winPhotoOpened === pending) winPhotoOpened = null;
         return null;
       },
     );
+    winPhotoOpened = pending;
   }
   return winPhotoOpened;
 }
@@ -12908,7 +12957,7 @@ function winPhotoBlobLike(value) {
   return typeof value.text === "function" && typeof value.size === "number" && typeof value.type === "string";
 }
 
-/** True only for the synthetic placeholder blob. Real photos are rejected. */
+/** True only for the synthetic placeholder image. Real photos are rejected. */
 async function isPlaceholderPhotoBlob(blob) {
   if (!winPhotoBlobLike(blob)) return false;
   if (blob.type !== "image/svg+xml") return false;
@@ -12920,13 +12969,32 @@ async function isPlaceholderPhotoBlob(blob) {
   }
 }
 
+function winPhotoStoredAt(createdAt) {
+  const stamp = createdAt instanceof Date ? createdAt.getTime() : Number(createdAt);
+  return Number.isFinite(stamp) ? stamp : Date.now();
+}
+
+function winPhotoBytes(value) {
+  if (winPhotoBlobLike(value)) return value;
+  if (value && typeof value === "object" && winPhotoBlobLike(value.blob)) return value.blob;
+  return null;
+}
+
+/** A just-stored placeholder image. A raw blob with no time is not pending. */
+function winPhotoPending(value, nowMs) {
+  if (!value || typeof value !== "object" || winPhotoBlobLike(value)) return false;
+  if (typeof value.createdAt !== "number" || !Number.isFinite(value.createdAt)) return false;
+  return nowMs - value.createdAt < WIN_PHOTO_PENDING_MS;
+}
+
 /**
- * Store the placeholder blob under the win id.
+ * Store the placeholder image under the win id, with the time it was stored.
+ * createdAt defaults to now. Tests pass an older time when a sweep should be allowed to delete it.
  * reason "unavailable" means IndexedDB cannot be opened.
  * reason "put" means the write failed, including quota.
- * reason "blob" means the bytes were not the placeholder.
+ * reason "blob" means the bytes were not the placeholder image.
  */
-async function putWinPhoto(id, blob) {
+async function putWinPhoto(id, blob, createdAt = Date.now()) {
   if (typeof id !== "string" || !id.trim()) return { ok: false, reason: "id" };
   if (!(await isPlaceholderPhotoBlob(blob))) return { ok: false, reason: "blob" };
   const db = await winPhotoOpenDb();
@@ -12934,7 +13002,7 @@ async function putWinPhoto(id, blob) {
   let tx = null;
   try {
     tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
-    tx.objectStore(WIN_PHOTO_STORE).put(blob, id);
+    tx.objectStore(WIN_PHOTO_STORE).put({ blob, createdAt: winPhotoStoredAt(createdAt) }, id);
     await winPhotoTxDone(tx);
     return { ok: true };
   } catch {
@@ -12955,23 +13023,36 @@ async function readWinPhoto(id) {
     const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
     const value = await winPhotoRequest(tx.objectStore(WIN_PHOTO_STORE).get(id));
     await winPhotoTxDone(tx);
-    if (!winPhotoBlobLike(value)) return null;
-    return value;
+    const bytes = winPhotoBytes(value);
+    if (!(await isPlaceholderPhotoBlob(bytes))) return null;
+    return bytes;
   } catch {
     return null;
   }
 }
 
-async function winPhotoListKeys(db) {
+async function winPhotoEntries(db) {
   const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
   const store = tx.objectStore(WIN_PHOTO_STORE);
-  const keys = typeof store.getAllKeys === "function" ? await winPhotoRequest(store.getAllKeys()) : [];
+  if (typeof store.getAllKeys !== "function" || typeof store.getAll !== "function") {
+    await winPhotoTxDone(tx);
+    return null;
+  }
+  const keysRequest = store.getAllKeys();
+  const valuesRequest = store.getAll();
+  const keys = await winPhotoRequest(keysRequest);
+  const values = await winPhotoRequest(valuesRequest);
   await winPhotoTxDone(tx);
-  return Array.isArray(keys) ? keys.filter((key) => typeof key === "string" && key) : [];
+  if (!Array.isArray(keys) || !Array.isArray(values) || keys.length !== values.length) return null;
+  const entries = [];
+  for (let i = 0; i < keys.length; i += 1) {
+    if (typeof keys[i] === "string" && keys[i]) entries.push({ id: keys[i], value: values[i] });
+  }
+  return entries;
 }
 
 /**
- * Tell other tabs a photo blob changed. Does not write the wins record.
+ * Tell other tabs a placeholder image changed. Does not write the wins record.
  * Closing waits a tick so the message is not dropped.
  */
 function postWinPhotoChange(kind, id) {
@@ -12998,7 +13079,7 @@ function postWinPhotoChange(kind, id) {
   return true;
 }
 
-/** True when another tab stored or deleted a win photo. Does not write or post again. */
+/** True when another tab stored or deleted a placeholder image. Does not write or post again. */
 function handleWinPhotoMessage(event) {
   const data = event && event.data;
   if (!data || data.source !== WIN_PHOTO_CHANNEL) return false;
@@ -13024,44 +13105,49 @@ async function deleteWinPhotos(ids, options = {}) {
 }
 
 /**
- * Delete blobs whose keys are not in keepIds.
- * Used after a save replaces an unreadable wins record, when the old ids cannot be read.
- * The caller passes ids from the record it just wrote. This does not run on load.
+ * Ids that a sweep may delete.
+ * keepIds stay. A placeholder image stored in the last WIN_PHOTO_PENDING_MS stays too,
+ * so another tab's save can still write its reference.
+ * A value with no stored time is old enough to delete.
+ * Null means the list could not be read. The caller must not guess and must not clear the store.
  */
-async function deleteUnreferencedWinPhotos(keepIds) {
-  const db = await winPhotoOpenDb();
-  if (!db) return { deleted: [], unavailable: true };
-  let keys;
-  try {
-    keys = await winPhotoListKeys(db);
-  } catch {
-    return { deleted: [], failed: true };
-  }
+function winPhotoSweepIds(entries, keepIds, nowMs) {
+  if (!Array.isArray(entries)) return null;
   const keep = new Set(Array.isArray(keepIds) ? keepIds : []);
-  return deleteWinPhotos(keys.filter((key) => !keep.has(key)));
+  return entries
+    .filter((entry) => !keep.has(entry.id) && !winPhotoPending(entry.value, nowMs))
+    .map((entry) => entry.id);
 }
 
-/** Reset path. The live wins record is already cleared, so every blob is unmatched. */
-async function deleteAllWinPhotos() {
+/**
+ * Delete placeholder images whose keys are not in keepIds.
+ * Used after a save replaces an unreadable wins record, when the old ids cannot be read.
+ * The caller passes ids from the record it just wrote. This does not run on load.
+ * A placeholder image stored in the last WIN_PHOTO_PENDING_MS is left in place.
+ * If the keys cannot be listed, nothing is deleted.
+ */
+async function deleteUnreferencedWinPhotos(keepIds, nowMs = Date.now()) {
   const db = await winPhotoOpenDb();
   if (!db) return { deleted: [], unavailable: true };
-  let keys = [];
-  let listed = false;
+  let entries;
   try {
-    keys = await winPhotoListKeys(db);
-    listed = true;
-  } catch {
-    keys = [];
-  }
-  try {
-    const tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
-    tx.objectStore(WIN_PHOTO_STORE).clear();
-    await winPhotoTxDone(tx);
+    entries = await winPhotoEntries(db);
   } catch {
     return { deleted: [], failed: true };
   }
-  if (!listed || keys.length > 0) postWinPhotoChange("clear", "");
-  return { deleted: keys };
+  const ids = winPhotoSweepIds(entries, keepIds, nowMs);
+  if (!ids) return { deleted: [], failed: true };
+  return deleteWinPhotos(ids);
+}
+
+/**
+ * Reset path. The live wins record is already cleared, so stored images are unmatched.
+ * A placeholder image stored in the last WIN_PHOTO_PENDING_MS is left in place.
+ * This does not clear the whole store, because a clear would remove that fresh image.
+ * If the keys cannot be listed, nothing is deleted.
+ */
+async function deleteAllWinPhotos(nowMs = Date.now()) {
+  return deleteUnreferencedWinPhotos([], nowMs);
 }
 
 function winPhotoObjectUrl(blob) {
@@ -13105,12 +13191,17 @@ const WIN_SAVED_LABEL = "Saved on this device for today.";
 const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 /** Shown on Win of the day only while a save cannot be stored. */
 const WIN_RESET_LABEL = "Reset wins on this device";
+const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
 const WIN_RESET_NOTE =
-  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
+  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Placeholder images stored for wins on this device are removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
 const WIN_RESET_CONFIRM = "Confirm reset on this device";
 const WIN_RESET_CANCEL = "Keep the record";
 const WIN_RESET_DONE =
-  "Reset on this device. The unreadable record was kept as a backup. A new win can be saved on this device.";
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. A new win can be saved on this device.";
 const WIN_RESET_UNNEEDED =
   "Reset was not needed. The wins record on this device can already be read.";
 const WIN_RESET_FAILED =
@@ -13220,6 +13311,12 @@ function withUniqueIds(list) {
         next = stableWinId(index, win.at, win.text, salt);
       }
       win.id = next;
+      /*
+       * Both copies named one blob. The first id keeps it.
+       * This copy uses the bundled placeholder path, so it does not claim that blob.
+       * Load does not write. The next save stores the path.
+       */
+      if (win.photo === WIN_PHOTO_REF) win.photo = WIN_PLACEHOLDER_PHOTO;
     }
     seen.add(win.id);
     out.push(win);
@@ -13458,11 +13555,12 @@ function persistWins(store, storage, now = new Date()) {
   const current = readKey(storage, WINS_STORAGE_KEY);
   const readable = typeof current === "string" && current.length > 0 ? readWinsStoreText(current) : null;
   /*
-   * Read the previous record before the write. A later cleanup only deletes photos
-   * for ids that readable record named and this save dropped. It does not sweep
-   * unknown keys, so a blob another tab has stored but not yet referenced can stay.
-   * An unreadable record has no ids. After it is replaced, blobs the new record
-   * does not name are removed. A plain load never reaches this function.
+   * Read the previous record before the write. A later cleanup only deletes placeholder
+   * images for ids that readable record named and this save dropped. It does not sweep
+   * unknown keys, so an image another tab has stored but not yet referenced can stay.
+   * An unreadable record has no ids. After it is replaced, images the new record
+   * does not name are removed, except one stored in the last WIN_PHOTO_PENDING_MS.
+   * A plain load never reaches this function.
    */
   if (typeof current === "string" && current.length > 0 && !readable) {
     const backupKey = quarantineCorruptWins(storage, current, now);
@@ -13746,9 +13844,11 @@ function placeCorruptBackup(storage, text, now) {
  * the unsuffixed backup key, and the v1 key are not removed.
  * If the keys cannot be listed, or the copy cannot be written, nothing is cleared.
  * Does nothing when saving is not blocked, so a readable store stays put.
- * After the v2 key is cleared, every win photo blob is deleted. The unreadable text
+ * After the v2 key is cleared, stored placeholder images are deleted. The unreadable text
  * cannot name those ids, and the live record no longer references them.
- * If the reset does not clear the key, the blobs stay.
+ * An image stored in the last WIN_PHOTO_PENDING_MS stays, so another tab can finish saving it.
+ * If the photo database cannot be listed, the images stay.
+ * If the reset does not clear the key, the images stay.
  */
 function resetBlockedWins(storage = globalThis.localStorage, now = new Date()) {
   const idle = { cleared: false, needed: false, kept: [] };
@@ -16436,7 +16536,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage,setWinPhotoDatabaseFactory,resetWinPhotoDatabase};
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;}
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -16444,7 +16544,7 @@ mpIndividualGrowth={GROWTH_STORAGE_KEY,GROWTH_CHANGE_EVENT,GROWTH_TITLE,GROWTH_S
 mpCompanion={COMPANION_POLICY_VERSION,DEFAULT_PAGES_BASE,BASE_STORAGE_KEY,BASE_WINDOW_KEY,SAFETY_STATES,LIVE_LABEL,DEMO_LABEL,SUGGESTED_COMPANION_BASE,DEMO_HOLD_NOTE,UNAVAILABLE_NOTE,companionFailureCopy,companionStatusCopy,normalizeCompanionBase,storedCompanionBase,persistCompanionBase,joinCompanionUrl,companionBaseFromSearch,resolveCompanionBase,companionUrl,parseCompanionStatus,fetchCompanionStatus,parseCompanionReply,buildChatRequest,sendCompanionChat};
 mpReflect={REFLECT_LANE,CLINICAL_DISCLAIMER,REFLECT_SYSTEM_PROMPT,CRISIS_COPY,detectCrisisIntent,safetyStateForText,THREAD_STORAGE_KEY,MESSAGE_TEXT_MAX,emptyThread,normalizeMessage,normalizeThread,parseThreadJson,loadThread,saveThread,clearThread,appendMessage,downloadableTranscript,canSendText,shouldSendOnKey};
 mpAppointment={APPOINTMENT_LANE,APPOINTMENT_THREAD_STORAGE_KEY,APPOINTMENT_DISCLAIMER,APPOINTMENT_SYSTEM_PROMPT};
-})();if(typeof globalThis<`u`)globalThis.mpWins=mpWins;var mpCompanionDemo=(function(){/** Local Companion demo — works without Live AI. Bryan owns the proxy. */
+})();if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST)globalThis.mpWins=mpWins;var mpCompanionDemo=(function(){/** Local Companion demo — works without Live AI. Bryan owns the proxy. */
 
 /** Same localStorage key as src/companion/client.js so Reflect / Appointment share Live. */
 const COMPANION_BASE_KEY = "mindpal.companion.base";
@@ -20681,7 +20781,7 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({});
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1);
   function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
   function k(){r(mpWins.winsForDate(mpWins.readWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlockedQuiet())}
@@ -20706,7 +20806,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     })();
     return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
   },[n,e]);
+  // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   async function l(){
+    if(F.current)return;
+    F.current=!0;
+    T(!0);
     try{
       let u=e===`winOfDay`&&p?await mpWins.addWinPhoto(i):mpWins.addWin(i);
       if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
@@ -20715,6 +20819,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       a(``),s(u.photoError?mpWins.WIN_PHOTO_NOT_SAVED_LABEL:u.photoFallback?mpWins.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins.WIN_SAVED_LABEL),r(u.items);
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
     }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
+    finally{F.current=!1;T(!1)}
   }
   function d(){
     let y=mpWins.resetBlockedWins();
@@ -20761,7 +20866,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
     ]},w.id);})}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
-    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
+    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsxs)(`label`,{className:`mp-win-photo-opt`,htmlFor:`mp-win-photo-${e}`,children:[
         (0,A.jsx)(`input`,{id:`mp-win-photo-${e}`,type:`checkbox`,checked:p,onChange:n=>g(!!n.target.checked)}),
@@ -20770,7 +20875,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
     ]}):null,
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:S,onClick:l,children:`Save this win`}),
       t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[

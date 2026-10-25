@@ -9,6 +9,7 @@ import {
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
+  WIN_PHOTO_PENDING_MS,
   WIN_PHOTO_REF,
   WIN_PHOTO_STORE,
   WIN_PHOTO_UNAVAILABLE_LABEL,
@@ -102,10 +103,13 @@ describe("win photo blobs", () => {
     assert.equal(WIN_PHOTO_DB, "mindpal-photos");
     assert.equal(WIN_PHOTO_STORE, "winPhotos");
     assert.equal(WIN_PHOTO_REF, "idb");
-    assert.match(WIN_PHOTO_NOT_SAVED_LABEL, /Photo not saved/);
+    assert.match(WIN_PHOTO_NOT_SAVED_LABEL, /Placeholder image not saved/);
     assert.match(WIN_PHOTO_UNAVAILABLE_LABEL, /not available on this device/);
     assert.match(WIN_PHOTO_MISSING_LABEL, /not on this device/);
+    assert.match(WIN_PHOTO_MISSING_LABEL, /bundled placeholder/);
+    assert.match(WIN_PHOTO_ON_DEVICE_LABEL, /placeholder image/);
     assert.match(WIN_PHOTO_ON_DEVICE_LABEL, /on this device only/);
+    assert.equal(WIN_PHOTO_PENDING_MS, 15000);
     assert.doesNotMatch(
       `${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL}`,
       /—|–/,
@@ -230,7 +234,7 @@ describe("win photo blobs", () => {
 
   it("drops blobs the new record does not name when a save replaces an unreadable record", async () => {
     const storage = memoryStorage({ [WINS_STORAGE_KEY]: "{\"version\":2,\"days\":" });
-    const planted = await putWinPhoto("old-orphan", placeholderPhotoBlob());
+    const planted = await putWinPhoto("old-orphan", placeholderPhotoBlob(), new Date(Date.now() - WIN_PHOTO_PENDING_MS - 1000));
     assert.equal(planted.ok, true);
     const added = addWin("Fresh", storage, morning, morning);
     assert.equal(added.saved, true);
@@ -262,8 +266,9 @@ describe("win photo blobs", () => {
       [`${WINS_STORAGE_KEY_V2_BACKUP}.2`]: "old-b",
       [`${WINS_STORAGE_KEY_V2_BACKUP}.3`]: "old-c",
     });
-    await putWinPhoto("reset-a", placeholderPhotoBlob());
-    await putWinPhoto("reset-b", placeholderPhotoBlob());
+    const old = new Date(Date.now() - WIN_PHOTO_PENDING_MS - 1000);
+    await putWinPhoto("reset-a", placeholderPhotoBlob(), old);
+    await putWinPhoto("reset-b", placeholderPhotoBlob(), old);
     const reset = resetBlockedWins(storage, morning);
     assert.equal(reset.cleared, true);
     await reset.photoCleanup;
@@ -279,6 +284,138 @@ describe("win photo blobs", () => {
     assert.equal(added.saved, true);
     assert.equal(added.item.photo, WIN_PHOTO_REF);
     assert.equal(await readWinPhoto("win-missing"), null);
-    assert.match(WIN_PHOTO_MISSING_LABEL, /prototype placeholder/);
+    assert.match(WIN_PHOTO_MISSING_LABEL, /bundled placeholder/);
+  });
+
+  it("keeps a placeholder image another tab just stored when reset or an unreadable save would otherwise delete it", async () => {
+    const swept = memoryStorage({ [WINS_STORAGE_KEY]: "{\"version\":2,\"days\":" });
+    assert.equal((await putWinPhoto("pending-blob", placeholderPhotoBlob())).ok, true);
+    assert.equal(
+      (await putWinPhoto("old-orphan", placeholderPhotoBlob(), new Date(Date.now() - WIN_PHOTO_PENDING_MS))).ok,
+      true,
+    );
+    const added = addWin("Fresh", swept, morning, morning);
+    assert.equal(added.saved, true);
+    await added.photoCleanup;
+    assert.equal((await readWinPhoto("pending-blob")).type, "image/svg+xml");
+    assert.equal(await readWinPhoto("old-orphan"), null);
+
+    const blocked = memoryStorage({
+      [WINS_STORAGE_KEY]: "corrupt-reset",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.1`]: "old-a",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.2`]: "old-b",
+      [`${WINS_STORAGE_KEY_V2_BACKUP}.3`]: "old-c",
+    });
+    await putWinPhoto("pending-reset", placeholderPhotoBlob());
+    await putWinPhoto("old-reset", placeholderPhotoBlob(), new Date(Date.now() - WIN_PHOTO_PENDING_MS - 1000));
+    const reset = resetBlockedWins(blocked, morning);
+    assert.equal(reset.cleared, true);
+    await reset.photoCleanup;
+    assert.equal((await readWinPhoto("pending-reset")).type, "image/svg+xml");
+    assert.equal(await readWinPhoto("old-reset"), null);
+    assert.equal((await readWinPhoto("pending-blob")).type, "image/svg+xml");
+  });
+
+  it("does not return a stored value that is not the placeholder image", async () => {
+    const db = await new Promise((resolve, reject) => {
+      const request = indexedDB.open(WIN_PHOTO_DB, 1);
+      request.onupgradeneeded = () => {
+        const database = request.result;
+        if (!database.objectStoreNames.contains(WIN_PHOTO_STORE)) database.createObjectStore(WIN_PHOTO_STORE);
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+    await new Promise((resolve, reject) => {
+      const tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
+      tx.objectStore(WIN_PHOTO_STORE).put(new Blob(["nope"], { type: "image/png" }), "bad-raw");
+      tx.objectStore(WIN_PHOTO_STORE).put(
+        { blob: new Blob(["nope"], { type: "image/png" }), createdAt: Date.now() },
+        "bad-record",
+      );
+      tx.objectStore(WIN_PHOTO_STORE).put(placeholderPhotoBlob(), "raw-ok");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+    db.close();
+    assert.equal(await readWinPhoto("bad-raw"), null);
+    assert.equal(await readWinPhoto("bad-record"), null);
+    assert.equal(await (await readWinPhoto("raw-ok")).text(), WIN_PLACEHOLDER_SVG);
+  });
+
+  it("drops the cached connection on close and on versionchange, then opens on the next use", async () => {
+    let opens = 0;
+    let seen = null;
+    setWinPhotoDatabaseFactory({
+      open(name, version) {
+        opens += 1;
+        const request = indexedDB.open(name, version);
+        request.addEventListener("success", () => {
+          seen = request.result;
+        });
+        return request;
+      },
+      deleteDatabase(name) {
+        return indexedDB.deleteDatabase(name);
+      },
+    });
+    assert.equal((await putWinPhoto("keep", placeholderPhotoBlob(), new Date(0))).ok, true);
+    assert.equal(opens, 1);
+    assert.equal(typeof seen.onversionchange, "function");
+    assert.equal(typeof seen.onclose, "function");
+    seen.onclose();
+    assert.equal((await putWinPhoto("keep", placeholderPhotoBlob(), new Date(0))).ok, true);
+    assert.equal(opens, 2);
+
+    const upgrade = await new Promise((resolve, reject) => {
+      const request = indexedDB.open(WIN_PHOTO_DB, 2);
+      const timer = setTimeout(() => reject(new Error("versionchange stayed blocked")), 1000);
+      request.onupgradeneeded = () => {};
+      request.onsuccess = () => {
+        clearTimeout(timer);
+        request.result.close();
+        resolve("opened");
+      };
+      request.onerror = () => {
+        clearTimeout(timer);
+        reject(request.error);
+      };
+    });
+    assert.equal(upgrade, "opened");
+    const after = await putWinPhoto("keep", placeholderPhotoBlob(), new Date(0));
+    assert.equal(after.ok, false);
+    assert.equal(after.reason, "unavailable");
+    assert.equal(opens, 3);
+  });
+
+  it("does not give a duplicated id a second claim on the same placeholder image", async () => {
+    const at = "2026-09-20T09:00:00.000Z";
+    const raw = JSON.stringify({
+      version: 2,
+      days: {
+        "2026-09-20": [
+          { id: "same", text: "One", at, photo: WIN_PHOTO_REF },
+          { id: "same", text: "Two", at, photo: WIN_PHOTO_REF },
+        ],
+      },
+    });
+    const storage = memoryStorage({ [WINS_STORAGE_KEY]: raw });
+    let writes = 0;
+    const origSet = storage.setItem;
+    storage.setItem = (key, value) => {
+      writes += 1;
+      origSet(key, value);
+    };
+    assert.equal((await putWinPhoto("same", placeholderPhotoBlob(), new Date(0))).ok, true);
+    const loaded = loadWinsStore(storage);
+    assert.equal(writes, 0);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), raw);
+    const day = loaded.days["2026-09-20"];
+    assert.equal(day[0].id, "same");
+    assert.equal(day[0].photo, WIN_PHOTO_REF);
+    assert.notEqual(day[1].id, "same");
+    assert.equal(day[1].photo, WIN_PLACEHOLDER_PHOTO);
+    assert.equal(await (await readWinPhoto("same")).text(), WIN_PLACEHOLDER_SVG);
+    assert.equal(await readWinPhoto(day[1].id), null);
   });
 });

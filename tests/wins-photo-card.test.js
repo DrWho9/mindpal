@@ -58,6 +58,9 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
       viewport: { width: 1280, height: 900 },
       ignoreHTTPSErrors: true,
     });
+    await context.addInitScript(() => {
+      globalThis.MINDPAL_PHOTO_TEST = true;
+    });
     page = await context.newPage();
     page.setDefaultTimeout(20000);
     await signInLocal(page, host.origin);
@@ -112,7 +115,8 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
       });
-      const text = value ? await value.text() : "";
+      const blob = value && value.blob ? value.blob : value;
+      const text = blob && typeof blob.text === "function" ? await blob.text() : "";
       db.close();
       return text;
     }, win.id);
@@ -145,6 +149,45 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
       return value;
     }, win.id);
     assert.equal(left, null);
+  });
+
+  it("ignores a second Save click and Enter while the first save is still pending", { skip: skipCard }, async () => {
+    await page.evaluate(async () => {
+      mpWins.setWinPhotoDatabaseFactory(undefined);
+      const real = mpWins.addWinPhoto.bind(mpWins);
+      globalThis.__mpAddWinPhoto = real;
+      mpWins.addWinPhoto = (...args) => new Promise((resolve) => {
+        setTimeout(() => resolve(real(...args)), 400);
+      });
+    });
+    try {
+      const winCard = page.locator(".mp-win-of-day");
+      await winCard.locator("#mp-win-photo-winOfDay").check();
+      await winCard.locator("#mp-win-winOfDay").fill("One tap only");
+      await page.evaluate(() => {
+        const button = document.querySelector(".mp-win-of-day .button-row button.primary");
+        button.click();
+        button.click();
+        const input = document.querySelector("#mp-win-winOfDay");
+        input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+      });
+      await page.waitForFunction(() => document.querySelector(".mp-win-of-day .button-row button.primary")?.disabled === true);
+      await page.waitForFunction(() => document.querySelector(".mp-win-of-day .button-row button.primary")?.disabled === false);
+      await page.waitForFunction(
+        (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
+        WIN_SAVED_LABEL,
+      );
+      const count = await page.evaluate(() => {
+        const stored = JSON.parse(localStorage.getItem("mindpal.dailyWins.v2") || "{}");
+        return Object.values(stored.days || {}).flat().filter((item) => item && item.text === "One tap only").length;
+      });
+      assert.equal(count, 1);
+    } finally {
+      await page.evaluate(() => {
+        if (globalThis.__mpAddWinPhoto) mpWins.addWinPhoto = globalThis.__mpAddWinPhoto;
+        delete globalThis.__mpAddWinPhoto;
+      });
+    }
   });
 
   it("shows the placeholder when the photo reference has no blob", { skip: skipCard }, async () => {

@@ -1,8 +1,8 @@
 /**
- * Prototype win photos on this device.
+ * Prototype placeholder images on this device.
  * Database mindpal-photos, object store winPhotos, key is the win id.
- * The value is a Blob of the bundled fake placeholder. It is not a user photo
- * and not real private storage. Nothing is uploaded.
+ * The stored value is the bundled fake placeholder image plus the time it was stored.
+ * It is not a user photo and not real private storage. Nothing is uploaded.
  * A plain load of the wins record does not open this database and does not delete blobs.
  */
 
@@ -13,14 +13,20 @@ export const WIN_PHOTO_REF = "idb";
 /** BroadcastChannel name. Messages only ask other tabs to read again. */
 export const WIN_PHOTO_CHANNEL = "mindpal-photos";
 
-export const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Photo not saved.";
+export const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Placeholder image not saved.";
 export const WIN_PHOTO_UNAVAILABLE_LABEL =
-  "Saved on this device for today. Photo storage is not available on this device, so this win uses the prototype placeholder.";
+  "Saved on this device for today. Placeholder image storage is not available on this device, so this win uses the bundled placeholder.";
 export const WIN_PHOTO_MISSING_LABEL =
-  "This photo is not on this device. Showing the prototype placeholder.";
+  "This placeholder image is not on this device. Showing the bundled placeholder.";
 export const WIN_PHOTO_ON_DEVICE_LABEL =
-  "Prototype photo stored on this device only. Not real private storage.";
-export const WIN_PHOTO_CHECKING_LABEL = "Checking this photo on this device.";
+  "Prototype placeholder image stored on this device only. Not real private storage.";
+export const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this device.";
+/**
+ * A blob newer than this is still being saved by this tab or another tab.
+ * Reset and an unreadable-record sweep leave it in place.
+ * An ordinary save of a readable record does not use this window. It deletes only ids that record dropped.
+ */
+export const WIN_PHOTO_PENDING_MS = 15000;
 
 /** Same bytes as win-placeholder.svg. The only image this prototype stores. */
 export const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Prototype placeholder, not a private photo">
@@ -37,6 +43,8 @@ const WIN_PHOTO_MAX_BYTES = 4096;
 
 let winPhotoFactoryOverride;
 let winPhotoOpened = null;
+let winPhotoCachedDb = null;
+let winPhotoGeneration = 0;
 
 function winPhotoCurrentFactory() {
   if (winPhotoFactoryOverride !== undefined) return winPhotoFactoryOverride;
@@ -51,10 +59,44 @@ function winPhotoCurrentFactory() {
  * Tests pass a fake IndexedDB factory. Null means photo storage is unavailable.
  * Undefined uses the browser database. Closes a cached connection so the next open is fresh.
  */
+function winPhotoDropCached(db) {
+  if (!db || winPhotoCachedDb !== db) return;
+  winPhotoCachedDb = null;
+  winPhotoOpened = null;
+}
+
+function winPhotoWatchConnection(db, generation) {
+  if (!db || generation !== winPhotoGeneration) {
+    if (db && typeof db.close === "function") {
+      try {
+        db.close();
+      } catch {
+        /* a replaced connection is already closed */
+      }
+    }
+    return;
+  }
+  winPhotoCachedDb = db;
+  db.onversionchange = () => {
+    if (generation === winPhotoGeneration) winPhotoDropCached(db);
+    try {
+      db.close();
+    } catch {
+      /* the connection is already closed */
+    }
+  };
+  db.onclose = () => {
+    if (generation !== winPhotoGeneration) return;
+    winPhotoDropCached(db);
+  };
+}
+
 export function setWinPhotoDatabaseFactory(factory) {
   const previous = winPhotoOpened;
+  winPhotoGeneration += 1;
   winPhotoFactoryOverride = factory;
   winPhotoOpened = null;
+  winPhotoCachedDb = null;
   if (previous) {
     previous.then((db) => {
       if (db && typeof db.close === "function") {
@@ -71,7 +113,9 @@ export function setWinPhotoDatabaseFactory(factory) {
 export async function resetWinPhotoDatabase() {
   const factory = winPhotoCurrentFactory();
   const pending = winPhotoOpened;
+  winPhotoGeneration += 1;
   winPhotoOpened = null;
+  winPhotoCachedDb = null;
   if (pending) {
     const db = await pending.catch(() => null);
     if (db && typeof db.close === "function") {
@@ -112,7 +156,7 @@ function winPhotoTxDone(tx) {
   });
 }
 
-function winPhotoOpenDatabase(factory) {
+function winPhotoOpenDatabase(factory, generation) {
   return new Promise((resolve) => {
     let request;
     try {
@@ -134,6 +178,7 @@ function winPhotoOpenDatabase(factory) {
         return;
       }
       settled = true;
+      if (db) winPhotoWatchConnection(db, generation);
       resolve(db || null);
     };
     request.onupgradeneeded = () => {
@@ -153,16 +198,20 @@ function winPhotoOpenDb() {
   const factory = winPhotoCurrentFactory();
   if (!factory || typeof factory.open !== "function") return Promise.resolve(null);
   if (!winPhotoOpened) {
-    winPhotoOpened = winPhotoOpenDatabase(factory).then(
+    const generation = winPhotoGeneration;
+    let pending;
+    pending = winPhotoOpenDatabase(factory, generation).then(
       (db) => {
-        if (!db) winPhotoOpened = null;
+        if (winPhotoOpened === pending && (!db || generation !== winPhotoGeneration)) winPhotoOpened = null;
+        if (generation !== winPhotoGeneration) return null;
         return db;
       },
       () => {
-        winPhotoOpened = null;
+        if (winPhotoOpened === pending) winPhotoOpened = null;
         return null;
       },
     );
+    winPhotoOpened = pending;
   }
   return winPhotoOpened;
 }
@@ -182,7 +231,7 @@ function winPhotoBlobLike(value) {
   return typeof value.text === "function" && typeof value.size === "number" && typeof value.type === "string";
 }
 
-/** True only for the synthetic placeholder blob. Real photos are rejected. */
+/** True only for the synthetic placeholder image. Real photos are rejected. */
 export async function isPlaceholderPhotoBlob(blob) {
   if (!winPhotoBlobLike(blob)) return false;
   if (blob.type !== "image/svg+xml") return false;
@@ -194,13 +243,32 @@ export async function isPlaceholderPhotoBlob(blob) {
   }
 }
 
+function winPhotoStoredAt(createdAt) {
+  const stamp = createdAt instanceof Date ? createdAt.getTime() : Number(createdAt);
+  return Number.isFinite(stamp) ? stamp : Date.now();
+}
+
+function winPhotoBytes(value) {
+  if (winPhotoBlobLike(value)) return value;
+  if (value && typeof value === "object" && winPhotoBlobLike(value.blob)) return value.blob;
+  return null;
+}
+
+/** A just-stored placeholder image. A raw blob with no time is not pending. */
+function winPhotoPending(value, nowMs) {
+  if (!value || typeof value !== "object" || winPhotoBlobLike(value)) return false;
+  if (typeof value.createdAt !== "number" || !Number.isFinite(value.createdAt)) return false;
+  return nowMs - value.createdAt < WIN_PHOTO_PENDING_MS;
+}
+
 /**
- * Store the placeholder blob under the win id.
+ * Store the placeholder image under the win id, with the time it was stored.
+ * createdAt defaults to now. Tests pass an older time when a sweep should be allowed to delete it.
  * reason "unavailable" means IndexedDB cannot be opened.
  * reason "put" means the write failed, including quota.
- * reason "blob" means the bytes were not the placeholder.
+ * reason "blob" means the bytes were not the placeholder image.
  */
-export async function putWinPhoto(id, blob) {
+export async function putWinPhoto(id, blob, createdAt = Date.now()) {
   if (typeof id !== "string" || !id.trim()) return { ok: false, reason: "id" };
   if (!(await isPlaceholderPhotoBlob(blob))) return { ok: false, reason: "blob" };
   const db = await winPhotoOpenDb();
@@ -208,7 +276,7 @@ export async function putWinPhoto(id, blob) {
   let tx = null;
   try {
     tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
-    tx.objectStore(WIN_PHOTO_STORE).put(blob, id);
+    tx.objectStore(WIN_PHOTO_STORE).put({ blob, createdAt: winPhotoStoredAt(createdAt) }, id);
     await winPhotoTxDone(tx);
     return { ok: true };
   } catch {
@@ -229,23 +297,36 @@ export async function readWinPhoto(id) {
     const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
     const value = await winPhotoRequest(tx.objectStore(WIN_PHOTO_STORE).get(id));
     await winPhotoTxDone(tx);
-    if (!winPhotoBlobLike(value)) return null;
-    return value;
+    const bytes = winPhotoBytes(value);
+    if (!(await isPlaceholderPhotoBlob(bytes))) return null;
+    return bytes;
   } catch {
     return null;
   }
 }
 
-async function winPhotoListKeys(db) {
+async function winPhotoEntries(db) {
   const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
   const store = tx.objectStore(WIN_PHOTO_STORE);
-  const keys = typeof store.getAllKeys === "function" ? await winPhotoRequest(store.getAllKeys()) : [];
+  if (typeof store.getAllKeys !== "function" || typeof store.getAll !== "function") {
+    await winPhotoTxDone(tx);
+    return null;
+  }
+  const keysRequest = store.getAllKeys();
+  const valuesRequest = store.getAll();
+  const keys = await winPhotoRequest(keysRequest);
+  const values = await winPhotoRequest(valuesRequest);
   await winPhotoTxDone(tx);
-  return Array.isArray(keys) ? keys.filter((key) => typeof key === "string" && key) : [];
+  if (!Array.isArray(keys) || !Array.isArray(values) || keys.length !== values.length) return null;
+  const entries = [];
+  for (let i = 0; i < keys.length; i += 1) {
+    if (typeof keys[i] === "string" && keys[i]) entries.push({ id: keys[i], value: values[i] });
+  }
+  return entries;
 }
 
 /**
- * Tell other tabs a photo blob changed. Does not write the wins record.
+ * Tell other tabs a placeholder image changed. Does not write the wins record.
  * Closing waits a tick so the message is not dropped.
  */
 export function postWinPhotoChange(kind, id) {
@@ -272,7 +353,7 @@ export function postWinPhotoChange(kind, id) {
   return true;
 }
 
-/** True when another tab stored or deleted a win photo. Does not write or post again. */
+/** True when another tab stored or deleted a placeholder image. Does not write or post again. */
 export function handleWinPhotoMessage(event) {
   const data = event && event.data;
   if (!data || data.source !== WIN_PHOTO_CHANNEL) return false;
@@ -298,44 +379,49 @@ export async function deleteWinPhotos(ids, options = {}) {
 }
 
 /**
- * Delete blobs whose keys are not in keepIds.
- * Used after a save replaces an unreadable wins record, when the old ids cannot be read.
- * The caller passes ids from the record it just wrote. This does not run on load.
+ * Ids that a sweep may delete.
+ * keepIds stay. A placeholder image stored in the last WIN_PHOTO_PENDING_MS stays too,
+ * so another tab's save can still write its reference.
+ * A value with no stored time is old enough to delete.
+ * Null means the list could not be read. The caller must not guess and must not clear the store.
  */
-export async function deleteUnreferencedWinPhotos(keepIds) {
-  const db = await winPhotoOpenDb();
-  if (!db) return { deleted: [], unavailable: true };
-  let keys;
-  try {
-    keys = await winPhotoListKeys(db);
-  } catch {
-    return { deleted: [], failed: true };
-  }
+function winPhotoSweepIds(entries, keepIds, nowMs) {
+  if (!Array.isArray(entries)) return null;
   const keep = new Set(Array.isArray(keepIds) ? keepIds : []);
-  return deleteWinPhotos(keys.filter((key) => !keep.has(key)));
+  return entries
+    .filter((entry) => !keep.has(entry.id) && !winPhotoPending(entry.value, nowMs))
+    .map((entry) => entry.id);
 }
 
-/** Reset path. The live wins record is already cleared, so every blob is unmatched. */
-export async function deleteAllWinPhotos() {
+/**
+ * Delete placeholder images whose keys are not in keepIds.
+ * Used after a save replaces an unreadable wins record, when the old ids cannot be read.
+ * The caller passes ids from the record it just wrote. This does not run on load.
+ * A placeholder image stored in the last WIN_PHOTO_PENDING_MS is left in place.
+ * If the keys cannot be listed, nothing is deleted.
+ */
+export async function deleteUnreferencedWinPhotos(keepIds, nowMs = Date.now()) {
   const db = await winPhotoOpenDb();
   if (!db) return { deleted: [], unavailable: true };
-  let keys = [];
-  let listed = false;
+  let entries;
   try {
-    keys = await winPhotoListKeys(db);
-    listed = true;
-  } catch {
-    keys = [];
-  }
-  try {
-    const tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
-    tx.objectStore(WIN_PHOTO_STORE).clear();
-    await winPhotoTxDone(tx);
+    entries = await winPhotoEntries(db);
   } catch {
     return { deleted: [], failed: true };
   }
-  if (!listed || keys.length > 0) postWinPhotoChange("clear", "");
-  return { deleted: keys };
+  const ids = winPhotoSweepIds(entries, keepIds, nowMs);
+  if (!ids) return { deleted: [], failed: true };
+  return deleteWinPhotos(ids);
+}
+
+/**
+ * Reset path. The live wins record is already cleared, so stored images are unmatched.
+ * A placeholder image stored in the last WIN_PHOTO_PENDING_MS is left in place.
+ * This does not clear the whole store, because a clear would remove that fresh image.
+ * If the keys cannot be listed, nothing is deleted.
+ */
+export async function deleteAllWinPhotos(nowMs = Date.now()) {
+  return deleteUnreferencedWinPhotos([], nowMs);
 }
 
 export function winPhotoObjectUrl(blob) {

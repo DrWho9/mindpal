@@ -165,7 +165,7 @@ describe("daily wins", () => {
     assert.match(inject, /mpWins\.addWin\(i\)/);
     assert.match(inject, /mpWins\.winsForDate\(mpWins\.loadWinsStore\(\)\)/);
     assert.match(inject, /id:`mp-win-\$\{e\}`/);
-    assert.match(inject, /e\.key===`Enter`&&l\(\)/);
+    assert.match(inject, /e\.key===`Enter`&&!F\.current&&l\(\)/);
     assert.match(inject, /function mpEveningPage/);
     assert.match(inject, /function mpNightBand/);
     assert.equal(inject.split("variant:`evening`").length - 1 >= 2, true);
@@ -626,6 +626,11 @@ describe("daily wins", () => {
     assert.match(panel, /Attach prototype placeholder image/);
     assert.equal(panel.split("className:`mp-win-photo`").length - 1, 1);
     assert.match(panel, /e===`winOfDay`&&p\?await mpWins\.addWinPhoto\(i\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /useRef\)\(!1\)/);
+    assert.match(panel, /if\(F\.current\)return/);
+    assert.match(panel, /disabled:S/);
+    assert.match(panel, /onKeyDown:e=>\{e\.key===`Enter`&&!F\.current&&l\(\)\}/);
+    assert.match(panel, /finally\{F\.current=!1;T\(!1\)\}/);
     assert.match(panel, /if\(!u\.saved\)\{s\(mpWins\.WIN_NOT_SAVED_LABEL\);return\}/);
     assert.match(panel, /s\(u\.photoError\?mpWins\.WIN_PHOTO_NOT_SAVED_LABEL:u\.photoFallback\?mpWins\.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins\.WIN_SAVED_LABEL\)/);
     assert.match(panel, /function k\(\)\{r\(mpWins\.winsForDate\(mpWins\.readWinsStore\(\)\)\);if\(e===`winOfDay`\)h\(mpWins\.winsSaveBlockedQuiet\(\)\)\}/);
@@ -668,6 +673,9 @@ describe("daily wins", () => {
     assert.match(build, /src\/today\/win-photos\.js/);
     assert.match(build, /readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges/);
     assert.match(build, /addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF/);
+    assert.match(build, /MINDPAL_PHOTO_TEST\)\{mpWins\.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory/);
+    assert.match(build, /MINDPAL_PHOTO_TEST\)globalThis\.mpWins=mpWins/);
+    assert.doesNotMatch(build, /typeof globalThis<\\`u\\`\)globalThis\.mpWins=mpWins/);
   });
 
   it("gives v1 wins without an id a stable unique id and removes only one", () => {
