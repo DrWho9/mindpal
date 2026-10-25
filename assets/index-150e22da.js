@@ -13051,7 +13051,10 @@ function persistWins(store, storage, now = new Date()) {
   const current = readKey(storage, WINS_STORAGE_KEY);
   if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
     const backupKey = quarantineCorruptWins(storage, current, now);
-    if (!backupKey || readKey(storage, backupKey) !== current) return { store: next, saved: false };
+    if (!backupKey || readKey(storage, backupKey) !== current) {
+      clearProbeMemory();
+      return { store: next, saved: false };
+    }
   }
   let serial;
   try {
@@ -13059,9 +13062,12 @@ function persistWins(store, storage, now = new Date()) {
     storage.setItem(WINS_STORAGE_KEY, serial);
   } catch {
     /* private mode / quota; the v1 key is never written */
+    clearProbeMemory();
     return { store: next, saved: false };
   }
-  return { store: next, saved: readKey(storage, WINS_STORAGE_KEY) === serial };
+  const saved = readKey(storage, WINS_STORAGE_KEY) === serial;
+  if (!saved) clearProbeMemory();
+  return { store: next, saved };
 }
 
 function saveWinsStore(store, storage = globalThis.localStorage, now = new Date()) {
@@ -13094,16 +13100,20 @@ function compareKnownBackupAge(a, b) {
 
 /**
  * Last probe for one storage object and one unreadable text.
- * A later check of that same text does not write again.
+ * A later check of that same text does not write again, until a failed save forgets it.
  */
 let probeMemory = null;
+
+function clearProbeMemory() {
+  probeMemory = null;
+}
 
 /**
  * True when a backup of this exact text cannot be stored.
  * The probe value is that text, so a one-byte write cannot hide a larger record.
  * The probe key is not a wins backup. removeItem clears it after the check.
  * If removeItem throws, or the key is still there, the probe can remain and this returns true.
- * The answer is remembered for this storage and this text.
+ * The answer is remembered for this storage and this text until a failed save forgets it.
  */
 function freshBackupWriteFails(storage, text) {
   const sample = typeof text === "string" ? text : "";
@@ -13134,8 +13144,8 @@ function freshBackupWriteFails(storage, text) {
  * A matching backup can still be reused, so that case is not blocked.
  * A readable store is not blocked.
  * When the cap is not full, the first check for this text may write and remove a probe
- * the same size as the record. The same text is not probed again on this storage.
- * A plain load does not call this.
+ * the same size as the record. The same text is not probed again on this storage
+ * until a failed save forgets that answer. A plain load does not call this.
  */
 function winsSaveBlocked(storage = globalThis.localStorage) {
   if (!storage) return false;

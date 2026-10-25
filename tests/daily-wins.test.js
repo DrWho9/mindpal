@@ -1068,4 +1068,37 @@ describe("daily wins", () => {
     assert.equal(winsSaveBlocked(storage), true);
     assert.equal(writes, 1);
   });
+
+  it("checks again after a failed save when free space shrinks", () => {
+    const text = "corrupt-then-tight";
+    let tight = false;
+    let probeWrites = 0;
+    const storage = listedWinsStorage(
+      { [WINS_STORAGE_KEY]: text },
+      {
+        onSet(key) {
+          if (key === "mindpal.dailyWins.v2.writeprobe") probeWrites += 1;
+          if (!tight) return;
+          if (
+            key === WINS_STORAGE_KEY
+            || key.startsWith(`${WINS_STORAGE_KEY_V2_BACKUP}.`)
+            || key === "mindpal.dailyWins.v2.writeprobe"
+          ) {
+            throw new Error("quota");
+          }
+        },
+      },
+    );
+    assert.equal(winsSaveBlocked(storage), false);
+    assert.equal(probeWrites, 1);
+    assert.equal(winsSaveBlocked(storage), false);
+    assert.equal(probeWrites, 1);
+    tight = true;
+    const added = addWin("Tea", storage, morning, morning);
+    assert.equal(added.saved, false);
+    assert.equal(userCopy(added), WIN_NOT_SAVED_LABEL);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), text);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 2);
+  });
 });
