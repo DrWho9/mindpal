@@ -267,7 +267,7 @@ dialog[open]>*{pointer-events:auto}
 .mp-win-of-day.mp-wins-panel input{width:100%;min-height:44px;margin:2px 0 0;box-sizing:border-box}
 .mp-win-of-day .mp-win-photo{display:flex;align-items:center;gap:10px;margin:0;flex:1 1 100%}
 .mp-win-of-day .mp-win-photo img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #e8e1cc;background:#f4f7f1}
-.mp-win-of-day .mp-win-photo figcaption{margin:0;max-width:28ch;font-size:12px;line-height:1.35;color:#6d6758}
+.mp-win-of-day .mp-win-photo figcaption{margin:0;max-width:42ch;font-size:12px;line-height:1.35;color:#6d6758}
 .mp-win-of-day .mp-win-photo-note{margin:0}
 .mp-win-of-day .mp-win-photo-opt{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.35;color:#3d4338}
 .mp-win-of-day .mp-win-photo-opt input{width:auto;min-width:44px;min-height:44px;margin:0;flex:0 0 auto}

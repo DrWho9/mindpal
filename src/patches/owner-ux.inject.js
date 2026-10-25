@@ -199,23 +199,54 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1);
   function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
-  (0,_.useEffect)(()=>{function e(){c()}return window.addEventListener(`mindpal-wins-change`,e),()=>window.removeEventListener(`mindpal-wins-change`,e)},[]);
-  function l(){
-    let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
-    if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-    if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
-    if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
-    a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
-    try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
+  // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
+  function k(){r(mpWins.winsForDate(mpWins.readWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlockedQuiet())}
+  (0,_.useEffect)(()=>mpWins.listenForWinsChanges(window,c,k),[]);
+  (0,_.useEffect)(()=>{
+    if(e!==`winOfDay`)return;
+    let cancelled=!1;
+    let urls=[];
+    (async()=>{
+      let next={};
+      for(let w of n){
+        if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
+        let blob=await mpWins.readWinPhoto(w.id);
+        if(cancelled)return;
+        if(!blob){next[w.id]={kind:`missing`};continue}
+        let url=mpWins.winPhotoObjectUrl(blob);
+        if(cancelled){mpWins.releaseWinPhotoUrl(url);return}
+        if(url)urls.push(url);
+        next[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+      }
+      if(!cancelled)E(next);
+    })();
+    return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
+  },[n,e]);
+  // F blocks a second Save click or Enter press until this save finishes. S disables the button.
+  async function l(){
+    if(F.current)return;
+    F.current=!0;
+    T(!0);
+    try{
+      let u=e===`winOfDay`&&p?await mpWins.addWinPhoto(i):mpWins.addWin(i);
+      if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
+      if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
+      if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
+      a(``),s(u.photoError?mpWins.WIN_PHOTO_NOT_SAVED_LABEL:u.photoFallback?mpWins.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins.WIN_SAVED_LABEL),r(u.items);
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
+    finally{F.current=!1;T(!1)}
   }
-  function d(){
+  async function d(){
     let y=mpWins.resetBlockedWins();
     x(!1);
     if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
-    h(!1),s(mpWins.WIN_RESET_DONE),r(mpWins.winsForDate(mpWins.loadWinsStore()));
-    try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
+    let photos=null;
+    try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
+    h(!1),s(mpWins.winResetDoneLabel(photos)),r(mpWins.winsForDate(mpWins.loadWinsStore()));
+    try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
   }
   if(e===`hub`){
     return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
@@ -241,16 +272,21 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`h2`,{children:`A win from today`}),
       (0,A.jsx)(`p`,{children:`A sentence is enough. You’ll see these again in Before you sleep.`})
     ]}),
-    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>(0,A.jsxs)(`li`,{children:[
-      e===`winOfDay`&&w.photo===mpWins.WIN_PLACEHOLDER_PHOTO?(0,A.jsxs)(`figure`,{className:`mp-win-photo`,children:[
-        (0,A.jsx)(`img`,{src:mpWins.WIN_PLACEHOLDER_PHOTO,alt:mpWins.WIN_PHOTO_PROTOTYPE_LABEL,width:72,height:72}),
-        (0,A.jsx)(`figcaption`,{children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
+    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>{
+      let view=P[w.id];
+      let show=e===`winOfDay`&&(w.photo===mpWins.WIN_PHOTO_REF||w.photo===mpWins.WIN_PLACEHOLDER_PHOTO);
+      let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
+      let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
+      return (0,A.jsxs)(`li`,{children:[
+      show?(0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
+        (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
+        (0,A.jsx)(`figcaption`,{children:caption})
       ]}):null,
       (0,A.jsx)(`span`,{children:w.text}),
       w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
-    ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
+    ]},w.id);})}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
-    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
+    (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
       (0,A.jsxs)(`label`,{className:`mp-win-photo-opt`,htmlFor:`mp-win-photo-${e}`,children:[
         (0,A.jsx)(`input`,{id:`mp-win-photo-${e}`,type:`checkbox`,checked:p,onChange:n=>g(!!n.target.checked)}),
@@ -259,7 +295,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
     ]}):null,
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
-      (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
+      (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:S,onClick:l,children:`Save this win`}),
       t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
@@ -523,7 +559,7 @@ function mpAccountFooter(){
     (0,A.jsx)(mpAccountProfileCard,{}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Wins stay on this device. A Win of the day can include a prototype placeholder image, which is a bundled fake picture and not real private photo storage. Friends and sharing with other people need a future backend. Nothing is uploaded today.`})
+    (0,A.jsx)(`p`,{className:`muted`,children:`Wins stay on this device. A Win of the day can keep a prototype placeholder image in this browser only. That image is a bundled fake picture and not real private photo storage. Friends and sharing with other people need a future backend. Nothing is uploaded today.`})
   ]});
 }
 function mpDedicatedProblemRoute(id){

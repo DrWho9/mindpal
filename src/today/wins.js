@@ -1,4 +1,44 @@
 import { civilDateKey } from "../calendar/civil.js";
+import {
+  WIN_PHOTO_CHANNEL,
+  WIN_PHOTO_CHECKING_LABEL,
+  WIN_PHOTO_DB,
+  WIN_PHOTO_MISSING_LABEL,
+  WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_PHOTO_ON_DEVICE_LABEL,
+  WIN_PHOTO_PENDING_MS,
+  WIN_PHOTO_REF,
+  WIN_PHOTO_STORE,
+  WIN_PHOTO_UNAVAILABLE_LABEL,
+  deleteAllWinPhotos,
+  deleteUnreferencedWinPhotos,
+  deleteWinPhotos,
+  handleWinPhotoMessage,
+  isPlaceholderPhotoBlob,
+  placeholderPhotoBlob,
+  postWinPhotoChange,
+  putWinPhoto,
+  readWinPhoto,
+  releaseWinPhotoUrl,
+  winPhotoDatabaseReady,
+  winPhotoObjectUrl,
+} from "./win-photos.js";
+
+export {
+  WIN_PHOTO_CHANNEL,
+  WIN_PHOTO_CHECKING_LABEL,
+  WIN_PHOTO_DB,
+  WIN_PHOTO_MISSING_LABEL,
+  WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_PHOTO_ON_DEVICE_LABEL,
+  WIN_PHOTO_REF,
+  WIN_PHOTO_STORE,
+  WIN_PHOTO_UNAVAILABLE_LABEL,
+  handleWinPhotoMessage,
+  readWinPhoto,
+  releaseWinPhotoUrl,
+  winPhotoObjectUrl,
+};
 
 /** Legacy key. Read for migration only. Never overwritten or deleted. */
 export const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
@@ -20,16 +60,33 @@ export const WIN_SAVED_LABEL = "Saved on this device for today.";
 export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 /** Shown on Win of the day only while a save cannot be stored. */
 export const WIN_RESET_LABEL = "Reset wins on this device";
+const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
 export const WIN_RESET_NOTE =
-  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
+  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Placeholder images stored for wins on this device are removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
 export const WIN_RESET_CONFIRM = "Confirm reset on this device";
 export const WIN_RESET_CANCEL = "Keep the record";
 export const WIN_RESET_DONE =
-  "Reset on this device. The unreadable record was kept as a backup. A new win can be saved on this device.";
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. A placeholder image another tab started saving in the last " +
+  WIN_PHOTO_PENDING_SECONDS +
+  " seconds can stay. A new win can be saved on this device.";
+export const WIN_RESET_IMAGES_LEFT =
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images could not be removed from this device. A new win can be saved on this device.";
 export const WIN_RESET_UNNEEDED =
   "Reset was not needed. The wins record on this device can already be read.";
 export const WIN_RESET_FAILED =
   "Reset did not happen. The unreadable record is still on this device.";
+
+/**
+ * The done line after a reset that cleared the wins record.
+ * WIN_RESET_DONE only when image cleanup finished.
+ * A missing cleanup, a skipped database, or a failed list says the images could not be removed.
+ */
+export function winResetDoneLabel(cleanup) {
+  if (!cleanup || cleanup.failed === true || cleanup.unavailable === true) return WIN_RESET_IMAGES_LEFT;
+  return WIN_RESET_DONE;
+}
 /**
  * Stored when a win has no time of its own.
  * This is not the moment the record was read. The card says so.
@@ -37,11 +94,16 @@ export const WIN_RESET_FAILED =
 export const WIN_UNKNOWN_TIME = "1970-01-01T00:00:00.000Z";
 export const WIN_UNKNOWN_TIME_LABEL = "Time not recorded";
 const WRITE_PROBE_KEY = "mindpal.dailyWins.v2.writeprobe";
+/** Same-tab panels listen for this. Other tabs use the storage event instead. */
+export const WINS_CHANGE_EVENT = "mindpal-wins-change";
 export const WIN_TEXT_MAX = 280;
 
 /**
  * Bundled fake picture served with the app.
  * This is not a user photo and not private photo storage.
+ * When IndexedDB is available, the bytes live in mindpal-photos under the win id
+ * and this record stores WIN_PHOTO_REF only. When it is not available, the record
+ * keeps this path and the card says so.
  */
 export const WIN_PLACEHOLDER_PHOTO = "/mindpal/win-placeholder.svg";
 export const WIN_PHOTO_PROTOTYPE_LABEL =
@@ -60,8 +122,13 @@ export function emptyWinsDay(date = new Date()) {
   return [];
 }
 
+/**
+ * The record may name the bundled placeholder path, or the IndexedDB reference.
+ * Image bytes are never stored in this JSON. Any other value is dropped.
+ */
 function allowedPhoto(raw) {
-  return raw === WIN_PLACEHOLDER_PHOTO ? WIN_PLACEHOLDER_PHOTO : undefined;
+  if (raw === WIN_PLACEHOLDER_PHOTO || raw === WIN_PHOTO_REF) return raw;
+  return undefined;
 }
 
 export function normalizeWin(raw, fallbackAt = new Date(WIN_UNKNOWN_TIME)) {
@@ -125,6 +192,12 @@ function withUniqueIds(list) {
         next = stableWinId(index, win.at, win.text, salt);
       }
       win.id = next;
+      /*
+       * Both copies named one blob. The first id keeps it.
+       * This copy uses the bundled placeholder path, so it does not claim that blob.
+       * Load does not write. The next save stores the path.
+       */
+      if (win.photo === WIN_PHOTO_REF) win.photo = WIN_PLACEHOLDER_PHOTO;
     }
     seen.add(win.id);
     out.push(win);
@@ -184,7 +257,7 @@ export function migrateV1WinsJson(text) {
  * Pure downgrade of a v2 store into the v1 shape.
  * Returns { version: 1, days } with id and text. at is included only when a time
  * was recorded. WIN_UNKNOWN_TIME is left out, so the export does not invent a time.
- * Photos are left out.
+ * Photos are left out, including the IndexedDB reference and the placeholder path.
  * This does not read or write storage, and it does not delete or create the v1 key.
  *
  * Migration leaves mindpal.dailyWins.v1 as it is, including when that key is already
@@ -293,6 +366,21 @@ function quarantineCorruptWins(storage, v2Text, now = new Date()) {
   return null;
 }
 
+/**
+ * Read the wins record without writing.
+ * A cross-tab refresh uses this so a storage event cannot copy v1 into v2.
+ */
+export function readWinsStore(storage = globalThis.localStorage) {
+  if (!storage) return emptyWinsStore();
+  const v2Text = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof v2Text === "string" && v2Text.length > 0) {
+    const parsed = readWinsStoreText(v2Text);
+    if (parsed) return parsed;
+    return migratedV1(storage) || emptyWinsStore();
+  }
+  return migratedV1(storage) || emptyWinsStore();
+}
+
 export function loadWinsStore(storage = globalThis.localStorage) {
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
@@ -311,6 +399,27 @@ export function loadWinsStore(storage = globalThis.localStorage) {
   return migrated;
 }
 
+function referencedPhotoIds(store) {
+  const ids = [];
+  const days = store && store.days && typeof store.days === "object" ? store.days : {};
+  for (const list of Object.values(days)) {
+    if (!Array.isArray(list)) continue;
+    for (const item of list) {
+      if (item && item.photo === WIN_PHOTO_REF && typeof item.id === "string" && item.id) ids.push(item.id);
+    }
+  }
+  return ids;
+}
+
+function removedPhotoIds(previousStore, nextStore) {
+  const keep = new Set(referencedPhotoIds(nextStore));
+  return referencedPhotoIds(previousStore).filter((id) => !keep.has(id));
+}
+
+function idlePhotoCleanup() {
+  return Promise.resolve({ deleted: [] });
+}
+
 function pruneDays(store) {
   const keys = Object.keys(store.days).sort();
   if (keys.length <= MAX_DAYS) return store;
@@ -322,13 +431,23 @@ function pruneDays(store) {
 
 function persistWins(store, storage, now = new Date()) {
   const next = pruneDays(normalizeWinsStore(store));
-  if (!storage) return { store: next, saved: true };
+  const idle = idlePhotoCleanup();
+  if (!storage) return { store: next, saved: true, photoCleanup: idle };
   const current = readKey(storage, WINS_STORAGE_KEY);
-  if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
+  const readable = typeof current === "string" && current.length > 0 ? readWinsStoreText(current) : null;
+  /*
+   * Read the previous record before the write. A later cleanup only deletes placeholder
+   * images for ids that readable record named and this save dropped. It does not sweep
+   * unknown keys, so an image another tab has stored but not yet referenced can stay.
+   * An unreadable record has no ids. After it is replaced, images the new record
+   * does not name are removed, except one stored in the last WIN_PHOTO_PENDING_MS.
+   * A plain load never reaches this function.
+   */
+  if (typeof current === "string" && current.length > 0 && !readable) {
     const backupKey = quarantineCorruptWins(storage, current, now);
     if (!backupKey || readKey(storage, backupKey) !== current) {
       clearProbeMemory();
-      return { store: next, saved: false };
+      return { store: next, saved: false, photoCleanup: idle };
     }
   }
   let serial;
@@ -338,11 +457,19 @@ function persistWins(store, storage, now = new Date()) {
   } catch {
     /* private mode / quota; the v1 key is never written */
     clearProbeMemory();
-    return { store: next, saved: false };
+    return { store: next, saved: false, photoCleanup: idle };
   }
   const saved = readKey(storage, WINS_STORAGE_KEY) === serial;
-  if (!saved) clearProbeMemory();
-  return { store: next, saved };
+  if (!saved) {
+    clearProbeMemory();
+    return { store: next, saved: false, photoCleanup: idle };
+  }
+  let photoCleanup = idle;
+  if (readable) photoCleanup = deleteWinPhotos(removedPhotoIds(readable, next));
+  else if (typeof current === "string" && current.length > 0) {
+    photoCleanup = deleteUnreferencedWinPhotos(referencedPhotoIds(next));
+  }
+  return { store: next, saved: true, photoCleanup };
 }
 
 export function saveWinsStore(store, storage = globalThis.localStorage, now = new Date()) {
@@ -376,11 +503,19 @@ function compareKnownBackupAge(a, b) {
 /**
  * Last probe for one storage object and one unreadable text.
  * A later check of that same text does not write again, until a failed save forgets it.
+ * Another tab can change the record or free space. That tab's storage event must call
+ * clearWinsProbeCache, or this answer stays stale. The event handler only forgets the
+ * answer. It does not write a new probe. winsSaveBlockedQuiet is the read-only check
+ * a refresh uses so the event itself does not write.
  */
 let probeMemory = null;
 
-function clearProbeMemory() {
+export function clearWinsProbeCache() {
   probeMemory = null;
+}
+
+function clearProbeMemory() {
+  clearWinsProbeCache();
 }
 
 /**
@@ -388,7 +523,8 @@ function clearProbeMemory() {
  * The probe value is that text, so a one-byte write cannot hide a larger record.
  * The probe key is not a wins backup. removeItem clears it after the check.
  * If removeItem throws, or the key is still there, the probe can remain and this returns true.
- * The answer is remembered for this storage and this text until a failed save forgets it.
+ * The answer is remembered for this storage and this text until a failed save forgets it,
+ * or until clearWinsProbeCache runs because another tab changed a wins key.
  */
 function freshBackupWriteFails(storage, text) {
   const sample = typeof text === "string" ? text : "";
@@ -440,6 +576,100 @@ export function winsSaveBlocked(storage = globalThis.localStorage) {
   const known = keys.filter(isKnownBackupKey);
   if (known.length >= MAX_CORRUPT_BACKUPS) return true;
   return freshBackupWriteFails(storage, current);
+}
+
+/**
+ * Read-only blocked check. Never writes a probe and never uses the remembered answer.
+ * True when the record is unreadable and a backup cannot be reused or the cap is full.
+ * When a probe would be needed to know about quota, this returns false. The next save
+ * can probe. A storage event uses this so the refresh does not write.
+ */
+export function winsSaveBlockedQuiet(storage = globalThis.localStorage) {
+  if (!storage) return false;
+  const current = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof current !== "string" || current.length === 0) return false;
+  if (readWinsStoreText(current)) return false;
+  let keys;
+  try {
+    keys = backupKeys(storage);
+  } catch {
+    return true;
+  }
+  if (keys == null) return true;
+  for (const key of keys) {
+    if (readKey(storage, key) === current) return false;
+  }
+  return keys.filter(isKnownBackupKey).length >= MAX_CORRUPT_BACKUPS;
+}
+
+/** True for a wins key, a backup key, the probe key, or a storage.clear() event (null key). */
+export function isWinsStorageKey(key) {
+  if (key == null) return true;
+  if (typeof key !== "string") return false;
+  if (
+    key === WINS_STORAGE_KEY
+    || key === WINS_STORAGE_KEY_V1
+    || key === WRITE_PROBE_KEY
+    || key === WINS_STORAGE_KEY_V2_BACKUP
+  ) {
+    return true;
+  }
+  return key.startsWith(`${WINS_STORAGE_KEY_V2_BACKUP}.`);
+}
+
+/**
+ * Another tab changed a wins key. Forget the probe answer and tell the caller to refresh.
+ * Does not write. Returns false for unrelated keys so the caller does not refresh.
+ */
+export function handleWinsStorageEvent(event) {
+  if (!event || !isWinsStorageKey(event.key)) return false;
+  clearWinsProbeCache();
+  return true;
+}
+
+/**
+ * Listen for same-tab saves, other-tab wins keys, and photo blob messages.
+ * onSameTab may check the probe, because a save in this tab already wrote.
+ * onOtherTab must only read. This function does not write and does not post a
+ * photo message, so a received message cannot loop.
+ * Returns a function that removes the listeners.
+ */
+export function listenForWinsChanges(target, onSameTab, onOtherTab) {
+  if (!target || typeof target.addEventListener !== "function") return () => {};
+  function onSame() {
+    if (typeof onSameTab === "function") onSameTab();
+  }
+  function onStorage(event) {
+    if (!handleWinsStorageEvent(event)) return;
+    if (typeof onOtherTab === "function") onOtherTab();
+  }
+  function onPhoto(event) {
+    if (!handleWinPhotoMessage(event)) return;
+    if (typeof onOtherTab === "function") onOtherTab();
+  }
+  target.addEventListener(WINS_CHANGE_EVENT, onSame);
+  target.addEventListener("storage", onStorage);
+  let channel = null;
+  try {
+    if (typeof BroadcastChannel === "function") {
+      channel = new BroadcastChannel(WIN_PHOTO_CHANNEL);
+      channel.onmessage = onPhoto;
+    }
+  } catch {
+    channel = null;
+  }
+  return function stopWinsChangeListener() {
+    target.removeEventListener(WINS_CHANGE_EVENT, onSame);
+    target.removeEventListener("storage", onStorage);
+    if (channel) {
+      channel.onmessage = null;
+      try {
+        channel.close();
+      } catch {
+        /* already closed */
+      }
+    }
+  };
 }
 
 function removeStoredKey(storage, key) {
@@ -495,6 +725,11 @@ function placeCorruptBackup(storage, text, now) {
  * the unsuffixed backup key, and the v1 key are not removed.
  * If the keys cannot be listed, or the copy cannot be written, nothing is cleared.
  * Does nothing when saving is not blocked, so a readable store stays put.
+ * After the v2 key is cleared, stored placeholder images are deleted. The unreadable text
+ * cannot name those ids, and the live record no longer references them.
+ * An image stored in the last WIN_PHOTO_PENDING_MS stays, so another tab can finish saving it.
+ * If the photo database cannot be listed, the images stay.
+ * If the reset does not clear the key, the images stay.
  */
 export function resetBlockedWins(storage = globalThis.localStorage, now = new Date()) {
   const idle = { cleared: false, needed: false, kept: [] };
@@ -532,7 +767,12 @@ export function resetBlockedWins(storage = globalThis.localStorage, now = new Da
     const [dropped] = remain.splice(index, 1);
     removeStoredKey(storage, dropped);
   }
-  return { cleared: true, needed: true, kept: remain.concat(unknown, plain) };
+  return {
+    cleared: true,
+    needed: true,
+    kept: remain.concat(unknown, plain),
+    photoCleanup: deleteAllWinPhotos(),
+  };
 }
 
 export function winsForDate(store, date = new Date()) {
@@ -541,17 +781,32 @@ export function winsForDate(store, date = new Date()) {
   return Array.isArray(list) ? list.slice() : [];
 }
 
+function newWinId(now) {
+  return `win-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export function addWin(
   text,
   storage = globalThis.localStorage,
   date = new Date(),
   now = new Date(),
   photo,
+  presetId,
 ) {
-  const item = normalizeWin({ text, at: now.toISOString(), photo }, now);
+  const raw = { text, at: now.toISOString(), photo };
+  if (typeof presetId === "string" && presetId.trim()) raw.id = presetId.trim();
+  const item = normalizeWin(raw, now);
   const store = loadWinsStore(storage);
-  if (!item) return { store, item: null, items: winsForDate(store, date), saved: false };
-  item.id = `win-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
+  if (!item) {
+    return {
+      store,
+      item: null,
+      items: winsForDate(store, date),
+      saved: false,
+      photoCleanup: idlePhotoCleanup(),
+    };
+  }
+  if (!raw.id) item.id = newWinId(now);
   const key = civilDateKey(date);
   const items = [...winsForDate(store, date), item];
   store.days[key] = items;
@@ -562,9 +817,67 @@ export function addWin(
       item,
       items: winsForDate(loadWinsStore(storage), date),
       saved: false,
+      photoCleanup: written.photoCleanup,
     };
   }
-  return { store: written.store, item, items: winsForDate(written.store, date), saved: true };
+  return {
+    store: written.store,
+    item,
+    items: winsForDate(written.store, date),
+    saved: true,
+    photoCleanup: written.photoCleanup,
+  };
+}
+
+function photoResult(added, flags) {
+  return {
+    ...added,
+    photoSaved: flags.photoSaved === true,
+    photoFallback: flags.photoFallback === true,
+    photoError: flags.photoError === true,
+  };
+}
+
+/**
+ * Save a win and, when this browser can store it, the placeholder blob.
+ * The local record keeps WIN_PHOTO_REF, not the bytes.
+ * IndexedDB unavailable: the record keeps the placeholder path and photoFallback is set.
+ * Quota or a rejected blob: the text win still saves when it can, with no photo reference.
+ * If the text cannot be saved, a blob that was just written is deleted.
+ */
+export async function addWinPhoto(
+  text,
+  storage = globalThis.localStorage,
+  date = new Date(),
+  now = new Date(),
+  blob,
+) {
+  const draft = normalizeWin({ text, at: now.toISOString() }, now);
+  if (!draft) return photoResult(addWin(text, storage, date, now), {});
+  const id = newWinId(now);
+  const body = blob === undefined ? placeholderPhotoBlob() : blob;
+  if (!(await isPlaceholderPhotoBlob(body))) {
+    return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
+  }
+  if (!(await winPhotoDatabaseReady())) {
+    const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+    return photoResult(added, { photoFallback: added.saved === true });
+  }
+  const put = await putWinPhoto(id, body);
+  if (!put.ok) {
+    if (put.reason === "unavailable") {
+      const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+      return photoResult(added, { photoFallback: added.saved === true });
+    }
+    return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
+  }
+  const added = addWin(text, storage, date, now, WIN_PHOTO_REF, id);
+  if (!added.saved || !added.item || added.item.id !== id || added.item.photo !== WIN_PHOTO_REF) {
+    await deleteWinPhotos([id], { notify: false });
+    return photoResult(added, { photoError: true });
+  }
+  postWinPhotoChange("put", id);
+  return photoResult(added, { photoSaved: true });
 }
 
 export function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
@@ -576,7 +889,17 @@ export function removeWin(id, storage = globalThis.localStorage, date = new Date
   store.days[key] = items;
   const written = persistWins(store, storage, new Date());
   if (!written.saved) {
-    return { store: written.store, items: winsForDate(loadWinsStore(storage), date), saved: false };
+    return {
+      store: written.store,
+      items: winsForDate(loadWinsStore(storage), date),
+      saved: false,
+      photoCleanup: written.photoCleanup,
+    };
   }
-  return { store: written.store, items: winsForDate(written.store, date), saved: true };
+  return {
+    store: written.store,
+    items: winsForDate(written.store, date),
+    saved: true,
+    photoCleanup: written.photoCleanup,
+  };
 }

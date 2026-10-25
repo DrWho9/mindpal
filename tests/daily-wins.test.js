@@ -15,6 +15,7 @@ import {
   WIN_RESET_CONFIRM,
   WIN_RESET_DONE,
   WIN_RESET_FAILED,
+  WIN_RESET_IMAGES_LEFT,
   WIN_RESET_LABEL,
   WIN_RESET_NOTE,
   WIN_RESET_UNNEEDED,
@@ -25,20 +26,33 @@ import {
   WIN_OF_THE_DAY_EYEBROW,
   WIN_OF_THE_DAY_LEDE,
   WIN_OF_THE_DAY_TITLE,
+  WIN_PHOTO_CHECKING_LABEL,
+  WIN_PHOTO_MISSING_LABEL,
+  WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_PHOTO_ON_DEVICE_LABEL,
   WIN_PHOTO_PROTOTYPE_LABEL,
+  WIN_PHOTO_REF,
+  WIN_PHOTO_UNAVAILABLE_LABEL,
   WIN_PLACEHOLDER_PHOTO,
+  WINS_CHANGE_EVENT,
   addWin,
+  clearWinsProbeCache,
   emptyWinsStore,
   exportV1,
+  handleWinsStorageEvent,
+  isWinsStorageKey,
+  listenForWinsChanges,
   loadWinsStore,
   migrateV1WinsJson,
   normalizeWin,
+  readWinsStore,
   removeWin,
   resetBlockedWins,
   saveWinsStore,
   stableWinId,
   winsForDate,
   winsSaveBlocked,
+  winsSaveBlockedQuiet,
 } from "../src/today/wins.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -152,7 +166,7 @@ describe("daily wins", () => {
     assert.match(inject, /mpWins\.addWin\(i\)/);
     assert.match(inject, /mpWins\.winsForDate\(mpWins\.loadWinsStore\(\)\)/);
     assert.match(inject, /id:`mp-win-\$\{e\}`/);
-    assert.match(inject, /e\.key===`Enter`&&l\(\)/);
+    assert.match(inject, /e\.key===`Enter`&&!F\.current&&l\(\)/);
     assert.match(inject, /function mpEveningPage/);
     assert.match(inject, /function mpNightBand/);
     assert.equal(inject.split("variant:`evening`").length - 1 >= 2, true);
@@ -194,6 +208,14 @@ describe("daily wins", () => {
     assert.equal(withPhoto.items[0].text, "A quiet cup of tea");
     assert.equal(Object.hasOwn(withPhoto.items[0], "photo"), false);
     assert.equal(withPhoto.items[1].photo, WIN_PLACEHOLDER_PHOTO);
+    const referenced = normalizeWin({
+      id: "photo-ref",
+      text: "Stored on this device",
+      at: "2026-09-20T09:00:00.000Z",
+      photo: WIN_PHOTO_REF,
+    });
+    assert.equal(referenced.photo, WIN_PHOTO_REF);
+    assert.equal(JSON.stringify(referenced).includes("<svg"), false);
 
     for (const rejected of [
       "data:image/png;base64,aaaa",
@@ -595,14 +617,26 @@ describe("daily wins", () => {
 
   it("shows the placeholder thumbnail only on the Win of the day card", () => {
     const panel = inject.slice(inject.indexOf("function mpWinsPanel("), inject.indexOf("function mpMaddyTeaser("));
-    assert.match(panel, /e===`winOfDay`&&w\.photo===mpWins\.WIN_PLACEHOLDER_PHOTO\?\(0,A\.jsxs\)\(`figure`/);
-    assert.match(panel, /src:mpWins\.WIN_PLACEHOLDER_PHOTO,alt:mpWins\.WIN_PHOTO_PROTOTYPE_LABEL/);
+    assert.match(panel, /className:`mp-win-photo`/);
+    assert.match(panel, /src,alt:caption/);
+    assert.match(panel, /view&&view\.url\?view\.url:mpWins\.WIN_PLACEHOLDER_PHOTO/);
+    assert.match(panel, /mpWins\.WIN_PHOTO_ON_DEVICE_LABEL/);
+    assert.match(panel, /mpWins\.WIN_PHOTO_MISSING_LABEL/);
+    assert.match(panel, /mpWins\.WIN_PHOTO_CHECKING_LABEL/);
     assert.match(panel, /children:mpWins\.WIN_PHOTO_PROTOTYPE_LABEL/);
     assert.match(panel, /Attach prototype placeholder image/);
     assert.equal(panel.split("className:`mp-win-photo`").length - 1, 1);
-    assert.match(panel, /e===`winOfDay`&&p\?mpWins\.addWin\(i,void 0,void 0,void 0,mpWins\.WIN_PLACEHOLDER_PHOTO\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /e===`winOfDay`&&p\?await mpWins\.addWinPhoto\(i\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /useRef\)\(!1\)/);
+    assert.match(panel, /if\(F\.current\)return/);
+    assert.match(panel, /disabled:S/);
+    assert.match(panel, /onKeyDown:e=>\{e\.key===`Enter`&&!F\.current&&l\(\)\}/);
+    assert.match(panel, /finally\{F\.current=!1;T\(!1\)\}/);
     assert.match(panel, /if\(!u\.saved\)\{s\(mpWins\.WIN_NOT_SAVED_LABEL\);return\}/);
-    assert.match(panel, /a\(``\),s\(mpWins\.WIN_SAVED_LABEL\),r\(u\.items\)/);
+    assert.match(panel, /s\(u\.photoError\?mpWins\.WIN_PHOTO_NOT_SAVED_LABEL:u\.photoFallback\?mpWins\.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins\.WIN_SAVED_LABEL\)/);
+    assert.match(panel, /function k\(\)\{r\(mpWins\.winsForDate\(mpWins\.readWinsStore\(\)\)\);if\(e===`winOfDay`\)h\(mpWins\.winsSaveBlockedQuiet\(\)\)\}/);
+    assert.match(panel, /listenForWinsChanges\(window,c,k\)/);
+    assert.doesNotMatch(panel.slice(panel.indexOf("function k()"), panel.indexOf("function k()") + 180), /setItem|addWin|resetBlockedWins/);
     assert.doesNotMatch(panel, /s\(`Saved on this device for today\.`\)/);
     assert.match(panel, /e===`evening`\?\(0,A\.jsx\)\(`h2`,\{children:`Today’s wins`\}/);
     assert.match(panel, /e===`growth`\?/);
@@ -617,7 +651,7 @@ describe("daily wins", () => {
     assert.match(build, /WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL/);
     assert.match(build, /migrateV1WinsJson/);
     assert.match(build, /exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins/);
-    assert.match(build, /WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL/);
+    assert.match(build, /WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL/);
     assert.match(css, /\.mp-win-of-day \.mp-win-reset\{/);
     assert.match(css, /\.mp-win-of-day \.mp-win-reset button\{[^}]*min-height:44px/);
     assert.equal(panel.split("e===`winOfDay`&&b?").length - 1, 1);
@@ -630,13 +664,20 @@ describe("daily wins", () => {
     assert.match(panel, /onClick:\(\)=>x\(!1\),children:mpWins\.WIN_RESET_CANCEL/);
     assert.match(panel, /mpWins\.resetBlockedWins\(\)/);
     assert.match(panel, /y&&y\.needed===false\?mpWins\.WIN_RESET_UNNEEDED:mpWins\.WIN_RESET_FAILED/);
-    assert.match(panel, /s\(mpWins\.WIN_RESET_DONE\)/);
+    assert.match(panel, /photos=y\.photoCleanup\?await y\.photoCleanup:\{failed:!0\}/);
+    assert.match(panel, /s\(mpWins\.winResetDoneLabel\(photos\)\)/);
     assert.match(panel, /w\.at===mpWins\.WIN_UNKNOWN_TIME\?/);
     assert.match(panel, /children:mpWins\.WIN_UNKNOWN_TIME_LABEL/);
     assert.doesNotMatch(
-      `${WIN_RESET_LABEL} ${WIN_RESET_NOTE} ${WIN_RESET_CONFIRM} ${WIN_RESET_CANCEL} ${WIN_RESET_DONE} ${WIN_RESET_UNNEEDED} ${WIN_RESET_FAILED} ${WIN_UNKNOWN_TIME_LABEL}`,
+      `${WIN_RESET_LABEL} ${WIN_RESET_NOTE} ${WIN_RESET_CONFIRM} ${WIN_RESET_CANCEL} ${WIN_RESET_DONE} ${WIN_RESET_IMAGES_LEFT} ${WIN_RESET_UNNEEDED} ${WIN_RESET_FAILED} ${WIN_UNKNOWN_TIME_LABEL} ${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL} ${WIN_PHOTO_CHECKING_LABEL}`,
       /—|–/,
     );
+    assert.match(build, /src\/today\/win-photos\.js/);
+    assert.match(build, /readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges/);
+    assert.match(build, /addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF/);
+    assert.match(build, /MINDPAL_PHOTO_TEST\)\{mpWins\.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory/);
+    assert.match(build, /MINDPAL_PHOTO_TEST\)globalThis\.mpWins=mpWins/);
+    assert.doesNotMatch(build, /typeof globalThis<\\`u\\`\)globalThis\.mpWins=mpWins/);
   });
 
   it("gives v1 wins without an id a stable unique id and removes only one", () => {
@@ -1100,5 +1141,125 @@ describe("daily wins", () => {
     assert.equal(storage.getItem(WINS_STORAGE_KEY), text);
     assert.equal(winsSaveBlocked(storage), true);
     assert.equal(probeWrites, 2);
+  });
+
+  it("reads a missing v2 record without writing the v1 copy", () => {
+    const v1 = JSON.stringify({
+      version: 1,
+      days: { "2026-09-20": [{ id: "win-old", text: "Tea", at: "2026-09-20T09:00:00.000Z" }] },
+    });
+    let writes = 0;
+    const storage = memoryStorage({ [WINS_STORAGE_KEY_V1]: v1 });
+    const origSet = storage.setItem;
+    storage.setItem = (key, value) => {
+      writes += 1;
+      origSet(key, value);
+    };
+    const read = readWinsStore(storage);
+    assert.equal(writes, 0);
+    assert.equal(read.days["2026-09-20"][0].text, "Tea");
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), null);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+    const loaded = loadWinsStore(storage);
+    assert.equal(loaded.days["2026-09-20"][0].text, "Tea");
+    assert.equal(writes, 1);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+  });
+
+  it("forgets the probe answer when another tab changes a wins key and does not write", () => {
+    const text = "corrupt-other-tab";
+    let probeWrites = 0;
+    const storage = listedWinsStorage(
+      { [WINS_STORAGE_KEY]: text },
+      {
+        onSet(key, value) {
+          if (key !== "mindpal.dailyWins.v2.writeprobe") return;
+          probeWrites += 1;
+          if (typeof value === "string" && value.length < text.length) return;
+          throw new Error("quota");
+        },
+      },
+    );
+    clearWinsProbeCache();
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+    assert.equal(winsSaveBlockedQuiet(storage), false);
+    assert.equal(probeWrites, 1);
+    assert.equal(handleWinsStorageEvent({ key: "mindpal.sessionUser.v1" }), false);
+    assert.equal(isWinsStorageKey("mindpal.sessionUser.v1"), false);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+    assert.equal(handleWinsStorageEvent({ key: WINS_STORAGE_KEY }), true);
+    assert.equal(probeWrites, 1);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 2);
+    assert.equal(handleWinsStorageEvent({ key: null }), true);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 3);
+    assert.equal(storage.getItem("mindpal.dailyWins.v2.writeprobe"), null);
+  });
+
+  it("refreshes other tabs from a storage event and a photo message without writing", async () => {
+    const text = "corrupt-listener";
+    let probeWrites = 0;
+    const storage = listedWinsStorage(
+      { [WINS_STORAGE_KEY]: text },
+      {
+        onSet(key) {
+          if (key === "mindpal.dailyWins.v2.writeprobe") probeWrites += 1;
+          throw new Error("quota");
+        },
+      },
+    );
+    clearWinsProbeCache();
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+
+    let quiet = 0;
+    let same = 0;
+    const target = new EventTarget();
+    const stop = listenForWinsChanges(
+      target,
+      () => {
+        same += 1;
+      },
+      () => {
+        quiet += 1;
+      },
+    );
+    target.dispatchEvent(Object.assign(new Event("storage"), { key: "mindpal.sessionUser.v1" }));
+    assert.equal(quiet, 0);
+    assert.equal(same, 0);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+
+    target.dispatchEvent(Object.assign(new Event("storage"), { key: WINS_STORAGE_KEY }));
+    assert.equal(quiet, 1);
+    assert.equal(same, 0);
+    assert.equal(probeWrites, 1);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 2);
+
+    target.dispatchEvent(new Event(WINS_CHANGE_EVENT));
+    assert.equal(same, 1);
+    assert.equal(quiet, 1);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 2);
+
+    const before = quiet;
+    const other = new BroadcastChannel("mindpal-photos");
+    other.postMessage({ source: "mindpal-photos", kind: "put", id: "win-1" });
+    other.postMessage({ source: "someone-else", kind: "put" });
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    assert.equal(quiet, before + 1);
+    assert.equal(same, 1);
+    assert.equal(probeWrites, 2);
+    other.close();
+    stop();
+    const afterStop = new BroadcastChannel("mindpal-photos");
+    afterStop.postMessage({ source: "mindpal-photos", kind: "put", id: "win-2" });
+    await new Promise((resolve) => setTimeout(resolve, 30));
+    assert.equal(quiet, before + 1);
+    afterStop.close();
   });
 });
