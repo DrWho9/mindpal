@@ -79,7 +79,7 @@ describe("reset wins on this device", { timeout: 90000 }, () => {
     await host?.close();
   });
 
-  it("asks before clearing a blocked wins record and keeps the backup copies", { skip: skipCard }, async () => {
+  it("asks before clearing a blocked wins record and keeps the unreadable record as a backup", { skip: skipCard }, async () => {
     const winCard = page.locator(".mp-win-of-day");
     const eveningCard = page.locator(".mp-wins-evening");
     const reset = winCard.getByRole("button", { name: WIN_RESET_LABEL });
@@ -113,14 +113,17 @@ describe("reset wins on this device", { timeout: 90000 }, () => {
     }));
     assert.equal(afterReset.v2, null);
     assert.equal(afterReset.v1, null);
-    assert.deepEqual(afterReset.backups, [
-      "mindpal.dailyWins.v2.backup.11",
-      "mindpal.dailyWins.v2.backup.22",
-      "mindpal.dailyWins.v2.backup.33",
-    ]);
-    for (const [key, value] of Object.entries(backupCopies)) {
+    assert.equal(afterReset.backups.length, 3);
+    assert.equal(afterReset.backups.includes("mindpal.dailyWins.v2.backup.11"), false);
+    assert.equal(afterReset.backups.includes("mindpal.dailyWins.v2.backup.22"), true);
+    assert.equal(afterReset.backups.includes("mindpal.dailyWins.v2.backup.33"), true);
+    const rotated = afterReset.backups.find((key) => key !== "mindpal.dailyWins.v2.backup.22" && key !== "mindpal.dailyWins.v2.backup.33");
+    assert.match(rotated, /^mindpal\.dailyWins\.v2\.backup\.\d+$/);
+    const rotatedValue = await page.evaluate((name) => localStorage.getItem(name), rotated);
+    assert.equal(rotatedValue, corruptV2);
+    for (const key of ["mindpal.dailyWins.v2.backup.22", "mindpal.dailyWins.v2.backup.33"]) {
       const stored = await page.evaluate((name) => localStorage.getItem(name), key);
-      assert.equal(stored, value);
+      assert.equal(stored, backupCopies[key]);
     }
 
     await winCard.locator("#mp-win-winOfDay").fill("Walked to the shops");

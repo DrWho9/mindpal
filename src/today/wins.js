@@ -8,8 +8,9 @@ export const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
  * A save reuses a copy that already holds the same text.
  * Timestamped copies stop at MAX_CORRUPT_BACKUPS.
  * A plain load does not write a copy.
- * When that cap is full, saving stays blocked until the person resets.
- * Reset clears the unreadable v2 key and keeps the backup copies.
+ * When a save cannot keep another copy, saving stays blocked until the person resets.
+ * Reset copies that unreadable text into a timestamped backup, then clears the v2 key.
+ * The newest three timestamped copies stay. Backup names that are not timestamps are kept.
  */
 export const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
 /** Timestamped copies only. The unsuffixed backup key is left alone. */
@@ -20,11 +21,22 @@ export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this d
 /** Shown on Win of the day only while a save cannot be stored. */
 export const WIN_RESET_LABEL = "Reset wins on this device";
 export const WIN_RESET_NOTE =
-  "Saving is blocked. Reset clears the unreadable wins record on this device only. The newest backup copies stay on this device. This is a prototype, not real private storage.";
+  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
 export const WIN_RESET_CONFIRM = "Confirm reset on this device";
 export const WIN_RESET_CANCEL = "Keep the record";
 export const WIN_RESET_DONE =
-  "Reset on this device. The unreadable record was cleared. The newest backup copies were kept.";
+  "Reset on this device. The unreadable record was kept as a backup. A new win can be saved on this device.";
+export const WIN_RESET_UNNEEDED =
+  "Reset was not needed. The wins record on this device can already be read.";
+export const WIN_RESET_FAILED =
+  "Reset did not happen. The unreadable record is still on this device.";
+/**
+ * Stored when a win has no time of its own.
+ * This is not the moment the record was read. The card says so.
+ */
+export const WIN_UNKNOWN_TIME = "1970-01-01T00:00:00.000Z";
+export const WIN_UNKNOWN_TIME_LABEL = "Time not recorded";
+const WRITE_PROBE_KEY = "mindpal.dailyWins.v2.writeprobe";
 export const WIN_TEXT_MAX = 280;
 
 /**
@@ -52,7 +64,7 @@ function allowedPhoto(raw) {
   return raw === WIN_PLACEHOLDER_PHOTO ? WIN_PLACEHOLDER_PHOTO : undefined;
 }
 
-export function normalizeWin(raw, fallbackAt = new Date()) {
+export function normalizeWin(raw, fallbackAt = new Date(WIN_UNKNOWN_TIME)) {
   if (!raw || typeof raw !== "object") return null;
   const text = typeof raw.text === "string" ? raw.text.trim().slice(0, WIN_TEXT_MAX) : "";
   if (!text) return null;
@@ -63,7 +75,7 @@ export function normalizeWin(raw, fallbackAt = new Date()) {
   const at =
     typeof raw.at === "string" && raw.at
       ? raw.at
-      : fallbackAt.toISOString();
+      : WIN_UNKNOWN_TIME;
   const win = { id, text, at };
   const photo = allowedPhoto(raw.photo);
   if (photo) win.photo = photo;
@@ -74,15 +86,25 @@ export function emptyWinsStore() {
   return { version: WINS_STORE_VERSION, days: {} };
 }
 
+function shortHash(value) {
+  let hash = 5381;
+  const text = String(value);
+  for (let i = 0; i < text.length; i += 1) {
+    hash = ((hash << 5) + hash + text.charCodeAt(i)) >>> 0;
+  }
+  return hash.toString(36);
+}
+
 /**
  * Stable id for a win that had none, or that repeated an id already used that day.
- * Built from the list index, the timestamp, and the text so a later read matches.
+ * A short hash of the index, the time, and the text. A missing time uses
+ * WIN_UNKNOWN_TIME, not the clock, so a later read matches.
  */
 export function stableWinId(index, at, text, salt = 0) {
-  const stamp = typeof at === "string" ? at : "";
+  const stamp = typeof at === "string" && at ? at : WIN_UNKNOWN_TIME;
   const body = typeof text === "string" ? text : "";
-  const saltPart = salt > 0 ? `${salt}-` : "";
-  return `win-${index}-${saltPart}${stamp.length}-${body.length}-${stamp}-${body}`;
+  const saltPart = salt > 0 ? `-${salt}` : "";
+  return `win-${index}${saltPart}-${shortHash(`${index}\n${salt}\n${stamp}\n${body}`)}`;
 }
 
 function withUniqueIds(list) {
@@ -242,7 +264,7 @@ function quarantineCorruptWins(storage, v2Text, now = new Date()) {
     if (readKey(storage, key) === v2Text) return key;
   }
   const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
-  const stamped = keys.filter((key) => key.startsWith(prefix));
+  const stamped = keys.filter((key) => isKnownBackupKey(key));
   if (stamped.length >= MAX_CORRUPT_BACKUPS) return null;
   const stamp = now.getTime();
   for (let n = 0; n < 50; n += 1) {
@@ -315,26 +337,56 @@ export function saveWinsStore(store, storage = globalThis.localStorage, now = ne
   return persistWins(store, storage, now).store;
 }
 
-function backupStamp(key) {
+function backupSuffix(key) {
   const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
-  const rest = key.startsWith(prefix) ? key.slice(prefix.length) : "";
-  const [stampText, extraText] = rest.split(".");
-  const stamp = Number(stampText);
-  const extra = extraText == null || extraText === "" ? 0 : Number(extraText);
-  return [Number.isFinite(stamp) ? stamp : -1, Number.isFinite(extra) ? extra : -1];
+  return key.startsWith(prefix) ? key.slice(prefix.length) : "";
 }
 
-function compareBackupAge(a, b) {
-  const [aStamp, aExtra] = backupStamp(a);
-  const [bStamp, bExtra] = backupStamp(b);
+/** A timestamped copy is digits, or digits, a dot, and digits. Other names are kept. */
+function isKnownBackupKey(key) {
+  return /^\d+(?:\.\d+)?$/.test(backupSuffix(key));
+}
+
+function knownBackupRank(key) {
+  const [stampText, extraText] = backupSuffix(key).split(".");
+  const stamp = Number(stampText);
+  const extra = extraText == null || extraText === "" ? 0 : Number(extraText);
+  return [Number.isFinite(stamp) ? stamp : 0, Number.isFinite(extra) ? extra : 0];
+}
+
+function compareKnownBackupAge(a, b) {
+  const [aStamp, aExtra] = knownBackupRank(a);
+  const [bStamp, bExtra] = knownBackupRank(b);
   if (aStamp !== bStamp) return aStamp - bStamp;
   return aExtra - bExtra;
 }
 
 /**
- * True when the v2 record cannot be read and a save cannot keep another copy.
+ * True when a new backup of one byte cannot be written.
+ * The probe key is not a wins backup. It is removed when removeItem works.
+ */
+function freshBackupWriteFails(storage) {
+  try {
+    storage.setItem(WRITE_PROBE_KEY, "1");
+    const wrote = storage.getItem(WRITE_PROBE_KEY) === "1";
+    try {
+      if (typeof storage.removeItem === "function") storage.removeItem(WRITE_PROBE_KEY);
+    } catch {
+      /* the probe is not a wins backup */
+    }
+    return !wrote;
+  } catch {
+    return true;
+  }
+}
+
+/**
+ * True when a save cannot store a new win because the v2 record is unreadable
+ * and a backup of that text cannot be reused or written.
  * A matching backup can still be reused, so that case is not blocked.
- * A readable store is not blocked. This does not write.
+ * A readable store is not blocked.
+ * When the cap is not full, this may write and remove a one-byte probe key.
+ * A plain load does not call this.
  */
 export function winsSaveBlocked(storage = globalThis.localStorage) {
   if (!storage) return false;
@@ -351,8 +403,9 @@ export function winsSaveBlocked(storage = globalThis.localStorage) {
   for (const key of keys) {
     if (readKey(storage, key) === current) return false;
   }
-  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
-  return keys.filter((key) => key.startsWith(prefix)).length >= MAX_CORRUPT_BACKUPS;
+  const known = keys.filter(isKnownBackupKey);
+  if (known.length >= MAX_CORRUPT_BACKUPS) return true;
+  return freshBackupWriteFails(storage);
 }
 
 function removeStoredKey(storage, key) {
@@ -366,34 +419,86 @@ function removeStoredKey(storage, key) {
   return left == null || left === "";
 }
 
+function placeCorruptBackup(storage, text, now) {
+  let keys;
+  try {
+    keys = backupKeys(storage);
+  } catch {
+    return null;
+  }
+  if (keys == null) return null;
+  for (const key of keys) {
+    if (readKey(storage, key) === text) return key;
+  }
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  const stamp = now.getTime();
+  for (let n = 0; n < 50; n += 1) {
+    const key = n === 0 ? `${prefix}${stamp}` : `${prefix}${stamp}.${n}`;
+    let existing;
+    try {
+      existing = storage.getItem(key);
+    } catch {
+      return null;
+    }
+    if (existing === text) return key;
+    if (typeof existing === "string" && existing.length > 0) continue;
+    try {
+      storage.setItem(key, text);
+      if (storage.getItem(key) === text) return key;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
 /**
  * User-triggered recovery for a blocked save.
- * Removes the unreadable v2 key only. Keeps backup copies, or the newest
- * timestamped copies when there are more than MAX_CORRUPT_BACKUPS.
- * Does not remove the unsuffixed backup key or the v1 key.
+ * Copies the unreadable v2 text into a timestamped backup first.
+ * Clears the v2 key only after that copy is in place.
+ * Then drops the oldest timestamped copies until MAX_CORRUPT_BACKUPS remain.
+ * The copy of the unreadable text is not dropped. Unknown backup names,
+ * the unsuffixed backup key, and the v1 key are not removed.
+ * If the keys cannot be listed, or the copy cannot be written, nothing is cleared.
  * Does nothing when saving is not blocked, so a readable store stays put.
  */
-export function resetBlockedWins(storage = globalThis.localStorage) {
-  const empty = { cleared: false, kept: [] };
-  if (!winsSaveBlocked(storage)) return empty;
+export function resetBlockedWins(storage = globalThis.localStorage, now = new Date()) {
+  const idle = { cleared: false, needed: false, kept: [] };
+  if (!storage || !winsSaveBlocked(storage)) return idle;
   const current = readKey(storage, WINS_STORAGE_KEY);
-  if (typeof current === "string" && current.length > 0 && readWinsStoreText(current)) return empty;
-  let keys = null;
+  if (typeof current !== "string" || current.length === 0 || readWinsStoreText(current)) return idle;
+  let keys;
   try {
     keys = backupKeys(storage);
   } catch {
     keys = null;
   }
+  if (keys == null) return { cleared: false, needed: true, kept: [] };
+  const placed = placeCorruptBackup(storage, current, now);
+  if (!placed || readKey(storage, placed) !== current) {
+    return { cleared: false, needed: true, kept: [] };
+  }
+  let after;
+  try {
+    after = backupKeys(storage);
+  } catch {
+    after = null;
+  }
+  if (after == null || !removeStoredKey(storage, WINS_STORAGE_KEY)) {
+    return { cleared: false, needed: true, kept: after || [placed] };
+  }
   const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
-  const listed = Array.isArray(keys) ? keys : [];
-  const stamped = listed.filter((key) => key.startsWith(prefix)).sort(compareBackupAge);
-  const plain = listed.filter((key) => key === WINS_STORAGE_KEY_V2_BACKUP);
-  const overflow = Math.max(0, stamped.length - MAX_CORRUPT_BACKUPS);
-  const drop = stamped.slice(0, overflow);
-  const keep = stamped.slice(overflow).concat(plain);
-  if (!removeStoredKey(storage, WINS_STORAGE_KEY)) return { cleared: false, kept: keep };
-  for (const key of drop) removeStoredKey(storage, key);
-  return { cleared: true, kept: keep };
+  const known = after.filter(isKnownBackupKey).sort(compareKnownBackupAge);
+  const unknown = after.filter((key) => key.startsWith(prefix) && !isKnownBackupKey(key));
+  const plain = after.filter((key) => key === WINS_STORAGE_KEY_V2_BACKUP);
+  const remain = known.slice();
+  while (remain.length > MAX_CORRUPT_BACKUPS) {
+    const index = remain.findIndex((key) => readKey(storage, key) !== current);
+    if (index < 0) break;
+    const [dropped] = remain.splice(index, 1);
+    removeStoredKey(storage, dropped);
+  }
+  return { cleared: true, needed: true, kept: remain.concat(unknown, plain) };
 }
 
 export function winsForDate(store, date = new Date()) {

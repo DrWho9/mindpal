@@ -214,7 +214,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   function d(){
     let y=mpWins.resetBlockedWins();
     x(!1);
-    if(!y||!y.cleared){s(mpWins.WIN_NOT_SAVED_LABEL),h(mpWins.winsSaveBlocked());return}
+    if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
     h(!1),s(mpWins.WIN_RESET_DONE),r(mpWins.winsForDate(mpWins.loadWinsStore()));
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
@@ -248,7 +248,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         (0,A.jsx)(`figcaption`,{children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
       ]}):null,
       (0,A.jsx)(`span`,{children:w.text}),
-      (0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
+      w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
     ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
@@ -266,7 +266,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
       (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
       m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
         (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!1),children:mpWins.WIN_RESET_CANCEL})
       ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!0),children:mpWins.WIN_RESET_LABEL})
     ]}):null,
