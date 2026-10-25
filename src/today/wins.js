@@ -164,8 +164,9 @@ function backupKeys(storage) {
   }
   if (bag && typeof bag === "object") {
     for (const key of Object.keys(bag)) if (consider(key)) keys.push(key);
+    return keys;
   }
-  return keys;
+  return null;
 }
 
 function quarantineCorruptWins(storage, v2Text, now = new Date()) {
@@ -175,6 +176,7 @@ function quarantineCorruptWins(storage, v2Text, now = new Date()) {
   } catch {
     return null;
   }
+  if (keys == null) return null;
   for (const key of keys) {
     if (readKey(storage, key) === v2Text) return key;
   }
@@ -202,8 +204,7 @@ function quarantineCorruptWins(storage, v2Text, now = new Date()) {
   return null;
 }
 
-export function loadWinsStore(storage = globalThis.localStorage, now = new Date()) {
-  void now;
+export function loadWinsStore(storage = globalThis.localStorage) {
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
   if (typeof v2Text === "string" && v2Text.length > 0) {
@@ -267,7 +268,7 @@ export function addWin(
   photo,
 ) {
   const item = normalizeWin({ text, at: now.toISOString(), photo }, now);
-  const store = loadWinsStore(storage, now);
+  const store = loadWinsStore(storage);
   if (!item) return { store, item: null, items: winsForDate(store, date), saved: false };
   item.id = `win-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
   const key = civilDateKey(date);
@@ -278,7 +279,7 @@ export function addWin(
     return {
       store: written.store,
       item,
-      items: winsForDate(loadWinsStore(storage, now), date),
+      items: winsForDate(loadWinsStore(storage), date),
       saved: false,
     };
   }
