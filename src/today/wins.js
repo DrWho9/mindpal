@@ -1,7 +1,18 @@
 import { civilDateKey } from "../calendar/civil.js";
 
-export const WINS_STORAGE_KEY = "mindpal.dailyWins.v1";
+/** Legacy key. Read for migration only. Never overwritten or deleted. */
+export const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
+export const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
+export const WINS_STORE_VERSION = 2;
 export const WIN_TEXT_MAX = 280;
+
+/**
+ * Bundled fake picture served with the app.
+ * This is not a user photo and not private photo storage.
+ */
+export const WIN_PLACEHOLDER_PHOTO = "/mindpal/win-placeholder.svg";
+export const WIN_PHOTO_PROTOTYPE_LABEL =
+  "Prototype: placeholder image, not real private storage.";
 
 /** Always-on Today control. Not a numbered step and not a STEP_IDS entry. */
 export const WIN_OF_THE_DAY_TITLE = "Win of the day";
@@ -16,6 +27,10 @@ export function emptyWinsDay(date = new Date()) {
   return [];
 }
 
+function allowedPhoto(raw) {
+  return raw === WIN_PLACEHOLDER_PHOTO ? WIN_PLACEHOLDER_PHOTO : undefined;
+}
+
 export function normalizeWin(raw, fallbackAt = new Date()) {
   if (!raw || typeof raw !== "object") return null;
   const text = typeof raw.text === "string" ? raw.text.trim().slice(0, WIN_TEXT_MAX) : "";
@@ -28,11 +43,14 @@ export function normalizeWin(raw, fallbackAt = new Date()) {
     typeof raw.at === "string" && raw.at
       ? raw.at
       : fallbackAt.toISOString();
-  return { id, text, at };
+  const win = { id, text, at };
+  const photo = allowedPhoto(raw.photo);
+  if (photo) win.photo = photo;
+  return win;
 }
 
 export function emptyWinsStore() {
-  return { version: 1, days: {} };
+  return { version: WINS_STORE_VERSION, days: {} };
 }
 
 export function normalizeWinsStore(raw) {
@@ -55,13 +73,60 @@ export function parseWinsJson(text) {
   }
 }
 
+/**
+ * Copy a v1 store into the v2 shape.
+ * Returns null when the text cannot be read, so the caller must not write v2.
+ * Wins keep id, text and at. No photo is copied or invented.
+ */
+export function migrateV1WinsJson(text) {
+  if (typeof text !== "string" || !text.trim()) return null;
+  let raw;
+  try {
+    raw = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const daysIn = raw.days;
+  if (!daysIn || typeof daysIn !== "object" || Array.isArray(daysIn)) return null;
+  const store = emptyWinsStore();
+  for (const [key, list] of Object.entries(daysIn)) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || !Array.isArray(list)) continue;
+    store.days[key] = list
+      .map((item) =>
+        normalizeWin(
+          item && typeof item === "object"
+            ? { id: item.id, text: item.text, at: item.at }
+            : null,
+        ),
+      )
+      .filter(Boolean);
+  }
+  return pruneDays(store);
+}
+
+function readKey(storage, key) {
+  try {
+    return storage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
 export function loadWinsStore(storage = globalThis.localStorage) {
   if (!storage) return emptyWinsStore();
+  const v2Text = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof v2Text === "string" && v2Text.length > 0) return parseWinsJson(v2Text);
+  const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
+  if (typeof v1Text !== "string" || v1Text.length === 0) return emptyWinsStore();
+  const migrated = migrateV1WinsJson(v1Text);
+  if (!migrated) return emptyWinsStore();
   try {
-    return parseWinsJson(storage.getItem(WINS_STORAGE_KEY));
+    storage.setItem(WINS_STORAGE_KEY, JSON.stringify(migrated));
   } catch {
-    return emptyWinsStore();
+    /* quota or private mode: leave the v1 key untouched */
   }
+  return migrated;
 }
 
 function pruneDays(store) {
@@ -70,7 +135,7 @@ function pruneDays(store) {
   const keep = keys.slice(-MAX_DAYS);
   const days = {};
   for (const key of keep) days[key] = store.days[key];
-  return { version: 1, days };
+  return { version: WINS_STORE_VERSION, days };
 }
 
 export function saveWinsStore(store, storage = globalThis.localStorage) {
@@ -79,7 +144,7 @@ export function saveWinsStore(store, storage = globalThis.localStorage) {
   try {
     storage.setItem(WINS_STORAGE_KEY, JSON.stringify(next));
   } catch {
-    /* private mode / quota */
+    /* private mode / quota; the v1 key is never written */
   }
   return next;
 }
@@ -95,8 +160,9 @@ export function addWin(
   storage = globalThis.localStorage,
   date = new Date(),
   now = new Date(),
+  photo,
 ) {
-  const item = normalizeWin({ text, at: now.toISOString() }, now);
+  const item = normalizeWin({ text, at: now.toISOString(), photo }, now);
   const store = loadWinsStore(storage);
   if (!item) return { store, item: null, items: winsForDate(store, date) };
   item.id = `win-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
