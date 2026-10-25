@@ -13,8 +13,8 @@ Close the day: read today’s wins, add one more, then a short Journal wind-down
 ## Expected UX
 
 - Wins list for the civil date from `mindpal.dailyWins.v2`. A readable v1 store is migrated on load and then left untouched. The v1 key is not deleted, including when it is already missing.
-- **Reset wins on this device** is not on this card. It appears on Win of the day only, and only while saving is blocked. Confirm keeps the unreadable record as a backup on this device, then clears it. The newest three timestamped copies stay. This is a prototype, not real private storage.
-- `exportV1` turns the current v2 list into a version 1 record without writing storage, so a rollback to v1 code can keep the wins. Photos are left out. Duplicate ids are made unique in memory on load and are written on the next save. A missing time stays a fixed value, not the clock. Removing a win removes one win.
+- **Reset wins on this device** is not on this card. This card does not run the blocked-save check. The control appears on Win of the day only, and only while saving is blocked. Confirm keeps the unreadable record as a backup on this device, then clears it. The newest three timestamped copies stay. This is a prototype, not real private storage.
+- `exportV1` turns the current v2 list into a version 1 record without writing storage, so a rollback to v1 code can keep the wins. Photos are left out. A win with no recorded time leaves `at` out of that export. Duplicate ids are made unique in memory on load and are written on the next save. A missing time stays a fixed value in the stored list, and this card says "Time not recorded" too. Removing a win removes one win.
 - **Save this win** — also **Enter** in the win input.
 - **Write a short wind-down note** prefills Journal with `Before sleep, I noticed…`.
 

@@ -199,14 +199,13 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore())),h(mpWins.winsSaveBlocked())}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
+  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
   (0,_.useEffect)(()=>{function e(){c()}return window.addEventListener(`mindpal-wins-change`,e),()=>window.removeEventListener(`mindpal-wins-change`,e)},[]);
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-    let q=mpWins.winsSaveBlocked();
-    h(q);if(!q)x(!1);
+    if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
     if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
     a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}

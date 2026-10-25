@@ -16,7 +16,7 @@ Private notes on this device. Optional “Talk to diary” is a **server** featu
 - Save / edit / delete notes.
 - **Search diary** filters the list as you type.
 - Prefill from hubs (`C(prompt)` then navigate).
-- Daily wins panel above the diary. The blocked-save control **Reset wins on this device** is on Win of the day, not on this panel.
+- Daily wins panel above the diary. A win with no recorded time says "Time not recorded" here too. This panel does not run the blocked-save check. The control **Reset wins on this device** is on Win of the day, not on this panel.
 
 ## Enter / Send / search
 

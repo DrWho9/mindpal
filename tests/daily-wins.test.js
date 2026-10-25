@@ -621,6 +621,10 @@ describe("daily wins", () => {
     assert.match(css, /\.mp-win-of-day \.mp-win-reset\{/);
     assert.match(css, /\.mp-win-of-day \.mp-win-reset button\{[^}]*min-height:44px/);
     assert.equal(panel.split("e===`winOfDay`&&b?").length - 1, 1);
+    assert.match(panel, /e===`winOfDay`&&mpWins\.winsSaveBlocked\(\)/);
+    assert.match(panel, /if\(e===`winOfDay`\)h\(mpWins\.winsSaveBlocked\(\)\)/);
+    assert.match(panel, /if\(e===`winOfDay`\)\{let q=mpWins\.winsSaveBlocked\(\)/);
+    assert.doesNotMatch(panel, /\(\)=>mpWins\.winsSaveBlocked\(\)/);
     assert.match(panel, /onClick:\(\)=>x\(!0\),children:mpWins\.WIN_RESET_LABEL/);
     assert.match(panel, /className:`secondary`,type:`button`,onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
     assert.match(panel, /onClick:\(\)=>x\(!1\),children:mpWins\.WIN_RESET_CANCEL/);
@@ -996,5 +1000,72 @@ describe("daily wins", () => {
     assert.equal(storage.getItem(`${prefix}later`), "keep-c");
     assert.equal(storage.getItem(`${prefix}${morning.getTime()}`), "corrupt-names");
     assert.equal(storage.getItem("mindpal.dailyWins.v2.writeprobe"), null);
+  });
+
+  it("leaves at out of the v1 export when the win has no time", () => {
+    const known = "2026-09-20T09:00:00.000Z";
+    const exported = exportV1({
+      version: 2,
+      days: {
+        "2026-09-20": [
+          { id: "win-known", text: "Tea", at: known },
+          { id: "win-unknown", text: "Walk", at: WIN_UNKNOWN_TIME },
+          { id: "win-blank", text: "Nap" },
+        ],
+      },
+    });
+    assert.equal(exported.days["2026-09-20"][0].at, known);
+    assert.equal(Object.hasOwn(exported.days["2026-09-20"][1], "at"), false);
+    assert.equal(exported.days["2026-09-20"][1].text, "Walk");
+    assert.equal(Object.hasOwn(exported.days["2026-09-20"][2], "at"), false);
+    assert.equal(exported.days["2026-09-20"][2].text, "Nap");
+    const rolled = memoryStorage({ [WINS_STORAGE_KEY_V1]: JSON.stringify(exported) });
+    const read = loadWinsStore(rolled);
+    assert.equal(read.days["2026-09-20"][1].at, WIN_UNKNOWN_TIME);
+    assert.equal(read.days["2026-09-20"][1].text, "Walk");
+    assert.equal(JSON.parse(rolled.getItem(WINS_STORAGE_KEY_V1)).days["2026-09-20"][1].at, undefined);
+  });
+
+  it("blocks a save when the full record does not fit and does not probe that text again", () => {
+    const text = "corrupt-record-too-big";
+    let probeWrites = 0;
+    const storage = listedWinsStorage(
+      { [WINS_STORAGE_KEY]: text },
+      {
+        onSet(key, value) {
+          if (key !== "mindpal.dailyWins.v2.writeprobe") return;
+          probeWrites += 1;
+          if (typeof value === "string" && value.length < text.length) return;
+          throw new Error("quota");
+        },
+      },
+    );
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(probeWrites, 1);
+    assert.equal(storage.getItem("mindpal.dailyWins.v2.writeprobe"), null);
+    const roomy = listedWinsStorage({ [WINS_STORAGE_KEY]: "short-corrupt" });
+    assert.equal(winsSaveBlocked(roomy), false);
+    assert.equal(roomy.getItem("mindpal.dailyWins.v2.writeprobe"), null);
+  });
+
+  it("keeps a probe key when removeItem throws and does not write it again", () => {
+    const text = "corrupt-keep-probe";
+    let writes = 0;
+    const storage = listedWinsStorage({ [WINS_STORAGE_KEY]: text });
+    const origSet = storage.setItem;
+    storage.setItem = (key, value) => {
+      if (key === "mindpal.dailyWins.v2.writeprobe") writes += 1;
+      origSet(key, value);
+    };
+    storage.removeItem = () => {
+      throw new Error("remove failed");
+    };
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(writes, 1);
+    assert.equal(storage.getItem("mindpal.dailyWins.v2.writeprobe"), text);
+    assert.equal(winsSaveBlocked(storage), true);
+    assert.equal(writes, 1);
   });
 });

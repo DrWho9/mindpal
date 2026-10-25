@@ -12907,7 +12907,9 @@ function migrateV1WinsJson(text) {
 
 /**
  * Pure downgrade of a v2 store into the v1 shape.
- * Returns { version: 1, days } with id, text, and at only. Photos are left out.
+ * Returns { version: 1, days } with id and text. at is included only when a time
+ * was recorded. WIN_UNKNOWN_TIME is left out, so the export does not invent a time.
+ * Photos are left out.
  * This does not read or write storage, and it does not delete or create the v1 key.
  *
  * Migration leaves mindpal.dailyWins.v1 as it is, including when that key is already
@@ -12921,7 +12923,11 @@ function exportV1(store) {
   const days = {};
   for (const [key, list] of Object.entries(normalized.days)) {
     if (!Array.isArray(list) || list.length === 0) continue;
-    days[key] = list.map((item) => ({ id: item.id, text: item.text, at: item.at }));
+    days[key] = list.map((item) => {
+      const win = { id: item.id, text: item.text };
+      if (typeof item.at === "string" && item.at && item.at !== WIN_UNKNOWN_TIME) win.at = item.at;
+      return win;
+    });
   }
   return { version: 1, days };
 }
@@ -13087,22 +13093,39 @@ function compareKnownBackupAge(a, b) {
 }
 
 /**
- * True when a new backup of one byte cannot be written.
- * The probe key is not a wins backup. It is removed when removeItem works.
+ * Last probe for one storage object and one unreadable text.
+ * A later check of that same text does not write again.
  */
-function freshBackupWriteFails(storage) {
-  try {
-    storage.setItem(WRITE_PROBE_KEY, "1");
-    const wrote = storage.getItem(WRITE_PROBE_KEY) === "1";
-    try {
-      if (typeof storage.removeItem === "function") storage.removeItem(WRITE_PROBE_KEY);
-    } catch {
-      /* the probe is not a wins backup */
-    }
-    return !wrote;
-  } catch {
-    return true;
+let probeMemory = null;
+
+/**
+ * True when a backup of this exact text cannot be stored.
+ * The probe value is that text, so a one-byte write cannot hide a larger record.
+ * The probe key is not a wins backup. removeItem clears it after the check.
+ * If removeItem throws, or the key is still there, the probe can remain and this returns true.
+ * The answer is remembered for this storage and this text.
+ */
+function freshBackupWriteFails(storage, text) {
+  const sample = typeof text === "string" ? text : "";
+  if (probeMemory && probeMemory.storage === storage && probeMemory.text === sample) {
+    return probeMemory.fails;
   }
+  let fails = true;
+  try {
+    storage.setItem(WRITE_PROBE_KEY, sample);
+    fails = storage.getItem(WRITE_PROBE_KEY) !== sample;
+  } catch {
+    fails = true;
+  }
+  try {
+    if (typeof storage.removeItem === "function") storage.removeItem(WRITE_PROBE_KEY);
+  } catch {
+    /* the probe key can remain */
+  }
+  const left = readKey(storage, WRITE_PROBE_KEY);
+  if (typeof left === "string" && left.length > 0) fails = true;
+  probeMemory = { storage, text: sample, fails };
+  return fails;
 }
 
 /**
@@ -13110,7 +13133,8 @@ function freshBackupWriteFails(storage) {
  * and a backup of that text cannot be reused or written.
  * A matching backup can still be reused, so that case is not blocked.
  * A readable store is not blocked.
- * When the cap is not full, this may write and remove a one-byte probe key.
+ * When the cap is not full, the first check for this text may write and remove a probe
+ * the same size as the record. The same text is not probed again on this storage.
  * A plain load does not call this.
  */
 function winsSaveBlocked(storage = globalThis.localStorage) {
@@ -13130,7 +13154,7 @@ function winsSaveBlocked(storage = globalThis.localStorage) {
   }
   const known = keys.filter(isKnownBackupKey);
   if (known.length >= MAX_CORRUPT_BACKUPS) return true;
-  return freshBackupWriteFails(storage);
+  return freshBackupWriteFails(storage, current);
 }
 
 function removeStoredKey(storage, key) {
@@ -20030,14 +20054,13 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore())),h(mpWins.winsSaveBlocked())}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
+  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
   (0,_.useEffect)(()=>{function e(){c()}return window.addEventListener(`mindpal-wins-change`,e),()=>window.removeEventListener(`mindpal-wins-change`,e)},[]);
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-    let q=mpWins.winsSaveBlocked();
-    h(q);if(!q)x(!1);
+    if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
     if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
     a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
