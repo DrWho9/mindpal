@@ -14,7 +14,7 @@ Morning → Day → Night hub. One day’s steps, optional team ritual, Support/
 
 - Greeting + civil date; optional Coptic date if enabled.
 - **Win of the day** is the first control after the greeting, above Individual Growth. It is always on. It is not a numbered step, not “Step 0”, and not an entry in `STEP_IDS` / `STEP_META`. Step 1 in that model is still Readings; the hub does not mount a Readings row (the morning band is Individual Growth, whose first numbered row is Step 1 · Settle / breathe).
-- The card lists today’s wins and saves a new one with **Save this win**. Morning is allowed. Same store as Evening and Journal (`addWin` / `winsForDate`, `mindpal.dailyWins.v1`).
+- The card lists today’s wins and saves a new one with **Save this win**. Morning is allowed. Same store as Evening and Journal (`addWin` / `winsForDate`, `mindpal.dailyWins.v2`). On first load, a readable `mindpal.dailyWins.v1` store is copied into v2 and the v1 key is left in place. The card can also attach a bundled fake placeholder image, not real private photo storage.
 - **Do this next** on the current step. Rows open `#Readings`, `#Focus`, `#Later`, `#Evening`.
 - Support (“When it's heavy”) and Growth (“Build strength”) chips expand, then **Open hub** → `#Problem`.
 - Faith chip hidden when the local profile is secular.
@@ -28,7 +28,7 @@ No page-level search. **Enter** in `#mp-win-winOfDay` saves a win on Today. Even
 
 ## Content sources
 
-`mindpal.todaySteps.v1`, `mindpal.dailyWins.v1`, `mpProblemHubs`, Maddy catalog, faith verse catalog (collapsed).
+`mindpal.todaySteps.v1`, `mindpal.dailyWins.v2` (copied from a readable `mindpal.dailyWins.v1` when v2 is absent), `mpProblemHubs`, Maddy catalog, faith verse catalog (collapsed).
 
 ## Acceptance tests
 

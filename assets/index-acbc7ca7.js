@@ -12728,6 +12728,8 @@ function bandForStep(stepId) {
 /** Legacy key. Read for migration only. Never overwritten or deleted. */
 const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
 const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
+/** Holds an unreadable v2 payload before that payload is replaced from v1. */
+const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
 const WINS_STORE_VERSION = 2;
 const WIN_TEXT_MAX = 280;
 
@@ -12838,10 +12840,51 @@ function readKey(storage, key) {
   }
 }
 
+function readWinsStoreText(text) {
+  if (typeof text !== "string" || text.length === 0) return null;
+  let raw;
+  try {
+    raw = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  if (Object.prototype.hasOwnProperty.call(raw, "days")) {
+    if (!raw.days || typeof raw.days !== "object" || Array.isArray(raw.days)) return null;
+  }
+  return normalizeWinsStore(raw);
+}
+
+function backupCorruptWins(storage, v2Text) {
+  try {
+    const existing = storage.getItem(WINS_STORAGE_KEY_V2_BACKUP);
+    if (typeof existing === "string" && existing.length > 0 && existing !== v2Text) return false;
+    if (existing !== v2Text) storage.setItem(WINS_STORAGE_KEY_V2_BACKUP, v2Text);
+    return storage.getItem(WINS_STORAGE_KEY_V2_BACKUP) === v2Text;
+  } catch {
+    return false;
+  }
+}
+
 function loadWinsStore(storage = globalThis.localStorage) {
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
-  if (typeof v2Text === "string" && v2Text.length > 0) return parseWinsJson(v2Text);
+  if (typeof v2Text === "string" && v2Text.length > 0) {
+    const parsed = readWinsStoreText(v2Text);
+    if (parsed) return parsed;
+    const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
+    const migrated =
+      typeof v1Text === "string" && v1Text.length > 0 ? migrateV1WinsJson(v1Text) : null;
+    if (migrated && backupCorruptWins(storage, v2Text)) {
+      try {
+        storage.setItem(WINS_STORAGE_KEY, JSON.stringify(migrated));
+      } catch {
+        /* backup holds the unreadable v2 text; the v1 key stays as it was */
+      }
+      return migrated;
+    }
+    return migrated || emptyWinsStore();
+  }
   const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
   if (typeof v1Text !== "string" || v1Text.length === 0) return emptyWinsStore();
   const migrated = migrateV1WinsJson(v1Text);
@@ -12866,6 +12909,11 @@ function pruneDays(store) {
 function saveWinsStore(store, storage = globalThis.localStorage) {
   const next = pruneDays(normalizeWinsStore(store));
   if (!storage) return next;
+  const current = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
+    /* unreadable v2 stays put unless load already copied it aside and replaced it from v1 */
+    return next;
+  }
   try {
     storage.setItem(WINS_STORAGE_KEY, JSON.stringify(next));
   } catch {
@@ -15418,7 +15466,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};

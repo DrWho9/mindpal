@@ -7,6 +7,7 @@ import { STEP_IDS, STEP_META, hubStepCaption } from "../src/today/steps.js";
 import {
   WINS_STORAGE_KEY,
   WINS_STORAGE_KEY_V1,
+  WINS_STORAGE_KEY_V2_BACKUP,
   WINS_STORE_VERSION,
   WIN_OF_THE_DAY_EMPTY,
   WIN_OF_THE_DAY_EYEBROW,
@@ -258,6 +259,57 @@ describe("daily wins", () => {
     assert.equal(kept.getItem(WINS_STORAGE_KEY_V1), v1);
     saveWinsStore(existing, kept);
     assert.equal(kept.getItem(WINS_STORAGE_KEY_V1), v1);
+  });
+
+  it("does not replace a corrupt v2 record with only the new win", () => {
+    const corrupt = "{\"version\":2,\"days\":";
+    const at = "2026-09-20T09:00:00.000Z";
+    const v1 = JSON.stringify({
+      version: 1,
+      days: { "2026-09-20": [{ id: "win-old", text: "Tea", at }] },
+    });
+    const storage = memoryStorage({
+      [WINS_STORAGE_KEY]: corrupt,
+      [WINS_STORAGE_KEY_V1]: v1,
+    });
+    const added = addWin("Fresh", storage, morning, morning);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V2_BACKUP), corrupt);
+    const saved = JSON.parse(storage.getItem(WINS_STORAGE_KEY));
+    assert.deepEqual(
+      saved.days["2026-09-20"].map((item) => item.text),
+      ["Tea", "Fresh"],
+    );
+    assert.equal(added.items.length, 2);
+    assert.equal(saved.version, 2);
+
+    const onlyCorrupt = memoryStorage({ [WINS_STORAGE_KEY]: corrupt });
+    addWin("Fresh", onlyCorrupt, morning, morning);
+    assert.equal(onlyCorrupt.getItem(WINS_STORAGE_KEY), corrupt);
+    assert.equal(onlyCorrupt.store.has(WINS_STORAGE_KEY_V2_BACKUP), false);
+    assert.equal(onlyCorrupt.store.has(WINS_STORAGE_KEY_V1), false);
+
+    let v2Writes = 0;
+    const blocked = {
+      data: {
+        [WINS_STORAGE_KEY]: corrupt,
+        [WINS_STORAGE_KEY_V1]: v1,
+      },
+      getItem(key) {
+        return Object.hasOwn(this.data, key) ? this.data[key] : null;
+      },
+      setItem(key, value) {
+        if (key === WINS_STORAGE_KEY_V2_BACKUP) throw new Error("backup quota");
+        if (key === WINS_STORAGE_KEY_V1) throw new Error("v1 must stay untouched");
+        if (key === WINS_STORAGE_KEY) v2Writes += 1;
+        this.data[key] = value;
+      },
+    };
+    addWin("Fresh", blocked, morning, morning);
+    assert.equal(v2Writes, 0);
+    assert.equal(blocked.getItem(WINS_STORAGE_KEY), corrupt);
+    assert.equal(blocked.getItem(WINS_STORAGE_KEY_V1), v1);
+    assert.match(build, /WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP/);
   });
 
   it("shows the placeholder thumbnail only on the Win of the day card", () => {

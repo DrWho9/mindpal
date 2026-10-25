@@ -8,11 +8,11 @@
 
 ## Purpose
 
-Close the day: read today’s wins, add one more, then a short Journal wind-down. Wins can already have been saved from **Win of the day** on Today; this page reviews the same `mindpal.dailyWins.v1` list.
+Close the day: read today’s wins, add one more, then a short Journal wind-down. Wins can already have been saved from **Win of the day** on Today; this page reviews the same `mindpal.dailyWins.v2` list. A readable `mindpal.dailyWins.v1` store is copied into v2 on load, and the v1 key is left in place.
 
 ## Expected UX
 
-- Wins list for the civil date from `mindpal.dailyWins.v1`.
+- Wins list for the civil date from `mindpal.dailyWins.v2`. A readable v1 store is migrated on load and then left untouched.
 - **Save this win** — also **Enter** in the win input.
 - **Write a short wind-down note** prefills Journal with `Before sleep, I noticed…`.
 

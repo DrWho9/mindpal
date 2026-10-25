@@ -3,6 +3,8 @@ import { civilDateKey } from "../calendar/civil.js";
 /** Legacy key. Read for migration only. Never overwritten or deleted. */
 export const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
 export const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
+/** Holds an unreadable v2 payload before that payload is replaced from v1. */
+export const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
 export const WINS_STORE_VERSION = 2;
 export const WIN_TEXT_MAX = 280;
 
@@ -113,10 +115,51 @@ function readKey(storage, key) {
   }
 }
 
+function readWinsStoreText(text) {
+  if (typeof text !== "string" || text.length === 0) return null;
+  let raw;
+  try {
+    raw = JSON.parse(text);
+  } catch {
+    return null;
+  }
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  if (Object.prototype.hasOwnProperty.call(raw, "days")) {
+    if (!raw.days || typeof raw.days !== "object" || Array.isArray(raw.days)) return null;
+  }
+  return normalizeWinsStore(raw);
+}
+
+function backupCorruptWins(storage, v2Text) {
+  try {
+    const existing = storage.getItem(WINS_STORAGE_KEY_V2_BACKUP);
+    if (typeof existing === "string" && existing.length > 0 && existing !== v2Text) return false;
+    if (existing !== v2Text) storage.setItem(WINS_STORAGE_KEY_V2_BACKUP, v2Text);
+    return storage.getItem(WINS_STORAGE_KEY_V2_BACKUP) === v2Text;
+  } catch {
+    return false;
+  }
+}
+
 export function loadWinsStore(storage = globalThis.localStorage) {
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
-  if (typeof v2Text === "string" && v2Text.length > 0) return parseWinsJson(v2Text);
+  if (typeof v2Text === "string" && v2Text.length > 0) {
+    const parsed = readWinsStoreText(v2Text);
+    if (parsed) return parsed;
+    const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
+    const migrated =
+      typeof v1Text === "string" && v1Text.length > 0 ? migrateV1WinsJson(v1Text) : null;
+    if (migrated && backupCorruptWins(storage, v2Text)) {
+      try {
+        storage.setItem(WINS_STORAGE_KEY, JSON.stringify(migrated));
+      } catch {
+        /* backup holds the unreadable v2 text; the v1 key stays as it was */
+      }
+      return migrated;
+    }
+    return migrated || emptyWinsStore();
+  }
   const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
   if (typeof v1Text !== "string" || v1Text.length === 0) return emptyWinsStore();
   const migrated = migrateV1WinsJson(v1Text);
@@ -141,6 +184,11 @@ function pruneDays(store) {
 export function saveWinsStore(store, storage = globalThis.localStorage) {
   const next = pruneDays(normalizeWinsStore(store));
   if (!storage) return next;
+  const current = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
+    /* unreadable v2 stays put unless load already copied it aside and replaced it from v1 */
+    return next;
+  }
   try {
     storage.setItem(WINS_STORAGE_KEY, JSON.stringify(next));
   } catch {
