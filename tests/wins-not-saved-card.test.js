@@ -29,12 +29,15 @@ function cardSkipReason() {
   return false;
 }
 
-describe("not-saved win card copy", { skip: cardSkipReason(), timeout: 90000 }, () => {
+const skipCard = cardSkipReason();
+
+describe("not-saved win card copy", { timeout: 90000 }, () => {
   let host;
   let browser;
   let page;
 
   before(async () => {
+    if (skipCard) return;
     host = await startMindpalServer(root);
     browser = await chromium.launch({
       executablePath: chromePath,
@@ -70,7 +73,7 @@ describe("not-saved win card copy", { skip: cardSkipReason(), timeout: 90000 }, 
     await host?.close();
   });
 
-  it("shows the not-saved sentence on the win of the day card and the evening card", async () => {
+  it("shows the not-saved sentence on the win of the day card and the evening card", { skip: skipCard }, async () => {
     const winCard = page.locator(".mp-win-of-day");
     await winCard.locator("#mp-win-winOfDay").fill("Walked to the shops");
     await winCard.getByRole("button", { name: "Save this win" }).click();

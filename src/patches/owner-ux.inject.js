@@ -199,14 +199,23 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()))}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
+  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore())),h(mpWins.winsSaveBlocked())}
   (0,_.useEffect)(()=>{function e(){c()}return window.addEventListener(`mindpal-wins-change`,e),()=>window.removeEventListener(`mindpal-wins-change`,e)},[]);
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
+    let q=mpWins.winsSaveBlocked();
+    h(q);if(!q)x(!1);
     if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
     a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
+    try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
+  }
+  function d(){
+    let y=mpWins.resetBlockedWins();
+    x(!1);
+    if(!y||!y.cleared){s(mpWins.WIN_NOT_SAVED_LABEL),h(mpWins.winsSaveBlocked());return}
+    h(!1),s(mpWins.WIN_RESET_DONE),r(mpWins.winsForDate(mpWins.loadWinsStore()));
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
   if(e===`hub`){
@@ -254,6 +263,13 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
       t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
+    e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
+      (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
+      m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
+        (0,A.jsx)(`button`,{type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!1),children:mpWins.WIN_RESET_CANCEL})
+      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!0),children:mpWins.WIN_RESET_LABEL})
+    ]}):null,
     o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
   ]});
 }

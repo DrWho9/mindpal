@@ -12,7 +12,9 @@ Close the day: read today’s wins, add one more, then a short Journal wind-down
 
 ## Expected UX
 
-- Wins list for the civil date from `mindpal.dailyWins.v2`. A readable v1 store is migrated on load and then left untouched.
+- Wins list for the civil date from `mindpal.dailyWins.v2`. A readable v1 store is migrated on load and then left untouched. The v1 key is not deleted, including when it is already missing.
+- **Reset wins on this device** is not on this card. It appears on Win of the day only, and only while saving is blocked. Confirm clears the unreadable v2 record on this device and keeps the newest backup copies. This is a prototype, not real private storage.
+- `exportV1` turns the current v2 list into a version 1 record without writing storage, so a rollback to v1 code can keep the wins. Photos are left out. Duplicate ids are made unique in memory on load and are written on the next save. Removing a win removes one win.
 - **Save this win** — also **Enter** in the win input.
 - **Write a short wind-down note** prefills Journal with `Before sleep, I noticed…`.
 
@@ -29,3 +31,4 @@ Close the day: read today’s wins, add one more, then a short Journal wind-down
 ## Known gaps
 
 - Wins stay on this device; no cloud share.
+- Real photos would need IndexedDB. There is no backend, no encryption, and no consent flow.

@@ -11,6 +11,11 @@ import {
   MAX_CORRUPT_BACKUPS,
   WINS_STORE_VERSION,
   WIN_NOT_SAVED_LABEL,
+  WIN_RESET_CANCEL,
+  WIN_RESET_CONFIRM,
+  WIN_RESET_DONE,
+  WIN_RESET_LABEL,
+  WIN_RESET_NOTE,
   WIN_SAVED_LABEL,
   WIN_OF_THE_DAY_EMPTY,
   WIN_OF_THE_DAY_EYEBROW,
@@ -20,11 +25,16 @@ import {
   WIN_PLACEHOLDER_PHOTO,
   addWin,
   emptyWinsStore,
+  exportV1,
   loadWinsStore,
   migrateV1WinsJson,
   normalizeWin,
+  removeWin,
+  resetBlockedWins,
   saveWinsStore,
+  stableWinId,
   winsForDate,
+  winsSaveBlocked,
 } from "../src/today/wins.js";
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -37,6 +47,9 @@ function memoryStorage(initial = {}) {
   return {
     getItem: (key) => (store.has(key) ? store.get(key) : null),
     setItem: (key, value) => store.set(key, value),
+    removeItem: (key) => {
+      store.delete(key);
+    },
     store,
   };
 }
@@ -57,6 +70,9 @@ function listedWinsStorage(initial = {}, { onSet } = {}) {
     setItem(key, value) {
       if (onSet) onSet(key, value);
       store.set(key, value);
+    },
+    removeItem(key) {
+      store.delete(key);
     },
   };
 }
@@ -596,5 +612,239 @@ describe("daily wins", () => {
     assert.match(build, /WINS_STORAGE_KEY_V1,WINS_STORE_VERSION/);
     assert.match(build, /WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL/);
     assert.match(build, /migrateV1WinsJson/);
+    assert.match(build, /exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins/);
+    assert.match(build, /WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE/);
+    assert.match(css, /\.mp-win-of-day \.mp-win-reset\{/);
+    assert.match(css, /\.mp-win-of-day \.mp-win-reset button\{[^}]*min-height:44px/);
+    assert.equal(panel.split("e===`winOfDay`&&b?").length - 1, 1);
+    assert.match(panel, /onClick:\(\)=>x\(!0\),children:mpWins\.WIN_RESET_LABEL/);
+    assert.match(panel, /onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
+    assert.match(panel, /onClick:\(\)=>x\(!1\),children:mpWins\.WIN_RESET_CANCEL/);
+    assert.match(panel, /mpWins\.resetBlockedWins\(\)/);
+    assert.match(panel, /s\(mpWins\.WIN_RESET_DONE\)/);
+    assert.doesNotMatch(`${WIN_RESET_LABEL} ${WIN_RESET_NOTE} ${WIN_RESET_CONFIRM} ${WIN_RESET_CANCEL} ${WIN_RESET_DONE}`, /—|–/);
+  });
+
+  it("gives v1 wins without an id a stable unique id and removes only one", () => {
+    const at = "2026-09-20T09:00:00.000Z";
+    const v1 = JSON.stringify({
+      version: 1,
+      days: {
+        "2026-09-20": [
+          { text: "Tea", at, photo: "data:image/png;base64,not-a-real-photo" },
+          { text: "Walk", at },
+          { text: "Tea", at },
+        ],
+      },
+    });
+    const storage = memoryStorage({ [WINS_STORAGE_KEY_V1]: v1 });
+    const loaded = loadWinsStore(storage);
+    const day = loaded.days["2026-09-20"];
+    assert.equal(day.length, 3);
+    assert.equal(day[0].id, stableWinId(0, at, "Tea"));
+    assert.equal(day[1].id, stableWinId(1, at, "Walk"));
+    assert.equal(day[2].id, stableWinId(2, at, "Tea"));
+    assert.equal(new Set(day.map((item) => item.id)).size, 3);
+    assert.equal(Object.hasOwn(day[0], "photo"), false);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+    const written = JSON.parse(storage.getItem(WINS_STORAGE_KEY));
+    assert.deepEqual(written.days["2026-09-20"].map((item) => item.id), day.map((item) => item.id));
+
+    storage.removeItem(WINS_STORAGE_KEY);
+    const again = loadWinsStore(storage);
+    assert.deepEqual(
+      again.days["2026-09-20"].map((item) => item.id),
+      day.map((item) => item.id),
+    );
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+
+    const removed = removeWin(day[0].id, storage, morning);
+    assert.equal(removed.saved, true);
+    assert.deepEqual(removed.items.map((item) => item.text), ["Walk", "Tea"]);
+    const removedAgain = removeWin(day[0].id, storage, morning);
+    assert.deepEqual(removedAgain.items.map((item) => item.text), ["Walk", "Tea"]);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+  });
+
+  it("fixes duplicate v2 ids in memory and writes them on the next save", () => {
+    const at = "2026-09-20T09:00:00.000Z";
+    const raw = JSON.stringify({
+      version: 2,
+      days: {
+        "2026-09-20": [
+          { id: "same", text: "One", at, photo: WIN_PLACEHOLDER_PHOTO },
+          { id: "same", text: "Two", at, photo: WIN_PLACEHOLDER_PHOTO },
+          { id: "same", text: "Three", at },
+        ],
+      },
+    });
+    let writes = 0;
+    const storage = memoryStorage({ [WINS_STORAGE_KEY]: raw });
+    const origSet = storage.setItem;
+    storage.setItem = (key, value) => {
+      writes += 1;
+      origSet(key, value);
+    };
+    const loaded = loadWinsStore(storage);
+    const day = loaded.days["2026-09-20"];
+    assert.equal(writes, 0);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), raw);
+    assert.equal(day[0].id, "same");
+    assert.equal(day[0].photo, WIN_PLACEHOLDER_PHOTO);
+    assert.equal(day[1].id, stableWinId(1, at, "Two"));
+    assert.equal(day[2].id, stableWinId(2, at, "Three"));
+    assert.equal(new Set(day.map((item) => item.id)).size, 3);
+
+    const removed = removeWin("same", storage, morning);
+    assert.equal(removed.saved, true);
+    assert.equal(writes, 1);
+    assert.deepEqual(removed.items.map((item) => item.text), ["Two", "Three"]);
+    assert.deepEqual(removed.items.map((item) => item.id), [day[1].id, day[2].id]);
+    const stored = JSON.parse(storage.getItem(WINS_STORAGE_KEY));
+    assert.deepEqual(stored.days["2026-09-20"].map((item) => item.text), ["Two", "Three"]);
+    assert.equal(new Set(stored.days["2026-09-20"].map((item) => item.id)).size, 2);
+    const onceMore = removeWin("same", storage, morning);
+    assert.deepEqual(onceMore.items.map((item) => item.text), ["Two", "Three"]);
+  });
+
+  it("exports v2 wins back to a v1 record without touching storage", () => {
+    const at = "2026-09-20T09:00:00.000Z";
+    const originalV1 = JSON.stringify({
+      version: 1,
+      days: { "2026-09-20": [{ id: "old", text: "Original", at }] },
+    });
+    const storage = memoryStorage({ [WINS_STORAGE_KEY_V1]: originalV1 });
+    const added = addWin("Walked to the shops", storage, morning, morning, WIN_PLACEHOLDER_PHOTO);
+    assert.equal(added.saved, true);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), originalV1);
+    let writes = 0;
+    const origSet = storage.setItem;
+    storage.setItem = (key, value) => {
+      writes += 1;
+      origSet(key, value);
+    };
+    const exported = exportV1(loadWinsStore(storage));
+    assert.equal(writes, 0);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), originalV1);
+    assert.equal(storage.store.has(WINS_STORAGE_KEY_V1), true);
+    assert.equal(exported.version, 1);
+    assert.equal(exported.days["2026-09-20"][0].text, "Original");
+    assert.equal(exported.days["2026-09-20"][1].text, "Walked to the shops");
+    assert.equal(exported.days["2026-09-20"][1].id, added.item.id);
+    assert.equal(Object.hasOwn(exported.days["2026-09-20"][1], "photo"), false);
+
+    const absent = memoryStorage();
+    addWin("Only in v2", absent, morning, morning);
+    assert.equal(absent.store.has(WINS_STORAGE_KEY_V1), false);
+    const downgraded = exportV1(loadWinsStore(absent));
+    assert.equal(absent.store.has(WINS_STORAGE_KEY_V1), false);
+    assert.equal(absent.getItem(WINS_STORAGE_KEY_V1), null);
+    const rolled = memoryStorage({ [WINS_STORAGE_KEY_V1]: JSON.stringify(downgraded) });
+    const legacy = JSON.parse(rolled.getItem(WINS_STORAGE_KEY_V1));
+    assert.equal(legacy.version, 1);
+    assert.equal(legacy.days["2026-09-20"][0].text, "Only in v2");
+    assert.equal(Object.hasOwn(legacy.days["2026-09-20"][0], "photo"), false);
+    const readBack = loadWinsStore(rolled);
+    assert.equal(readBack.days["2026-09-20"][0].text, "Only in v2");
+    assert.equal(rolled.getItem(WINS_STORAGE_KEY_V1), JSON.stringify(downgraded));
+  });
+
+  it("resets a blocked save and keeps the newest backup copies", () => {
+    const at = "2026-09-20T09:00:00.000Z";
+    const v1 = JSON.stringify({
+      version: 1,
+      days: { "2026-09-20": [{ id: "win-old", text: "Tea", at }] },
+    });
+    const flags = { failV2: true };
+    const storage = listedWinsStorage(
+      {
+        [WINS_STORAGE_KEY]: "corrupt-0",
+        [WINS_STORAGE_KEY_V1]: v1,
+        [WINS_STORAGE_KEY_V2_BACKUP]: "plain-backup",
+      },
+      {
+        onSet(key) {
+          if (flags.failV2 && key === WINS_STORAGE_KEY) throw new Error("v2 quota");
+          if (key === WINS_STORAGE_KEY_V1) throw new Error("v1 must stay untouched");
+        },
+      },
+    );
+    for (let i = 0; i < MAX_CORRUPT_BACKUPS; i += 1) {
+      storage.store.set(WINS_STORAGE_KEY, `corrupt-${i}`);
+      const result = addWin(`Win ${i}`, storage, morning, new Date(2026, 8, 20, 9, i, 0));
+      assert.equal(result.saved, false);
+    }
+    assert.equal(winsSaveBlocked(storage), false);
+    assert.equal(resetBlockedWins(storage).cleared, false);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), `corrupt-${MAX_CORRUPT_BACKUPS - 1}`);
+
+    storage.store.set(WINS_STORAGE_KEY, "corrupt-extra");
+    assert.equal(winsSaveBlocked(storage), true);
+    const blocked = addWin("Extra", storage, morning, new Date(2026, 8, 20, 9, 30, 0));
+    assert.equal(blocked.saved, false);
+    assert.equal(userCopy(blocked), WIN_NOT_SAVED_LABEL);
+    const held = stampedBackups(storage);
+    assert.equal(held.length, MAX_CORRUPT_BACKUPS);
+    const reset = resetBlockedWins(storage);
+    assert.equal(reset.cleared, true);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), null);
+    assert.deepEqual(stampedBackups(storage), held);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V2_BACKUP), "plain-backup");
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+    assert.equal(winsSaveBlocked(storage), false);
+    assert.equal(resetBlockedWins(storage).cleared, false);
+
+    flags.failV2 = false;
+    const saved = addWin("Kept", storage, morning, new Date(2026, 8, 20, 9, 45, 0));
+    assert.equal(saved.saved, true);
+    assert.equal(userCopy(saved), WIN_SAVED_LABEL);
+    assert.deepEqual(stampedBackups(storage), held);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
+    assert.deepEqual(
+      winsForDate(loadWinsStore(storage), morning).map((item) => item.text),
+      ["Tea", "Kept"],
+    );
+    assert.equal(winsSaveBlocked(storage), false);
+
+    const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+    const crowded = listedWinsStorage({
+      [WINS_STORAGE_KEY]: "corrupt-new",
+      [WINS_STORAGE_KEY_V1]: v1,
+      [WINS_STORAGE_KEY_V2_BACKUP]: "plain-backup",
+      [`${prefix}10`]: "oldest",
+      [`${prefix}20`]: "keep-b",
+      [`${prefix}30`]: "keep-c",
+      [`${prefix}40.1`]: "newest",
+    });
+    assert.equal(winsSaveBlocked(crowded), true);
+    const trimmed = resetBlockedWins(crowded);
+    assert.equal(trimmed.cleared, true);
+    assert.equal(crowded.getItem(WINS_STORAGE_KEY), null);
+    assert.equal(crowded.getItem(`${prefix}10`), null);
+    assert.equal(crowded.getItem(`${prefix}20`), "keep-b");
+    assert.equal(crowded.getItem(`${prefix}30`), "keep-c");
+    assert.equal(crowded.getItem(`${prefix}40.1`), "newest");
+    assert.equal(crowded.getItem(WINS_STORAGE_KEY_V2_BACKUP), "plain-backup");
+    assert.equal(crowded.getItem(WINS_STORAGE_KEY_V1), v1);
+    assert.deepEqual(trimmed.kept, [`${prefix}20`, `${prefix}30`, `${prefix}40.1`, WINS_STORAGE_KEY_V2_BACKUP]);
+
+    const readable = memoryStorage();
+    addWin("Still here", readable, morning, morning);
+    const before = readable.getItem(WINS_STORAGE_KEY);
+    assert.equal(winsSaveBlocked(readable), false);
+    assert.equal(resetBlockedWins(readable).cleared, false);
+    assert.equal(readable.getItem(WINS_STORAGE_KEY), before);
+
+    const unlistable = {
+      getItem(key) {
+        return key === WINS_STORAGE_KEY ? "corrupt-unlistable" : null;
+      },
+      setItem() {
+        throw new Error("no writes");
+      },
+    };
+    assert.equal(winsSaveBlocked(unlistable), true);
+    assert.equal(resetBlockedWins(unlistable).cleared, false);
+    assert.equal(unlistable.getItem(WINS_STORAGE_KEY), "corrupt-unlistable");
   });
 });
