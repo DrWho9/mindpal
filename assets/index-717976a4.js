@@ -12728,9 +12728,14 @@ function bandForStep(stepId) {
 /** Legacy key. Read for migration only. Never overwritten or deleted. */
 const WINS_STORAGE_KEY_V1 = "mindpal.dailyWins.v1";
 const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
-/** Holds an unreadable v2 payload before that payload is replaced from v1. */
+/**
+ * Prefix for a copy of an unreadable v2 payload.
+ * Each copy adds a timestamp suffix, so an older backup is left as it is.
+ */
 const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
 const WINS_STORE_VERSION = 2;
+const WIN_SAVED_LABEL = "Saved on this device for today.";
+const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 const WIN_TEXT_MAX = 280;
 
 /**
@@ -12855,39 +12860,61 @@ function readWinsStoreText(text) {
   return normalizeWinsStore(raw);
 }
 
-function backupCorruptWins(storage, v2Text) {
+function migratedV1(storage) {
+  const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
+  if (typeof v1Text !== "string" || v1Text.length === 0) return null;
+  return migrateV1WinsJson(v1Text);
+}
+
+function quarantineCorruptWins(storage, v2Text, now = new Date()) {
+  const stamp = now.getTime();
+  for (let n = 0; n < 50; n += 1) {
+    const key = n === 0
+      ? `${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}`
+      : `${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}.${n}`;
+    let existing;
+    try {
+      existing = storage.getItem(key);
+    } catch {
+      return null;
+    }
+    if (existing === v2Text) return key;
+    if (typeof existing === "string" && existing.length > 0) continue;
+    try {
+      storage.setItem(key, v2Text);
+      if (storage.getItem(key) === v2Text) return key;
+    } catch {
+      return null;
+    }
+  }
+  return null;
+}
+
+function replaceCorruptV2(storage, v2Text, now) {
+  const backupKey = quarantineCorruptWins(storage, v2Text, now);
+  if (!backupKey || readKey(storage, backupKey) !== v2Text) return false;
+  const base = migratedV1(storage) || emptyWinsStore();
   try {
-    const existing = storage.getItem(WINS_STORAGE_KEY_V2_BACKUP);
-    if (typeof existing === "string" && existing.length > 0 && existing !== v2Text) return false;
-    if (existing !== v2Text) storage.setItem(WINS_STORAGE_KEY_V2_BACKUP, v2Text);
-    return storage.getItem(WINS_STORAGE_KEY_V2_BACKUP) === v2Text;
+    storage.setItem(WINS_STORAGE_KEY, JSON.stringify(base));
   } catch {
     return false;
   }
+  return readWinsStoreText(readKey(storage, WINS_STORAGE_KEY)) !== null
+    && readKey(storage, backupKey) === v2Text;
 }
 
-function loadWinsStore(storage = globalThis.localStorage) {
+function loadWinsStore(storage = globalThis.localStorage, now = new Date()) {
   if (!storage) return emptyWinsStore();
   const v2Text = readKey(storage, WINS_STORAGE_KEY);
   if (typeof v2Text === "string" && v2Text.length > 0) {
     const parsed = readWinsStoreText(v2Text);
     if (parsed) return parsed;
-    const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
-    const migrated =
-      typeof v1Text === "string" && v1Text.length > 0 ? migrateV1WinsJson(v1Text) : null;
-    if (migrated && backupCorruptWins(storage, v2Text)) {
-      try {
-        storage.setItem(WINS_STORAGE_KEY, JSON.stringify(migrated));
-      } catch {
-        /* backup holds the unreadable v2 text; the v1 key stays as it was */
-      }
-      return migrated;
+    if (replaceCorruptV2(storage, v2Text, now)) {
+      return readWinsStoreText(readKey(storage, WINS_STORAGE_KEY)) || emptyWinsStore();
     }
-    return migrated || emptyWinsStore();
+    return migratedV1(storage) || emptyWinsStore();
   }
-  const v1Text = readKey(storage, WINS_STORAGE_KEY_V1);
-  if (typeof v1Text !== "string" || v1Text.length === 0) return emptyWinsStore();
-  const migrated = migrateV1WinsJson(v1Text);
+  const migrated = migratedV1(storage);
   if (!migrated) return emptyWinsStore();
   try {
     storage.setItem(WINS_STORAGE_KEY, JSON.stringify(migrated));
@@ -12906,20 +12933,26 @@ function pruneDays(store) {
   return { version: WINS_STORE_VERSION, days };
 }
 
-function saveWinsStore(store, storage = globalThis.localStorage) {
+function persistWins(store, storage, now = new Date()) {
   const next = pruneDays(normalizeWinsStore(store));
-  if (!storage) return next;
+  if (!storage) return { store: next, saved: true };
   const current = readKey(storage, WINS_STORAGE_KEY);
   if (typeof current === "string" && current.length > 0 && !readWinsStoreText(current)) {
-    /* unreadable v2 stays put unless load already copied it aside and replaced it from v1 */
-    return next;
+    if (!replaceCorruptV2(storage, current, now)) return { store: next, saved: false };
   }
+  let serial;
   try {
-    storage.setItem(WINS_STORAGE_KEY, JSON.stringify(next));
+    serial = JSON.stringify(next);
+    storage.setItem(WINS_STORAGE_KEY, serial);
   } catch {
     /* private mode / quota; the v1 key is never written */
+    return { store: next, saved: false };
   }
-  return next;
+  return { store: next, saved: readKey(storage, WINS_STORAGE_KEY) === serial };
+}
+
+function saveWinsStore(store, storage = globalThis.localStorage, now = new Date()) {
+  return persistWins(store, storage, now).store;
 }
 
 function winsForDate(store, date = new Date()) {
@@ -12936,13 +12969,22 @@ function addWin(
   photo,
 ) {
   const item = normalizeWin({ text, at: now.toISOString(), photo }, now);
-  const store = loadWinsStore(storage);
-  if (!item) return { store, item: null, items: winsForDate(store, date) };
+  const store = loadWinsStore(storage, now);
+  if (!item) return { store, item: null, items: winsForDate(store, date), saved: false };
   item.id = `win-${now.getTime()}-${Math.random().toString(36).slice(2, 8)}`;
   const key = civilDateKey(date);
   const items = [...winsForDate(store, date), item];
   store.days[key] = items;
-  return { store: saveWinsStore(store, storage), item, items };
+  const written = persistWins(store, storage, now);
+  if (!written.saved) {
+    return {
+      store: written.store,
+      item,
+      items: winsForDate(loadWinsStore(storage, now), date),
+      saved: false,
+    };
+  }
+  return { store: written.store, item, items: winsForDate(written.store, date), saved: true };
 }
 
 function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
@@ -12950,7 +12992,11 @@ function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
   const key = civilDateKey(date);
   const items = winsForDate(store, date).filter((item) => item.id !== id);
   store.days[key] = items;
-  return { store: saveWinsStore(store, storage), items };
+  const written = persistWins(store, storage, new Date());
+  if (!written.saved) {
+    return { store: written.store, items: winsForDate(loadWinsStore(storage), date), saved: false };
+  }
+  return { store: written.store, items: winsForDate(written.store, date), saved: true };
 }
 
 
@@ -15466,7 +15512,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -19717,7 +19763,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-    a(``),s(`Saved on this device for today.`),r(u.items);
+    if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
+    a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
   if(e===`hub`){

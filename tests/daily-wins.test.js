@@ -9,6 +9,8 @@ import {
   WINS_STORAGE_KEY_V1,
   WINS_STORAGE_KEY_V2_BACKUP,
   WINS_STORE_VERSION,
+  WIN_NOT_SAVED_LABEL,
+  WIN_SAVED_LABEL,
   WIN_OF_THE_DAY_EMPTY,
   WIN_OF_THE_DAY_EYEBROW,
   WIN_OF_THE_DAY_LEDE,
@@ -46,6 +48,7 @@ describe("daily wins", () => {
   it("stores a win on the civil day and reads it back at evening", () => {
     const storage = memoryStorage();
     const added = addWin("Walked to the shops", storage, morning, morning);
+    assert.equal(added.saved, true);
     assert.equal(added.items.length, 1);
     assert.equal(added.items[0].text, "Walked to the shops");
     assert.equal(storage.store.has(WINS_STORAGE_KEY), true);
@@ -64,6 +67,7 @@ describe("daily wins", () => {
   it("ignores blank text", () => {
     const storage = memoryStorage();
     const added = addWin("   ", storage, morning, morning);
+    assert.equal(added.saved, false);
     assert.equal(added.item, null);
     assert.equal(added.items.length, 0);
   });
@@ -261,55 +265,121 @@ describe("daily wins", () => {
     assert.equal(kept.getItem(WINS_STORAGE_KEY_V1), v1);
   });
 
-  it("does not replace a corrupt v2 record with only the new win", () => {
+  it("keeps a corrupt v2 record and still lets the next save persist", () => {
     const corrupt = "{\"version\":2,\"days\":";
     const at = "2026-09-20T09:00:00.000Z";
-    const v1 = JSON.stringify({
+    const readableV1 = JSON.stringify({
       version: 1,
       days: { "2026-09-20": [{ id: "win-old", text: "Tea", at }] },
     });
-    const storage = memoryStorage({
+    const unreadableV1 = "{not json";
+    const stamp = morning.getTime();
+    const later = new Date(2026, 8, 20, 9, 30, 0);
+    assert.equal(WIN_SAVED_LABEL, "Saved on this device for today.");
+    assert.equal(WIN_NOT_SAVED_LABEL, "Not saved. This win was not stored on this device.");
+    assert.doesNotMatch(WIN_NOT_SAVED_LABEL, /Saved on this device/);
+
+    function reloadTexts(storage) {
+      return winsForDate(loadWinsStore(storage), morning).map((item) => item.text);
+    }
+    function backupCopies(storage) {
+      return [...storage.store.entries()].filter(([key]) => key.startsWith(`${WINS_STORAGE_KEY_V2_BACKUP}.`));
+    }
+    function userCopy(result) {
+      return result.saved ? WIN_SAVED_LABEL : WIN_NOT_SAVED_LABEL;
+    }
+
+    const brokenV1 = memoryStorage({
       [WINS_STORAGE_KEY]: corrupt,
-      [WINS_STORAGE_KEY_V1]: v1,
+      [WINS_STORAGE_KEY_V1]: unreadableV1,
     });
-    const added = addWin("Fresh", storage, morning, morning);
-    assert.equal(storage.getItem(WINS_STORAGE_KEY_V1), v1);
-    assert.equal(storage.getItem(WINS_STORAGE_KEY_V2_BACKUP), corrupt);
-    const saved = JSON.parse(storage.getItem(WINS_STORAGE_KEY));
-    assert.deepEqual(
-      saved.days["2026-09-20"].map((item) => item.text),
-      ["Tea", "Fresh"],
-    );
-    assert.equal(added.items.length, 2);
-    assert.equal(saved.version, 2);
+    const firstBroken = addWin("Fresh", brokenV1, morning, morning);
+    assert.equal(firstBroken.saved, true);
+    assert.equal(userCopy(firstBroken), WIN_SAVED_LABEL);
+    assert.deepEqual(firstBroken.items.map((item) => item.text), ["Fresh"]);
+    assert.equal(brokenV1.getItem(WINS_STORAGE_KEY_V1), unreadableV1);
+    assert.deepEqual(backupCopies(brokenV1), [[`${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}`, corrupt]]);
+    assert.deepEqual(reloadTexts(brokenV1), ["Fresh"]);
+    const secondBroken = addWin("Again", brokenV1, morning, later);
+    assert.equal(secondBroken.saved, true);
+    assert.equal(userCopy(secondBroken), WIN_SAVED_LABEL);
+    assert.deepEqual(reloadTexts(brokenV1), ["Fresh", "Again"]);
 
-    const onlyCorrupt = memoryStorage({ [WINS_STORAGE_KEY]: corrupt });
-    addWin("Fresh", onlyCorrupt, morning, morning);
-    assert.equal(onlyCorrupt.getItem(WINS_STORAGE_KEY), corrupt);
-    assert.equal(onlyCorrupt.store.has(WINS_STORAGE_KEY_V2_BACKUP), false);
-    assert.equal(onlyCorrupt.store.has(WINS_STORAGE_KEY_V1), false);
+    const noV1 = memoryStorage({ [WINS_STORAGE_KEY]: corrupt });
+    const firstNew = addWin("Fresh", noV1, morning, morning);
+    assert.equal(firstNew.saved, true);
+    assert.equal(userCopy(firstNew), WIN_SAVED_LABEL);
+    assert.equal(noV1.store.has(WINS_STORAGE_KEY_V1), false);
+    assert.deepEqual(backupCopies(noV1), [[`${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}`, corrupt]]);
+    assert.deepEqual(reloadTexts(noV1), ["Fresh"]);
+    const secondNew = addWin("Again", noV1, morning, later);
+    assert.equal(secondNew.saved, true);
+    assert.deepEqual(reloadTexts(noV1), ["Fresh", "Again"]);
 
-    let v2Writes = 0;
+    const olderBackup = "older-unreadable-record";
+    const takenKey = `${WINS_STORAGE_KEY_V2_BACKUP}.${stamp}`;
+    const takenValue = "different-timestamp-backup";
+    const withBackup = memoryStorage({
+      [WINS_STORAGE_KEY]: corrupt,
+      [WINS_STORAGE_KEY_V1]: readableV1,
+      [WINS_STORAGE_KEY_V2_BACKUP]: olderBackup,
+      [takenKey]: takenValue,
+    });
+    const firstKept = addWin("Fresh", withBackup, morning, morning);
+    assert.equal(firstKept.saved, true);
+    assert.equal(userCopy(firstKept), WIN_SAVED_LABEL);
+    assert.equal(withBackup.getItem(WINS_STORAGE_KEY_V1), readableV1);
+    assert.equal(withBackup.getItem(WINS_STORAGE_KEY_V2_BACKUP), olderBackup);
+    assert.equal(withBackup.getItem(takenKey), takenValue);
+    assert.equal(withBackup.getItem(`${takenKey}.1`), corrupt);
+    assert.deepEqual(reloadTexts(withBackup), ["Tea", "Fresh"]);
+    const secondKept = addWin("Again", withBackup, morning, later);
+    assert.equal(secondKept.saved, true);
+    assert.equal(userCopy(secondKept), WIN_SAVED_LABEL);
+    assert.deepEqual(reloadTexts(withBackup), ["Tea", "Fresh", "Again"]);
+    assert.equal(withBackup.getItem(WINS_STORAGE_KEY_V2_BACKUP), olderBackup);
+    assert.equal(withBackup.getItem(takenKey), takenValue);
+
     const blocked = {
-      data: {
-        [WINS_STORAGE_KEY]: corrupt,
-        [WINS_STORAGE_KEY_V1]: v1,
-      },
+      failBackup: true,
+      store: new Map([
+        [WINS_STORAGE_KEY, corrupt],
+        [WINS_STORAGE_KEY_V1, readableV1],
+      ]),
       getItem(key) {
-        return Object.hasOwn(this.data, key) ? this.data[key] : null;
+        return this.store.has(key) ? this.store.get(key) : null;
       },
       setItem(key, value) {
-        if (key === WINS_STORAGE_KEY_V2_BACKUP) throw new Error("backup quota");
         if (key === WINS_STORAGE_KEY_V1) throw new Error("v1 must stay untouched");
-        if (key === WINS_STORAGE_KEY) v2Writes += 1;
-        this.data[key] = value;
+        if (this.failBackup && (key === WINS_STORAGE_KEY_V2_BACKUP || key.startsWith(`${WINS_STORAGE_KEY_V2_BACKUP}.`))) {
+          throw new Error("backup quota");
+        }
+        this.store.set(key, value);
       },
     };
-    addWin("Fresh", blocked, morning, morning);
-    assert.equal(v2Writes, 0);
+    const failed = addWin("Fresh", blocked, morning, morning);
+    assert.equal(failed.saved, false);
+    assert.equal(failed.item.text, "Fresh");
+    assert.equal(userCopy(failed), WIN_NOT_SAVED_LABEL);
+    assert.deepEqual(failed.items.map((item) => item.text), ["Tea"]);
     assert.equal(blocked.getItem(WINS_STORAGE_KEY), corrupt);
-    assert.equal(blocked.getItem(WINS_STORAGE_KEY_V1), v1);
-    assert.match(build, /WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP/);
+    assert.equal(blocked.getItem(WINS_STORAGE_KEY_V1), readableV1);
+    assert.equal([...blocked.store.keys()].some((key) => key.startsWith(`${WINS_STORAGE_KEY_V2_BACKUP}.`)), false);
+    assert.deepEqual(winsForDate(loadWinsStore(blocked, morning), morning).map((item) => item.text), ["Tea"]);
+    assert.equal(blocked.getItem(WINS_STORAGE_KEY), corrupt);
+    blocked.failBackup = false;
+    const recovered = addWin("Again", blocked, morning, later);
+    assert.equal(recovered.saved, true);
+    assert.equal(userCopy(recovered), WIN_SAVED_LABEL);
+    assert.deepEqual(winsForDate(loadWinsStore(blocked, later), morning).map((item) => item.text), ["Tea", "Again"]);
+    assert.equal(blocked.getItem(`${WINS_STORAGE_KEY_V2_BACKUP}.${later.getTime()}`), corrupt);
+    const third = addWin("Later", blocked, morning, new Date(2026, 8, 20, 9, 45, 0));
+    assert.equal(third.saved, true);
+    assert.deepEqual(
+      winsForDate(loadWinsStore(blocked), morning).map((item) => item.text),
+      ["Tea", "Again", "Later"],
+    );
+    assert.match(build, /WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL/);
   });
 
   it("shows the placeholder thumbnail only on the Win of the day card", () => {
@@ -320,6 +390,9 @@ describe("daily wins", () => {
     assert.match(panel, /Attach prototype placeholder image/);
     assert.equal(panel.split("className:`mp-win-photo`").length - 1, 1);
     assert.match(panel, /e===`winOfDay`&&p\?mpWins\.addWin\(i,void 0,void 0,void 0,mpWins\.WIN_PLACEHOLDER_PHOTO\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /if\(!u\.saved\)\{s\(mpWins\.WIN_NOT_SAVED_LABEL\);return\}/);
+    assert.match(panel, /a\(``\),s\(mpWins\.WIN_SAVED_LABEL\),r\(u\.items\)/);
+    assert.doesNotMatch(panel, /s\(`Saved on this device for today\.`\)/);
     assert.match(panel, /e===`evening`\?\(0,A\.jsx\)\(`h2`,\{children:`Today’s wins`\}/);
     assert.match(panel, /e===`growth`\?/);
     assert.match(panel, /e===`nudge`\?/);

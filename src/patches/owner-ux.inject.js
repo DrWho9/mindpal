@@ -205,7 +205,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-    a(``),s(`Saved on this device for today.`),r(u.items);
+    if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
+    a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
   if(e===`hub`){
