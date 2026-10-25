@@ -12733,6 +12733,8 @@ const WINS_STORAGE_KEY = "mindpal.dailyWins.v2";
  * A save reuses a copy that already holds the same text.
  * Timestamped copies stop at MAX_CORRUPT_BACKUPS.
  * A plain load does not write a copy.
+ * When that cap is full, saving stays blocked until the person resets.
+ * Reset clears the unreadable v2 key and keeps the backup copies.
  */
 const WINS_STORAGE_KEY_V2_BACKUP = "mindpal.dailyWins.v2.backup";
 /** Timestamped copies only. The unsuffixed backup key is left alone. */
@@ -12740,6 +12742,14 @@ const MAX_CORRUPT_BACKUPS = 3;
 const WINS_STORE_VERSION = 2;
 const WIN_SAVED_LABEL = "Saved on this device for today.";
 const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
+/** Shown on Win of the day only while a save cannot be stored. */
+const WIN_RESET_LABEL = "Reset wins on this device";
+const WIN_RESET_NOTE =
+  "Saving is blocked. Reset clears the unreadable wins record on this device only. The newest backup copies stay on this device. This is a prototype, not real private storage.";
+const WIN_RESET_CONFIRM = "Confirm reset on this device";
+const WIN_RESET_CANCEL = "Keep the record";
+const WIN_RESET_DONE =
+  "Reset on this device. The unreadable record was cleared. The newest backup copies were kept.";
 const WIN_TEXT_MAX = 280;
 
 /**
@@ -12789,13 +12799,49 @@ function emptyWinsStore() {
   return { version: WINS_STORE_VERSION, days: {} };
 }
 
+/**
+ * Stable id for a win that had none, or that repeated an id already used that day.
+ * Built from the list index, the timestamp, and the text so a later read matches.
+ */
+function stableWinId(index, at, text, salt = 0) {
+  const stamp = typeof at === "string" ? at : "";
+  const body = typeof text === "string" ? text : "";
+  const saltPart = salt > 0 ? `${salt}-` : "";
+  return `win-${index}-${saltPart}${stamp.length}-${body.length}-${stamp}-${body}`;
+}
+
+function withUniqueIds(list) {
+  if (!Array.isArray(list)) return [];
+  const seen = new Set();
+  const out = [];
+  for (let index = 0; index < list.length; index += 1) {
+    const raw = list[index];
+    const win = normalizeWin(raw);
+    if (!win) continue;
+    const rawId = raw && typeof raw === "object" && typeof raw.id === "string" ? raw.id.trim() : "";
+    if (!rawId) win.id = stableWinId(index, win.at, win.text, 0);
+    if (seen.has(win.id)) {
+      let salt = 0;
+      let next = stableWinId(index, win.at, win.text, salt);
+      while (seen.has(next)) {
+        salt += 1;
+        next = stableWinId(index, win.at, win.text, salt);
+      }
+      win.id = next;
+    }
+    seen.add(win.id);
+    out.push(win);
+  }
+  return out;
+}
+
 function normalizeWinsStore(raw) {
   const store = emptyWinsStore();
   if (!raw || typeof raw !== "object") return store;
   const days = raw.days && typeof raw.days === "object" ? raw.days : {};
   for (const [key, list] of Object.entries(days)) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || !Array.isArray(list)) continue;
-    store.days[key] = list.map((item) => normalizeWin(item)).filter(Boolean);
+    store.days[key] = withUniqueIds(list);
   }
   return store;
 }
@@ -12828,17 +12874,34 @@ function migrateV1WinsJson(text) {
   const store = emptyWinsStore();
   for (const [key, list] of Object.entries(daysIn)) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(key) || !Array.isArray(list)) continue;
-    store.days[key] = list
-      .map((item) =>
-        normalizeWin(
-          item && typeof item === "object"
-            ? { id: item.id, text: item.text, at: item.at }
-            : null,
-        ),
-      )
-      .filter(Boolean);
+    store.days[key] = withUniqueIds(
+      list.map((item) =>
+        item && typeof item === "object" ? { id: item.id, text: item.text, at: item.at } : null,
+      ),
+    );
   }
   return pruneDays(store);
+}
+
+/**
+ * Pure downgrade of a v2 store into the v1 shape.
+ * Returns { version: 1, days } with id, text, and at only. Photos are left out.
+ * This does not read or write storage, and it does not delete or create the v1 key.
+ *
+ * Migration leaves mindpal.dailyWins.v1 as it is, including when that key is already
+ * absent. Deleting it would drop the only record v1 code can read. Writing it during
+ * migration would replace an original record, or create one, without a separate decision.
+ * A rollback to code that reads the v1 key can take JSON.stringify(exportV1(store))
+ * and store that text under the v1 key as its own step.
+ */
+function exportV1(store) {
+  const normalized = typeof store === "string" ? parseWinsJson(store) : normalizeWinsStore(store);
+  const days = {};
+  for (const [key, list] of Object.entries(normalized.days)) {
+    if (!Array.isArray(list) || list.length === 0) continue;
+    days[key] = list.map((item) => ({ id: item.id, text: item.text, at: item.at }));
+  }
+  return { version: 1, days };
 }
 
 function readKey(storage, key) {
@@ -12870,28 +12933,26 @@ function migratedV1(storage) {
   return migrateV1WinsJson(v1Text);
 }
 
-function backupKeys(storage) {
-  const keys = [];
-  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
-  const consider = (key) =>
-    typeof key === "string" && (key === WINS_STORAGE_KEY_V2_BACKUP || key.startsWith(prefix));
+function namesFromStorage(storage) {
+  if (!storage || typeof storage !== "object") return null;
   if (typeof storage.length === "number" && typeof storage.key === "function") {
-    for (let i = 0; i < storage.length; i += 1) {
-      const key = storage.key(i);
-      if (consider(key)) keys.push(key);
-    }
-    return keys;
+    const names = [];
+    for (let i = 0; i < storage.length; i += 1) names.push(storage.key(i));
+    return names;
   }
   const bag = storage.store;
-  if (bag && typeof bag.keys === "function") {
-    for (const key of bag.keys()) if (consider(key)) keys.push(key);
-    return keys;
-  }
-  if (bag && typeof bag === "object") {
-    for (const key of Object.keys(bag)) if (consider(key)) keys.push(key);
-    return keys;
-  }
-  return null;
+  if (!bag || typeof bag !== "object") return null;
+  if (typeof bag.keys === "function") return [...bag.keys()];
+  return Object.keys(bag);
+}
+
+function backupKeys(storage) {
+  const names = namesFromStorage(storage);
+  if (!names) return null;
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  return names.filter(
+    (key) => typeof key === "string" && (key === WINS_STORAGE_KEY_V2_BACKUP || key.startsWith(prefix)),
+  );
 }
 
 function quarantineCorruptWins(storage, v2Text, now = new Date()) {
@@ -12979,6 +13040,87 @@ function saveWinsStore(store, storage = globalThis.localStorage, now = new Date(
   return persistWins(store, storage, now).store;
 }
 
+function backupStamp(key) {
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  const rest = key.startsWith(prefix) ? key.slice(prefix.length) : "";
+  const [stampText, extraText] = rest.split(".");
+  const stamp = Number(stampText);
+  const extra = extraText == null || extraText === "" ? 0 : Number(extraText);
+  return [Number.isFinite(stamp) ? stamp : -1, Number.isFinite(extra) ? extra : -1];
+}
+
+function compareBackupAge(a, b) {
+  const [aStamp, aExtra] = backupStamp(a);
+  const [bStamp, bExtra] = backupStamp(b);
+  if (aStamp !== bStamp) return aStamp - bStamp;
+  return aExtra - bExtra;
+}
+
+/**
+ * True when the v2 record cannot be read and a save cannot keep another copy.
+ * A matching backup can still be reused, so that case is not blocked.
+ * A readable store is not blocked. This does not write.
+ */
+function winsSaveBlocked(storage = globalThis.localStorage) {
+  if (!storage) return false;
+  const current = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof current !== "string" || current.length === 0) return false;
+  if (readWinsStoreText(current)) return false;
+  let keys;
+  try {
+    keys = backupKeys(storage);
+  } catch {
+    return true;
+  }
+  if (keys == null) return true;
+  for (const key of keys) {
+    if (readKey(storage, key) === current) return false;
+  }
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  return keys.filter((key) => key.startsWith(prefix)).length >= MAX_CORRUPT_BACKUPS;
+}
+
+function removeStoredKey(storage, key) {
+  if (!storage || typeof storage.removeItem !== "function") return false;
+  try {
+    storage.removeItem(key);
+  } catch {
+    return false;
+  }
+  const left = readKey(storage, key);
+  return left == null || left === "";
+}
+
+/**
+ * User-triggered recovery for a blocked save.
+ * Removes the unreadable v2 key only. Keeps backup copies, or the newest
+ * timestamped copies when there are more than MAX_CORRUPT_BACKUPS.
+ * Does not remove the unsuffixed backup key or the v1 key.
+ * Does nothing when saving is not blocked, so a readable store stays put.
+ */
+function resetBlockedWins(storage = globalThis.localStorage) {
+  const empty = { cleared: false, kept: [] };
+  if (!winsSaveBlocked(storage)) return empty;
+  const current = readKey(storage, WINS_STORAGE_KEY);
+  if (typeof current === "string" && current.length > 0 && readWinsStoreText(current)) return empty;
+  let keys = null;
+  try {
+    keys = backupKeys(storage);
+  } catch {
+    keys = null;
+  }
+  const prefix = `${WINS_STORAGE_KEY_V2_BACKUP}.`;
+  const listed = Array.isArray(keys) ? keys : [];
+  const stamped = listed.filter((key) => key.startsWith(prefix)).sort(compareBackupAge);
+  const plain = listed.filter((key) => key === WINS_STORAGE_KEY_V2_BACKUP);
+  const overflow = Math.max(0, stamped.length - MAX_CORRUPT_BACKUPS);
+  const drop = stamped.slice(0, overflow);
+  const keep = stamped.slice(overflow).concat(plain);
+  if (!removeStoredKey(storage, WINS_STORAGE_KEY)) return { cleared: false, kept: keep };
+  for (const key of drop) removeStoredKey(storage, key);
+  return { cleared: true, kept: keep };
+}
+
 function winsForDate(store, date = new Date()) {
   const key = civilDateKey(date);
   const list = store?.days?.[key];
@@ -13014,7 +13156,9 @@ function addWin(
 function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
   const store = loadWinsStore(storage);
   const key = civilDateKey(date);
-  const items = winsForDate(store, date).filter((item) => item.id !== id);
+  const items = winsForDate(store, date);
+  const index = items.findIndex((item) => item.id === id);
+  if (index >= 0) items.splice(index, 1);
   store.days[key] = items;
   const written = persistWins(store, storage, new Date());
   if (!written.saved) {
@@ -15536,7 +15680,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,loadWinsStore,saveWinsStore,winsForDate,addWin,removeWin};
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin};
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -19781,14 +19925,23 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()))}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1);
+  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore())),h(mpWins.winsSaveBlocked())}
   (0,_.useEffect)(()=>{function e(){c()}return window.addEventListener(`mindpal-wins-change`,e),()=>window.removeEventListener(`mindpal-wins-change`,e)},[]);
   function l(){
     let u=e===`winOfDay`&&p?mpWins.addWin(i,void 0,void 0,void 0,mpWins.WIN_PLACEHOLDER_PHOTO):mpWins.addWin(i);
     if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
+    let q=mpWins.winsSaveBlocked();
+    h(q);if(!q)x(!1);
     if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
     a(``),s(mpWins.WIN_SAVED_LABEL),r(u.items);
+    try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
+  }
+  function d(){
+    let y=mpWins.resetBlockedWins();
+    x(!1);
+    if(!y||!y.cleared){s(mpWins.WIN_NOT_SAVED_LABEL),h(mpWins.winsSaveBlocked());return}
+    h(!1),s(mpWins.WIN_RESET_DONE),r(mpWins.winsForDate(mpWins.loadWinsStore()));
     try{window.dispatchEvent(new Event(`mindpal-wins-change`))}catch{}
   }
   if(e===`hub`){
@@ -19836,6 +19989,13 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,onClick:l,children:`Save this win`}),
       t&&(e===`nudge`||e===`problem`)?(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:t,children:`Add a win in Journal`}):null
     ]}),
+    e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
+      (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
+      m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
+        (0,A.jsx)(`button`,{type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!1),children:mpWins.WIN_RESET_CANCEL})
+      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!0),children:mpWins.WIN_RESET_LABEL})
+    ]}):null,
     o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
   ]});
 }
