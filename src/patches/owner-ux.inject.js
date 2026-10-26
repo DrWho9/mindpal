@@ -209,7 +209,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     for(let id of Object.keys(cache)) if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
     photoCache.current={};
   },[]);
-  // Past thumbnails load only while the list is open. A cached id is not read again.
+  // Past thumbnails load only while the list is open. A stored thumbnail is not read again.
+  // A missing thumbnail is read again when the list refreshes or opens.
   // Object URLs are revoked when that win leaves the store, or when the card unmounts.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
@@ -234,7 +235,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       }
       for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
-        if(cache[w.id])continue;
+        if(cache[w.id]&&cache[w.id].kind===`blob`)continue;
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
         if(!blob){cache[w.id]={kind:`missing`};changed=!0;continue}
@@ -256,7 +257,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     let node=null;
     try{node=document.querySelector(target)}catch{node=null}
     if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
-  },[past,dropBusy]);
+  },[past,dropBusy,hold]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
@@ -297,7 +298,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   }
   function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
   // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
-  async function drop(id,key){
+  async function drop(id,key,index){
     if(dropGuard.current)return;
     dropGuard.current=!0;
     setDropBusy(!0);
@@ -311,9 +312,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         s(mpWins.WIN_NOT_REMOVED_LABEL);
         return;
       }
-      let nextFocus=mpWins.pastWinFocusAfter(past.days,id);
-      let safe=nextFocus.kind===`win`&&typeof CSS<`u`&&CSS.escape?CSS.escape(nextFocus.id):nextFocus.id;
-      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${safe}"]`:`#mp-past-summary`;
+      let nextFocus=mpWins.pastWinFocusAfter(past.days,id,index);
+      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${nextFocus.index}"]`:`#mp-past-summary`;
       let cache=photoCache.current;
       if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
       if(cache[id])delete cache[id];
@@ -336,7 +336,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`figcaption`,{children:caption})
     ]});
   }
-  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})}
+  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:mpWins.pastWinTimeLabel(w.at)})}
+  let focusAt=0;
   if(e===`hub`){
     return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Through the day, add your daily wins — small ones count — so you can read them together tonight.`}),
@@ -367,23 +368,31 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       winWhen(w)
     ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
-      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:mpWins.PAST_WINS_TITLE}),
-      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map(day=>(0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
-        (0,A.jsx)(`h3`,{children:day.label}),
-        (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
-          let held=hold&&hold.id===w.id&&hold.key===day.key;
-          let removeName=mpWins.pastWinRemoveLabel(w.text);
-          let confirmName=mpWins.pastWinConfirmLabel(w.text);
-          return (0,A.jsxs)(`li`,{children:[
-            photoBlock(w),
-            (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
-            winWhen(w),
-            held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
-              (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>drop(w.id,day.key),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
-              (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(!dropBusy)setHold(null)},children:mpWins.PAST_WINS_REMOVE_KEEP})
-            ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>{if(!dropBusy)setHold({id:w.id,key:day.key})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
-          ]},w.id);
-        })})
+      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:past.days.length>0&&past.days.every(day=>day.future)&&!past.hasMore?mpWins.PAST_WINS_LATER:mpWins.PAST_WINS_TITLE}),
+      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>(0,A.jsxs)(A.Fragment,{children:[
+        day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)&&!(past.days.every(item=>item.future)&&!past.hasMore)?(0,A.jsx)(`p`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
+        (0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
+          (0,A.jsxs)(`h3`,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
+          (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
+            let index=focusAt;
+            focusAt+=1;
+            let held=hold&&hold.index===index;
+            let timeLabel=mpWins.pastWinTimeLabel(w.at);
+            let removeName=mpWins.pastWinRemoveLabel(w.text,day.label,timeLabel);
+            let confirmName=mpWins.pastWinConfirmLabel(w.text,day.label,timeLabel);
+            let keepName=mpWins.pastWinKeepLabel(w.text,day.label,timeLabel);
+            let aim=`[data-mp-past-focus="${index}"]`;
+            return (0,A.jsxs)(`li`,{children:[
+              photoBlock(w),
+              (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
+              winWhen(w),
+              held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
+                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+                (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
+              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,index})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+            ]},w.id);
+          })})
+        ]})
       ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
       past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
     ]}):null,

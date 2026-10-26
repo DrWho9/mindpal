@@ -127,27 +127,63 @@ export const PAST_WINS_SHOW_MORE = "Show more";
 export const PAST_WINS_REMOVE = "Remove";
 export const PAST_WINS_REMOVE_CONFIRM = "Confirm remove";
 export const PAST_WINS_REMOVE_KEEP = "Keep this win";
+/** Group heading for wins stored under a day after today. */
+export const PAST_WINS_LATER = "Later dates";
+/** Small note on a day key that is after today. */
+export const PAST_WINS_FUTURE_NOTE = "Future date";
 
-/** Accessible name for Remove. The visible button stays short. */
-export function pastWinRemoveLabel(text) {
+function pastWinNameParts(text, dayLabel, timeLabel) {
   const words = typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
-  if (!words) return "Remove win";
+  const day = typeof dayLabel === "string" ? dayLabel.replace(/\s+/g, " ").trim() : "";
+  const time = typeof timeLabel === "string" ? timeLabel.replace(/\s+/g, " ").trim() : "";
   const clipped = words.length > 80 ? `${words.slice(0, 77).trimEnd()}...` : words;
-  return `Remove win: ${clipped}`;
+  return { clipped, day, time };
+}
+
+/** Clock time for an accessible name. Empty when the win has no recorded time. */
+export function pastWinTimeLabel(at) {
+  if (!at || at === WIN_UNKNOWN_TIME) return "";
+  const date = new Date(at);
+  if (Number.isNaN(date.getTime())) return "";
+  try {
+    return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}
+
+/** Accessible name for Remove. The visible button stays short. Day and time keep duplicate text apart. */
+export function pastWinRemoveLabel(text, dayLabel, timeLabel) {
+  const { clipped, day, time } = pastWinNameParts(text, dayLabel, timeLabel);
+  const extra = [day, time].filter(Boolean);
+  if (!clipped && extra.length === 0) return "Remove win";
+  if (!clipped) return `Remove win, ${extra.join(", ")}`;
+  return `Remove win: ${[clipped, ...extra].join(", ")}`;
 }
 
 /** Accessible name for the confirm step. */
-export function pastWinConfirmLabel(text) {
-  const name = pastWinRemoveLabel(text);
+export function pastWinConfirmLabel(text, dayLabel, timeLabel) {
+  const name = pastWinRemoveLabel(text, dayLabel, timeLabel);
   if (name === "Remove win") return "Confirm remove win";
   return `Confirm ${name.charAt(0).toLowerCase()}${name.slice(1)}`;
+}
+
+/** Accessible name for Keep. The visible button stays "Keep this win". */
+export function pastWinKeepLabel(text, dayLabel, timeLabel) {
+  const name = pastWinRemoveLabel(text, dayLabel, timeLabel);
+  if (name === "Remove win") return "Keep this win";
+  if (name.startsWith("Remove win: ")) return `Keep this win: ${name.slice("Remove win: ".length)}`;
+  if (name.startsWith("Remove win, ")) return `Keep this win, ${name.slice("Remove win, ".length)}`;
+  return "Keep this win";
 }
 
 /**
  * Where focus goes after a past win is removed.
  * The next win in the open list, otherwise the previous one, otherwise the list heading.
+ * `fromIndex` picks this occurrence when the same id is stored more than once.
+ * `index` is where that target sits after this win is gone.
  */
-export function pastWinFocusAfter(days, id) {
+export function pastWinFocusAfter(days, id, fromIndex) {
   const flat = [];
   const list = Array.isArray(days) ? days : [];
   for (const day of list) {
@@ -156,9 +192,12 @@ export function pastWinFocusAfter(days, id) {
       if (item && typeof item.id === "string" && item.id) flat.push(item.id);
     }
   }
-  const index = flat.indexOf(id);
-  if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1] };
-  if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1] };
+  const preferred = Number.isInteger(fromIndex) ? fromIndex : -1;
+  const index = preferred >= 0 && preferred < flat.length && flat[preferred] === id
+    ? preferred
+    : flat.indexOf(id);
+  if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1], index };
+  if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1], index: index - 1 };
   return { kind: "summary" };
 }
 /**
@@ -909,6 +948,7 @@ export function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DA
     days: keys.slice(0, count).map((key) => ({
       key,
       label: formatWinDayLabel(key),
+      future: key > today,
       items: daysIn[key].slice(),
     })),
     totalDays: keys.length,

@@ -174,7 +174,7 @@ describe("daily wins", () => {
     assert.doesNotMatch(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpWinsPanel/);
     assert.match(css, /\.mp-win-of-day\{[^}]*width:100%/);
     assert.match(css, /\.mp-win-of-day input\{[^}]*min-height:44px/);
-    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,pastWinRemoveLabel,pastWinConfirmLabel,pastWinFocusAfter,emptyPastWins,pastWinsPage/);
+    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,emptyPastWins,pastWinsPage/);
   });
 
   it("keeps a v2 win model and accepts only the bundled placeholder photo", () => {

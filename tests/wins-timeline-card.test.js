@@ -4,11 +4,8 @@ import { after, before, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   PAST_WINS_EMPTY,
-  PAST_WINS_REMOVE_KEEP,
   PAST_WINS_SHOW_MORE,
   PAST_WINS_TITLE,
-  pastWinConfirmLabel,
-  pastWinRemoveLabel,
   WIN_PHOTO_CHECKING_LABEL,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
@@ -170,17 +167,45 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
 
     const yesterdayId = await page.evaluate(() => globalThis.__yesterdayId);
-    const yesterdayName = pastWinRemoveLabel("Synthetic win yesterday");
+    const names = await page.evaluate(() => {
+      const atOffset = (offset) => {
+        const day = new Date();
+        day.setDate(day.getDate() - offset);
+        day.setHours(9, 15, 0, 0);
+        return day;
+      };
+      const keyOf = (day) => `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+      const named = (text, offset) => {
+        const day = atOffset(offset);
+        const label = mpWins.formatWinDayLabel(keyOf(day));
+        const time = mpWins.pastWinTimeLabel(day.toISOString());
+        return {
+          remove: mpWins.pastWinRemoveLabel(text, label, time),
+          confirm: mpWins.pastWinConfirmLabel(text, label, time),
+          keep: mpWins.pastWinKeepLabel(text, label, time),
+        };
+      };
+      return { yesterday: named("Synthetic win yesterday", 1), bundled: named("Bundled placeholder win", 2) };
+    });
+    const yesterdayName = names.yesterday.remove;
     const yesterdayRow = past.locator("li", { hasText: "Synthetic win yesterday" });
     await yesterdayRow.getByRole("button", { name: yesterdayName, exact: true }).click();
-    await past.getByRole("button", { name: PAST_WINS_REMOVE_KEEP, exact: true }).click();
+    await page.waitForFunction(
+      (label) => document.activeElement && document.activeElement.getAttribute("aria-label") === label,
+      names.yesterday.confirm,
+    );
+    await yesterdayRow.getByRole("button", { name: names.yesterday.keep, exact: true }).click();
+    await page.waitForFunction(
+      (label) => document.activeElement && document.activeElement.getAttribute("aria-label") === label,
+      yesterdayName,
+    );
     assert.equal(await yesterdayRow.count(), 1);
     await yesterdayRow.getByRole("button", { name: yesterdayName, exact: true }).click();
-    await yesterdayRow.getByRole("button", { name: pastWinConfirmLabel("Synthetic win yesterday"), exact: true }).click();
+    await yesterdayRow.getByRole("button", { name: names.yesterday.confirm, exact: true }).click();
     await past.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });
     await page.waitForFunction(
       (label) => document.activeElement && document.activeElement.getAttribute("aria-label") === label,
-      pastWinRemoveLabel("Bundled placeholder win"),
+      names.bundled.remove,
     );
     await past.getByText("Bundled placeholder win").waitFor({ state: "visible" });
     await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });

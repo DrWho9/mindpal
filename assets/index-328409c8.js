@@ -13154,17 +13154,15 @@ async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}) {
       /*
        * Abort and commit can overlap. A blob that lands after the timeout
        * would be an orphan while the card says the image was not saved.
-       * Delete it now, and again if a late complete arrives after that.
+       * Start the delete and do not wait. A hung delete must not use up the
+       * save grace, or the win text would be dropped. If a late complete
+       * arrives after that, delete again.
        */
       const cleanup = () => {
         deleteWinPhotos([id], { notify: false }).catch(() => {});
       };
       if (tx) tx.oncomplete = cleanup;
-      try {
-        await deleteWinPhotos([id], { notify: false });
-      } catch {
-        /* the late complete handler still tries */
-      }
+      cleanup();
       return { ok: false, reason: "timeout" };
     }
     return { ok: false, reason: "put" };
@@ -13425,27 +13423,63 @@ const PAST_WINS_SHOW_MORE = "Show more";
 const PAST_WINS_REMOVE = "Remove";
 const PAST_WINS_REMOVE_CONFIRM = "Confirm remove";
 const PAST_WINS_REMOVE_KEEP = "Keep this win";
+/** Group heading for wins stored under a day after today. */
+const PAST_WINS_LATER = "Later dates";
+/** Small note on a day key that is after today. */
+const PAST_WINS_FUTURE_NOTE = "Future date";
 
-/** Accessible name for Remove. The visible button stays short. */
-function pastWinRemoveLabel(text) {
+function pastWinNameParts(text, dayLabel, timeLabel) {
   const words = typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
-  if (!words) return "Remove win";
+  const day = typeof dayLabel === "string" ? dayLabel.replace(/\s+/g, " ").trim() : "";
+  const time = typeof timeLabel === "string" ? timeLabel.replace(/\s+/g, " ").trim() : "";
   const clipped = words.length > 80 ? `${words.slice(0, 77).trimEnd()}...` : words;
-  return `Remove win: ${clipped}`;
+  return { clipped, day, time };
+}
+
+/** Clock time for an accessible name. Empty when the win has no recorded time. */
+function pastWinTimeLabel(at) {
+  if (!at || at === WIN_UNKNOWN_TIME) return "";
+  const date = new Date(at);
+  if (Number.isNaN(date.getTime())) return "";
+  try {
+    return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  } catch {
+    return "";
+  }
+}
+
+/** Accessible name for Remove. The visible button stays short. Day and time keep duplicate text apart. */
+function pastWinRemoveLabel(text, dayLabel, timeLabel) {
+  const { clipped, day, time } = pastWinNameParts(text, dayLabel, timeLabel);
+  const extra = [day, time].filter(Boolean);
+  if (!clipped && extra.length === 0) return "Remove win";
+  if (!clipped) return `Remove win, ${extra.join(", ")}`;
+  return `Remove win: ${[clipped, ...extra].join(", ")}`;
 }
 
 /** Accessible name for the confirm step. */
-function pastWinConfirmLabel(text) {
-  const name = pastWinRemoveLabel(text);
+function pastWinConfirmLabel(text, dayLabel, timeLabel) {
+  const name = pastWinRemoveLabel(text, dayLabel, timeLabel);
   if (name === "Remove win") return "Confirm remove win";
   return `Confirm ${name.charAt(0).toLowerCase()}${name.slice(1)}`;
+}
+
+/** Accessible name for Keep. The visible button stays "Keep this win". */
+function pastWinKeepLabel(text, dayLabel, timeLabel) {
+  const name = pastWinRemoveLabel(text, dayLabel, timeLabel);
+  if (name === "Remove win") return "Keep this win";
+  if (name.startsWith("Remove win: ")) return `Keep this win: ${name.slice("Remove win: ".length)}`;
+  if (name.startsWith("Remove win, ")) return `Keep this win, ${name.slice("Remove win, ".length)}`;
+  return "Keep this win";
 }
 
 /**
  * Where focus goes after a past win is removed.
  * The next win in the open list, otherwise the previous one, otherwise the list heading.
+ * `fromIndex` picks this occurrence when the same id is stored more than once.
+ * `index` is where that target sits after this win is gone.
  */
-function pastWinFocusAfter(days, id) {
+function pastWinFocusAfter(days, id, fromIndex) {
   const flat = [];
   const list = Array.isArray(days) ? days : [];
   for (const day of list) {
@@ -13454,9 +13488,12 @@ function pastWinFocusAfter(days, id) {
       if (item && typeof item.id === "string" && item.id) flat.push(item.id);
     }
   }
-  const index = flat.indexOf(id);
-  if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1] };
-  if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1] };
+  const preferred = Number.isInteger(fromIndex) ? fromIndex : -1;
+  const index = preferred >= 0 && preferred < flat.length && flat[preferred] === id
+    ? preferred
+    : flat.indexOf(id);
+  if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1], index };
+  if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1], index: index - 1 };
   return { kind: "summary" };
 }
 /**
@@ -14207,6 +14244,7 @@ function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DAYS) {
     days: keys.slice(0, count).map((key) => ({
       key,
       label: formatWinDayLabel(key),
+      future: key > today,
       items: daysIn[key].slice(),
     })),
     totalDays: keys.length,
@@ -16990,7 +17028,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,pastWinRemoveLabel,pastWinConfirmLabel,pastWinFocusAfter,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -21245,7 +21283,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     for(let id of Object.keys(cache)) if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
     photoCache.current={};
   },[]);
-  // Past thumbnails load only while the list is open. A cached id is not read again.
+  // Past thumbnails load only while the list is open. A stored thumbnail is not read again.
+  // A missing thumbnail is read again when the list refreshes or opens.
   // Object URLs are revoked when that win leaves the store, or when the card unmounts.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
@@ -21270,7 +21309,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       }
       for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
-        if(cache[w.id])continue;
+        if(cache[w.id]&&cache[w.id].kind===`blob`)continue;
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
         if(!blob){cache[w.id]={kind:`missing`};changed=!0;continue}
@@ -21292,7 +21331,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     let node=null;
     try{node=document.querySelector(target)}catch{node=null}
     if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
-  },[past,dropBusy]);
+  },[past,dropBusy,hold]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
@@ -21333,7 +21372,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   }
   function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
   // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
-  async function drop(id,key){
+  async function drop(id,key,index){
     if(dropGuard.current)return;
     dropGuard.current=!0;
     setDropBusy(!0);
@@ -21347,9 +21386,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         s(mpWins.WIN_NOT_REMOVED_LABEL);
         return;
       }
-      let nextFocus=mpWins.pastWinFocusAfter(past.days,id);
-      let safe=nextFocus.kind===`win`&&typeof CSS<`u`&&CSS.escape?CSS.escape(nextFocus.id):nextFocus.id;
-      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${safe}"]`:`#mp-past-summary`;
+      let nextFocus=mpWins.pastWinFocusAfter(past.days,id,index);
+      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${nextFocus.index}"]`:`#mp-past-summary`;
       let cache=photoCache.current;
       if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
       if(cache[id])delete cache[id];
@@ -21372,7 +21410,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`figcaption`,{children:caption})
     ]});
   }
-  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})}
+  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:mpWins.pastWinTimeLabel(w.at)})}
+  let focusAt=0;
   if(e===`hub`){
     return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Through the day, add your daily wins — small ones count — so you can read them together tonight.`}),
@@ -21403,23 +21442,31 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       winWhen(w)
     ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
-      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:mpWins.PAST_WINS_TITLE}),
-      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map(day=>(0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
-        (0,A.jsx)(`h3`,{children:day.label}),
-        (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
-          let held=hold&&hold.id===w.id&&hold.key===day.key;
-          let removeName=mpWins.pastWinRemoveLabel(w.text);
-          let confirmName=mpWins.pastWinConfirmLabel(w.text);
-          return (0,A.jsxs)(`li`,{children:[
-            photoBlock(w),
-            (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
-            winWhen(w),
-            held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
-              (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>drop(w.id,day.key),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
-              (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(!dropBusy)setHold(null)},children:mpWins.PAST_WINS_REMOVE_KEEP})
-            ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>{if(!dropBusy)setHold({id:w.id,key:day.key})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
-          ]},w.id);
-        })})
+      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:past.days.length>0&&past.days.every(day=>day.future)&&!past.hasMore?mpWins.PAST_WINS_LATER:mpWins.PAST_WINS_TITLE}),
+      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>(0,A.jsxs)(A.Fragment,{children:[
+        day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)&&!(past.days.every(item=>item.future)&&!past.hasMore)?(0,A.jsx)(`p`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
+        (0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
+          (0,A.jsxs)(`h3`,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
+          (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
+            let index=focusAt;
+            focusAt+=1;
+            let held=hold&&hold.index===index;
+            let timeLabel=mpWins.pastWinTimeLabel(w.at);
+            let removeName=mpWins.pastWinRemoveLabel(w.text,day.label,timeLabel);
+            let confirmName=mpWins.pastWinConfirmLabel(w.text,day.label,timeLabel);
+            let keepName=mpWins.pastWinKeepLabel(w.text,day.label,timeLabel);
+            let aim=`[data-mp-past-focus="${index}"]`;
+            return (0,A.jsxs)(`li`,{children:[
+              photoBlock(w),
+              (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
+              winWhen(w),
+              held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
+                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+                (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
+              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,index})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+            ]},w.id);
+          })})
+        ]})
       ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
       past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
     ]}):null,

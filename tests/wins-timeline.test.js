@@ -17,6 +17,8 @@ import {
 import {
   PAST_WINS_EMPTY,
   PAST_WINS_PAGE_DAYS,
+  PAST_WINS_FUTURE_NOTE,
+  PAST_WINS_LATER,
   PAST_WINS_REMOVE,
   PAST_WINS_REMOVE_CONFIRM,
   PAST_WINS_REMOVE_KEEP,
@@ -43,7 +45,9 @@ import {
   loadWinsStore,
   pastWinConfirmLabel,
   pastWinFocusAfter,
+  pastWinKeepLabel,
   pastWinRemoveLabel,
+  pastWinTimeLabel,
   pastWinsPage,
   readWinsStore,
   removeWin,
@@ -198,6 +202,8 @@ describe("past wins timeline", () => {
     assert.equal(page.totalDays, 3);
     assert.equal(page.hasMore, false);
     assert.deepEqual(page.days.map((day) => day.key), ["2026-09-21", "2026-09-19", "2026-09-18"]);
+    assert.equal(page.days[0].future, true);
+    assert.equal(page.days[1].future, false);
     assert.equal(page.days[0].items[0].id, "future");
     assert.equal(page.days[0].items[0].text, "Not yet");
     assert.match(page.days[0].label, /21/);
@@ -220,8 +226,10 @@ describe("past wins timeline", () => {
     assert.match(PAST_WINS_EMPTY, /on this device only/);
     assert.equal(PAST_WINS_SHOW_MORE, "Show more");
     assert.equal(PAST_WINS_REMOVE, "Remove");
+    assert.equal(PAST_WINS_LATER, "Later dates");
+    assert.equal(PAST_WINS_FUTURE_NOTE, "Future date");
     assert.doesNotMatch(
-      `${PAST_WINS_TITLE} ${PAST_WINS_EMPTY} ${PAST_WINS_SHOW_MORE} ${PAST_WINS_REMOVE} ${formatWinDayLabel("2026-09-19", "en-AU")}`,
+      `${PAST_WINS_TITLE} ${PAST_WINS_EMPTY} ${PAST_WINS_SHOW_MORE} ${PAST_WINS_REMOVE} ${PAST_WINS_LATER} ${PAST_WINS_FUTURE_NOTE} ${formatWinDayLabel("2026-09-19", "en-AU")}`,
       /—|–/,
     );
   });
@@ -301,19 +309,26 @@ describe("past wins timeline", () => {
     assert.doesNotMatch(css, /(^|\n)\.mp-past-wins/);
     const photoEffect = panel.slice(panel.indexOf("Past thumbnails load only"), panel.indexOf("async function l()"));
     assert.match(photoEffect, /if\(openPast\)/);
-    assert.match(photoEffect, /if\(cache\[w\.id\]\)continue/);
+    assert.match(photoEffect, /if\(cache\[w\.id\]&&cache\[w\.id\]\.kind===`blob`\)continue/);
     assert.match(panel, /photoCache\.current=\{\}/);
     const dropFn = panel.slice(panel.indexOf("async function drop("), panel.indexOf("function photoBlock("));
     assert.match(dropFn, /if\(dropGuard\.current\)return/);
     assert.match(dropFn, /setDropBusy\(!0\)/);
     assert.match(dropFn, /mpWins\.WIN_NOT_REMOVED_LABEL/);
     assert.match(dropFn, /mpWins\.readWinsStore\(\)/);
-    assert.match(dropFn, /mpWins\.pastWinFocusAfter\(past\.days,id\)/);
+    assert.match(dropFn, /mpWins\.pastWinFocusAfter\(past\.days,id,index\)/);
     assert.doesNotMatch(dropFn.slice(dropFn.indexOf("if(!u.saved)"), dropFn.indexOf("let nextFocus")), /u\.store/);
     assert.match(panel, /disabled:dropBusy/);
     assert.match(panel.slice(panel.indexOf("Focus only after dropBusy"), panel.indexOf("async function l()")), /if\(dropBusy\)return/);
+    assert.match(panel, /\[past,dropBusy,hold\]/);
+    assert.match(panel, /focusAfter\.current=aim/);
     assert.match(panel, /"aria-label":removeName/);
     assert.match(panel, /"aria-label":confirmName/);
+    assert.match(panel, /"aria-label":keepName/);
+    assert.match(panel, /mpWins\.pastWinKeepLabel/);
+    assert.match(panel, /mpWins\.PAST_WINS_LATER/);
+    assert.match(panel, /mpWins\.PAST_WINS_FUTURE_NOTE/);
+    assert.match(panel, /className:`mp-past-future`/);
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_CONFIRM/);
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_KEEP/);
     assert.match(panel, /id:`mp-past-summary`/);
@@ -337,25 +352,38 @@ describe("past wins timeline", () => {
   });
 
   it("names the remove control and chooses the next focus target", () => {
-    assert.equal(pastWinRemoveLabel("Synthetic win yesterday"), "Remove win: Synthetic win yesterday");
-    assert.equal(pastWinConfirmLabel("Synthetic win yesterday"), "Confirm remove win: Synthetic win yesterday");
+    const day = "Saturday 19 September 2026";
+    const otherDay = "Friday 18 September 2026";
+    assert.equal(pastWinRemoveLabel("Synthetic win yesterday", day, "9:15 am"), "Remove win: Synthetic win yesterday, Saturday 19 September 2026, 9:15 am");
+    assert.equal(pastWinConfirmLabel("Synthetic win yesterday", day, "9:15 am"), "Confirm remove win: Synthetic win yesterday, Saturday 19 September 2026, 9:15 am");
+    assert.equal(pastWinKeepLabel("Synthetic win yesterday", day, "9:15 am"), "Keep this win: Synthetic win yesterday, Saturday 19 September 2026, 9:15 am");
+    assert.notEqual(pastWinRemoveLabel("Tea", day, "9:15 am"), pastWinRemoveLabel("Tea", otherDay, "8:00 am"));
+    assert.equal(pastWinTimeLabel(WIN_UNKNOWN_TIME), "");
+    assert.equal(pastWinRemoveLabel("Quiet", day, pastWinTimeLabel(WIN_UNKNOWN_TIME)), "Remove win: Quiet, Saturday 19 September 2026");
     assert.equal(pastWinRemoveLabel("  "), "Remove win");
     assert.equal(pastWinConfirmLabel(""), "Confirm remove win");
+    assert.equal(pastWinKeepLabel("  "), "Keep this win");
+    assert.equal(pastWinKeepLabel("", day), "Keep this win, Saturday 19 September 2026");
     assert.equal(PAST_WINS_REMOVE, "Remove");
     assert.equal(PAST_WINS_REMOVE_CONFIRM, "Confirm remove");
     assert.equal(PAST_WINS_REMOVE_KEEP, "Keep this win");
     const long = "word ".repeat(30);
-    assert.match(pastWinRemoveLabel(long), /^Remove win: /);
-    assert.ok(pastWinRemoveLabel(long).length < long.length);
-    assert.doesNotMatch(`${pastWinRemoveLabel("Tea")} ${pastWinConfirmLabel("Tea")} ${PAST_WINS_REMOVE_CONFIRM} ${PAST_WINS_REMOVE_KEEP}`, /—|–/);
+    assert.match(pastWinRemoveLabel(long, day, "9:15 am"), /^Remove win: /);
+    assert.match(pastWinRemoveLabel(long, day, "9:15 am"), /Saturday 19 September 2026, 9:15 am$/);
+    assert.ok(pastWinRemoveLabel(long, day, "9:15 am").length < long.length);
+    assert.doesNotMatch(`${pastWinRemoveLabel("Tea", day, "9:15 am")} ${pastWinConfirmLabel("Tea", day, "9:15 am")} ${pastWinKeepLabel("Tea", day, "9:15 am")} ${PAST_WINS_REMOVE_CONFIRM} ${PAST_WINS_REMOVE_KEEP}`, /—|–/);
     const days = [
       { key: "2026-09-19", items: [{ id: "a" }, { id: "b" }] },
       { key: "2026-09-18", items: [{ id: "c" }] },
     ];
-    assert.deepEqual(pastWinFocusAfter(days, "a"), { kind: "win", id: "b" });
-    assert.deepEqual(pastWinFocusAfter(days, "b"), { kind: "win", id: "c" });
-    assert.deepEqual(pastWinFocusAfter(days, "c"), { kind: "win", id: "b" });
+    assert.deepEqual(pastWinFocusAfter(days, "a"), { kind: "win", id: "b", index: 0 });
+    assert.deepEqual(pastWinFocusAfter(days, "b"), { kind: "win", id: "c", index: 1 });
+    assert.deepEqual(pastWinFocusAfter(days, "c"), { kind: "win", id: "b", index: 1 });
     assert.deepEqual(pastWinFocusAfter([{ key: "2026-09-19", items: [{ id: "only" }] }], "only"), { kind: "summary" });
+    const dup = [{ key: "2026-09-19", items: [{ id: "dup" }, { id: "dup" }, { id: "tail" }] }];
+    assert.deepEqual(pastWinFocusAfter(dup, "dup", 0), { kind: "win", id: "dup", index: 0 });
+    assert.deepEqual(pastWinFocusAfter(dup, "dup", 1), { kind: "win", id: "tail", index: 1 });
+    assert.deepEqual(pastWinFocusAfter(dup, "dup"), { kind: "win", id: "dup", index: 0 });
   });
 });
 
@@ -460,5 +488,64 @@ describe("save timeout", () => {
     assert.equal(dropped.abandoned, true);
     assert.equal(storage.getItem(WINS_STORAGE_KEY), null);
     assert.equal(winSaveStatusLabel(dropped, true), WIN_NOT_SAVED_LABEL);
+  });
+
+  it("stores the win text when a timed out photo write and its cleanup both hang", async () => {
+    assert.equal(WIN_SAVE_TIMEOUT_MS, 10000);
+    assert.equal(WIN_SAVE_ABORT_GRACE_MS, 50);
+    assert.equal(WIN_PHOTO_REQUEST_MS, 10000);
+    const rows = new Map();
+    setWinPhotoDatabaseFactory({
+      open() {
+        const request = {};
+        queueMicrotask(() => {
+          const db = {
+            objectStoreNames: { contains: () => true },
+            close() {},
+            transaction() {
+              const tx = {
+                abort() {
+                  if (typeof this.onabort === "function") this.onabort();
+                },
+                objectStore() {
+                  return {
+                    put: () => {
+                      const req = {};
+                      queueMicrotask(() => {
+                        if (typeof req.onsuccess === "function") req.onsuccess();
+                      });
+                      return req;
+                    },
+                    delete: () => ({}),
+                    get: () => ({}),
+                  };
+                },
+              };
+              return tx;
+            },
+          };
+          request.result = db;
+          if (typeof request.onsuccess === "function") request.onsuccess();
+        });
+        return request;
+      },
+    });
+    const storage = memoryStorage();
+    const started = Date.now();
+    const result = await watchSave(
+      (signal, attempt) => addWinPhoto("Hung cleanup", storage, today, today, undefined, { signal, attempt }),
+    );
+    const elapsed = Date.now() - started;
+    assert.ok(elapsed >= 8000, `finished too soon (${elapsed}ms)`);
+    assert.ok(elapsed < 15000, `cleanup held the save (${elapsed}ms)`);
+    assert.equal(result.saved, true);
+    assert.equal(result.abandoned, undefined);
+    assert.equal(result.photoError, true);
+    assert.equal(result.timedOut, true);
+    assert.equal(Object.hasOwn(result.item, "photo"), false);
+    assert.equal(result.item.text, "Hung cleanup");
+    assert.equal(winSaveStatusLabel(result, true), WIN_PHOTO_NOT_SAVED_LABEL);
+    assert.equal(JSON.parse(storage.getItem(WINS_STORAGE_KEY)).days["2026-09-20"].length, 1);
+    assert.equal(rows.size, 0);
   });
 });

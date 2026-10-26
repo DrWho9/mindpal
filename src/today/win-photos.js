@@ -428,17 +428,15 @@ export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}
       /*
        * Abort and commit can overlap. A blob that lands after the timeout
        * would be an orphan while the card says the image was not saved.
-       * Delete it now, and again if a late complete arrives after that.
+       * Start the delete and do not wait. A hung delete must not use up the
+       * save grace, or the win text would be dropped. If a late complete
+       * arrives after that, delete again.
        */
       const cleanup = () => {
         deleteWinPhotos([id], { notify: false }).catch(() => {});
       };
       if (tx) tx.oncomplete = cleanup;
-      try {
-        await deleteWinPhotos([id], { notify: false });
-      } catch {
-        /* the late complete handler still tries */
-      }
+      cleanup();
       return { ok: false, reason: "timeout" };
     }
     return { ok: false, reason: "put" };
