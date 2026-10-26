@@ -89,6 +89,9 @@ export const WIN_IMAGE_WIN_GONE_LABEL = "Image not changed. That win is no longe
 /** The sample write finished, but the blob was not there when the record was about to point at it. */
 export const WIN_IMAGE_NOT_ON_DEVICE_LABEL =
   "Image not changed. That sample image is not on this device. The win text is still saved on this device.";
+/** The confirming read failed and the previous image could not be put back. */
+export const WIN_IMAGE_MAY_HAVE_CHANGED_LABEL =
+  "The sample image on this device may have changed. The win text is still saved on this device.";
 export const WIN_IMAGE_UPDATED_LABEL = "Sample image updated on this device.";
 export const WIN_IMAGE_REMOVED_LABEL = "Sample image removed on this device.";
 /** IndexedDB could not store a chosen sample, so the record keeps that sample's bundled path. */
@@ -1515,13 +1518,17 @@ export async function changeWinImage(
    * A missing blob, or a blob that is not that sample, is left as it is so another
    * tab's delete is not undone.
    * A read that errors (the get throws, or the photo database cannot be opened)
-   * is not that case. Put the previous blob back, or delete the new blob when
-   * this win had none, the same as a timed out write.
-   * The confirming read and the record write are not one transaction. The read
-   * decodes the blob for the allowlist, then this function decodes it again for
-   * the sample id. Those two decodes are microtasks. Another tab can remove the
-   * blob in that gap, and the synchronous commit can still point the record at
-   * it. That gap is not the 300 ms write window.
+   * puts the previous blob back, or deletes the new blob when this win had none.
+   * That restore can overwrite a newer image another tab stored after this write.
+   * The timeout path has the same blind restore.
+   * Say the image was not changed only when that restore or delete succeeds.
+   * If it does not, point the record at the blob still stored and say the sample
+   * image may have changed.
+   * The confirming read and the record write are not one transaction. Reading the
+   * blob is its own task, and the allowlist check decodes it again. The gap
+   * includes waiting for that read. Another tab can remove the blob before the
+   * synchronous commit, and the record can still point at it. That gap is not
+   * the 300 ms write window.
    */
   let seen = await readWinPhotoRecord(id);
   let seenId = "";
@@ -1537,12 +1544,24 @@ export async function changeWinImage(
     const fix = previous
       ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
       : deleteWinPhotos([id], { notify: false });
+    let restored = false;
     try {
-      await fix;
+      const result = await fix;
+      restored = previous
+        ? Boolean(result && result.ok)
+        : Boolean(result && Array.isArray(result.deleted) && result.deleted.includes(id));
     } catch {
-      /* the new blob is put back or removed when the photo database can */
+      restored = false;
     }
-    return imageKept(storage, current, { reason: "read" });
+    if (restored) return imageKept(storage, current, { reason: "read" });
+    const pointed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+    if (pointed.missing) return imageGone(storage);
+    const store = pointed.written && pointed.written.store ? pointed.written.store : readWinsStore(storage);
+    return imageKept(storage, pointed.item || current, {
+      reason: "uncertain",
+      saved: Boolean(pointed.written && pointed.written.saved),
+      store,
+    });
   }
   if (seen.status !== "ok" || seenId !== wanted) {
     return imageKept(storage, current, { reason: "unconfirmed" });

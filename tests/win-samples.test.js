@@ -32,6 +32,7 @@ import {
 import {
   WINS_STORAGE_KEY,
   WIN_IMAGE_NOT_CHANGED_LABEL,
+  WIN_IMAGE_MAY_HAVE_CHANGED_LABEL,
   WIN_IMAGE_NOT_ON_DEVICE_LABEL,
   WIN_IMAGE_REMOVED_LABEL,
   WIN_IMAGE_UPDATED_LABEL,
@@ -174,6 +175,63 @@ function holdFirstWriteFactory(base, delayMs, gate, deleteAfter = false) {
             Object.defineProperty(fake, "onerror", { set() {}, get() { return null; } });
             Object.defineProperty(fake, "onabort", { set() {}, get() { return null; } });
             return fake;
+          }
+          return transaction(storeNames, mode);
+        };
+      });
+      return request;
+    },
+    deleteDatabase(name) {
+      return base.deleteDatabase(name);
+    },
+  };
+}
+
+function failReadThenWriteFactory(base, succeedReads, succeedWrites, fail) {
+  let reads = 0;
+  let writes = 0;
+  return {
+    open(name, version) {
+      const request = base.open(name, version);
+      request.addEventListener("success", () => {
+        const db = request.result;
+        const transaction = db.transaction.bind(db);
+        db.transaction = (storeNames, mode) => {
+          if (mode === "readonly") {
+            reads += 1;
+            if (reads > succeedReads) {
+              return {
+                objectStore() {
+                  return {
+                    get() {
+                      throw new Error("confirming read failed");
+                    },
+                  };
+                },
+                abort() {},
+              };
+            }
+          }
+          if (mode === "readwrite") {
+            writes += 1;
+            const tx = transaction(storeNames, mode);
+            if (writes > succeedWrites) {
+              const objectStore = tx.objectStore.bind(tx);
+              tx.objectStore = (storeName) => {
+                const store = objectStore(storeName);
+                if (fail === "delete") {
+                  store.delete = () => {
+                    throw new Error("delete failed");
+                  };
+                } else {
+                  store.put = () => {
+                    throw new DOMException("Quota exceeded", "QuotaExceededError");
+                  };
+                }
+                return store;
+              };
+            }
+            return tx;
           }
           return transaction(storeNames, mode);
         };
@@ -338,7 +396,7 @@ describe("sample image allowlist", () => {
     assert.equal(await putWinPhoto("nope", new Blob(["<svg></svg>"], { type: "image/svg+xml" })).then((result) => result.reason), "blob");
     assert.equal(await readWinPhoto("nope"), null);
     assert.doesNotMatch(
-      `${WIN_SAMPLE_ON_DEVICE_LABEL} ${WIN_SAMPLE_PROTOTYPE_LABEL} ${WIN_IMAGE_NOT_CHANGED_LABEL} ${WIN_IMAGE_NOT_ON_DEVICE_LABEL} ${WIN_IMAGE_WIN_GONE_LABEL} ${WIN_IMAGE_UPDATED_LABEL} ${WIN_IMAGE_REMOVED_LABEL} ${WIN_SAMPLE_UNAVAILABLE_LABEL} ${WIN_SAMPLE_NOT_SAVED_LABEL}`,
+      `${WIN_SAMPLE_ON_DEVICE_LABEL} ${WIN_SAMPLE_PROTOTYPE_LABEL} ${WIN_IMAGE_NOT_CHANGED_LABEL} ${WIN_IMAGE_NOT_ON_DEVICE_LABEL} ${WIN_IMAGE_MAY_HAVE_CHANGED_LABEL} ${WIN_IMAGE_WIN_GONE_LABEL} ${WIN_IMAGE_UPDATED_LABEL} ${WIN_IMAGE_REMOVED_LABEL} ${WIN_SAMPLE_UNAVAILABLE_LABEL} ${WIN_SAMPLE_NOT_SAVED_LABEL}`,
       /—|–/,
     );
     assert.doesNotMatch(WIN_IMAGE_WIN_GONE_LABEL, /still saved/);
@@ -629,8 +687,46 @@ describe("a sample change reloads before it saves", () => {
     setWinPhotoDatabaseFactory(indexedDB);
     assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_4_SVG);
     const source = readFileSync(join(root, "../src/today/wins.js"), "utf8");
-    assert.match(source, /Those two decodes are microtasks/);
-    assert.match(source, /That gap is not the 300 ms write window/);
+    assert.match(source, /Reading the[\s*]*blob is its own task/);
+    assert.match(source, /gap[\s*]*includes waiting for that read/);
+    assert.match(source, /overwrite a newer image another tab stored/);
+    assert.doesNotMatch(source, /microtasks/);
+  });
+
+  it("does not say the image was unchanged when the restore put fails", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Had an image", storage, morning, morning, winSampleBlob("sample-4"));
+    setWinPhotoDatabaseFactory(failReadThenWriteFactory(indexedDB, 1, 1, "put"));
+    const changed = await changeWinImage(added.item.id, "sample-2", storage, morning, morning);
+    assert.equal(changed.reason, "uncertain");
+    assert.equal(changed.imageChanged, false);
+    assert.equal(WIN_IMAGE_MAY_HAVE_CHANGED_LABEL, "The sample image on this device may have changed. The win text is still saved on this device.");
+    assert.doesNotMatch(WIN_IMAGE_MAY_HAVE_CHANGED_LABEL, /Image not changed/);
+    const kept = loadWinsStore(storage).days["2026-09-20"][0];
+    assert.equal(kept.photo, WIN_PHOTO_REF);
+    assert.equal(kept.text, "Had an image");
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_2_SVG);
+    const panel = readFileSync(join(root, "../src/patches/owner-ux.inject.js"), "utf8");
+    assert.match(panel, /u\.reason===`uncertain`\)imageStatus=mpWins\.WIN_IMAGE_MAY_HAVE_CHANGED_LABEL/);
+  });
+
+  it("points the record at the blob when deleting the new image fails", async () => {
+    const storage = memoryStorage();
+    const added = await addWin("Bundled path", storage, morning, morning);
+    const seeded = loadWinsStore(storage);
+    seeded.days["2026-09-20"][0].photo = winSamplePath("sample-1");
+    saveWinsStore(seeded, storage, morning);
+    setWinPhotoDatabaseFactory(failReadThenWriteFactory(indexedDB, 0, 1, "delete"));
+    const changed = await changeWinImage(added.item.id, "sample-2", storage, morning, morning);
+    assert.equal(changed.reason, "uncertain");
+    assert.equal(changed.imageChanged, false);
+    assert.doesNotMatch(WIN_IMAGE_MAY_HAVE_CHANGED_LABEL, /Image not changed/);
+    const kept = loadWinsStore(storage).days["2026-09-20"][0];
+    assert.equal(kept.text, "Bundled path");
+    assert.equal(kept.photo, WIN_PHOTO_REF);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_2_SVG);
   });
 
   it("deletes the new blob when the confirming read throws and there was no stored image", async () => {

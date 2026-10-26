@@ -414,8 +414,17 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       }
       if(u&&u.unchanged)return !0;
       if(!u||u.imageChanged!==!0){
-        s(u&&u.reason===`unconfirmed`?mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL:mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);
-        if(u&&u.reason===`unconfirmed`){
+        let imageStatus=mpWins.WIN_IMAGE_NOT_CHANGED_LABEL;
+        if(u&&u.reason===`unconfirmed`)imageStatus=mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL;
+        if(u&&u.reason===`uncertain`)imageStatus=mpWins.WIN_IMAGE_MAY_HAVE_CHANGED_LABEL;
+        s(imageStatus);
+        if(u&&(u.reason===`unconfirmed`||u.reason===`uncertain`)){
+          if(u.reason===`uncertain`){
+            let cache=photoCache.current;
+            if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+            if(cache[id])delete cache[id];
+            E({...cache});
+          }
           let fresh=u.store||mpWins.readWinsStore();
           r(mpWins.winsForDate(fresh));
           setPast(mpWins.pastWinsPage(fresh,new Date(),shown.current));
