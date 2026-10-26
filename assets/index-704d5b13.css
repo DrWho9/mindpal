@@ -274,6 +274,19 @@ dialog[open]>*{pointer-events:auto}
 .mp-win-of-day .mp-win-reset{display:flex;flex-direction:column;gap:8px;margin:4px 0 0;padding:10px 12px;border:1px solid #e3dcc6;border-radius:10px;background:#fffdf8}
 .mp-win-of-day .mp-win-reset .button-row{margin:0}
 .mp-win-of-day .mp-win-reset button{min-height:44px}
+.mp-past-wins{margin:2px 0 0;border-top:1px solid #e8e1cc;padding-top:8px}
+.mp-past-wins summary{cursor:pointer;font-weight:650;min-height:44px;display:flex;align-items:center}
+.mp-past-wins h3{margin:8px 0 0;font-size:1rem;font-weight:700}
+.mp-past-wins .mp-wins-list{margin:2px 0 8px}
+.mp-past-wins .mp-wins-list li{flex-wrap:wrap;align-items:center}
+.mp-past-wins .mp-past-win-text{flex:1 1 12rem}
+.mp-past-wins .mp-win-photo img{width:48px;height:48px}
+.mp-past-wins .mp-past-remove,.mp-past-wins .mp-past-more{min-height:44px}
+.mp-past-wins .mp-past-more{margin:4px 0 0}
+@media (width<=480px){
+  .mp-past-wins .mp-wins-list li{align-items:flex-start}
+  .mp-past-wins .mp-win-photo figcaption{max-width:100%}
+}
 
 .mp-day-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
 .mp-day-step{border-radius:14px;padding:16px 18px;border:1px solid #dfe4d5;background:#fffef9}

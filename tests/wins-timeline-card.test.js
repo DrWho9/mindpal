@@ -1,11 +1,12 @@
 import assert from "node:assert/strict";
-import { existsSync, mkdirSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { after, before, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   PAST_WINS_EMPTY,
   PAST_WINS_SHOW_MORE,
   PAST_WINS_TITLE,
+  WIN_PHOTO_CHECKING_LABEL,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
   WIN_PHOTO_PROTOTYPE_LABEL,
@@ -142,24 +143,28 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     assert.equal(await past.getByRole("button", { name: PAST_WINS_SHOW_MORE }).count(), 1);
     await past.getByText(WIN_PHOTO_PROTOTYPE_LABEL).first().waitFor({ state: "visible" });
     await past.getByText(WIN_PHOTO_MISSING_LABEL).waitFor({ state: "visible" });
-    await past.getByText(WIN_UNKNOWN_TIME_LABEL).waitFor({ state: "visible" });
+    await past.getByText(WIN_UNKNOWN_TIME_LABEL, { exact: true }).waitFor({ state: "visible" });
     const yesterdayFigure = past.locator("li", { hasText: "Synthetic win yesterday" }).locator("img");
     assert.match(await yesterdayFigure.getAttribute("src"), /^blob:/);
-
-    const otherPast = other.locator(".mp-win-of-day .mp-past-wins");
-    await otherPast.locator("summary").click();
-    await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
 
     await past.getByRole("button", { name: PAST_WINS_SHOW_MORE }).click();
     await past.getByText("Synthetic win day 8").waitFor({ state: "visible" });
     assert.equal(await past.locator("[data-mp-win-day]").count(), 8);
     assert.equal(await past.getByRole("button", { name: PAST_WINS_SHOW_MORE }).count(), 0);
-    await shot(page, "win-past-timeline");
-
-    await page.setViewportSize({ width: 390, height: 844 });
-    await winCard.scrollIntoViewIfNeeded();
-    await shot(page, "win-past-phone");
+    await page.waitForFunction(
+      (labels) => {
+        const caps = [...document.querySelectorAll(".mp-past-wins figcaption")].map((node) => node.textContent);
+        return caps.includes(labels.onDevice) && !caps.includes(labels.checking);
+      },
+      { onDevice: WIN_PHOTO_ON_DEVICE_LABEL, checking: WIN_PHOTO_CHECKING_LABEL },
+    );
+    await shotViewport(page, "win-past-timeline", 1280, 900, ".mp-past-wins");
+    await shotViewport(page, "win-past-phone", 390, 844, ".mp-past-wins");
     await page.setViewportSize({ width: 1280, height: 900 });
+
+    const otherPast = other.locator(".mp-win-of-day .mp-past-wins");
+    await otherPast.locator("summary").click();
+    await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
 
     const yesterdayId = await page.evaluate(() => globalThis.__yesterdayId);
     await past.locator("li", { hasText: "Synthetic win yesterday" }).getByRole("button", { name: "Remove" }).click();
@@ -214,6 +219,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       window.dispatchEvent(new StorageEvent("storage", { key: "mindpal.dailyWins.v2" }));
     });
     const reset = winCard.getByRole("button", { name: WIN_RESET_LABEL });
+    await reset.scrollIntoViewIfNeeded();
     await reset.waitFor({ state: "visible" });
     const note = (await winCard.locator(".mp-win-reset-note").innerText()).trim();
     assert.equal(note, WIN_RESET_NOTE);
@@ -228,11 +234,14 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       return button && button.disabled === true;
     });
     assert.equal(await winCard.getByRole("button", { name: WIN_RESET_LABEL }).count(), 0);
-    await page.evaluate(() => {
+    const clickedAgain = await page.evaluate(() => {
       const button = [...document.querySelectorAll(".mp-win-reset button")].find((node) => node.textContent === "Confirm reset on this device");
+      if (!button || button.disabled !== true) return false;
       button.disabled = false;
       button.click();
+      return true;
     });
+    assert.equal(clickedAgain, true);
     const status = winCard.locator("p[role='status']");
     await page.waitForTimeout(100);
     assert.equal(await status.count(), 0);
@@ -242,12 +251,58 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
   });
 });
 
-async function shot(page, name, selector = ".mp-win-of-day") {
-  await page.locator(selector).first().screenshot({
+async function shot(page, name, selector = ".mp-win-of-day", width = 1280) {
+  const locator = page.locator(selector).first();
+  await page.setViewportSize({ width, height: 900 });
+  await locator.evaluate((node) => node.scrollIntoView({ block: "start", inline: "nearest" }));
+  const box = await locator.boundingBox();
+  if (!box) throw new Error(`No box for ${name}`);
+  const viewportHeight = Math.ceil(box.y + box.height) + 80;
+  await page.setViewportSize({ width, height: viewportHeight });
+  await locator.evaluate((node) => node.scrollIntoView({ block: "start", inline: "nearest" }));
+  const fitted = await locator.boundingBox();
+  if (!fitted) throw new Error(`No fitted box for ${name}`);
+  await page.screenshot({
     path: `${shots}/${name}.png`,
     animations: "disabled",
-    timeout: 5000,
+    clip: {
+      x: Math.max(0, Math.floor(fitted.x)),
+      y: Math.max(0, Math.floor(fitted.y)),
+      width: Math.floor(fitted.width),
+      height: Math.floor(fitted.height),
+    },
+    timeout: 10000,
   });
+}
+
+// Headless Chrome stalls on Page.captureScreenshot once this card has placeholder images.
+// A single screencast frame still shows the open list.
+async function shotViewport(page, name, width, height, selector) {
+  await page.setViewportSize({ width, height });
+  await page.locator(selector).first().evaluate((node) => node.scrollIntoView({ block: "start", inline: "nearest" }));
+  const client = await page.context().newCDPSession(page);
+  try {
+    const frame = new Promise((resolve, reject) => {
+      const timer = setTimeout(() => reject(new Error(`screenshot timed out for ${name}`)), 8000);
+      client.on("Page.screencastFrame", (event) => {
+        clearTimeout(timer);
+        resolve(event);
+      });
+    });
+    await client.send("Page.startScreencast", {
+      format: "png",
+      quality: 100,
+      maxWidth: width,
+      maxHeight: height,
+      everyNthFrame: 1,
+    });
+    const event = await frame;
+    await client.send("Page.screencastFrameAck", { sessionId: event.sessionId });
+    await client.send("Page.stopScreencast");
+    writeFileSync(`${shots}/${name}.png`, Buffer.from(event.data, "base64"));
+  } finally {
+    await client.detach();
+  }
 }
 
 async function signInLocal(page, origin) {
