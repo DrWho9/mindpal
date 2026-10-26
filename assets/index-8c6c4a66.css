@@ -271,12 +271,19 @@ dialog[open]>*{pointer-events:auto}
 .mp-win-of-day .mp-win-photo-note{margin:0}
 .mp-win-of-day .mp-win-photo-opt{display:flex;align-items:center;gap:8px;font-size:13px;line-height:1.35;color:#3d4338}
 .mp-win-of-day .mp-win-photo-opt input{width:auto;min-width:44px;min-height:44px;margin:0;flex:0 0 auto}
+.mp-win-of-day .mp-win-samples{border:1px solid #e8e1cc;border-radius:10px;margin:0;padding:8px 10px 4px;display:flex;flex-direction:column;gap:2px}
+.mp-win-of-day .mp-win-samples legend{font-size:13px;font-weight:650;padding:0 4px}
+.mp-win-of-day .mp-win-samples label{display:flex;align-items:center;gap:8px;min-height:44px;font-size:13px;line-height:1.35}
+.mp-win-of-day .mp-win-samples input{width:auto;min-width:44px;min-height:44px;margin:0;flex:0 0 auto}
+.mp-win-of-day .mp-win-sample-thumb{width:36px;height:36px;border-radius:8px;border:1px solid #e8e1cc;background:#f4f7f1;object-fit:cover;flex:0 0 auto}
+.mp-win-of-day .mp-past-wins .mp-win-sample-change{flex:1 1 100%}
 .mp-win-of-day .mp-win-reset{display:flex;flex-direction:column;gap:8px;margin:4px 0 0;padding:10px 12px;border:1px solid #e3dcc6;border-radius:10px;background:#fffdf8}
 .mp-win-of-day .mp-win-reset .button-row{margin:0}
 .mp-win-of-day .mp-win-reset button{min-height:44px}
 .mp-win-of-day .mp-past-wins{margin:2px 0 0;border-top:1px solid #e8e1cc;padding-top:8px}
 .mp-win-of-day .mp-past-wins summary{cursor:pointer;font-weight:650;min-height:44px;display:flex;align-items:center}
 .mp-win-of-day .mp-past-wins h3{margin:8px 0 0;font-size:1rem;font-weight:700}
+.mp-win-of-day .mp-past-wins h4{margin:4px 0 0;font-size:.95rem;font-weight:650}
 .mp-win-of-day .mp-past-wins .mp-wins-list{margin:2px 0 8px}
 .mp-win-of-day .mp-past-wins .mp-wins-list li{flex-wrap:wrap;align-items:center}
 .mp-win-of-day .mp-past-wins .mp-past-win-text{flex:1 1 12rem}
@@ -289,6 +296,7 @@ dialog[open]>*{pointer-events:auto}
 @media (width<=480px){
   .mp-win-of-day .mp-past-wins .mp-wins-list li{align-items:flex-start}
   .mp-win-of-day .mp-past-wins .mp-win-photo figcaption{max-width:100%}
+  .mp-win-of-day .mp-win-samples label{align-items:flex-start}
 }
 
 .mp-day-steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}

@@ -1,7 +1,7 @@
 /**
- * Prototype placeholder images on this device.
+ * Prototype sample images on this device.
  * Database mindpal-photos, object store winPhotos, key is the win id.
- * The stored value is the bundled fake placeholder image plus the time it was stored.
+ * The stored value is one bundled sample, or the bundled placeholder, plus the time it was stored.
  * It is not a user photo and not real private storage. Nothing is uploaded.
  * A plain load of the wins record does not open this database and does not delete blobs.
  */
@@ -20,6 +20,10 @@ export const WIN_PHOTO_MISSING_LABEL =
   "This placeholder image is not on this device. Showing the bundled placeholder.";
 export const WIN_PHOTO_ON_DEVICE_LABEL =
   "Prototype placeholder image stored on this device only. Not real private storage.";
+export const WIN_SAMPLE_ON_DEVICE_LABEL =
+  "Prototype sample image stored on this device only. Not real private storage.";
+export const WIN_SAMPLE_PROTOTYPE_LABEL =
+  "Prototype sample image, not real private storage.";
 export const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this device.";
 /**
  * A blob newer than this is still being saved by this tab or another tab.
@@ -46,7 +50,7 @@ export function winPhotoRequestLimit() {
   return winPhotoRequestMs;
 }
 
-/** Same bytes as win-placeholder.svg. The only image this prototype stores. */
+/** Same bytes as win-placeholder.svg. One of the images this prototype stores. */
 export const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Prototype placeholder, not a private photo">
   <title>Prototype placeholder</title>
   <rect width="160" height="160" rx="18" fill="#e7f0e4"/>
@@ -56,6 +60,91 @@ export const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" widt
   <text x="80" y="148" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2f3b2c">PLACEHOLDER</text>
 </svg>
 `;
+
+/** Same bytes as win-sample-1.svg. Green squares. No people. */
+export const WIN_SAMPLE_1_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, green squares">
+  <title>Sample image 1</title>
+  <rect width="160" height="160" rx="18" fill="#e7f0e4"/>
+  <rect x="28" y="32" width="46" height="46" rx="6" fill="#2f5a3d"/>
+  <rect x="86" y="32" width="46" height="46" rx="6" fill="#8aa583"/>
+  <rect x="28" y="88" width="46" height="28" rx="6" fill="#8aa583"/>
+  <rect x="86" y="88" width="46" height="28" rx="6" fill="#2f5a3d"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#2f3b2c">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-2.svg. Blue circles. No people. */
+export const WIN_SAMPLE_2_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, blue circles">
+  <title>Sample image 2</title>
+  <rect width="160" height="160" rx="18" fill="#e7eef6"/>
+  <circle cx="54" cy="62" r="24" fill="#2a4d6e"/>
+  <circle cx="108" cy="58" r="16" fill="#7ea0c4"/>
+  <circle cx="86" cy="102" r="18" fill="#3d6f99"/>
+  <text x="80" y="146" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1e3348">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-3.svg. Amber triangles. No people. */
+export const WIN_SAMPLE_3_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, amber triangles">
+  <title>Sample image 3</title>
+  <rect width="160" height="160" rx="18" fill="#f8f1e4"/>
+  <polygon points="40,100 70,44 100,100" fill="#c47b2b"/>
+  <polygon points="78,108 108,62 138,108" fill="#e2b56a"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#5c5346">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-4.svg. Teal bars. No people. */
+export const WIN_SAMPLE_4_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, teal bars">
+  <title>Sample image 4</title>
+  <rect width="160" height="160" rx="18" fill="#e5f3f1"/>
+  <rect x="28" y="40" width="104" height="16" rx="6" fill="#1f6f6a"/>
+  <rect x="28" y="68" width="76" height="16" rx="6" fill="#3d9a94"/>
+  <rect x="28" y="96" width="52" height="16" rx="6" fill="#8ec9c4"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1e3348">Sample</text>
+</svg>
+`;
+
+export const WIN_SAMPLE_PLACEHOLDER = "placeholder";
+export const WIN_SAMPLE_NONE = "none";
+
+export const WIN_SAMPLES = [
+  {
+    id: "sample-1",
+    label: "Sample image 1: green squares",
+    file: "win-sample-1.svg",
+    path: "/mindpal/win-sample-1.svg",
+    svg: WIN_SAMPLE_1_SVG,
+  },
+  {
+    id: "sample-2",
+    label: "Sample image 2: blue circles",
+    file: "win-sample-2.svg",
+    path: "/mindpal/win-sample-2.svg",
+    svg: WIN_SAMPLE_2_SVG,
+  },
+  {
+    id: "sample-3",
+    label: "Sample image 3: amber triangles",
+    file: "win-sample-3.svg",
+    path: "/mindpal/win-sample-3.svg",
+    svg: WIN_SAMPLE_3_SVG,
+  },
+  {
+    id: "sample-4",
+    label: "Sample image 4: teal bars",
+    file: "win-sample-4.svg",
+    path: "/mindpal/win-sample-4.svg",
+    svg: WIN_SAMPLE_4_SVG,
+  },
+];
+
+/** Radios for a new win and for a win already on the card. Placeholder stays first. */
+export const WIN_SAMPLE_CHOICES = [
+  { id: WIN_SAMPLE_PLACEHOLDER, label: "Placeholder image", thumb: "/mindpal/win-placeholder.svg" },
+  ...WIN_SAMPLES.map((item) => ({ id: item.id, label: item.label, thumb: item.path })),
+  { id: WIN_SAMPLE_NONE, label: "No image", thumb: "" },
+];
 
 const WIN_PHOTO_MAX_BYTES = 4096;
 
@@ -354,22 +443,74 @@ export function placeholderPhotoBlob() {
   return new Blob([WIN_PLACEHOLDER_SVG], { type: "image/svg+xml" });
 }
 
+/** Blob for a bundled sample or the placeholder. Null when the id is not on the list. */
+export function winSampleBlob(choice) {
+  if (choice === WIN_SAMPLE_PLACEHOLDER) return placeholderPhotoBlob();
+  const sample = WIN_SAMPLES.find((item) => item.id === choice);
+  if (!sample) return null;
+  return new Blob([sample.svg], { type: "image/svg+xml" });
+}
+
+/** Bundled path for a choice. Empty when the id is not on the list. */
+export function winSamplePath(choice) {
+  if (choice === WIN_SAMPLE_PLACEHOLDER) return "/mindpal/win-placeholder.svg";
+  const sample = WIN_SAMPLES.find((item) => item.id === choice);
+  return sample ? sample.path : "";
+}
+
+/** Choice id for a stored path. Empty for a missing path, the idb reference, or anything else. */
+export function winPhotoChoiceForPath(photo) {
+  if (typeof photo !== "string" || !photo) return "";
+  if (photo === "/mindpal/win-placeholder.svg") return WIN_SAMPLE_PLACEHOLDER;
+  const sample = WIN_SAMPLES.find((item) => item.path === photo);
+  return sample ? sample.id : "";
+}
+
 function winPhotoBlobLike(value) {
   if (!value || typeof value !== "object") return false;
   if (typeof Blob === "function" && value instanceof Blob) return true;
   return typeof value.text === "function" && typeof value.size === "number" && typeof value.type === "string";
 }
 
-/** True only for the synthetic placeholder image. Real photos are rejected. */
-export async function isPlaceholderPhotoBlob(blob) {
-  if (!winPhotoBlobLike(blob)) return false;
-  if (blob.type !== "image/svg+xml") return false;
-  if (blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return false;
+function winPhotoChoiceId(text) {
+  if (text === WIN_PLACEHOLDER_SVG) return WIN_SAMPLE_PLACEHOLDER;
+  const sample = WIN_SAMPLES.find((item) => item.svg === text);
+  return sample ? sample.id : "";
+}
+
+async function winPhotoSvgText(blob) {
+  if (!winPhotoBlobLike(blob)) return "";
+  if (blob.type !== "image/svg+xml") return "";
+  if (blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return "";
   try {
-    return (await blob.text()) === WIN_PLACEHOLDER_SVG;
+    const text = await blob.text();
+    return typeof text === "string" ? text : "";
   } catch {
-    return false;
+    return "";
   }
+}
+
+/**
+ * Id of an allowlisted image, or "" when the bytes are not an exact bundled sample
+ * or the exact placeholder. Real photos are rejected.
+ */
+export async function winPhotoAllowlistId(blob) {
+  return winPhotoChoiceId(await winPhotoSvgText(blob));
+}
+
+/** True for the placeholder or one of the four bundled samples. Same list as put and read. */
+export async function isAllowedWinPhotoBlob(blob) {
+  return (await winPhotoAllowlistId(blob)) !== "";
+}
+
+/** Choice id for a blob already known to be an image. Empty when it is not allowlisted. */
+export async function winPhotoChoiceFromBlob(blob) {
+  return winPhotoAllowlistId(blob);
+}
+
+/** True only for the synthetic placeholder image. Real photos and samples are rejected. */
+export async function isPlaceholderPhotoBlob(blob) {
+  return (await winPhotoAllowlistId(blob)) === WIN_SAMPLE_PLACEHOLDER;
 }
 
 function winPhotoStoredAt(createdAt) {
@@ -401,13 +542,19 @@ function winPhotoPending(value, nowMs) {
  * createdAt defaults to now. Tests pass an older time when a sweep should be allowed to delete it.
  * reason "unavailable" means IndexedDB cannot be opened.
  * reason "put" means the write failed, including quota.
- * reason "blob" means the bytes were not the placeholder image.
+ * reason "blob" means the bytes were not an allowlisted sample or the placeholder.
+ * options.previousBlob, when set, is put back if this write times out, so a change
+ * does not delete the image that was already there.
+ * options.leaveOnTimeout skips that cleanup. A restore uses it so a second timeout
+ * does not delete the image it just tried to put back.
  */
 export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}) {
   const signal = options && typeof options === "object" ? options.signal : undefined;
+  const previousBlob = options && options.previousBlob;
+  const leaveOnTimeout = Boolean(options && options.leaveOnTimeout);
   if (typeof id !== "string" || !id.trim()) return { ok: false, reason: "id" };
   if (signal && signal.aborted) return { ok: false, reason: "timeout" };
-  if (!(await isPlaceholderPhotoBlob(blob))) return { ok: false, reason: "blob" };
+  if (!(await isAllowedWinPhotoBlob(blob))) return { ok: false, reason: "blob" };
   if (signal && signal.aborted) return { ok: false, reason: "timeout" };
   const db = await winPhotoOpenDb();
   if (!db) return { ok: false, reason: "unavailable" };
@@ -431,12 +578,20 @@ export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}
        * Start the delete and do not wait. A hung delete must not use up the
        * save grace, or the win text would be dropped. If a late complete
        * arrives after that, delete again.
+       * A change passes previousBlob so the image already stored is put back
+       * instead of being deleted. leaveOnTimeout is the restore itself.
        */
-      const cleanup = () => {
-        deleteWinPhotos([id], { notify: false }).catch(() => {});
-      };
-      if (tx) tx.oncomplete = cleanup;
-      cleanup();
+      if (!leaveOnTimeout) {
+        const cleanup = previousBlob
+          ? () => {
+            putWinPhoto(id, previousBlob, Date.now(), { leaveOnTimeout: true }).catch(() => {});
+          }
+          : () => {
+            deleteWinPhotos([id], { notify: false }).catch(() => {});
+          };
+        if (tx) tx.oncomplete = cleanup;
+        cleanup();
+      }
       return { ok: false, reason: "timeout" };
     }
     return { ok: false, reason: "put" };
@@ -452,7 +607,7 @@ export async function readWinPhoto(id) {
     const value = await winPhotoRequest(tx.objectStore(WIN_PHOTO_STORE).get(id));
     await winPhotoTxDone(tx);
     const bytes = winPhotoBytes(value);
-    if (!(await isPlaceholderPhotoBlob(bytes))) return null;
+    if (!(await isAllowedWinPhotoBlob(bytes))) return null;
     return bytes;
   } catch {
     return null;
