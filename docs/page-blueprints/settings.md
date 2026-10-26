@@ -15,7 +15,7 @@ Local preferences and the local account. Not a cloud settings console.
 - Nickname / display preferences from the vendor card.
 - **Calendar & morning picture**: Coptic date toggle, welcome image toggle.
 - **Account**: faith edit, age/gender edit (MindPal facts), **Sign out** → first-run gate.
-- Privacy copy: wins stay on this device. A Win of the day can keep a prototype placeholder image in this browser only. That image is a bundled fake picture and not real private photo storage. Friends and sharing need a future backend. Hosting and live AI are separate steps.
+- Privacy copy: wins stay on this device. A Win of the day can keep a prototype placeholder image in this browser only, including on the Past wins list. That image is a bundled fake picture and not real private photo storage. Friends and sharing need a future backend. Hosting and live AI are separate steps.
 
 ## Enter / Send / search
 

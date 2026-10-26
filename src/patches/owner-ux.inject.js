@@ -199,18 +199,21 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
+  function c(){let store=mpWins.loadWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlocked());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
-  function k(){r(mpWins.winsForDate(mpWins.readWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlockedQuiet())}
+  function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlockedQuiet());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   (0,_.useEffect)(()=>mpWins.listenForWinsChanges(window,c,k),[]);
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
     let cancelled=!1;
     let urls=[];
+    let rows=n.slice();
+    let days=past&&Array.isArray(past.days)?past.days:[];
+    for(let day of days) if(day&&Array.isArray(day.items)) rows.push(...day.items);
     (async()=>{
       let next={};
-      for(let w of n){
+      for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
@@ -223,31 +226,71 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       if(!cancelled)E(next);
     })();
     return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
-  },[n,e]);
+  },[n,past,e]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
+  // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
     if(F.current)return;
+    let token=saveSeq.current+1;
+    saveSeq.current=token;
     F.current=!0;
     T(!0);
     try{
-      let u=e===`winOfDay`&&p?await mpWins.addWinPhoto(i):mpWins.addWin(i);
-      if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-      if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
-      if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
-      a(``),s(u.photoError?mpWins.WIN_PHOTO_NOT_SAVED_LABEL:u.photoFallback?mpWins.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins.WIN_SAVED_LABEL),r(u.items);
+      let u=await mpWins.watchSave((signal,attempt)=>e===`winOfDay`&&p?mpWins.addWinPhoto(i,void 0,void 0,void 0,void 0,{signal,attempt}):mpWins.addWin(i),mpWins.winSaveTimeoutLimit());
+      if(saveSeq.current!==token)return;
+      let label=mpWins.winSaveStatusLabel(u,e===`winOfDay`&&p);
+      if(!u||!u.item){s(u&&(u.timedOut||u.abandoned||u.failed)?label:`Write a few words first — a cup of tea counts.`);return}
+      if(e===`winOfDay`){let blocked=mpWins.winsSaveBlocked();h(blocked);if(!blocked)x(!1)}
+      if(!u.saved){s(label);return}
+      a(``),s(label),r(u.items);
+      if(e===`winOfDay`)setPast(mpWins.pastWinsPage(u.store||mpWins.readWinsStore(),new Date(),shown.current));
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
-    }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
-    finally{F.current=!1;T(!1)}
+    }catch{if(saveSeq.current===token)s(mpWins.WIN_NOT_SAVED_LABEL)}
+    finally{if(saveSeq.current===token){F.current=!1;T(!1)}}
   }
+  // G blocks a second reset while cleanup is still running. j disables Reset and Confirm.
   async function d(){
-    let y=mpWins.resetBlockedWins();
-    x(!1);
-    if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
-    let photos=null;
-    try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
-    h(!1),s(mpWins.winResetDoneLabel(photos)),r(mpWins.winsForDate(mpWins.loadWinsStore()));
-    try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    if(G.current)return;
+    G.current=!0;
+    q(!0);
+    try{
+      let y=mpWins.resetBlockedWins();
+      if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
+      let photos=null;
+      try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
+      h(!1),s(mpWins.winResetDoneLabel(photos));
+      let store=mpWins.loadWinsStore();
+      r(mpWins.winsForDate(store));
+      setPast(mpWins.pastWinsPage(store,new Date(),shown.current));
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    }finally{G.current=!1;q(!1);x(!1)}
   }
+  function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
+  async function drop(id,key){
+    if(dropGuard.current)return;
+    dropGuard.current=!0;
+    try{
+      let when=mpWins.civilDateFromKey(key)||new Date();
+      let u=mpWins.removeWin(id,void 0,when);
+      r(mpWins.winsForDate(u.store));
+      setPast(mpWins.pastWinsPage(u.store,new Date(),shown.current));
+      if(!u.saved)s(mpWins.WIN_NOT_SAVED_LABEL);
+      try{if(u.photoCleanup)await u.photoCleanup}catch{}
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    }finally{dropGuard.current=!1}
+  }
+  function photoBlock(w){
+    if(e!==`winOfDay`||!w)return null;
+    if(w.photo!==mpWins.WIN_PHOTO_REF&&w.photo!==mpWins.WIN_PLACEHOLDER_PHOTO)return null;
+    let view=P[w.id];
+    let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
+    let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
+    return (0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
+      (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
+      (0,A.jsx)(`figcaption`,{children:caption})
+    ]});
+  }
+  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})}
   if(e===`hub`){
     return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Through the day, add your daily wins — small ones count — so you can read them together tonight.`}),
@@ -272,19 +315,24 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`h2`,{children:`A win from today`}),
       (0,A.jsx)(`p`,{children:`A sentence is enough. You’ll see these again in Before you sleep.`})
     ]}),
-    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>{
-      let view=P[w.id];
-      let show=e===`winOfDay`&&(w.photo===mpWins.WIN_PHOTO_REF||w.photo===mpWins.WIN_PLACEHOLDER_PHOTO);
-      let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
-      let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
-      return (0,A.jsxs)(`li`,{children:[
-      show?(0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
-        (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
-        (0,A.jsx)(`figcaption`,{children:caption})
-      ]}):null,
+    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>(0,A.jsxs)(`li`,{children:[
+      photoBlock(w),
       (0,A.jsx)(`span`,{children:w.text}),
-      w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
-    ]},w.id);})}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
+      winWhen(w)
+    ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
+    e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
+      (0,A.jsx)(`summary`,{children:mpWins.PAST_WINS_TITLE}),
+      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map(day=>(0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
+        (0,A.jsx)(`h3`,{children:day.label}),
+        (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>(0,A.jsxs)(`li`,{children:[
+          photoBlock(w),
+          (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
+          winWhen(w),
+          (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,onClick:()=>drop(w.id,day.key),"aria-label":mpWins.PAST_WINS_REMOVE,children:mpWins.PAST_WINS_REMOVE})
+        ]},w.id))})
+      ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
+      past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
+    ]}):null,
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
@@ -301,9 +349,9 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
       (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
       m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!1),children:mpWins.WIN_RESET_CANCEL})
-      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!0),children:mpWins.WIN_RESET_LABEL})
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!1)},children:mpWins.WIN_RESET_CANCEL})
+      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!0)},children:mpWins.WIN_RESET_LABEL})
     ]}):null,
     o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
   ]});

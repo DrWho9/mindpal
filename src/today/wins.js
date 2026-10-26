@@ -62,13 +62,13 @@ export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this d
 export const WIN_RESET_LABEL = "Reset wins on this device";
 const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
 export const WIN_RESET_NOTE =
-  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Placeholder images stored for wins on this device are removed. A placeholder image another tab started saving in the last " +
+  "Saving is blocked. Reset keeps the unreadable wins record as a backup on this device, then clears it so a new win can be saved. Placeholder images stored for wins on this device are removed. One saved in the last " +
   WIN_PHOTO_PENDING_SECONDS +
   " seconds can stay. Older backup copies are dropped only to keep the newest three. This is a prototype, not real private storage.";
 export const WIN_RESET_CONFIRM = "Confirm reset on this device";
 export const WIN_RESET_CANCEL = "Keep the record";
 export const WIN_RESET_DONE =
-  "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. A placeholder image another tab started saving in the last " +
+  "Reset on this device. The unreadable record was kept as a backup. Placeholder images stored for wins on this device were removed. One saved in the last " +
   WIN_PHOTO_PENDING_SECONDS +
   " seconds can stay. A new win can be saved on this device.";
 export const WIN_RESET_IMAGES_LEFT =
@@ -116,6 +116,42 @@ export const WIN_OF_THE_DAY_LEDE =
   "See today’s wins, or add one now — morning included. Small ones count. You’ll meet them again before sleep.";
 export const WIN_OF_THE_DAY_EMPTY =
   "Nothing saved yet today. Add one whenever you like.";
+/** How many past days the Win of the day card shows before Show more. */
+export const PAST_WINS_PAGE_DAYS = 7;
+export const PAST_WINS_TITLE = "Past wins";
+export const PAST_WINS_EMPTY =
+  "No earlier wins saved on this device. This prototype keeps wins on this device only.";
+export const PAST_WINS_SHOW_MORE = "Show more";
+export const PAST_WINS_REMOVE = "Remove";
+/**
+ * How long Save waits for a win write. A hung photo database aborts at this point.
+ * The words can still be stored. A result that arrives after the watch gives up is ignored.
+ */
+export const WIN_SAVE_TIMEOUT_MS = 10000;
+/** Extra wait after abort so a photo failure can still store the win text. */
+export const WIN_SAVE_ABORT_GRACE_MS = 50;
+
+let winSaveTimeoutMs = WIN_SAVE_TIMEOUT_MS;
+let winSaveAbortGraceMs = WIN_SAVE_ABORT_GRACE_MS;
+
+export function setWinSaveTimeoutMs(ms) {
+  const next = Number(ms);
+  winSaveTimeoutMs = Number.isFinite(next) && next >= 0 ? next : WIN_SAVE_TIMEOUT_MS;
+}
+
+export function winSaveTimeoutLimit() {
+  return winSaveTimeoutMs;
+}
+
+export function setWinSaveAbortGraceMs(ms) {
+  const next = Number(ms);
+  winSaveAbortGraceMs = Number.isFinite(next) && next >= 0 ? next : WIN_SAVE_ABORT_GRACE_MS;
+}
+
+export function winSaveAbortGraceLimit() {
+  return winSaveAbortGraceMs;
+}
+
 const MAX_DAYS = 60;
 
 export function emptyWinsDay(date = new Date()) {
@@ -438,7 +474,7 @@ function persistWins(store, storage, now = new Date()) {
   /*
    * Read the previous record before the write. A later cleanup only deletes placeholder
    * images for ids that readable record named and this save dropped. It does not sweep
-   * unknown keys, so an image another tab has stored but not yet referenced can stay.
+   * unknown keys, so an image this tab or another tab has stored but not yet referenced can stay.
    * An unreadable record has no ids. After it is replaced, images the new record
    * does not name are removed, except one stored in the last WIN_PHOTO_PENDING_MS.
    * A plain load never reaches this function.
@@ -727,7 +763,7 @@ function placeCorruptBackup(storage, text, now) {
  * Does nothing when saving is not blocked, so a readable store stays put.
  * After the v2 key is cleared, stored placeholder images are deleted. The unreadable text
  * cannot name those ids, and the live record no longer references them.
- * An image stored in the last WIN_PHOTO_PENDING_MS stays, so another tab can finish saving it.
+ * An image stored in the last WIN_PHOTO_PENDING_MS stays, so this tab or another tab can finish saving it.
  * If the photo database cannot be listed, the images stay.
  * If the reset does not clear the key, the images stay.
  */
@@ -779,6 +815,147 @@ export function winsForDate(store, date = new Date()) {
   const key = civilDateKey(date);
   const list = store?.days?.[key];
   return Array.isArray(list) ? list.slice() : [];
+}
+
+/** Local calendar label for a YYYY-MM-DD key. Uses the device locale, same as the card clock. */
+export function formatWinDayLabel(key, locales) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof key === "string" ? key : "");
+  if (!match) return "";
+  const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+  const locale = locales || (typeof navigator !== "undefined" && navigator.language ? navigator.language : "en-AU");
+  try {
+    return date.toLocaleDateString(locale, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  } catch {
+    return key;
+  }
+}
+
+/** Noon on that civil day, so removeWin lands on the same local date. */
+export function civilDateFromKey(key) {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(typeof key === "string" ? key : "");
+  if (!match) return null;
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), 12, 0, 0, 0);
+}
+
+export function emptyPastWins() {
+  return { days: [], totalDays: 0, hasMore: false, shown: PAST_WINS_PAGE_DAYS };
+}
+
+/**
+ * Earlier days than `date`, newest first. Today is not included.
+ * Wins inside a day stay in the order they were saved.
+ * `shown` is how many days to return. The rest stay behind hasMore.
+ * This does not read or write storage.
+ */
+export function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DAYS) {
+  const today = civilDateKey(date instanceof Date ? date : new Date());
+  const daysIn = store && store.days && typeof store.days === "object" ? store.days : {};
+  const keys = Object.keys(daysIn)
+    .filter(
+      (key) =>
+        key < today
+        && /^\d{4}-\d{2}-\d{2}$/.test(key)
+        && Array.isArray(daysIn[key])
+        && daysIn[key].length > 0,
+    )
+    .sort()
+    .reverse();
+  const count = Number.isFinite(shown) && shown > 0 ? Math.floor(shown) : PAST_WINS_PAGE_DAYS;
+  return {
+    days: keys.slice(0, count).map((key) => ({
+      key,
+      label: formatWinDayLabel(key),
+      items: daysIn[key].slice(),
+    })),
+    totalDays: keys.length,
+    hasMore: keys.length > count,
+    shown: count,
+  };
+}
+
+/**
+ * The line Save shows for a finished watch.
+ * An abandoned watch that did not store the win says it was not saved.
+ * A stored win whose placeholder image failed says the photo was not saved.
+ * An empty string means the words were blank, so the card asks for a few words.
+ */
+export function winSaveStatusLabel(result, photoRequested = false) {
+  if (!result || result.failed === true || result.abandoned === true) {
+    if (result && result.saved === true && (result.photoError === true || photoRequested === true)) {
+      return WIN_PHOTO_NOT_SAVED_LABEL;
+    }
+    return WIN_NOT_SAVED_LABEL;
+  }
+  if (!result.item) return "";
+  if (result.saved !== true) return WIN_NOT_SAVED_LABEL;
+  if (result.photoError === true) return WIN_PHOTO_NOT_SAVED_LABEL;
+  if (result.photoFallback === true) return WIN_PHOTO_UNAVAILABLE_LABEL;
+  return WIN_SAVED_LABEL;
+}
+
+/**
+ * Run one save and stop waiting after `ms` milliseconds.
+ * At the deadline the signal aborts so a hung photo write can fail.
+ * If the save finishes during the grace period, that result is used.
+ * After the grace, attempt.dropped is set and a late result is ignored.
+ * The returned promise settles once. A late write must see attempt.dropped and not store again.
+ */
+export function watchSave(start, ms = winSaveTimeoutLimit(), graceMs = winSaveAbortGraceLimit()) {
+  const limit = Number.isFinite(ms) && ms >= 0 ? ms : winSaveTimeoutLimit();
+  const grace = Number.isFinite(graceMs) && graceMs >= 0 ? graceMs : winSaveAbortGraceLimit();
+  const attempt = { dropped: false };
+  let settled = false;
+  let timer = null;
+  let graceTimer = null;
+  let controller = null;
+  try {
+    controller = typeof AbortController === "function" ? new AbortController() : null;
+  } catch {
+    controller = null;
+  }
+  const signal = controller ? controller.signal : null;
+  return new Promise((resolve) => {
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      if (graceTimer) clearTimeout(graceTimer);
+      resolve(value);
+    };
+    let work;
+    try {
+      work = start(signal, attempt);
+    } catch {
+      finish({ saved: false, failed: true });
+      return;
+    }
+    Promise.resolve(work).then(
+      (value) => {
+        finish(value && typeof value === "object" ? value : { saved: false, failed: true });
+      },
+      () => {
+        finish({ saved: false, failed: true });
+      },
+    );
+    timer = setTimeout(() => {
+      if (settled) return;
+      try {
+        if (controller) controller.abort();
+      } catch {
+        /* the photo write is already finished */
+      }
+      graceTimer = setTimeout(() => {
+        if (settled) return;
+        attempt.dropped = true;
+        finish({ timedOut: true, abandoned: true, saved: false });
+      }, grace);
+    }, limit);
+  });
 }
 
 function newWinId(now) {
@@ -835,6 +1012,31 @@ function photoResult(added, flags) {
     photoSaved: flags.photoSaved === true,
     photoFallback: flags.photoFallback === true,
     photoError: flags.photoError === true,
+    timedOut: flags.timedOut === true,
+  };
+}
+
+function winSaveAborted(signal) {
+  return Boolean(signal && signal.aborted);
+}
+
+function winSaveDropped(options) {
+  return Boolean(options && options.attempt && options.attempt.dropped);
+}
+
+function droppedWinResult(storage, date) {
+  const store = readWinsStore(storage);
+  return {
+    store,
+    item: null,
+    items: winsForDate(store, date),
+    saved: false,
+    photoCleanup: idlePhotoCleanup(),
+    photoSaved: false,
+    photoFallback: false,
+    photoError: false,
+    timedOut: true,
+    abandoned: true,
   };
 }
 
@@ -851,25 +1053,59 @@ export async function addWinPhoto(
   date = new Date(),
   now = new Date(),
   blob,
+  options = {},
 ) {
+  const signal = options && typeof options === "object" ? options.signal : undefined;
   const draft = normalizeWin({ text, at: now.toISOString() }, now);
   if (!draft) return photoResult(addWin(text, storage, date, now), {});
+  if (winSaveDropped(options)) return droppedWinResult(storage, date);
   const id = newWinId(now);
   const body = blob === undefined ? placeholderPhotoBlob() : blob;
-  if (!(await isPlaceholderPhotoBlob(body))) {
+  const placeholder = await isPlaceholderPhotoBlob(body);
+  if (winSaveDropped(options)) return droppedWinResult(storage, date);
+  if (!placeholder) {
+    if (winSaveAborted(signal)) return droppedWinResult(storage, date);
     return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
   }
-  if (!(await winPhotoDatabaseReady())) {
+  const ready = winSaveAborted(signal) ? false : await winPhotoDatabaseReady(signal);
+  if (winSaveDropped(options)) return droppedWinResult(storage, date);
+  if (winSaveAborted(signal)) {
+    const added = addWin(text, storage, date, now, undefined, id);
+    return photoResult(added, { photoError: added.saved === true, timedOut: true });
+  }
+  if (!ready) {
     const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
     return photoResult(added, { photoFallback: added.saved === true });
   }
-  const put = await putWinPhoto(id, body);
+  const stamp = now instanceof Date ? now.getTime() : Date.now();
+  const put = await putWinPhoto(id, body, stamp, { signal });
+  if (winSaveDropped(options)) {
+    if (put.ok) {
+      try {
+        await deleteWinPhotos([id], { notify: false });
+      } catch {
+        /* a dropped save does not keep the blob */
+      }
+    }
+    return droppedWinResult(storage, date);
+  }
   if (!put.ok) {
     if (put.reason === "unavailable") {
       const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
       return photoResult(added, { photoFallback: added.saved === true });
     }
-    return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
+    const added = addWin(text, storage, date, now, undefined, id);
+    return photoResult(added, { photoError: added.saved === true, timedOut: put.reason === "timeout" });
+  }
+  if (winSaveAborted(signal) || winSaveDropped(options)) {
+    try {
+      await deleteWinPhotos([id], { notify: false });
+    } catch {
+      /* the words still save when the watch has not given up */
+    }
+    if (winSaveDropped(options)) return droppedWinResult(storage, date);
+    const added = addWin(text, storage, date, now, undefined, id);
+    return photoResult(added, { photoError: added.saved === true, timedOut: true });
   }
   const added = addWin(text, storage, date, now, WIN_PHOTO_REF, id);
   if (!added.saved || !added.item || added.item.id !== id || added.item.photo !== WIN_PHOTO_REF) {

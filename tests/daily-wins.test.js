@@ -174,7 +174,7 @@ describe("daily wins", () => {
     assert.doesNotMatch(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpWinsPanel/);
     assert.match(css, /\.mp-win-of-day\{[^}]*width:100%/);
     assert.match(css, /\.mp-win-of-day input\{[^}]*min-height:44px/);
-    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY/);
+    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,emptyPastWins,pastWinsPage/);
   });
 
   it("keeps a v2 win model and accepts only the bundled placeholder photo", () => {
@@ -626,17 +626,19 @@ describe("daily wins", () => {
     assert.match(panel, /children:mpWins\.WIN_PHOTO_PROTOTYPE_LABEL/);
     assert.match(panel, /Attach prototype placeholder image/);
     assert.equal(panel.split("className:`mp-win-photo`").length - 1, 1);
-    assert.match(panel, /e===`winOfDay`&&p\?await mpWins\.addWinPhoto\(i\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /e===`winOfDay`&&p\?mpWins\.addWinPhoto\(i,void 0,void 0,void 0,void 0,\{signal,attempt\}\):mpWins\.addWin\(i\)/);
+    assert.match(panel, /mpWins\.watchSave\(/);
+    assert.match(panel, /mpWins\.winSaveTimeoutLimit\(\)/);
+    assert.match(panel, /mpWins\.winSaveStatusLabel\(u,e===`winOfDay`&&p\)/);
     assert.match(panel, /useRef\)\(!1\)/);
     assert.match(panel, /if\(F\.current\)return/);
     assert.match(panel, /disabled:S/);
     assert.match(panel, /onKeyDown:e=>\{e\.key===`Enter`&&!F\.current&&l\(\)\}/);
-    assert.match(panel, /finally\{F\.current=!1;T\(!1\)\}/);
-    assert.match(panel, /if\(!u\.saved\)\{s\(mpWins\.WIN_NOT_SAVED_LABEL\);return\}/);
-    assert.match(panel, /s\(u\.photoError\?mpWins\.WIN_PHOTO_NOT_SAVED_LABEL:u\.photoFallback\?mpWins\.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins\.WIN_SAVED_LABEL\)/);
-    assert.match(panel, /function k\(\)\{r\(mpWins\.winsForDate\(mpWins\.readWinsStore\(\)\)\);if\(e===`winOfDay`\)h\(mpWins\.winsSaveBlockedQuiet\(\)\)\}/);
+    assert.match(panel, /finally\{if\(saveSeq\.current===token\)\{F\.current=!1;T\(!1\)\}\}/);
+    assert.match(panel, /if\(!u\.saved\)\{s\(label\);return\}/);
+    assert.match(panel, /function k\(\)\{let store=mpWins\.readWinsStore\(\);r\(mpWins\.winsForDate\(store\)\);if\(e!==`winOfDay`\)return;h\(mpWins\.winsSaveBlockedQuiet\(\)\);setPast\(mpWins\.pastWinsPage\(store,new Date\(\),shown\.current\)\)\}/);
     assert.match(panel, /listenForWinsChanges\(window,c,k\)/);
-    assert.doesNotMatch(panel.slice(panel.indexOf("function k()"), panel.indexOf("function k()") + 180), /setItem|addWin|resetBlockedWins/);
+    assert.doesNotMatch(panel.slice(panel.indexOf("function k()"), panel.indexOf("function l()")), /setItem|addWin|resetBlockedWins|loadWinsStore/);
     assert.doesNotMatch(panel, /s\(`Saved on this device for today\.`\)/);
     assert.match(panel, /e===`evening`\?\(0,A\.jsx\)\(`h2`,\{children:`Today’s wins`\}/);
     assert.match(panel, /e===`growth`\?/);
@@ -656,12 +658,13 @@ describe("daily wins", () => {
     assert.match(css, /\.mp-win-of-day \.mp-win-reset button\{[^}]*min-height:44px/);
     assert.equal(panel.split("e===`winOfDay`&&b?").length - 1, 1);
     assert.match(panel, /e===`winOfDay`&&mpWins\.winsSaveBlocked\(\)/);
-    assert.match(panel, /if\(e===`winOfDay`\)h\(mpWins\.winsSaveBlocked\(\)\)/);
-    assert.match(panel, /if\(e===`winOfDay`\)\{let q=mpWins\.winsSaveBlocked\(\)/);
+    assert.match(panel, /if\(e!==`winOfDay`\)return;h\(mpWins\.winsSaveBlocked\(\)\)/);
+    assert.match(panel, /if\(e===`winOfDay`\)\{let blocked=mpWins\.winsSaveBlocked\(\)/);
     assert.doesNotMatch(panel, /\(\)=>mpWins\.winsSaveBlocked\(\)/);
-    assert.match(panel, /onClick:\(\)=>x\(!0\),children:mpWins\.WIN_RESET_LABEL/);
-    assert.match(panel, /className:`secondary`,type:`button`,onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
-    assert.match(panel, /onClick:\(\)=>x\(!1\),children:mpWins\.WIN_RESET_CANCEL/);
+    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!0\)\},children:mpWins\.WIN_RESET_LABEL/);
+    assert.match(panel, /className:`secondary`,type:`button`,disabled:j,onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
+    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!1\)\},children:mpWins\.WIN_RESET_CANCEL/);
+    assert.match(panel, /if\(G\.current\)return/);
     assert.match(panel, /mpWins\.resetBlockedWins\(\)/);
     assert.match(panel, /y&&y\.needed===false\?mpWins\.WIN_RESET_UNNEEDED:mpWins\.WIN_RESET_FAILED/);
     assert.match(panel, /photos=y\.photoCleanup\?await y\.photoCleanup:\{failed:!0\}/);
@@ -676,6 +679,8 @@ describe("daily wins", () => {
     assert.match(build, /readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges/);
     assert.match(build, /addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF/);
     assert.match(build, /MINDPAL_PHOTO_TEST\)\{mpWins\.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory/);
+    assert.match(build, /mpWins\.setWinSaveTimeoutMs=setWinSaveTimeoutMs/);
+    assert.match(build, /mpWins\.setWinPhotoRequestMs=setWinPhotoRequestMs/);
     assert.match(build, /MINDPAL_PHOTO_TEST\)globalThis\.mpWins=mpWins/);
     assert.doesNotMatch(build, /typeof globalThis<\\`u\\`\)globalThis\.mpWins=mpWins/);
   });

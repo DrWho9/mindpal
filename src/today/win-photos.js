@@ -27,6 +27,24 @@ export const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this
  * An ordinary save of a readable record does not use this window. It deletes only ids that record dropped.
  */
 export const WIN_PHOTO_PENDING_MS = 15000;
+/**
+ * Clock skew. A stored time further ahead than this is not a save in progress.
+ * A stamp inside this skew can still be pending for WIN_PHOTO_PENDING_MS.
+ */
+export const WIN_PHOTO_FUTURE_SKEW_MS = 2000;
+/** A photo database request that never settles fails after this long. */
+export const WIN_PHOTO_REQUEST_MS = 10000;
+
+let winPhotoRequestMs = WIN_PHOTO_REQUEST_MS;
+
+export function setWinPhotoRequestMs(ms) {
+  const next = Number(ms);
+  winPhotoRequestMs = Number.isFinite(next) && next >= 0 ? next : WIN_PHOTO_REQUEST_MS;
+}
+
+export function winPhotoRequestLimit() {
+  return winPhotoRequestMs;
+}
 
 /** Same bytes as win-placeholder.svg. The only image this prototype stores. */
 export const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Prototype placeholder, not a private photo">
@@ -141,18 +159,105 @@ export async function resetWinPhotoDatabase() {
   });
 }
 
-function winPhotoRequest(request) {
+function winPhotoGaveUp(error) {
+  if (!error) return false;
+  if (error.name === "AbortError" || error.name === "TimeoutError") return true;
+  const message = typeof error.message === "string" ? error.message : "";
+  return (
+    message === "photo request timed out"
+    || message === "photo write aborted"
+    || message === "The photo request was aborted."
+  );
+}
+
+function winPhotoAbortError() {
+  try {
+    return new DOMException("The photo request was aborted.", "AbortError");
+  } catch {
+    const error = new Error("The photo request was aborted.");
+    error.name = "AbortError";
+    return error;
+  }
+}
+
+function winPhotoListen(signal, onAbort) {
+  if (!signal || typeof signal.addEventListener !== "function") return () => {};
+  if (signal.aborted) {
+    onAbort();
+    return () => {};
+  }
+  signal.addEventListener("abort", onAbort);
+  return () => {
+    try {
+      signal.removeEventListener("abort", onAbort);
+    } catch {
+      /* the request is already finished */
+    }
+  };
+}
+
+/**
+ * Resolves, rejects, or gives up after winPhotoRequestLimit.
+ * A late success or error is ignored so it cannot settle twice.
+ */
+function winPhotoRequest(request, signal) {
   return new Promise((resolve, reject) => {
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error || new Error("photo request failed"));
+    let settled = false;
+    let timer = null;
+    let stopListen = () => {};
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      stopListen();
+      fn(value);
+    };
+    const onAbort = () => finish(reject, winPhotoAbortError());
+    timer = setTimeout(() => finish(reject, new Error("photo request timed out")), winPhotoRequestLimit());
+    stopListen = winPhotoListen(signal, onAbort);
+    if (settled && timer) clearTimeout(timer);
+    if (settled) return;
+    try {
+      request.onsuccess = () => finish(resolve, request.result);
+      request.onerror = () => finish(reject, request.error || new Error("photo request failed"));
+    } catch (error) {
+      finish(reject, error);
+    }
   });
 }
 
-function winPhotoTxDone(tx) {
+/**
+ * Waits for the transaction. On timeout or abort, the transaction is aborted
+ * so a late complete cannot store the blob after the caller has moved on.
+ */
+function winPhotoTxDone(tx, signal) {
   return new Promise((resolve, reject) => {
-    tx.oncomplete = () => resolve();
-    tx.onerror = () => reject(tx.error || new Error("photo write failed"));
-    tx.onabort = () => reject(tx.error || new Error("photo write aborted"));
+    let settled = false;
+    let timer = null;
+    let stopListen = () => {};
+    const finish = (fn, value) => {
+      if (settled) return;
+      settled = true;
+      if (timer) clearTimeout(timer);
+      stopListen();
+      fn(value);
+    };
+    const giveUp = (error) => {
+      try {
+        if (tx && typeof tx.abort === "function") tx.abort();
+      } catch {
+        /* the write is already finished */
+      }
+      finish(reject, error);
+    };
+    const onAbort = () => giveUp(winPhotoAbortError());
+    timer = setTimeout(() => giveUp(new Error("photo request timed out")), winPhotoRequestLimit());
+    stopListen = winPhotoListen(signal, onAbort);
+    if (settled && timer) clearTimeout(timer);
+    if (settled) return;
+    tx.oncomplete = () => finish(resolve);
+    tx.onerror = () => finish(reject, tx.error || new Error("photo write failed"));
+    tx.onabort = () => finish(reject, tx.error || new Error("photo write aborted"));
   });
 }
 
@@ -166,6 +271,7 @@ function winPhotoOpenDatabase(factory, generation) {
       return;
     }
     let settled = false;
+    let timer = null;
     const finish = (db) => {
       if (settled) {
         if (db && typeof db.close === "function") {
@@ -178,9 +284,11 @@ function winPhotoOpenDatabase(factory, generation) {
         return;
       }
       settled = true;
+      if (timer) clearTimeout(timer);
       if (db) winPhotoWatchConnection(db, generation);
       resolve(db || null);
     };
+    timer = setTimeout(() => finish(null), winPhotoRequestLimit());
     request.onupgradeneeded = () => {
       const db = request.result;
       if (!db.objectStoreNames.contains(WIN_PHOTO_STORE)) db.createObjectStore(WIN_PHOTO_STORE);
@@ -216,9 +324,30 @@ function winPhotoOpenDb() {
   return winPhotoOpened;
 }
 
-export async function winPhotoDatabaseReady() {
-  const db = await winPhotoOpenDb();
-  return Boolean(db);
+export async function winPhotoDatabaseReady(signal) {
+  if (signal && signal.aborted) return false;
+  const opening = winPhotoOpenDb();
+  if (!signal || typeof signal.addEventListener !== "function") return Boolean(await opening);
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = (value) => {
+      if (settled) return;
+      settled = true;
+      try {
+        signal.removeEventListener("abort", onAbort);
+      } catch {
+        /* the open is already finished */
+      }
+      resolve(Boolean(value) && !signal.aborted);
+    };
+    const onAbort = () => finish(null);
+    if (signal.aborted) {
+      finish(null);
+      return;
+    }
+    signal.addEventListener("abort", onAbort);
+    opening.then(finish, () => finish(null));
+  });
 }
 
 export function placeholderPhotoBlob() {
@@ -254,11 +383,17 @@ function winPhotoBytes(value) {
   return null;
 }
 
-/** A just-stored placeholder image. A raw blob with no time is not pending. */
+/**
+ * A just-stored placeholder image. A raw blob with no time is not pending.
+ * A time more than WIN_PHOTO_FUTURE_SKEW_MS ahead of now is not pending.
+ * That cap stops a far future stamp from staying pending until the clock catches up.
+ */
 function winPhotoPending(value, nowMs) {
   if (!value || typeof value !== "object" || winPhotoBlobLike(value)) return false;
   if (typeof value.createdAt !== "number" || !Number.isFinite(value.createdAt)) return false;
-  return nowMs - value.createdAt < WIN_PHOTO_PENDING_MS;
+  const age = nowMs - value.createdAt;
+  if (age < -WIN_PHOTO_FUTURE_SKEW_MS) return false;
+  return age < WIN_PHOTO_PENDING_MS;
 }
 
 /**
@@ -268,23 +403,28 @@ function winPhotoPending(value, nowMs) {
  * reason "put" means the write failed, including quota.
  * reason "blob" means the bytes were not the placeholder image.
  */
-export async function putWinPhoto(id, blob, createdAt = Date.now()) {
+export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}) {
+  const signal = options && typeof options === "object" ? options.signal : undefined;
   if (typeof id !== "string" || !id.trim()) return { ok: false, reason: "id" };
+  if (signal && signal.aborted) return { ok: false, reason: "timeout" };
   if (!(await isPlaceholderPhotoBlob(blob))) return { ok: false, reason: "blob" };
+  if (signal && signal.aborted) return { ok: false, reason: "timeout" };
   const db = await winPhotoOpenDb();
   if (!db) return { ok: false, reason: "unavailable" };
+  if (signal && signal.aborted) return { ok: false, reason: "timeout" };
   let tx = null;
   try {
     tx = db.transaction(WIN_PHOTO_STORE, "readwrite");
     tx.objectStore(WIN_PHOTO_STORE).put({ blob, createdAt: winPhotoStoredAt(createdAt) }, id);
-    await winPhotoTxDone(tx);
+    await winPhotoTxDone(tx, signal);
     return { ok: true };
-  } catch {
+  } catch (error) {
     try {
       if (tx && tx.abort) tx.abort();
     } catch {
       /* the write already failed */
     }
+    if (winPhotoGaveUp(error) || (signal && signal.aborted)) return { ok: false, reason: "timeout" };
     return { ok: false, reason: "put" };
   }
 }
@@ -391,8 +531,9 @@ export async function deleteWinPhotos(ids, options = {}) {
 /**
  * Ids that a sweep may delete.
  * keepIds stay. A placeholder image stored in the last WIN_PHOTO_PENDING_MS stays too,
- * so another tab's save can still write its reference.
+ * so this tab or another tab can still write its reference.
  * A value with no stored time is old enough to delete.
+ * A time more than WIN_PHOTO_FUTURE_SKEW_MS ahead of now is not pending.
  * Null means the list could not be read. The caller must not guess and must not clear the store.
  */
 function winPhotoSweepIds(entries, keepIds, nowMs) {
