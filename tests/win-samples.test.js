@@ -186,6 +186,41 @@ function holdFirstWriteFactory(base, delayMs, gate, deleteAfter = false) {
   };
 }
 
+function failReadAfterFactory(base, succeedCount) {
+  let reads = 0;
+  return {
+    open(name, version) {
+      const request = base.open(name, version);
+      request.addEventListener("success", () => {
+        const db = request.result;
+        const transaction = db.transaction.bind(db);
+        db.transaction = (storeNames, mode) => {
+          if (mode === "readonly") {
+            reads += 1;
+            if (reads > succeedCount) {
+              return {
+                objectStore() {
+                  return {
+                    get() {
+                      throw new Error("confirming read failed");
+                    },
+                  };
+                },
+                abort() {},
+              };
+            }
+          }
+          return transaction(storeNames, mode);
+        };
+      });
+      return request;
+    },
+    deleteDatabase(name) {
+      return base.deleteDatabase(name);
+    },
+  };
+}
+
 function readThrowsFactory(base) {
   return {
     open(name, version) {
@@ -575,6 +610,43 @@ describe("a sample change reloads before it saves", () => {
     const kept = loadWinsStore(storage).days["2026-09-20"][0];
     assert.equal(kept.text, "Race the blob");
     assert.equal(Object.hasOwn(kept, "photo"), false);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await readWinPhoto(added.item.id), null);
+  });
+
+  it("puts the previous blob back when the confirming read throws", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Had an image", storage, morning, morning, winSampleBlob("sample-4"));
+    assert.equal(added.item.photo, WIN_PHOTO_REF);
+    setWinPhotoDatabaseFactory(failReadAfterFactory(indexedDB, 1));
+    const changed = await changeWinImage(added.item.id, "sample-2", storage, morning, morning);
+    assert.equal(changed.imageChanged, false);
+    assert.equal(changed.kept, true);
+    assert.equal(changed.reason, "read");
+    const kept = loadWinsStore(storage).days["2026-09-20"][0];
+    assert.equal(kept.text, "Had an image");
+    assert.equal(kept.photo, WIN_PHOTO_REF);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_4_SVG);
+    const source = readFileSync(join(root, "../src/today/wins.js"), "utf8");
+    assert.match(source, /Those two decodes are microtasks/);
+    assert.match(source, /That gap is not the 300 ms write window/);
+  });
+
+  it("deletes the new blob when the confirming read throws and there was no stored image", async () => {
+    const storage = memoryStorage();
+    const added = await addWin("Bundled path", storage, morning, morning);
+    const seeded = loadWinsStore(storage);
+    seeded.days["2026-09-20"][0].photo = winSamplePath("sample-1");
+    saveWinsStore(seeded, storage, morning);
+    setWinPhotoDatabaseFactory(failReadAfterFactory(indexedDB, 0));
+    const changed = await changeWinImage(added.item.id, "sample-2", storage, morning, morning);
+    assert.equal(changed.imageChanged, false);
+    assert.equal(changed.kept, true);
+    assert.equal(changed.reason, "read");
+    const kept = loadWinsStore(storage).days["2026-09-20"][0];
+    assert.equal(kept.text, "Bundled path");
+    assert.equal(kept.photo, winSamplePath("sample-1"));
     setWinPhotoDatabaseFactory(indexedDB);
     assert.equal(await readWinPhoto(added.item.id), null);
   });

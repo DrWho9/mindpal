@@ -1510,9 +1510,41 @@ export async function changeWinImage(
     fix.catch(() => {});
     return imageKept(storage, current, { timedOut: true });
   }
-  const seen = await readWinPhotoRecord(id);
-  const seenId = seen && seen.status === "ok" ? await winPhotoAllowlistId(seen.blob) : "";
-  if (!seen || seen.status !== "ok" || seenId !== wanted) {
+  /*
+   * Confirm the blob is still the chosen sample before the record points at it.
+   * A missing blob, or a blob that is not that sample, is left as it is so another
+   * tab's delete is not undone.
+   * A read that errors (the get throws, or the photo database cannot be opened)
+   * is not that case. Put the previous blob back, or delete the new blob when
+   * this win had none, the same as a timed out write.
+   * The confirming read and the record write are not one transaction. The read
+   * decodes the blob for the allowlist, then this function decodes it again for
+   * the sample id. Those two decodes are microtasks. Another tab can remove the
+   * blob in that gap, and the synchronous commit can still point the record at
+   * it. That gap is not the 300 ms write window.
+   */
+  let seen = await readWinPhotoRecord(id);
+  let seenId = "";
+  if (seen && seen.status === "ok") {
+    try {
+      seenId = await winPhotoAllowlistId(seen.blob);
+    } catch {
+      seen = { status: "error", blob: null };
+    }
+  }
+  const readFailed = !seen || (seen.status !== "ok" && seen.status !== "missing");
+  if (readFailed) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    try {
+      await fix;
+    } catch {
+      /* the new blob is put back or removed when the photo database can */
+    }
+    return imageKept(storage, current, { reason: "read" });
+  }
+  if (seen.status !== "ok" || seenId !== wanted) {
     return imageKept(storage, current, { reason: "unconfirmed" });
   }
   const committed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
