@@ -314,6 +314,16 @@ describe("sample image picker card", { timeout: 180000 }, () => {
       WIN_IMAGE_UPDATED_LABEL,
     );
     assert.equal(await readBlob(page, win.id), WIN_SAMPLE_2_SVG);
+    await page.waitForFunction(() => {
+      const node = document.activeElement;
+      return Boolean(node) && node.tagName !== "BODY";
+    });
+    const focused = await page.evaluate(() => ({
+      tag: document.activeElement && document.activeElement.tagName,
+      id: document.activeElement && document.activeElement.id,
+    }));
+    assert.notEqual(focused.tag, "BODY");
+    assert.equal(focused.id, "mp-win-status-winOfDay");
 
     await page.evaluate(async () => {
       const day = new Date();

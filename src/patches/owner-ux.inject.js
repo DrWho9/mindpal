@@ -199,7 +199,7 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(mpWins.WIN_SAMPLE_PLACEHOLDER||`placeholder`),[picks,setPicks]=(0,_.useState)({}),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),stalePhotos=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),focusWasInPast=(0,_.useRef)(!1),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(mpWins.WIN_SAMPLE_PLACEHOLDER||`placeholder`),[picks,setPicks]=(0,_.useState)({}),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),stalePhotos=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),focusSample=(0,_.useRef)(null),focusWasInPast=(0,_.useRef)(!1),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
   function c(){let store=mpWins.loadWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlocked());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
   function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;stalePhotos.current={all:!0};h(mpWins.winsSaveBlockedQuiet());let active=null;try{active=document.activeElement}catch{active=null}focusWasInPast.current=mpWins.pastWinFocusMove(active);setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
@@ -265,6 +265,23 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     try{node=document.querySelector(target)}catch{node=null}
     if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
   },[past,dropBusy,hold]);
+  // Apply disables itself while the write runs, which drops focus to the page.
+  // After that write, put focus on the status line, or on the checked radio if the status is not there yet.
+  (0,_.useEffect)(()=>{
+    let pending=focusSample.current;
+    if(!pending)return;
+    focusSample.current=null;
+    let move=()=>{
+      let status=null;
+      try{status=document.getElementById(mpWins.winStatusId(e))}catch{status=null}
+      if(status&&typeof status.focus===`function`){status.focus();return}
+      let node=null;
+      try{node=document.querySelector(`input[type="radio"][name*="${pending.id}"][value="${pending.choice}"]:checked`)}catch{node=null}
+      if(node&&typeof node.focus===`function`)node.focus();
+    };
+    if(typeof requestAnimationFrame===`function`)requestAnimationFrame(move);
+    else move();
+  },[o,S]);
   // Confirm stays only while id, day, and position still name the picked win.
   // Move focus only when it is inside the confirm row or Past wins. The win input stays put.
   (0,_.useEffect)(()=>{
@@ -292,10 +309,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     T(!0);
     try{
       let withImage=e===`winOfDay`&&p!==`none`;
+      let asked=withImage&&p!==(mpWins.WIN_SAMPLE_PLACEHOLDER||`placeholder`)?`sample`:withImage;
       let chosen=withImage?mpWins.winSampleBlob(p):void 0;
       let u=await mpWins.watchSave((signal,attempt)=>withImage?mpWins.addWinPhoto(i,void 0,void 0,void 0,chosen,{signal,attempt}):mpWins.addWin(i),mpWins.winSaveTimeoutLimit());
       if(saveSeq.current!==token)return;
-      let label=mpWins.winSaveStatusLabel(u,withImage);
+      let label=mpWins.winSaveStatusLabel(u,asked);
       if(!u||!u.item){s(u&&(u.timedOut||u.abandoned||u.failed)?label:`Write a few words first — a cup of tea counts.`);return}
       if(e===`winOfDay`){let blocked=mpWins.winsSaveBlocked();h(blocked);if(!blocked)x(!1)}
       if(!u.saved){s(label);return}
@@ -395,7 +413,15 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         return !1;
       }
       if(u&&u.unchanged)return !0;
-      if(!u||u.imageChanged!==!0){s(mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);return !1}
+      if(!u||u.imageChanged!==!0){
+        s(u&&u.reason===`unconfirmed`?mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL:mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);
+        if(u&&u.reason===`unconfirmed`){
+          let fresh=u.store||mpWins.readWinsStore();
+          r(mpWins.winsForDate(fresh));
+          setPast(mpWins.pastWinsPage(fresh,new Date(),shown.current));
+        }
+        return !1;
+      }
       let cache=photoCache.current;
       if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
       if(cache[id])delete cache[id];
@@ -407,7 +433,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
       return !0;
     }catch{if(saveSeq.current===token)s(mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);return !1}
-    finally{if(saveSeq.current===token){F.current=!1;T(!1)}}
+    finally{if(saveSeq.current===token){F.current=!1;T(!1);focusSample.current={id,choice}}}
   }
   async function applySaved(id, key, choice, current){
     let ok=await applyImage(id, key, choice, current);

@@ -632,7 +632,8 @@ describe("daily wins", () => {
     assert.match(panel, /withImage\?mpWins\.addWinPhoto\(i,void 0,void 0,void 0,chosen,\{signal,attempt\}\):mpWins\.addWin\(i\)/);
     assert.match(panel, /mpWins\.watchSave\(/);
     assert.match(panel, /mpWins\.winSaveTimeoutLimit\(\)/);
-    assert.match(panel, /mpWins\.winSaveStatusLabel\(u,withImage\)/);
+    assert.match(panel, /mpWins\.winSaveStatusLabel\(u,asked\)/);
+    assert.match(panel, /let asked=withImage&&p!==\(mpWins\.WIN_SAMPLE_PLACEHOLDER\|\|`placeholder`\)\?`sample`:withImage/);
     assert.match(panel, /let withImage=e===`winOfDay`&&p!==`none`/);
     assert.match(panel, /useRef\)\(!1\)/);
     assert.match(panel, /if\(F\.current\)return/);

@@ -14,6 +14,7 @@ export const WIN_PHOTO_REF = "idb";
 export const WIN_PHOTO_CHANNEL = "mindpal-photos";
 
 export const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Placeholder image not saved.";
+export const WIN_SAMPLE_NOT_SAVED_LABEL = "Saved on this device for today. Sample image not saved.";
 export const WIN_PHOTO_UNAVAILABLE_LABEL =
   "Saved on this device for today. Placeholder image storage is not available on this device, so this win uses the bundled placeholder.";
 export const WIN_PHOTO_MISSING_LABEL =

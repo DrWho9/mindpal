@@ -445,17 +445,26 @@ async function shot(page, name, selector = ".mp-win-of-day", width = 1280) {
   await locator.evaluate((node) => node.scrollIntoView({ block: "start", inline: "nearest" }));
   const fitted = await locator.boundingBox();
   if (!fitted) throw new Error(`No fitted box for ${name}`);
-  await page.screenshot({
-    path: `${shots}/${name}.png`,
-    animations: "disabled",
-    clip: {
-      x: Math.max(0, Math.floor(fitted.x)),
-      y: Math.max(0, Math.floor(fitted.y)),
-      width: Math.floor(fitted.width),
-      height: Math.floor(fitted.height),
-    },
-    timeout: 10000,
-  });
+  let lastError = null;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      await page.screenshot({
+        path: `${shots}/${name}.png`,
+        animations: "disabled",
+        clip: {
+          x: Math.max(0, Math.floor(fitted.x)),
+          y: Math.max(0, Math.floor(fitted.y)),
+          width: Math.floor(fitted.width),
+          height: Math.floor(fitted.height),
+        },
+        timeout: 30000,
+      });
+      return;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError;
 }
 
 // Headless Chrome stalls on Page.captureScreenshot once this card has placeholder images.
