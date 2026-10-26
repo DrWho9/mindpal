@@ -274,6 +274,9 @@ dialog[open]>*{pointer-events:auto}
 .mp-win-of-day .mp-win-samples label{display:flex;align-items:center;gap:8px;min-height:44px;font-size:13px;line-height:1.35}
 .mp-win-of-day .mp-win-samples input{width:auto;min-width:44px;min-height:44px;margin:0;flex:0 0 auto}
 .mp-win-of-day .mp-win-sample-thumb{width:36px;height:36px;border-radius:8px;border:1px solid #e8e1cc;background:#f4f7f1;object-fit:cover;flex:0 0 auto}
+.mp-win-of-day .mp-wins-list li{flex-wrap:wrap;align-items:center}
+.mp-win-of-day .mp-win-sample-change{flex:1 1 100%}
+.mp-win-of-day .mp-win-sample-apply{min-height:44px}
 .mp-win-of-day .mp-past-wins .mp-win-sample-change{flex:1 1 100%}
 .mp-win-of-day .mp-win-reset{display:flex;flex-direction:column;gap:8px;margin:4px 0 0;padding:10px 12px;border:1px solid #e3dcc6;border-radius:10px;background:#fffdf8}
 .mp-win-of-day .mp-win-reset .button-row{margin:0}

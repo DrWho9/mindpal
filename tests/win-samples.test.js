@@ -21,6 +21,7 @@ import {
   isPlaceholderPhotoBlob,
   putWinPhoto,
   readWinPhoto,
+  readWinPhotoRecord,
   resetWinPhotoDatabase,
   setWinPhotoDatabaseFactory,
   setWinPhotoRequestMs,
@@ -33,13 +34,19 @@ import {
   WIN_IMAGE_NOT_CHANGED_LABEL,
   WIN_IMAGE_REMOVED_LABEL,
   WIN_IMAGE_UPDATED_LABEL,
+  WIN_IMAGE_WIN_GONE_LABEL,
   WIN_PHOTO_REF,
+  WIN_PHOTO_UNAVAILABLE_LABEL,
   WIN_PLACEHOLDER_PHOTO,
+  WIN_SAMPLE_UNAVAILABLE_LABEL,
   addWin,
   addWinPhoto,
   changeWinImage,
   exportV1,
   loadWinsStore,
+  removeWin,
+  saveWinsStore,
+  winSaveStatusLabel,
   pastWinDayHeading,
   pastWinFocusMove,
   pastWinHoldAfterRefresh,
@@ -91,6 +98,95 @@ function putFailsFactory(base) {
             const store = objectStore(storeName);
             store.put = () => {
               throw new DOMException("Quota exceeded", "QuotaExceededError");
+            };
+            return store;
+          };
+          return tx;
+        };
+      });
+      return request;
+    },
+    deleteDatabase(name) {
+      return base.deleteDatabase(name);
+    },
+  };
+}
+
+function holdFirstWriteFactory(base, delayMs, gate) {
+  let used = false;
+  return {
+    open(name, version) {
+      const request = base.open(name, version);
+      request.addEventListener("success", () => {
+        const db = request.result;
+        const transaction = db.transaction.bind(db);
+        db.transaction = (storeNames, mode) => {
+          if (mode === "readwrite" && !used) {
+            used = true;
+            let oncomplete = null;
+            let payload = null;
+            const fake = {
+              objectStore() {
+                return {
+                  put(value, key) {
+                    payload = { value, key };
+                    if (gate) gate();
+                    setTimeout(() => {
+                      const tx = transaction(storeNames, "readwrite");
+                      const storeName = Array.isArray(storeNames) ? storeNames[0] : storeNames;
+                      tx.objectStore(storeName).put(payload.value, payload.key);
+                      const done = oncomplete;
+                      tx.oncomplete = () => {
+                        if (typeof done === "function") done();
+                      };
+                    }, delayMs);
+                    return {};
+                  },
+                  delete() {
+                    return {};
+                  },
+                };
+              },
+              abort() {},
+            };
+            Object.defineProperty(fake, "oncomplete", {
+              set(fn) {
+                oncomplete = fn;
+              },
+              get() {
+                return oncomplete;
+              },
+            });
+            Object.defineProperty(fake, "onerror", { set() {}, get() { return null; } });
+            Object.defineProperty(fake, "onabort", { set() {}, get() { return null; } });
+            return fake;
+          }
+          return transaction(storeNames, mode);
+        };
+      });
+      return request;
+    },
+    deleteDatabase(name) {
+      return base.deleteDatabase(name);
+    },
+  };
+}
+
+function readThrowsFactory(base) {
+  return {
+    open(name, version) {
+      const request = base.open(name, version);
+      request.addEventListener("success", () => {
+        const db = request.result;
+        const transaction = db.transaction.bind(db);
+        db.transaction = (storeNames, mode) => {
+          const tx = transaction(storeNames, mode);
+          if (mode !== "readonly") return tx;
+          const objectStore = tx.objectStore.bind(tx);
+          tx.objectStore = (storeName) => {
+            const store = objectStore(storeName);
+            store.get = () => {
+              throw new Error("photo read failed");
             };
             return store;
           };
@@ -181,12 +277,22 @@ describe("sample image allowlist", () => {
     assert.equal(await isAllowedWinPhotoBlob(new Blob(["<svg></svg>"], { type: "image/svg+xml" })), false);
     assert.equal(await isAllowedWinPhotoBlob(new Blob([WIN_SAMPLE_2_SVG], { type: "image/png" })), false);
     assert.equal(await isAllowedWinPhotoBlob(new Blob([`${"x".repeat(5000)}`], { type: "image/svg+xml" })), false);
+    const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+    const body = new TextEncoder().encode(WIN_SAMPLE_2_SVG);
+    const withBom = new Uint8Array(bom.length + body.length);
+    withBom.set(bom, 0);
+    withBom.set(body, bom.length);
+    const bomBlob = new Blob([withBom], { type: "image/svg+xml" });
+    assert.equal(await winPhotoAllowlistId(bomBlob), "");
+    assert.equal(await isAllowedWinPhotoBlob(bomBlob), false);
+    assert.equal((await putWinPhoto("bom", bomBlob)).reason, "blob");
     assert.equal(await putWinPhoto("nope", new Blob(["<svg></svg>"], { type: "image/svg+xml" })).then((result) => result.reason), "blob");
     assert.equal(await readWinPhoto("nope"), null);
     assert.doesNotMatch(
-      `${WIN_SAMPLE_ON_DEVICE_LABEL} ${WIN_SAMPLE_PROTOTYPE_LABEL} ${WIN_IMAGE_NOT_CHANGED_LABEL} ${WIN_IMAGE_UPDATED_LABEL} ${WIN_IMAGE_REMOVED_LABEL}`,
+      `${WIN_SAMPLE_ON_DEVICE_LABEL} ${WIN_SAMPLE_PROTOTYPE_LABEL} ${WIN_IMAGE_NOT_CHANGED_LABEL} ${WIN_IMAGE_WIN_GONE_LABEL} ${WIN_IMAGE_UPDATED_LABEL} ${WIN_IMAGE_REMOVED_LABEL} ${WIN_SAMPLE_UNAVAILABLE_LABEL}`,
       /—|–/,
     );
+    assert.doesNotMatch(WIN_IMAGE_WIN_GONE_LABEL, /still saved/);
     assert.match(WIN_SAMPLE_ON_DEVICE_LABEL, /sample image/);
     assert.doesNotMatch(WIN_IMAGE_NOT_CHANGED_LABEL, /photo/i);
   });
@@ -341,10 +447,117 @@ describe("change and remove a sample image", () => {
     assert.equal(changed.item.photo, "/mindpal/win-sample-2.svg");
     assert.equal(changed.item.text, "Path only");
     assert.equal(await readWinPhoto(added.item.id), null);
+    const savedSample = await addWinPhoto("Saved sample", storage, morning, later, winSampleBlob("sample-3"));
+    assert.equal(savedSample.photoFallback, true);
+    assert.equal(savedSample.item.photo, "/mindpal/win-sample-3.svg");
+    assert.equal(winSaveStatusLabel(savedSample, true), WIN_SAMPLE_UNAVAILABLE_LABEL);
+    const savedPlaceholder = await addWinPhoto("Saved placeholder", storage, morning, new Date(2026, 8, 20, 9, 6, 0));
+    assert.equal(savedPlaceholder.photoFallback, true);
+    assert.equal(savedPlaceholder.item.photo, WIN_PLACEHOLDER_PHOTO);
+    assert.equal(winSaveStatusLabel(savedPlaceholder, true), WIN_PHOTO_UNAVAILABLE_LABEL);
+    assert.equal(winSaveStatusLabel({ saved: true, item: { id: "path" }, photoFallback: true }, true), WIN_PHOTO_UNAVAILABLE_LABEL);
     const rejected = await addWinPhoto("Not allowed", storage, morning, later, new Blob(["face"], { type: "image/png" }));
     assert.equal(rejected.photoError, true);
     assert.equal(Object.hasOwn(rejected.item, "photo"), false);
     assert.equal(rejected.item.text, "Not allowed");
+  });
+});
+
+describe("a sample change reloads before it saves", () => {
+  beforeEach(async () => {
+    setWinPhotoDatabaseFactory(indexedDB);
+    await resetWinPhotoDatabase();
+    setWinPhotoRequestMs(10000);
+  });
+
+  afterEach(async () => {
+    await resetWinPhotoDatabase();
+    setWinPhotoDatabaseFactory(undefined);
+    setWinPhotoRequestMs(10000);
+  });
+
+  function changeWhileHeld(storage, id, during) {
+    let ran = false;
+    setWinPhotoDatabaseFactory(holdFirstWriteFactory(indexedDB, 300, () => {
+      during();
+      ran = true;
+    }));
+    const changing = changeWinImage(id, "sample-2", storage, morning, morning);
+    return changing.then((changed) => {
+      assert.equal(ran, true);
+      return changed;
+    });
+  }
+
+  it("keeps a win added while the image write is held", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Held win", storage, morning, morning);
+    const changed = await changeWhileHeld(storage, added.item.id, () => {
+      const extra = addWin("Added during change", storage, morning, later);
+      assert.equal(extra.saved, true);
+    });
+    assert.equal(changed.imageChanged, true);
+    const day = loadWinsStore(storage).days["2026-09-20"];
+    assert.equal(day.length, 2);
+    assert.equal(day.find((item) => item.id === added.item.id).text, "Held win");
+    assert.equal(day.find((item) => item.id === added.item.id).photo, WIN_PHOTO_REF);
+    assert.equal(day.some((item) => item.text === "Added during change"), true);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_2_SVG);
+  });
+
+  it("does not bring back a win removed while the image write is held", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Going away", storage, morning, morning);
+    const changed = await changeWhileHeld(storage, added.item.id, () => {
+      const removed = removeWin(added.item.id, storage, morning);
+      assert.equal(removed.saved, true);
+    });
+    assert.equal(changed.missing, true);
+    assert.equal(changed.imageChanged, false);
+    assert.equal(changed.kept, false);
+    assert.equal(WIN_IMAGE_WIN_GONE_LABEL.includes("no longer on this device"), true);
+    const day = loadWinsStore(storage).days["2026-09-20"] || [];
+    assert.equal(day.some((item) => item.id === added.item.id), false);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await readWinPhoto(added.item.id), null);
+  });
+
+  it("keeps a save from another tab while the image write is held", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Shared win", storage, morning, morning);
+    const changed = await changeWhileHeld(storage, added.item.id, () => {
+      const fresh = loadWinsStore(storage);
+      fresh.days["2026-09-20"][0].text = "Edited in another tab";
+      fresh.days["2026-09-20"].push({ id: "other-tab", text: "From the other tab", at: later.toISOString() });
+      saveWinsStore(fresh, storage, later);
+    });
+    assert.equal(changed.imageChanged, true);
+    const day = loadWinsStore(storage).days["2026-09-20"];
+    const target = day.find((item) => item.id === added.item.id);
+    assert.equal(target.text, "Edited in another tab");
+    assert.equal(target.photo, WIN_PHOTO_REF);
+    assert.equal(day.some((item) => item.id === "other-tab"), true);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_2_SVG);
+  });
+
+  it("does not replace a stored image when the read fails", async () => {
+    const storage = memoryStorage();
+    const added = await addWinPhoto("Keep the good image", storage, morning, morning, winSampleBlob("sample-4"));
+    setWinPhotoDatabaseFactory(readThrowsFactory(indexedDB));
+    const failed = await changeWinImage(added.item.id, "sample-1", storage, morning, morning);
+    assert.equal(failed.imageChanged, false);
+    assert.equal(failed.kept, true);
+    assert.equal(failed.reason, "read");
+    const unread = await readWinPhotoRecord(added.item.id);
+    assert.equal(unread.status, "error");
+    assert.equal(unread.blob, null);
+    setWinPhotoDatabaseFactory(indexedDB);
+    assert.equal(await (await readWinPhoto(added.item.id)).text(), WIN_SAMPLE_4_SVG);
+    const kept = loadWinsStore(storage).days["2026-09-20"][0];
+    assert.equal(kept.text, "Keep the good image");
+    assert.equal(kept.photo, WIN_PHOTO_REF);
   });
 });
 
@@ -365,8 +578,17 @@ describe("past wins outline, focus, and status ids", () => {
     assert.match(wins, /focusAfter\.current=`#\$\{mpWins\.winStatusId\(`winOfDay`\)\}`/);
     assert.doesNotMatch(wins, /id:`mp-win-status`/);
     assert.match(wins, /Sample image for /);
+    assert.match(wins, /children:`Apply sample image`/);
+    assert.match(wins, /disabled:!!\(add&&\(S\|\|lock\)\)/);
+    assert.doesNotMatch(wins, /choice=>applyImage/);
+    assert.match(wins, /releaseWinPhotoUrl\(cache\[w\.id\]\.url\);delete cache\[w\.id\]/);
+    assert.match(wins, /async function d\(\)\{\s*if\(F\.current\)return;\s*if\(G\.current\)return;/);
+    assert.match(wins, /async function drop\(id,key,pos,index\)\{\s*if\(F\.current\)return;\s*if\(dropGuard\.current\)return;/);
+    assert.match(wins, /disabled:dropBusy\|\|S/);
     assert.doesNotMatch(wins, /type:`file`/);
     assert.doesNotMatch(wins, /capture=/);
+    const photos = readFileSync(join(root, "../src/today/win-photos.js"), "utf8");
+    assert.match(photos, /IndexedDB running[\s*]*write transactions on the same store in order/);
   });
 
   it("moves focus only from the confirm row or Past wins", () => {

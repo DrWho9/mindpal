@@ -159,7 +159,9 @@ describe("sample image picker card", { timeout: 180000 }, () => {
     await other.locator(".mp-win-of-day").getByText(WIN_SAMPLE_ON_DEVICE_LABEL).waitFor({ state: "visible" });
 
     const beforeRevoke = await page.evaluate(() => globalThis.__mpRevoked.length);
+    assert.match((await row.locator("legend").innerText()).trim(), /Sample image for Blue circles today, today/);
     await row.getByRole("radio", { name: "Sample image 4: teal bars" }).click();
+    await row.getByRole("button", { name: /^Apply sample image/ }).click();
     await page.waitForFunction(
       (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
       WIN_IMAGE_UPDATED_LABEL,
@@ -171,6 +173,7 @@ describe("sample image picker card", { timeout: 180000 }, () => {
     assert.equal(afterRevoke > beforeRevoke, true);
 
     await row.getByRole("radio", { name: "No image" }).click();
+    await row.getByRole("button", { name: /^Apply sample image/ }).click();
     await page.waitForFunction(
       (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
       WIN_IMAGE_REMOVED_LABEL,
@@ -202,7 +205,12 @@ describe("sample image picker card", { timeout: 180000 }, () => {
     assert.equal(await dayHeading.count() > 0, true);
     assert.equal(await past.locator("h3.mp-past-later").count(), 0);
 
+    const pastLegend = (await row.locator("legend").innerText()).trim();
+    const pastHeading = (await row.locator("xpath=ancestor::*[@data-mp-win-day][1]").locator("h3, h4").first().innerText()).trim();
+    assert.match(pastLegend, /Sample image for Yesterday sample,/);
+    assert.equal(pastLegend.includes(pastHeading), true);
     await row.getByRole("radio", { name: "Sample image 1: green squares" }).click();
+    await row.getByRole("button", { name: /^Apply sample image/ }).click();
     await page.waitForFunction(
       (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
       WIN_IMAGE_UPDATED_LABEL,
@@ -254,12 +262,15 @@ describe("sample image picker card", { timeout: 180000 }, () => {
     });
     try {
       await row.getByRole("radio", { name: "Sample image 3: amber triangles" }).click();
+      assert.equal(await row.locator("fieldset").isDisabled(), false);
+      await row.getByRole("button", { name: /^Apply sample image/ }).click();
       await page.waitForFunction(
         (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
         WIN_IMAGE_NOT_CHANGED_LABEL,
       );
       assert.equal((await row.innerText()).includes("Keep these words"), true);
-      assert.equal(await row.getByRole("radio", { name: "Placeholder image" }).isChecked(), true);
+      assert.equal(await row.locator("fieldset").isDisabled(), false);
+      assert.equal(await row.getByRole("radio", { name: "Sample image 3: amber triangles" }).isChecked(), true);
       assert.equal(await readBlob(page, win.id), original);
       const after = JSON.parse(await page.evaluate(() => localStorage.getItem("mindpal.dailyWins.v2")));
       const kept = Object.values(after.days).flat().find((item) => item.id === win.id);
@@ -271,6 +282,69 @@ describe("sample image picker card", { timeout: 180000 }, () => {
         delete globalThis.__mpPut;
       });
     }
+  });
+
+  it("arrow keys on a saved win do not write until Apply", { skip: skipCard }, async () => {
+    const winCard = page.locator(".mp-win-of-day");
+    await winCard.locator("#mp-win-winOfDay").fill("Arrow today");
+    await winCard.locator(".mp-win-sample-add").getByRole("radio", { name: "Placeholder image" }).check();
+    await winCard.getByRole("button", { name: "Save this win" }).click();
+    await page.waitForFunction(
+      (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
+      WIN_SAVED_LABEL,
+    );
+    const row = winCard.locator(".mp-wins-list li", { hasText: "Arrow today" });
+    await row.getByText(WIN_PHOTO_ON_DEVICE_LABEL).waitFor({ state: "visible" });
+    const stored = JSON.parse(await page.evaluate(() => localStorage.getItem("mindpal.dailyWins.v2")));
+    const win = Object.values(stored.days).flat().find((item) => item.text === "Arrow today");
+    const before = await readBlob(page, win.id);
+    const group = row.locator("fieldset");
+    assert.equal(await group.isDisabled(), false);
+    await row.getByRole("radio", { name: "Placeholder image" }).focus();
+    await page.keyboard.press("ArrowDown");
+    assert.equal(await row.getByRole("radio", { name: "Sample image 1: green squares" }).isChecked(), true);
+    await page.keyboard.press("ArrowDown");
+    assert.equal(await row.getByRole("radio", { name: "Sample image 2: blue circles" }).isChecked(), true);
+    assert.equal(await group.isDisabled(), false);
+    assert.equal(await readBlob(page, win.id), before);
+    assert.equal(await page.locator(".mp-win-of-day p[role='status']").textContent(), WIN_SAVED_LABEL);
+    await row.getByRole("button", { name: /^Apply sample image/ }).click();
+    await page.waitForFunction(
+      (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
+      WIN_IMAGE_UPDATED_LABEL,
+    );
+    assert.equal(await readBlob(page, win.id), WIN_SAMPLE_2_SVG);
+
+    await page.evaluate(async () => {
+      const day = new Date();
+      day.setDate(day.getDate() - 3);
+      day.setHours(9, 15, 0, 0);
+      const added = await mpWins.addWinPhoto("Arrow past", undefined, day, day);
+      globalThis.__arrowPastId = added.item && added.item.id;
+      window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+    });
+    const past = page.locator(".mp-win-of-day .mp-past-wins");
+    if (!(await past.evaluate((node) => node.open))) await past.locator("summary").click();
+    const pastRow = past.locator("li", { hasText: "Arrow past" });
+    await pastRow.getByText(WIN_PHOTO_ON_DEVICE_LABEL).waitFor({ state: "visible" });
+    const pastLegend = (await pastRow.locator("legend").innerText()).trim();
+    const pastHeading = (await pastRow.locator("xpath=ancestor::*[@data-mp-win-day][1]").locator("h3, h4").first().innerText()).trim();
+    assert.match(pastLegend, /Sample image for Arrow past,/);
+    assert.equal(pastLegend.includes(pastHeading), true);
+    assert.equal(pastLegend.includes(", today"), false);
+    const pastId = await page.evaluate(() => globalThis.__arrowPastId);
+    const pastBefore = await readBlob(page, pastId);
+    const pastGroup = pastRow.locator("fieldset");
+    assert.equal(await pastGroup.isDisabled(), false);
+    await pastRow.getByRole("radio", { name: "Placeholder image" }).focus();
+    await page.keyboard.press("ArrowDown");
+    assert.equal(await pastRow.getByRole("radio", { name: "Sample image 1: green squares" }).isChecked(), true);
+    const statusBefore = await page.locator(".mp-win-of-day p[role='status']").textContent();
+    await page.keyboard.press("ArrowDown");
+    assert.equal(await pastRow.getByRole("radio", { name: "Sample image 2: blue circles" }).isChecked(), true);
+    assert.equal(await pastGroup.isDisabled(), false);
+    assert.equal(await readBlob(page, pastId), pastBefore);
+    assert.equal(await page.locator(".mp-win-of-day p[role='status']").textContent(), statusBefore);
   });
 
   it("leaves Confirm in place for another day and moves focus only from Past wins", { skip: skipCard }, async () => {

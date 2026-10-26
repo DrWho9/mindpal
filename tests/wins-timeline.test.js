@@ -298,8 +298,8 @@ describe("past wins timeline", () => {
     const hideAt = resetFn.indexOf("x(!1)");
     assert.ok(awaitAt > 0);
     assert.ok(hideAt > awaitAt);
-    assert.match(panel, /disabled:j,onClick:d/);
-    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!0\)\}/);
+    assert.match(panel, /disabled:j\|\|S,onClick:d/);
+    assert.match(panel, /disabled:j\|\|S,onClick:\(\)=>\{if\(!j&&!S\)x\(!0\)\}/);
     assert.match(panel, /mp-past-wins/);
     assert.match(panel, /mpWins\.PAST_WINS_EMPTY/);
     assert.match(panel, /releaseWinPhotoUrl\(url\)/);

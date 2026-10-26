@@ -665,9 +665,9 @@ describe("daily wins", () => {
     assert.match(panel, /if\(e!==`winOfDay`\)return;h\(mpWins\.winsSaveBlocked\(\)\)/);
     assert.match(panel, /if\(e===`winOfDay`\)\{let blocked=mpWins\.winsSaveBlocked\(\)/);
     assert.doesNotMatch(panel, /\(\)=>mpWins\.winsSaveBlocked\(\)/);
-    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!0\)\},children:mpWins\.WIN_RESET_LABEL/);
-    assert.match(panel, /className:`secondary`,type:`button`,disabled:j,onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
-    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!1\)\},children:mpWins\.WIN_RESET_CANCEL/);
+    assert.match(panel, /disabled:j\|\|S,onClick:\(\)=>\{if\(!j&&!S\)x\(!0\)\},children:mpWins\.WIN_RESET_LABEL/);
+    assert.match(panel, /className:`secondary`,type:`button`,disabled:j\|\|S,onClick:d,children:mpWins\.WIN_RESET_CONFIRM/);
+    assert.match(panel, /disabled:j\|\|S,onClick:\(\)=>\{if\(!j&&!S\)x\(!1\)\},children:mpWins\.WIN_RESET_CANCEL/);
     assert.match(panel, /if\(G\.current\)return/);
     assert.match(panel, /mpWins\.resetBlockedWins\(\)/);
     assert.match(panel, /y&&y\.needed===false\?mpWins\.WIN_RESET_UNNEEDED:mpWins\.WIN_RESET_FAILED/);

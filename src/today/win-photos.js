@@ -17,14 +17,14 @@ export const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Placeh
 export const WIN_PHOTO_UNAVAILABLE_LABEL =
   "Saved on this device for today. Placeholder image storage is not available on this device, so this win uses the bundled placeholder.";
 export const WIN_PHOTO_MISSING_LABEL =
-  "This placeholder image is not on this device. Showing the bundled placeholder.";
+  "This image is not on this device. Showing the bundled placeholder.";
 export const WIN_PHOTO_ON_DEVICE_LABEL =
   "Prototype placeholder image stored on this device only. Not real private storage.";
 export const WIN_SAMPLE_ON_DEVICE_LABEL =
   "Prototype sample image stored on this device only. Not real private storage.";
 export const WIN_SAMPLE_PROTOTYPE_LABEL =
   "Prototype sample image, not real private storage.";
-export const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this device.";
+export const WIN_PHOTO_CHECKING_LABEL = "Checking this image on this device.";
 /**
  * A blob newer than this is still being saved by this tab or another tab.
  * Reset and an unreadable-record sweep leave it in place.
@@ -472,30 +472,48 @@ function winPhotoBlobLike(value) {
   return typeof value.text === "function" && typeof value.size === "number" && typeof value.type === "string";
 }
 
-function winPhotoChoiceId(text) {
-  if (text === WIN_PLACEHOLDER_SVG) return WIN_SAMPLE_PLACEHOLDER;
-  const sample = WIN_SAMPLES.find((item) => item.svg === text);
-  return sample ? sample.id : "";
+const winPhotoEncoder = new TextEncoder();
+
+function winPhotoBytesEqual(left, right) {
+  if (!left || !right || left.byteLength !== right.byteLength) return false;
+  for (let index = 0; index < left.byteLength; index += 1) {
+    if (left[index] !== right[index]) return false;
+  }
+  return true;
 }
 
-async function winPhotoSvgText(blob) {
-  if (!winPhotoBlobLike(blob)) return "";
-  if (blob.type !== "image/svg+xml") return "";
-  if (blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return "";
+/**
+ * Exact file bytes only. A decoded string is not enough: a leading BOM is stripped
+ * by text decoding and would otherwise match a bundled sample.
+ */
+async function winPhotoRawBytes(blob) {
+  if (!winPhotoBlobLike(blob)) return null;
+  if (blob.type !== "image/svg+xml") return null;
+  if (typeof blob.size !== "number" || blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return null;
+  if (typeof blob.arrayBuffer !== "function") return null;
   try {
-    const text = await blob.text();
-    return typeof text === "string" ? text : "";
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    if (bytes.byteLength !== blob.size) return null;
+    if (bytes.byteLength >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) return null;
+    return bytes;
   } catch {
-    return "";
+    return null;
   }
+}
+
+function winPhotoChoiceIdFromBytes(bytes) {
+  if (!bytes) return "";
+  if (winPhotoBytesEqual(bytes, winPhotoEncoder.encode(WIN_PLACEHOLDER_SVG))) return WIN_SAMPLE_PLACEHOLDER;
+  const sample = WIN_SAMPLES.find((item) => winPhotoBytesEqual(bytes, winPhotoEncoder.encode(item.svg)));
+  return sample ? sample.id : "";
 }
 
 /**
  * Id of an allowlisted image, or "" when the bytes are not an exact bundled sample
- * or the exact placeholder. Real photos are rejected.
+ * or the exact placeholder. Real photos are rejected. A leading BOM is rejected.
  */
 export async function winPhotoAllowlistId(blob) {
-  return winPhotoChoiceId(await winPhotoSvgText(blob));
+  return winPhotoChoiceIdFromBytes(await winPhotoRawBytes(blob));
 }
 
 /** True for the placeholder or one of the four bundled samples. Same list as put and read. */
@@ -580,6 +598,10 @@ export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}
        * arrives after that, delete again.
        * A change passes previousBlob so the image already stored is put back
        * instead of being deleted. leaveOnTimeout is the restore itself.
+       * Putting that image back after a timeout relies on IndexedDB running
+       * write transactions on the same store in order. The restore transaction
+       * is opened after the timed out one, so it is applied after that write
+       * and a late commit does not replace it.
        */
       if (!leaveOnTimeout) {
         const cleanup = previousBlob
@@ -598,20 +620,32 @@ export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}
   }
 }
 
-export async function readWinPhoto(id) {
-  if (typeof id !== "string" || !id) return null;
+/**
+ * ok: an allowlisted blob.
+ * missing: no row, or a row that is not an allowlisted image.
+ * unavailable: the photo database cannot be opened.
+ * error: the read failed. Callers must not treat that as an empty slot.
+ */
+export async function readWinPhotoRecord(id) {
+  if (typeof id !== "string" || !id) return { status: "missing", blob: null };
   const db = await winPhotoOpenDb();
-  if (!db) return null;
+  if (!db) return { status: "unavailable", blob: null };
   try {
     const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
     const value = await winPhotoRequest(tx.objectStore(WIN_PHOTO_STORE).get(id));
     await winPhotoTxDone(tx);
     const bytes = winPhotoBytes(value);
-    if (!(await isAllowedWinPhotoBlob(bytes))) return null;
-    return bytes;
+    if (!(await isAllowedWinPhotoBlob(bytes))) return { status: "missing", blob: null };
+    return { status: "ok", blob: bytes };
   } catch {
-    return null;
+    return { status: "error", blob: null };
   }
+}
+
+export async function readWinPhoto(id) {
+  const record = await readWinPhotoRecord(id);
+  if (!record || record.status !== "ok") return null;
+  return record.blob;
 }
 
 async function winPhotoEntries(db) {
