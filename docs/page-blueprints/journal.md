@@ -16,7 +16,7 @@ Private notes on this device. Optional “Talk to diary” is a **server** featu
 - Save / edit / delete notes.
 - **Search diary** filters the list as you type.
 - Prefill from hubs (`C(prompt)` then navigate).
-- Daily wins panel above the diary. A win with no recorded time says "Time not recorded" here too. This panel does not run the blocked-save check. The control **Reset wins on this device** is on Win of the day, not on this panel. The photo thumbnail is not on this panel. Another tab's change to a wins key, or a photo message on `mindpal-photos`, refreshes the list without writing.
+- Daily wins panel above the diary. A win with no recorded time says "Time not recorded" here too. This panel does not run the blocked-save check. The control **Reset wins on this device** is on Win of the day, not on this panel. The photo thumbnail is not on this panel. **Past wins** is not on this panel either. That expandable list of other days stays on Win of the day, where a later date is marked Future date and Remove asks before it deletes one win. Another tab's change to a wins key, or a photo message on `mindpal-photos`, refreshes the list without writing.
 
 ## Enter / Send / search
 

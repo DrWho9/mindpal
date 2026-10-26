@@ -199,55 +199,158 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1);
-  function c(){r(mpWins.winsForDate(mpWins.loadWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlocked())}
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
+  function c(){let store=mpWins.loadWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlocked());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
-  function k(){r(mpWins.winsForDate(mpWins.readWinsStore()));if(e===`winOfDay`)h(mpWins.winsSaveBlockedQuiet())}
+  function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlockedQuiet());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   (0,_.useEffect)(()=>mpWins.listenForWinsChanges(window,c,k),[]);
+  (0,_.useEffect)(()=>()=>{
+    let cache=photoCache.current;
+    for(let id of Object.keys(cache)) if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+    photoCache.current={};
+  },[]);
+  // Past thumbnails load only while the list is open. A stored thumbnail is not read again.
+  // A missing thumbnail is read again when the list refreshes or opens.
+  // Object URLs are revoked when that win leaves the store, or when the card unmounts.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
     let cancelled=!1;
-    let urls=[];
+    let rows=n.slice();
+    if(openPast){
+      let days=past&&Array.isArray(past.days)?past.days:[];
+      for(let day of days) if(day&&Array.isArray(day.items)) rows.push(...day.items);
+    }
+    let known=new Set();
+    for(let w of n) if(w&&w.id) known.add(w.id);
+    let allDays=past&&Array.isArray(past.days)?past.days:[];
+    for(let day of allDays) if(day&&Array.isArray(day.items)) for(let w of day.items) if(w&&w.id) known.add(w.id);
     (async()=>{
-      let next={};
-      for(let w of n){
+      let cache=photoCache.current;
+      let changed=!1;
+      for(let id of Object.keys(cache)){
+        if(known.has(id))continue;
+        if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+        delete cache[id];
+        changed=!0;
+      }
+      for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
+        if(cache[w.id]&&cache[w.id].kind===`blob`)continue;
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
-        if(!blob){next[w.id]={kind:`missing`};continue}
+        if(!blob){cache[w.id]={kind:`missing`};changed=!0;continue}
         let url=mpWins.winPhotoObjectUrl(blob);
-        if(cancelled){mpWins.releaseWinPhotoUrl(url);return}
-        if(url)urls.push(url);
-        next[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+        if(cancelled){if(url)mpWins.releaseWinPhotoUrl(url);return}
+        cache[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+        changed=!0;
       }
-      if(!cancelled)E(next);
+      if(!cancelled&&(changed||rows.length))E({...cache});
     })();
-    return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
-  },[n,e]);
+    return()=>{cancelled=!0};
+  },[n,past,e,openPast]);
+  // Focus only after dropBusy clears. A disabled Remove button cannot take focus.
+  (0,_.useEffect)(()=>{
+    if(dropBusy)return;
+    let target=focusAfter.current;
+    if(!target)return;
+    focusAfter.current=null;
+    let node=null;
+    try{node=document.querySelector(target)}catch{node=null}
+    if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
+  },[past,dropBusy,hold]);
+  // Confirm stays only while id, day, and position still name the picked win.
+  (0,_.useEffect)(()=>{
+    if(e!==`winOfDay`||!hold)return;
+    let check=mpWins.pastWinHoldAfterRefresh(past&&past.days,hold);
+    if(check.keep)return;
+    let next=check.focus||{kind:`summary`};
+    focusAfter.current=next.kind===`win`?`[data-mp-past-focus="${next.index}"]`:`#mp-past-summary`;
+    setHold(null);
+  },[past,hold,e]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
+  // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
     if(F.current)return;
+    let token=saveSeq.current+1;
+    saveSeq.current=token;
     F.current=!0;
     T(!0);
     try{
-      let u=e===`winOfDay`&&p?await mpWins.addWinPhoto(i):mpWins.addWin(i);
-      if(!u.item){s(`Write a few words first — a cup of tea counts.`);return}
-      if(e===`winOfDay`){let q=mpWins.winsSaveBlocked();h(q);if(!q)x(!1)}
-      if(!u.saved){s(mpWins.WIN_NOT_SAVED_LABEL);return}
-      a(``),s(u.photoError?mpWins.WIN_PHOTO_NOT_SAVED_LABEL:u.photoFallback?mpWins.WIN_PHOTO_UNAVAILABLE_LABEL:mpWins.WIN_SAVED_LABEL),r(u.items);
+      let u=await mpWins.watchSave((signal,attempt)=>e===`winOfDay`&&p?mpWins.addWinPhoto(i,void 0,void 0,void 0,void 0,{signal,attempt}):mpWins.addWin(i),mpWins.winSaveTimeoutLimit());
+      if(saveSeq.current!==token)return;
+      let label=mpWins.winSaveStatusLabel(u,e===`winOfDay`&&p);
+      if(!u||!u.item){s(u&&(u.timedOut||u.abandoned||u.failed)?label:`Write a few words first — a cup of tea counts.`);return}
+      if(e===`winOfDay`){let blocked=mpWins.winsSaveBlocked();h(blocked);if(!blocked)x(!1)}
+      if(!u.saved){s(label);return}
+      a(``),s(label),r(u.items);
+      if(e===`winOfDay`)setPast(mpWins.pastWinsPage(u.store||mpWins.readWinsStore(),new Date(),shown.current));
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
-    }catch{s(mpWins.WIN_NOT_SAVED_LABEL)}
-    finally{F.current=!1;T(!1)}
+    }catch{if(saveSeq.current===token)s(mpWins.WIN_NOT_SAVED_LABEL)}
+    finally{if(saveSeq.current===token){F.current=!1;T(!1)}}
   }
+  // G blocks a second reset while cleanup is still running. j disables Reset and Confirm.
   async function d(){
-    let y=mpWins.resetBlockedWins();
-    x(!1);
-    if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
-    let photos=null;
-    try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
-    h(!1),s(mpWins.winResetDoneLabel(photos)),r(mpWins.winsForDate(mpWins.loadWinsStore()));
-    try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    if(G.current)return;
+    G.current=!0;
+    q(!0);
+    try{
+      let y=mpWins.resetBlockedWins();
+      if(!y||!y.cleared){s(y&&y.needed===false?mpWins.WIN_RESET_UNNEEDED:mpWins.WIN_RESET_FAILED),h(mpWins.winsSaveBlocked());return}
+      let photos=null;
+      try{photos=y.photoCleanup?await y.photoCleanup:{failed:!0}}catch{photos={failed:!0}}
+      h(!1),s(mpWins.winResetDoneLabel(photos));
+      let store=mpWins.loadWinsStore();
+      r(mpWins.winsForDate(store));
+      setPast(mpWins.pastWinsPage(store,new Date(),shown.current));
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    }finally{G.current=!1;q(!1);x(!1)}
   }
+  function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
+  // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
+  async function drop(id,key,pos,index){
+    if(dropGuard.current)return;
+    if(!hold||hold.id!==id||hold.key!==key||hold.pos!==pos)return;
+    let check=mpWins.pastWinHoldAfterRefresh(past.days,hold);
+    if(!check.keep)return;
+    dropGuard.current=!0;
+    setDropBusy(!0);
+    try{
+      let when=mpWins.civilDateFromKey(key)||new Date();
+      let u=mpWins.removeWin(id,void 0,when);
+      if(!u.saved){
+        let kept=mpWins.readWinsStore();
+        r(mpWins.winsForDate(kept));
+        setPast(mpWins.pastWinsPage(kept,new Date(),shown.current));
+        s(mpWins.WIN_NOT_REMOVED_LABEL);
+        focusAfter.current=`#mp-win-status`;
+        return;
+      }
+      let nextFocus=mpWins.pastWinFocusAfter(past.days,id,index);
+      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${nextFocus.index}"]`:`#mp-past-summary`;
+      let cache=photoCache.current;
+      if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+      if(cache[id])delete cache[id];
+      E({...cache});
+      r(mpWins.winsForDate(u.store));
+      setPast(mpWins.pastWinsPage(u.store,new Date(),shown.current));
+      setHold(null);
+      try{if(u.photoCleanup)await u.photoCleanup}catch{}
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+    }finally{dropGuard.current=!1;setDropBusy(!1)}
+  }
+  function photoBlock(w){
+    if(e!==`winOfDay`||!w)return null;
+    if(w.photo!==mpWins.WIN_PHOTO_REF&&w.photo!==mpWins.WIN_PLACEHOLDER_PHOTO)return null;
+    let view=P[w.id];
+    let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
+    let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
+    return (0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
+      (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
+      (0,A.jsx)(`figcaption`,{children:caption})
+    ]});
+  }
+  function winWhen(w){return w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:mpWins.pastWinTimeLabel(w.at)})}
+  let focusAt=0;
   if(e===`hub`){
     return(0,A.jsxs)(`section`,{className:`mp-wins-panel mp-wins-hub`,"aria-label":`Daily wins`,children:[
       (0,A.jsx)(`p`,{className:`mp-wins-nudge`,children:`Through the day, add your daily wins — small ones count — so you can read them together tonight.`}),
@@ -272,19 +375,41 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       (0,A.jsx)(`h2`,{children:`A win from today`}),
       (0,A.jsx)(`p`,{children:`A sentence is enough. You’ll see these again in Before you sleep.`})
     ]}),
-    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>{
-      let view=P[w.id];
-      let show=e===`winOfDay`&&(w.photo===mpWins.WIN_PHOTO_REF||w.photo===mpWins.WIN_PLACEHOLDER_PHOTO);
-      let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
-      let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
-      return (0,A.jsxs)(`li`,{children:[
-      show?(0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
-        (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
-        (0,A.jsx)(`figcaption`,{children:caption})
-      ]}):null,
+    n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>(0,A.jsxs)(`li`,{children:[
+      photoBlock(w),
       (0,A.jsx)(`span`,{children:w.text}),
-      w.at===mpWins.WIN_UNKNOWN_TIME?(0,A.jsx)(`time`,{children:mpWins.WIN_UNKNOWN_TIME_LABEL}):(0,A.jsx)(`time`,{dateTime:w.at,children:new Date(w.at).toLocaleTimeString(undefined,{hour:`numeric`,minute:`2-digit`})})
-    ]},w.id);})}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
+      winWhen(w)
+    ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
+    e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
+      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:past.days.length>0&&past.days.every(day=>day.future)&&!past.hasMore?mpWins.PAST_WINS_LATER:mpWins.PAST_WINS_TITLE}),
+      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>(0,A.jsxs)(A.Fragment,{children:[
+        day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)?(0,A.jsx)(`h3`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
+        !day.future&&past.days.some(item=>item.future)&&!past.days.slice(0,dayIndex).some(item=>item&&!item.future)?(0,A.jsx)(`h3`,{className:`mp-past-earlier`,children:mpWins.PAST_WINS_EARLIER}):null,
+        (0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
+          (0,A.jsxs)(`h3`,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
+          (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map((w,pos)=>{
+            let index=focusAt;
+            focusAt+=1;
+            let held=hold&&hold.id===w.id&&hold.key===day.key&&hold.pos===pos;
+            let timeLabel=mpWins.pastWinTimeLabel(w.at);
+            let removeName=mpWins.pastWinRemoveLabel(w.text,day.label,timeLabel);
+            let confirmName=mpWins.pastWinConfirmLabel(w.text,day.label,timeLabel);
+            let keepName=mpWins.pastWinKeepLabel(w.text,day.label,timeLabel);
+            let aim=`[data-mp-past-focus="${index}"]`;
+            return (0,A.jsxs)(`li`,{children:[
+              photoBlock(w),
+              (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
+              winWhen(w),
+              held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
+                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,pos,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+                (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
+              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,pos})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+            ]},w.id);
+          })})
+        ]})
+      ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
+      past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
+    ]}):null,
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
@@ -301,11 +426,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
       (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
       m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!1),children:mpWins.WIN_RESET_CANCEL})
-      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>x(!0),children:mpWins.WIN_RESET_LABEL})
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!1)},children:mpWins.WIN_RESET_CANCEL})
+      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!0)},children:mpWins.WIN_RESET_LABEL})
     ]}):null,
-    o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
+    o?(0,A.jsx)(`p`,{id:`mp-win-status`,role:`status`,tabIndex:-1,children:o}):null
   ]});
 }
 function mpMaddyTeaser({onOpen:e}){
