@@ -128,7 +128,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
     });
 
-    await past.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
+    await past.getByText("Synthetic win yesterday", { exact: true }).waitFor({ state: "visible" });
     await page.waitForFunction(
       (label) => [...document.querySelectorAll(".mp-past-wins figcaption")].some((node) => node.textContent === label),
       WIN_PHOTO_ON_DEVICE_LABEL,
@@ -145,11 +145,11 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     await past.getByText(WIN_PHOTO_PROTOTYPE_LABEL).first().waitFor({ state: "visible" });
     await past.getByText(WIN_PHOTO_MISSING_LABEL).waitFor({ state: "visible" });
     await past.getByText(WIN_UNKNOWN_TIME_LABEL, { exact: true }).waitFor({ state: "visible" });
-    const yesterdayFigure = past.locator("li", { hasText: "Synthetic win yesterday" }).locator("img");
+    const yesterdayFigure = past.locator("li", { hasText: "Synthetic win yesterday" }).locator("figure.mp-win-photo img");
     assert.match(await yesterdayFigure.getAttribute("src"), /^blob:/);
 
     await past.getByRole("button", { name: PAST_WINS_SHOW_MORE }).click();
-    await past.getByText("Synthetic win day 8").waitFor({ state: "visible" });
+    await past.getByText("Synthetic win day 8", { exact: true }).waitFor({ state: "visible" });
     assert.equal(await past.locator("[data-mp-win-day]").count(), 8);
     assert.equal(await past.getByRole("button", { name: PAST_WINS_SHOW_MORE }).count(), 0);
     await page.waitForFunction(
@@ -165,7 +165,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
 
     const otherPast = other.locator(".mp-win-of-day .mp-past-wins");
     await otherPast.locator("summary").click();
-    await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
+    await otherPast.getByText("Synthetic win yesterday", { exact: true }).waitFor({ state: "visible" });
 
     const yesterdayId = await page.evaluate(() => globalThis.__yesterdayId);
     const names = await page.evaluate(() => {
@@ -203,13 +203,13 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     assert.equal(await yesterdayRow.count(), 1);
     await yesterdayRow.getByRole("button", { name: yesterdayName, exact: true }).click();
     await yesterdayRow.getByRole("button", { name: names.yesterday.confirm, exact: true }).click();
-    await past.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });
+    await past.getByText("Synthetic win yesterday", { exact: true }).waitFor({ state: "hidden" });
     await page.waitForFunction(
       (label) => document.activeElement && document.activeElement.getAttribute("aria-label") === label,
       names.bundled.remove,
     );
-    await past.getByText("Bundled placeholder win").waitFor({ state: "visible" });
-    await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });
+    await past.getByText("Bundled placeholder win", { exact: true }).waitFor({ state: "visible" });
+    await otherPast.getByText("Synthetic win yesterday", { exact: true }).waitFor({ state: "hidden" });
     const left = await page.evaluate(async (id) => {
       const db = await new Promise((resolve, reject) => {
         const request = indexedDB.open("mindpal-photos", 1);
@@ -248,7 +248,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
     });
     if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
-    await past.getByText("Picked win").waitFor({ state: "visible" });
+    await past.getByText("Picked win", { exact: true }).waitFor({ state: "visible" });
     const names = await page.evaluate(() => {
       const day = (offset) => new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - offset, 9, 15, 0);
       const keyOf = (when) => `${when.getFullYear()}-${String(when.getMonth() + 1).padStart(2, "0")}-${String(when.getDate()).padStart(2, "0")}`;
@@ -270,12 +270,12 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       day.setHours(12, 0, 0, 0);
       mpWins.removeWin("win-slide", undefined, day);
     });
-    await past.getByText("Slide away").waitFor({ state: "hidden" });
+    await past.getByText("Slide away", { exact: true }).waitFor({ state: "hidden" });
     await picked.getByRole("button", { name: names.picked, exact: true }).waitFor({ state: "visible" });
     assert.equal(await decoy.getByRole("button", { name: names.decoy, exact: true }).count(), 0);
     await picked.getByRole("button", { name: names.picked, exact: true }).click();
-    await past.getByText("Picked win").waitFor({ state: "hidden" });
-    await past.getByText("Decoy win").waitFor({ state: "visible" });
+    await past.getByText("Picked win", { exact: true }).waitFor({ state: "hidden" });
+    await past.getByText("Decoy win", { exact: true }).waitFor({ state: "visible" });
   });
 
   it("keeps confirm on the picked win when the day rolls forward", { skip: skipCard }, async () => {
@@ -290,7 +290,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
     });
     if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
-    await past.getByText("Picked win").waitFor({ state: "visible" });
+    await past.getByText("Picked win", { exact: true }).waitFor({ state: "visible" });
     const confirm = await page.evaluate(() => {
       const today = new Date();
       const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1, 9, 15, 0);
@@ -323,8 +323,8 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       assert.equal(await moved.getByRole("button", { name: confirm, exact: true }).count(), 0);
       await picked.getByRole("button", { name: confirm, exact: true }).waitFor({ state: "visible" });
       await picked.getByRole("button", { name: confirm, exact: true }).click();
-      await past.getByText("Picked win").waitFor({ state: "hidden" });
-      await past.getByText("Was today").waitFor({ state: "visible" });
+      await past.getByText("Picked win", { exact: true }).waitFor({ state: "hidden" });
+      await past.getByText("Was today", { exact: true }).waitFor({ state: "visible" });
     } finally {
       await page.evaluate(() => {
         if (globalThis.__RealDate) globalThis.Date = globalThis.__RealDate;
@@ -344,7 +344,7 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
       window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
     });
     if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
-    await past.getByText("Stay listed").waitFor({ state: "visible" });
+    await past.getByText("Stay listed", { exact: true }).waitFor({ state: "visible" });
     const confirm = await page.evaluate(() => {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
@@ -368,10 +368,10 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
         };
       });
       await row.getByRole("button", { name: confirm, exact: true }).click();
-      await page.waitForFunction(() => document.activeElement && document.activeElement.id === "mp-win-status");
-      assert.equal((await page.locator("#mp-win-status").innerText()).trim(), WIN_NOT_REMOVED_LABEL);
+      await page.waitForFunction(() => document.activeElement && document.activeElement.id === "mp-win-status-winOfDay");
+      assert.equal((await page.locator("#mp-win-status-winOfDay").innerText()).trim(), WIN_NOT_REMOVED_LABEL);
       assert.notEqual(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), confirm);
-      await past.getByText("Stay listed").waitFor({ state: "visible" });
+      await past.getByText("Stay listed", { exact: true }).waitFor({ state: "visible" });
     } finally {
       await page.evaluate(() => {
         if (typeof globalThis.__restoreWinSet === "function") globalThis.__restoreWinSet();
