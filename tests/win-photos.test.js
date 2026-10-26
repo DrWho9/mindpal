@@ -8,6 +8,7 @@ import {
   WIN_PHOTO_DB,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_SAMPLE_NOT_SAVED_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
   WIN_PHOTO_FUTURE_SKEW_MS,
   WIN_PHOTO_PENDING_MS,
@@ -112,6 +113,7 @@ describe("win photo blobs", () => {
     assert.equal(WIN_PHOTO_STORE, "winPhotos");
     assert.equal(WIN_PHOTO_REF, "idb");
     assert.match(WIN_PHOTO_NOT_SAVED_LABEL, /Placeholder image not saved/);
+    assert.match(WIN_SAMPLE_NOT_SAVED_LABEL, /Sample image not saved/);
     assert.match(WIN_PHOTO_UNAVAILABLE_LABEL, /not available on this device/);
     assert.match(WIN_PHOTO_MISSING_LABEL, /not on this device/);
     assert.match(WIN_PHOTO_MISSING_LABEL, /bundled placeholder/);
@@ -121,7 +123,7 @@ describe("win photo blobs", () => {
     assert.equal(WIN_PHOTO_FUTURE_SKEW_MS, 2000);
     assert.equal(WIN_PHOTO_REQUEST_MS, 10000);
     assert.doesNotMatch(
-      `${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL}`,
+      `${WIN_PHOTO_NOT_SAVED_LABEL} ${WIN_SAMPLE_NOT_SAVED_LABEL} ${WIN_PHOTO_UNAVAILABLE_LABEL} ${WIN_PHOTO_MISSING_LABEL} ${WIN_PHOTO_ON_DEVICE_LABEL}`,
       /—|–/,
     );
     const blob = placeholderPhotoBlob();

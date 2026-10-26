@@ -84,7 +84,7 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
 
   it("stores the placeholder blob and the other tab reads it without a reload", { skip: skipCard }, async () => {
     const winCard = page.locator(".mp-win-of-day");
-    await winCard.locator("#mp-win-photo-winOfDay").check();
+    await winCard.locator(".mp-win-sample-add").getByRole("radio", { name: "Placeholder image" }).check();
     await winCard.locator("#mp-win-winOfDay").fill("Saw the placeholder");
     await winCard.getByRole("button", { name: "Save this win" }).click();
     await winCard.locator("p[role='status']").waitFor({ state: "visible" });
@@ -162,7 +162,7 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
     });
     try {
       const winCard = page.locator(".mp-win-of-day");
-      await winCard.locator("#mp-win-photo-winOfDay").check();
+      await winCard.locator(".mp-win-sample-add").getByRole("radio", { name: "Placeholder image" }).check();
       await winCard.locator("#mp-win-winOfDay").fill("One tap only");
       await page.evaluate(() => {
         const button = document.querySelector(".mp-win-of-day .button-row button.primary");
@@ -207,7 +207,7 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
       if (mpWins.resetWinPhotoDatabase) await mpWins.resetWinPhotoDatabase();
     });
     const winCard = page.locator(".mp-win-of-day");
-    await winCard.locator("#mp-win-photo-winOfDay").check();
+    await winCard.locator(".mp-win-sample-add").getByRole("radio", { name: "Placeholder image" }).check();
     await winCard.locator("#mp-win-winOfDay").fill("No photo database");
     await winCard.getByRole("button", { name: "Save this win" }).click();
     await page.waitForFunction(
@@ -233,7 +233,7 @@ describe("win photo card in Chrome", { timeout: 180000 }, () => {
       };
     });
     const winCard = page.locator(".mp-win-of-day");
-    await winCard.locator("#mp-win-photo-winOfDay").check();
+    await winCard.locator(".mp-win-sample-add").getByRole("radio", { name: "Placeholder image" }).check();
     await winCard.locator("#mp-win-winOfDay").fill("Text without a photo");
     await winCard.getByRole("button", { name: "Save this win" }).click();
     await page.waitForFunction(

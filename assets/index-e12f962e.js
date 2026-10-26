@@ -12725,9 +12725,9 @@ function bandForStep(stepId) {
 }
 
 /**
- * Prototype placeholder images on this device.
+ * Prototype sample images on this device.
  * Database mindpal-photos, object store winPhotos, key is the win id.
- * The stored value is the bundled fake placeholder image plus the time it was stored.
+ * The stored value is one bundled sample, or the bundled placeholder, plus the time it was stored.
  * It is not a user photo and not real private storage. Nothing is uploaded.
  * A plain load of the wins record does not open this database and does not delete blobs.
  */
@@ -12740,13 +12740,18 @@ const WIN_PHOTO_REF = "idb";
 const WIN_PHOTO_CHANNEL = "mindpal-photos";
 
 const WIN_PHOTO_NOT_SAVED_LABEL = "Saved on this device for today. Placeholder image not saved.";
+const WIN_SAMPLE_NOT_SAVED_LABEL = "Saved on this device for today. Sample image not saved.";
 const WIN_PHOTO_UNAVAILABLE_LABEL =
   "Saved on this device for today. Placeholder image storage is not available on this device, so this win uses the bundled placeholder.";
 const WIN_PHOTO_MISSING_LABEL =
-  "This placeholder image is not on this device. Showing the bundled placeholder.";
+  "This image is not on this device. Showing the bundled placeholder.";
 const WIN_PHOTO_ON_DEVICE_LABEL =
   "Prototype placeholder image stored on this device only. Not real private storage.";
-const WIN_PHOTO_CHECKING_LABEL = "Checking this placeholder image on this device.";
+const WIN_SAMPLE_ON_DEVICE_LABEL =
+  "Prototype sample image stored on this device only. Not real private storage.";
+const WIN_SAMPLE_PROTOTYPE_LABEL =
+  "Prototype sample image, not real private storage.";
+const WIN_PHOTO_CHECKING_LABEL = "Checking this image on this device.";
 /**
  * A blob newer than this is still being saved by this tab or another tab.
  * Reset and an unreadable-record sweep leave it in place.
@@ -12772,7 +12777,7 @@ function winPhotoRequestLimit() {
   return winPhotoRequestMs;
 }
 
-/** Same bytes as win-placeholder.svg. The only image this prototype stores. */
+/** Same bytes as win-placeholder.svg. One of the images this prototype stores. */
 const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Prototype placeholder, not a private photo">
   <title>Prototype placeholder</title>
   <rect width="160" height="160" rx="18" fill="#e7f0e4"/>
@@ -12782,6 +12787,91 @@ const WIN_PLACEHOLDER_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160"
   <text x="80" y="148" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#2f3b2c">PLACEHOLDER</text>
 </svg>
 `;
+
+/** Same bytes as win-sample-1.svg. Green squares. No people. */
+const WIN_SAMPLE_1_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, green squares">
+  <title>Sample image 1</title>
+  <rect width="160" height="160" rx="18" fill="#e7f0e4"/>
+  <rect x="28" y="32" width="46" height="46" rx="6" fill="#2f5a3d"/>
+  <rect x="86" y="32" width="46" height="46" rx="6" fill="#8aa583"/>
+  <rect x="28" y="88" width="46" height="28" rx="6" fill="#8aa583"/>
+  <rect x="86" y="88" width="46" height="28" rx="6" fill="#2f5a3d"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#2f3b2c">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-2.svg. Blue circles. No people. */
+const WIN_SAMPLE_2_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, blue circles">
+  <title>Sample image 2</title>
+  <rect width="160" height="160" rx="18" fill="#e7eef6"/>
+  <circle cx="54" cy="62" r="24" fill="#2a4d6e"/>
+  <circle cx="108" cy="58" r="16" fill="#7ea0c4"/>
+  <circle cx="86" cy="102" r="18" fill="#3d6f99"/>
+  <text x="80" y="146" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1e3348">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-3.svg. Amber triangles. No people. */
+const WIN_SAMPLE_3_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, amber triangles">
+  <title>Sample image 3</title>
+  <rect width="160" height="160" rx="18" fill="#f8f1e4"/>
+  <polygon points="40,100 70,44 100,100" fill="#c47b2b"/>
+  <polygon points="78,108 108,62 138,108" fill="#e2b56a"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#5c5346">Sample</text>
+</svg>
+`;
+
+/** Same bytes as win-sample-4.svg. Teal bars. No people. */
+const WIN_SAMPLE_4_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, teal bars">
+  <title>Sample image 4</title>
+  <rect width="160" height="160" rx="18" fill="#e5f3f1"/>
+  <rect x="28" y="40" width="104" height="16" rx="6" fill="#1f6f6a"/>
+  <rect x="28" y="68" width="76" height="16" rx="6" fill="#3d9a94"/>
+  <rect x="28" y="96" width="52" height="16" rx="6" fill="#8ec9c4"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#1e3348">Sample</text>
+</svg>
+`;
+
+const WIN_SAMPLE_PLACEHOLDER = "placeholder";
+const WIN_SAMPLE_NONE = "none";
+
+const WIN_SAMPLES = [
+  {
+    id: "sample-1",
+    label: "Sample image 1: green squares",
+    file: "win-sample-1.svg",
+    path: "/mindpal/win-sample-1.svg",
+    svg: WIN_SAMPLE_1_SVG,
+  },
+  {
+    id: "sample-2",
+    label: "Sample image 2: blue circles",
+    file: "win-sample-2.svg",
+    path: "/mindpal/win-sample-2.svg",
+    svg: WIN_SAMPLE_2_SVG,
+  },
+  {
+    id: "sample-3",
+    label: "Sample image 3: amber triangles",
+    file: "win-sample-3.svg",
+    path: "/mindpal/win-sample-3.svg",
+    svg: WIN_SAMPLE_3_SVG,
+  },
+  {
+    id: "sample-4",
+    label: "Sample image 4: teal bars",
+    file: "win-sample-4.svg",
+    path: "/mindpal/win-sample-4.svg",
+    svg: WIN_SAMPLE_4_SVG,
+  },
+];
+
+/** Radios for a new win and for a win already on the card. Placeholder stays first. */
+const WIN_SAMPLE_CHOICES = [
+  { id: WIN_SAMPLE_PLACEHOLDER, label: "Placeholder image", thumb: "/mindpal/win-placeholder.svg" },
+  ...WIN_SAMPLES.map((item) => ({ id: item.id, label: item.label, thumb: item.path })),
+  { id: WIN_SAMPLE_NONE, label: "No image", thumb: "" },
+];
 
 const WIN_PHOTO_MAX_BYTES = 4096;
 
@@ -13080,22 +13170,92 @@ function placeholderPhotoBlob() {
   return new Blob([WIN_PLACEHOLDER_SVG], { type: "image/svg+xml" });
 }
 
+/** Blob for a bundled sample or the placeholder. Null when the id is not on the list. */
+function winSampleBlob(choice) {
+  if (choice === WIN_SAMPLE_PLACEHOLDER) return placeholderPhotoBlob();
+  const sample = WIN_SAMPLES.find((item) => item.id === choice);
+  if (!sample) return null;
+  return new Blob([sample.svg], { type: "image/svg+xml" });
+}
+
+/** Bundled path for a choice. Empty when the id is not on the list. */
+function winSamplePath(choice) {
+  if (choice === WIN_SAMPLE_PLACEHOLDER) return "/mindpal/win-placeholder.svg";
+  const sample = WIN_SAMPLES.find((item) => item.id === choice);
+  return sample ? sample.path : "";
+}
+
+/** Choice id for a stored path. Empty for a missing path, the idb reference, or anything else. */
+function winPhotoChoiceForPath(photo) {
+  if (typeof photo !== "string" || !photo) return "";
+  if (photo === "/mindpal/win-placeholder.svg") return WIN_SAMPLE_PLACEHOLDER;
+  const sample = WIN_SAMPLES.find((item) => item.path === photo);
+  return sample ? sample.id : "";
+}
+
 function winPhotoBlobLike(value) {
   if (!value || typeof value !== "object") return false;
   if (typeof Blob === "function" && value instanceof Blob) return true;
   return typeof value.text === "function" && typeof value.size === "number" && typeof value.type === "string";
 }
 
-/** True only for the synthetic placeholder image. Real photos are rejected. */
-async function isPlaceholderPhotoBlob(blob) {
-  if (!winPhotoBlobLike(blob)) return false;
-  if (blob.type !== "image/svg+xml") return false;
-  if (blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return false;
-  try {
-    return (await blob.text()) === WIN_PLACEHOLDER_SVG;
-  } catch {
-    return false;
+const winPhotoEncoder = new TextEncoder();
+
+function winPhotoBytesEqual(left, right) {
+  if (!left || !right || left.byteLength !== right.byteLength) return false;
+  for (let index = 0; index < left.byteLength; index += 1) {
+    if (left[index] !== right[index]) return false;
   }
+  return true;
+}
+
+/**
+ * Exact file bytes only. A decoded string is not enough: a leading BOM is stripped
+ * by text decoding and would otherwise match a bundled sample.
+ */
+async function winPhotoRawBytes(blob) {
+  if (!winPhotoBlobLike(blob)) return null;
+  if (blob.type !== "image/svg+xml") return null;
+  if (typeof blob.size !== "number" || blob.size <= 0 || blob.size > WIN_PHOTO_MAX_BYTES) return null;
+  if (typeof blob.arrayBuffer !== "function") return null;
+  try {
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    if (bytes.byteLength !== blob.size) return null;
+    if (bytes.byteLength >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) return null;
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
+function winPhotoChoiceIdFromBytes(bytes) {
+  if (!bytes) return "";
+  if (winPhotoBytesEqual(bytes, winPhotoEncoder.encode(WIN_PLACEHOLDER_SVG))) return WIN_SAMPLE_PLACEHOLDER;
+  const sample = WIN_SAMPLES.find((item) => winPhotoBytesEqual(bytes, winPhotoEncoder.encode(item.svg)));
+  return sample ? sample.id : "";
+}
+
+/**
+ * Id of an allowlisted image, or "" when the bytes are not an exact bundled sample
+ * or the exact placeholder. Real photos are rejected. A leading BOM is rejected.
+ */
+async function winPhotoAllowlistId(blob) {
+  return winPhotoChoiceIdFromBytes(await winPhotoRawBytes(blob));
+}
+
+/** True for the placeholder or one of the four bundled samples. Same list as put and read. */
+async function isAllowedWinPhotoBlob(blob) {
+  return (await winPhotoAllowlistId(blob)) !== "";
+}
+
+/** Choice id for a blob already known to be an image. Empty when it is not allowlisted. */
+async function winPhotoChoiceFromBlob(blob) {
+  return winPhotoAllowlistId(blob);
+}
+
+/** True only for the synthetic placeholder image. Real photos and samples are rejected. */
+async function isPlaceholderPhotoBlob(blob) {
+  return (await winPhotoAllowlistId(blob)) === WIN_SAMPLE_PLACEHOLDER;
 }
 
 function winPhotoStoredAt(createdAt) {
@@ -13127,13 +13287,19 @@ function winPhotoPending(value, nowMs) {
  * createdAt defaults to now. Tests pass an older time when a sweep should be allowed to delete it.
  * reason "unavailable" means IndexedDB cannot be opened.
  * reason "put" means the write failed, including quota.
- * reason "blob" means the bytes were not the placeholder image.
+ * reason "blob" means the bytes were not an allowlisted sample or the placeholder.
+ * options.previousBlob, when set, is put back if this write times out, so a change
+ * does not delete the image that was already there.
+ * options.leaveOnTimeout skips that cleanup. A restore uses it so a second timeout
+ * does not delete the image it just tried to put back.
  */
 async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}) {
   const signal = options && typeof options === "object" ? options.signal : undefined;
+  const previousBlob = options && options.previousBlob;
+  const leaveOnTimeout = Boolean(options && options.leaveOnTimeout);
   if (typeof id !== "string" || !id.trim()) return { ok: false, reason: "id" };
   if (signal && signal.aborted) return { ok: false, reason: "timeout" };
-  if (!(await isPlaceholderPhotoBlob(blob))) return { ok: false, reason: "blob" };
+  if (!(await isAllowedWinPhotoBlob(blob))) return { ok: false, reason: "blob" };
   if (signal && signal.aborted) return { ok: false, reason: "timeout" };
   const db = await winPhotoOpenDb();
   if (!db) return { ok: false, reason: "unavailable" };
@@ -13157,32 +13323,56 @@ async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}) {
        * Start the delete and do not wait. A hung delete must not use up the
        * save grace, or the win text would be dropped. If a late complete
        * arrives after that, delete again.
+       * A change passes previousBlob so the image already stored is put back
+       * instead of being deleted. leaveOnTimeout is the restore itself.
+       * Putting that image back after a timeout relies on IndexedDB running
+       * write transactions on the same store in order. The restore transaction
+       * is opened after the timed out one, so it is applied after that write
+       * and a late commit does not replace it.
        */
-      const cleanup = () => {
-        deleteWinPhotos([id], { notify: false }).catch(() => {});
-      };
-      if (tx) tx.oncomplete = cleanup;
-      cleanup();
+      if (!leaveOnTimeout) {
+        const cleanup = previousBlob
+          ? () => {
+            putWinPhoto(id, previousBlob, Date.now(), { leaveOnTimeout: true }).catch(() => {});
+          }
+          : () => {
+            deleteWinPhotos([id], { notify: false }).catch(() => {});
+          };
+        if (tx) tx.oncomplete = cleanup;
+        cleanup();
+      }
       return { ok: false, reason: "timeout" };
     }
     return { ok: false, reason: "put" };
   }
 }
 
-async function readWinPhoto(id) {
-  if (typeof id !== "string" || !id) return null;
+/**
+ * ok: an allowlisted blob.
+ * missing: no row, or a row that is not an allowlisted image.
+ * unavailable: the photo database cannot be opened.
+ * error: the read failed. Callers must not treat that as an empty slot.
+ */
+async function readWinPhotoRecord(id) {
+  if (typeof id !== "string" || !id) return { status: "missing", blob: null };
   const db = await winPhotoOpenDb();
-  if (!db) return null;
+  if (!db) return { status: "unavailable", blob: null };
   try {
     const tx = db.transaction(WIN_PHOTO_STORE, "readonly");
     const value = await winPhotoRequest(tx.objectStore(WIN_PHOTO_STORE).get(id));
     await winPhotoTxDone(tx);
     const bytes = winPhotoBytes(value);
-    if (!(await isPlaceholderPhotoBlob(bytes))) return null;
-    return bytes;
+    if (!(await isAllowedWinPhotoBlob(bytes))) return { status: "missing", blob: null };
+    return { status: "ok", blob: bytes };
   } catch {
-    return null;
+    return { status: "error", blob: null };
   }
+}
+
+async function readWinPhoto(id) {
+  const record = await readWinPhotoRecord(id);
+  if (!record || record.status !== "ok") return null;
+  return record.blob;
 }
 
 async function winPhotoEntries(db) {
@@ -13356,6 +13546,21 @@ const WIN_SAVED_LABEL = "Saved on this device for today.";
 const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 /** Removal failed. The win is still in the stored record. */
 const WIN_NOT_REMOVED_LABEL = "Not removed. This win is still saved on this device.";
+/** A sample change did not stick. The words on the win stay as they were. */
+const WIN_IMAGE_NOT_CHANGED_LABEL = "Image not changed. The win text is still saved on this device.";
+/** The win was removed before the sample change could be stored. */
+const WIN_IMAGE_WIN_GONE_LABEL = "Image not changed. That win is no longer on this device.";
+/** The sample write finished, but the blob was not there when the record was about to point at it. */
+const WIN_IMAGE_NOT_ON_DEVICE_LABEL =
+  "Image not changed. That sample image is not on this device. The win text is still saved on this device.";
+/** The confirming read failed and the previous image could not be put back. */
+const WIN_IMAGE_MAY_HAVE_CHANGED_LABEL =
+  "The sample image on this device may have changed. The win text is still saved on this device.";
+const WIN_IMAGE_UPDATED_LABEL = "Sample image updated on this device.";
+const WIN_IMAGE_REMOVED_LABEL = "Sample image removed on this device.";
+/** IndexedDB could not store a chosen sample, so the record keeps that sample's bundled path. */
+const WIN_SAMPLE_UNAVAILABLE_LABEL =
+  "Saved on this device for today. Sample image storage is not available on this device, so this win uses the bundled sample.";
 /** Shown on Win of the day only while a save cannot be stored. */
 const WIN_RESET_LABEL = "Reset wins on this device";
 const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
@@ -13554,6 +13759,37 @@ function pastWinHoldAfterRefresh(days, hold) {
   const pos = newer.length ? pastDayItems(neighbor).length - 1 : 0;
   return { keep: false, focus: pastFocusAt(list, neighbor.key, pos) };
 }
+
+/**
+ * Heading level for one day in Past wins.
+ * When Later dates or Earlier days is on the page, that group is an h3 and the day is an h4.
+ * When no group is shown, the day stays an h3 under the card title.
+ */
+function pastWinDayHeading(days) {
+  const list = Array.isArray(days) ? days : [];
+  return list.some((day) => day && day.future) ? "h4" : "h3";
+}
+
+/**
+ * True when focus is inside the confirm row or Past wins.
+ * A refresh that clears Confirm uses this so it does not pull focus back from the win input.
+ */
+function pastWinFocusMove(active) {
+  if (!active || typeof active.closest !== "function") return false;
+  try {
+    if (active.closest(".mp-past-remove-row")) return true;
+    if (active.closest(".mp-past-wins")) return true;
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+/** Status paragraph id. One per wins panel, so Today does not repeat the same id. */
+function winStatusId(variant) {
+  const name = typeof variant === "string" && /^[A-Za-z0-9]+$/.test(variant) ? variant : "win";
+  return `mp-win-status-${name}`;
+}
 /**
  * How long Save waits for a win write. A hung photo database aborts at this point.
  * The words can still be stored. A result that arrives after the watch gives up is ignored.
@@ -13595,6 +13831,7 @@ function emptyWinsDay(date = new Date()) {
  */
 function allowedPhoto(raw) {
   if (raw === WIN_PLACEHOLDER_PHOTO || raw === WIN_PHOTO_REF) return raw;
+  if (typeof raw === "string" && WIN_SAMPLES.some((item) => item.path === raw)) return raw;
   return undefined;
 }
 
@@ -14314,20 +14551,30 @@ function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DAYS) {
 /**
  * The line Save shows for a finished watch.
  * An abandoned watch that did not store the win says it was not saved.
- * A stored win whose placeholder image failed says the photo was not saved.
+ * A stored win whose image failed says that image was not saved.
  * An empty string means the words were blank, so the card asks for a few words.
+ * When storage is unavailable, a sample path and a placeholder path use different sentences.
  */
+function imageNotSavedLabel(result, photoRequested) {
+  if ((result && result.photoSample === true) || photoRequested === "sample") return WIN_SAMPLE_NOT_SAVED_LABEL;
+  return WIN_PHOTO_NOT_SAVED_LABEL;
+}
+
 function winSaveStatusLabel(result, photoRequested = false) {
   if (!result || result.failed === true || result.abandoned === true) {
-    if (result && result.saved === true && (result.photoError === true || photoRequested === true)) {
-      return WIN_PHOTO_NOT_SAVED_LABEL;
+    if (result && result.saved === true && (result.photoError === true || photoRequested === true || photoRequested === "sample")) {
+      return imageNotSavedLabel(result, photoRequested);
     }
     return WIN_NOT_SAVED_LABEL;
   }
   if (!result.item) return "";
   if (result.saved !== true) return WIN_NOT_SAVED_LABEL;
-  if (result.photoError === true) return WIN_PHOTO_NOT_SAVED_LABEL;
-  if (result.photoFallback === true) return WIN_PHOTO_UNAVAILABLE_LABEL;
+  if (result.photoError === true) return imageNotSavedLabel(result, photoRequested);
+  if (result.photoFallback === true) {
+    const choice = winPhotoChoiceForPath(result.item.photo);
+    if (choice && choice !== WIN_SAMPLE_PLACEHOLDER) return WIN_SAMPLE_UNAVAILABLE_LABEL;
+    return WIN_PHOTO_UNAVAILABLE_LABEL;
+  }
   return WIN_SAVED_LABEL;
 }
 
@@ -14445,6 +14692,7 @@ function photoResult(added, flags) {
     photoSaved: flags.photoSaved === true,
     photoFallback: flags.photoFallback === true,
     photoError: flags.photoError === true,
+    photoSample: flags.photoSample === true,
     timedOut: flags.timedOut === true,
   };
 }
@@ -14474,9 +14722,9 @@ function droppedWinResult(storage, date) {
 }
 
 /**
- * Save a win and, when this browser can store it, the placeholder blob.
+ * Save a win and, when this browser can store it, the chosen sample or the placeholder blob.
  * The local record keeps WIN_PHOTO_REF, not the bytes.
- * IndexedDB unavailable: the record keeps the placeholder path and photoFallback is set.
+ * IndexedDB unavailable: the record keeps that image's bundled path and photoFallback is set.
  * Quota or a rejected blob: the text win still saves when it can, with no photo reference.
  * If the text cannot be saved, a blob that was just written is deleted.
  */
@@ -14494,20 +14742,21 @@ async function addWinPhoto(
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
   const id = newWinId(now);
   const body = blob === undefined ? placeholderPhotoBlob() : blob;
-  const placeholder = await isPlaceholderPhotoBlob(body);
+  const allowedId = await winPhotoAllowlistId(body);
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
-  if (!placeholder) {
+  if (!allowedId) {
     if (winSaveAborted(signal)) return droppedWinResult(storage, date);
     return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
   }
+  const sampleChoice = allowedId !== WIN_SAMPLE_PLACEHOLDER;
   const ready = winSaveAborted(signal) ? false : await winPhotoDatabaseReady(signal);
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
   if (winSaveAborted(signal)) {
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: true });
+    return photoResult(added, { photoError: added.saved === true, timedOut: true, photoSample: sampleChoice });
   }
   if (!ready) {
-    const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+    const added = addWin(text, storage, date, now, winSamplePath(allowedId), id);
     return photoResult(added, { photoFallback: added.saved === true });
   }
   const stamp = now instanceof Date ? now.getTime() : Date.now();
@@ -14524,11 +14773,11 @@ async function addWinPhoto(
   }
   if (!put.ok) {
     if (put.reason === "unavailable") {
-      const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+      const added = addWin(text, storage, date, now, winSamplePath(allowedId), id);
       return photoResult(added, { photoFallback: added.saved === true });
     }
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: put.reason === "timeout" });
+    return photoResult(added, { photoError: added.saved === true, timedOut: put.reason === "timeout", photoSample: sampleChoice });
   }
   if (winSaveAborted(signal) || winSaveDropped(options)) {
     try {
@@ -14538,12 +14787,12 @@ async function addWinPhoto(
     }
     if (winSaveDropped(options)) return droppedWinResult(storage, date);
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: true });
+    return photoResult(added, { photoError: added.saved === true, timedOut: true, photoSample: sampleChoice });
   }
   const added = addWin(text, storage, date, now, WIN_PHOTO_REF, id);
   if (!added.saved || !added.item || added.item.id !== id || added.item.photo !== WIN_PHOTO_REF) {
     await deleteWinPhotos([id], { notify: false });
-    return photoResult(added, { photoError: true });
+    return photoResult(added, { photoError: true, photoSample: sampleChoice });
   }
   postWinPhotoChange("put", id);
   return photoResult(added, { photoSaved: true });
@@ -14570,6 +14819,248 @@ function removeWin(id, storage = globalThis.localStorage, date = new Date()) {
     items: winsForDate(written.store, date),
     saved: true,
     photoCleanup: written.photoCleanup,
+  };
+}
+
+function imageKept(storage, item, extra = {}) {
+  return {
+    saved: false,
+    imageChanged: false,
+    kept: true,
+    item: item || null,
+    store: readWinsStore(storage),
+    ...extra,
+  };
+}
+
+function imageGone(storage) {
+  return {
+    saved: false,
+    imageChanged: false,
+    missing: true,
+    kept: false,
+    item: null,
+    store: readWinsStore(storage),
+  };
+}
+
+/**
+ * Reload the wins record and change only this win's photo field.
+ * A win added, removed, or edited while the image write was in flight stays as it is now.
+ * Missing means that id is no longer stored. Nothing is written in that case.
+ */
+function commitWinPhoto(storage, id, photo, preferredKey, stampNow) {
+  const fresh = loadWinsStore(storage);
+  const days = fresh.days || {};
+  const order = [];
+  if (preferredKey && Array.isArray(days[preferredKey])) order.push(preferredKey);
+  for (const dayKey of Object.keys(days)) {
+    if (dayKey !== preferredKey) order.push(dayKey);
+  }
+  for (const dayKey of order) {
+    const list = days[dayKey];
+    if (!Array.isArray(list)) continue;
+    const index = list.findIndex((item) => item && item.id === id);
+    if (index < 0) continue;
+    const next = { ...list[index] };
+    if (photo) next.photo = photo;
+    else delete next.photo;
+    days[dayKey] = list.map((item, itemIndex) => (itemIndex === index ? next : item));
+    const written = persistWins(fresh, storage, stampNow);
+    const when = civilDateFromKey(dayKey) || stampNow;
+    return {
+      missing: false,
+      item: next,
+      items: winsForDate(written.store, when),
+      written,
+    };
+  }
+  return { missing: true, item: null, items: [], written: null };
+}
+
+/**
+ * Change or remove the sample image on one stored win.
+ * Writes or deletes the blob in mindpal-photos / winPhotos.
+ * The win text is left as it is. A failed write does not change the record.
+ * choice "none" removes the image. Any other id must be the placeholder or a bundled sample.
+ * Does not run on load.
+ */
+async function changeWinImage(
+  id,
+  choice,
+  storage = globalThis.localStorage,
+  date = new Date(),
+  now = new Date(),
+  options = {},
+) {
+  const signal = options && typeof options === "object" ? options.signal : undefined;
+  if (typeof id !== "string" || !id) return imageGone(storage);
+  if (winSaveDropped(options)) return imageKept(storage, null, { timedOut: true });
+  if (winsSaveBlockedQuiet(storage)) return imageKept(storage, null);
+  const store = loadWinsStore(storage);
+  const key = civilDateKey(date);
+  const listed = winsForDate(store, date);
+  const index = listed.findIndex((item) => item.id === id);
+  if (index < 0) return imageGone(storage);
+  const current = listed[index];
+  const wanted = choice === WIN_SAMPLE_NONE || choice == null || choice === "" ? WIN_SAMPLE_NONE : choice;
+  const stampNow = now instanceof Date ? now : new Date();
+  if (wanted === WIN_SAMPLE_NONE) {
+    if (!current.photo) {
+      return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+    }
+    const committed = commitWinPhoto(storage, id, "", key, stampNow);
+    if (committed.missing) return imageGone(storage);
+    if (!committed.written.saved) return imageKept(storage, current);
+    return {
+      saved: true,
+      imageChanged: true,
+      removed: true,
+      item: committed.item,
+      items: committed.items,
+      store: committed.written.store,
+      photoCleanup: committed.written.photoCleanup,
+    };
+  }
+  const blob = winSampleBlob(wanted);
+  const allowedId = blob ? await winPhotoAllowlistId(blob) : "";
+  if (!blob || allowedId !== wanted) return imageKept(storage, current, { reason: "blob", store });
+  if (current.photo && current.photo !== WIN_PHOTO_REF && current.photo === winSamplePath(wanted)) {
+    return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+  }
+  let previous = null;
+  if (current.photo === WIN_PHOTO_REF) {
+    const record = await readWinPhotoRecord(id);
+    if (record.status === "error") return imageKept(storage, current, { reason: "read", store });
+    previous = record.status === "ok" ? record.blob : null;
+    const previousId = previous ? await winPhotoAllowlistId(previous) : "";
+    if (previousId === wanted) {
+      return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+    }
+  }
+  if (winSaveDropped(options) || winSaveAborted(signal)) return imageKept(storage, current, { timedOut: true, store });
+  const ready = await winPhotoDatabaseReady(signal);
+  if (winSaveDropped(options)) return imageKept(storage, current, { timedOut: true, store });
+  if (winSaveAborted(signal)) return imageKept(storage, current, { timedOut: true, store });
+  if (!ready) {
+    const committed = commitWinPhoto(storage, id, winSamplePath(wanted), key, stampNow);
+    if (committed.missing) return imageGone(storage);
+    if (!committed.written.saved) return imageKept(storage, current);
+    return {
+      saved: true,
+      imageChanged: true,
+      photoFallback: true,
+      item: committed.item,
+      items: committed.items,
+      store: committed.written.store,
+      photoCleanup: committed.written.photoCleanup,
+    };
+  }
+  const put = await putWinPhoto(id, blob, stampNow.getTime(), {
+    signal,
+    previousBlob: previous || undefined,
+  });
+  if (winSaveDropped(options)) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    fix.catch(() => {});
+    return imageKept(storage, current, { timedOut: true });
+  }
+  if (!put.ok) {
+    return imageKept(storage, current, { reason: put.reason, timedOut: put.reason === "timeout", store });
+  }
+  if (winSaveAborted(signal) || winSaveDropped(options)) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    fix.catch(() => {});
+    return imageKept(storage, current, { timedOut: true });
+  }
+  /*
+   * Confirm the blob is still the chosen sample before the record points at it.
+   * A missing blob, or a blob that is not that sample, is left as it is so another
+   * tab's delete is not undone.
+   * A read that errors (the get throws, or the photo database cannot be opened)
+   * puts the previous blob back, or deletes the new blob when this win had none.
+   * That restore can overwrite a newer image another tab stored after this write.
+   * The timeout path has the same blind restore.
+   * Say the image was not changed only when that restore or delete succeeds.
+   * If it does not, point the record at the blob still stored and say the sample
+   * image may have changed.
+   * The confirming read and the record write are not one transaction. Reading the
+   * blob is its own task, and the allowlist check decodes it again. The gap
+   * includes waiting for that read. Another tab can remove the blob before the
+   * synchronous commit, and the record can still point at it. That gap is not
+   * the 300 ms write window.
+   */
+  let seen = await readWinPhotoRecord(id);
+  let seenId = "";
+  if (seen && seen.status === "ok") {
+    try {
+      seenId = await winPhotoAllowlistId(seen.blob);
+    } catch {
+      seen = { status: "error", blob: null };
+    }
+  }
+  const readFailed = !seen || (seen.status !== "ok" && seen.status !== "missing");
+  if (readFailed) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    let restored = false;
+    try {
+      const result = await fix;
+      restored = previous
+        ? Boolean(result && result.ok)
+        : Boolean(result && Array.isArray(result.deleted) && result.deleted.includes(id));
+    } catch {
+      restored = false;
+    }
+    if (restored) return imageKept(storage, current, { reason: "read" });
+    const pointed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+    if (pointed.missing) return imageGone(storage);
+    const store = pointed.written && pointed.written.store ? pointed.written.store : readWinsStore(storage);
+    return imageKept(storage, pointed.item || current, {
+      reason: "uncertain",
+      saved: Boolean(pointed.written && pointed.written.saved),
+      store,
+    });
+  }
+  if (seen.status !== "ok" || seenId !== wanted) {
+    return imageKept(storage, current, { reason: "unconfirmed" });
+  }
+  const committed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+  if (committed.missing || !committed.written || !committed.written.saved || winSaveDropped(options)) {
+    if (committed.missing) {
+      try {
+        await deleteWinPhotos([id], { notify: false });
+      } catch {
+        /* the new blob is cleaned up when the photo database can */
+      }
+      return imageGone(storage);
+    }
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    if (winSaveDropped(options)) fix.catch(() => {});
+    else {
+      try {
+        await fix;
+      } catch {
+        /* the wins record was not updated */
+      }
+    }
+    return imageKept(storage, current, { timedOut: winSaveDropped(options) });
+  }
+  postWinPhotoChange("put", id);
+  return {
+    saved: true,
+    imageChanged: true,
+    item: committed.item,
+    items: committed.items,
+    store: committed.written.store,
+    photoCleanup: committed.written.photoCleanup,
   };
 }
 
@@ -17086,7 +17577,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_EARLIER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,pastWinHoldAfterRefresh,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_EARLIER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,pastWinHoldAfterRefresh,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage,WIN_IMAGE_NOT_CHANGED_LABEL,WIN_IMAGE_NOT_ON_DEVICE_LABEL,WIN_IMAGE_MAY_HAVE_CHANGED_LABEL,WIN_IMAGE_WIN_GONE_LABEL,WIN_IMAGE_UPDATED_LABEL,WIN_IMAGE_REMOVED_LABEL,WIN_SAMPLE_NOT_SAVED_LABEL,WIN_SAMPLE_CHOICES,WIN_SAMPLE_ON_DEVICE_LABEL,WIN_SAMPLE_PROTOTYPE_LABEL,WIN_SAMPLE_PLACEHOLDER,WIN_SAMPLE_NONE,pastWinDayHeading,pastWinFocusMove,winStatusId,winSampleBlob,winPhotoChoiceForPath,winPhotoChoiceFromBlob,changeWinImage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -21331,19 +21822,20 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(mpWins.WIN_SAMPLE_PLACEHOLDER||`placeholder`),[picks,setPicks]=(0,_.useState)({}),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),stalePhotos=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),focusSample=(0,_.useRef)(null),focusWasInPast=(0,_.useRef)(!1),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
   function c(){let store=mpWins.loadWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlocked());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
-  function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlockedQuiet());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
+  function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;stalePhotos.current={all:!0};h(mpWins.winsSaveBlockedQuiet());let active=null;try{active=document.activeElement}catch{active=null}focusWasInPast.current=mpWins.pastWinFocusMove(active);setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   (0,_.useEffect)(()=>mpWins.listenForWinsChanges(window,c,k),[]);
   (0,_.useEffect)(()=>()=>{
     let cache=photoCache.current;
     for(let id of Object.keys(cache)) if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
     photoCache.current={};
   },[]);
-  // Past thumbnails load only while the list is open. A stored thumbnail is not read again.
+  // Past thumbnails load only while the list is open. A stored thumbnail is not read again
+  // unless another tab changed a wins record or a sample image.
   // A missing thumbnail is read again when the list refreshes or opens.
-  // Object URLs are revoked when that win leaves the store, or when the card unmounts.
+  // Object URLs are revoked when that win leaves the store, when its sample changes, or when the card unmounts.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
     let cancelled=!1;
@@ -21356,6 +21848,8 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     for(let w of n) if(w&&w.id) known.add(w.id);
     let allDays=past&&Array.isArray(past.days)?past.days:[];
     for(let day of allDays) if(day&&Array.isArray(day.items)) for(let w of day.items) if(w&&w.id) known.add(w.id);
+    let stale=stalePhotos.current;
+    stalePhotos.current={};
     (async()=>{
       let cache=photoCache.current;
       let changed=!1;
@@ -21367,13 +21861,17 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       }
       for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
-        if(cache[w.id]&&cache[w.id].kind===`blob`)continue;
+        let again=!!(stale.all||stale[w.id]);
+        if(cache[w.id]&&cache[w.id].kind===`blob`&&!again)continue;
+        if(again&&cache[w.id]&&cache[w.id].url){mpWins.releaseWinPhotoUrl(cache[w.id].url);delete cache[w.id]}
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
         if(!blob){cache[w.id]={kind:`missing`};changed=!0;continue}
         let url=mpWins.winPhotoObjectUrl(blob);
         if(cancelled){if(url)mpWins.releaseWinPhotoUrl(url);return}
-        cache[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+        let choice=await mpWins.winPhotoChoiceFromBlob(blob);
+        if(cancelled){if(url)mpWins.releaseWinPhotoUrl(url);return}
+        cache[w.id]=url?{kind:`blob`,url,choice}:{kind:`missing`};
         changed=!0;
       }
       if(!cancelled&&(changed||rows.length))E({...cache});
@@ -21390,13 +21888,38 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     try{node=document.querySelector(target)}catch{node=null}
     if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
   },[past,dropBusy,hold]);
+  // Apply disables itself while the write runs, which drops focus to the page.
+  // After that write, put focus on the status line, or on the checked radio if the status is not there yet.
+  (0,_.useEffect)(()=>{
+    let pending=focusSample.current;
+    if(!pending)return;
+    focusSample.current=null;
+    let move=()=>{
+      let status=null;
+      try{status=document.getElementById(mpWins.winStatusId(e))}catch{status=null}
+      if(status&&typeof status.focus===`function`){status.focus();return}
+      let node=null;
+      try{node=document.querySelector(`input[type="radio"][name*="${pending.id}"][value="${pending.choice}"]:checked`)}catch{node=null}
+      if(node&&typeof node.focus===`function`)node.focus();
+    };
+    if(typeof requestAnimationFrame===`function`)requestAnimationFrame(move);
+    else move();
+  },[o,S]);
   // Confirm stays only while id, day, and position still name the picked win.
+  // Move focus only when it is inside the confirm row or Past wins. The win input stays put.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`||!hold)return;
     let check=mpWins.pastWinHoldAfterRefresh(past&&past.days,hold);
+    let wasInside=focusWasInPast.current;
+    focusWasInPast.current=!1;
     if(check.keep)return;
-    let next=check.focus||{kind:`summary`};
-    focusAfter.current=next.kind===`win`?`[data-mp-past-focus="${next.index}"]`:`#mp-past-summary`;
+    let active=null;
+    try{active=document.activeElement}catch{active=null}
+    // The confirm button may already be gone, so k() records focus before the refresh render.
+    if(wasInside||mpWins.pastWinFocusMove(active)){
+      let next=check.focus||{kind:`summary`};
+      focusAfter.current=next.kind===`win`?`[data-mp-past-focus="${next.index}"]`:`#mp-past-summary`;
+    }
     setHold(null);
   },[past,hold,e]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
@@ -21408,9 +21931,12 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     F.current=!0;
     T(!0);
     try{
-      let u=await mpWins.watchSave((signal,attempt)=>e===`winOfDay`&&p?mpWins.addWinPhoto(i,void 0,void 0,void 0,void 0,{signal,attempt}):mpWins.addWin(i),mpWins.winSaveTimeoutLimit());
+      let withImage=e===`winOfDay`&&p!==`none`;
+      let asked=withImage&&p!==(mpWins.WIN_SAMPLE_PLACEHOLDER||`placeholder`)?`sample`:withImage;
+      let chosen=withImage?mpWins.winSampleBlob(p):void 0;
+      let u=await mpWins.watchSave((signal,attempt)=>withImage?mpWins.addWinPhoto(i,void 0,void 0,void 0,chosen,{signal,attempt}):mpWins.addWin(i),mpWins.winSaveTimeoutLimit());
       if(saveSeq.current!==token)return;
-      let label=mpWins.winSaveStatusLabel(u,e===`winOfDay`&&p);
+      let label=mpWins.winSaveStatusLabel(u,asked);
       if(!u||!u.item){s(u&&(u.timedOut||u.abandoned||u.failed)?label:`Write a few words first — a cup of tea counts.`);return}
       if(e===`winOfDay`){let blocked=mpWins.winsSaveBlocked();h(blocked);if(!blocked)x(!1)}
       if(!u.saved){s(label);return}
@@ -21422,6 +21948,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   }
   // G blocks a second reset while cleanup is still running. j disables Reset and Confirm.
   async function d(){
+    if(F.current)return;
     if(G.current)return;
     G.current=!0;
     q(!0);
@@ -21440,6 +21967,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
   // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
   async function drop(id,key,pos,index){
+    if(F.current)return;
     if(dropGuard.current)return;
     if(!hold||hold.id!==id||hold.key!==key||hold.pos!==pos)return;
     let check=mpWins.pastWinHoldAfterRefresh(past.days,hold);
@@ -21454,7 +21982,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         r(mpWins.winsForDate(kept));
         setPast(mpWins.pastWinsPage(kept,new Date(),shown.current));
         s(mpWins.WIN_NOT_REMOVED_LABEL);
-        focusAfter.current=`#mp-win-status`;
+        focusAfter.current=`#${mpWins.winStatusId(`winOfDay`)}`;
         return;
       }
       let nextFocus=mpWins.pastWinFocusAfter(past.days,id,index);
@@ -21470,13 +21998,115 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
     }finally{dropGuard.current=!1;setDropBusy(!1)}
   }
+  function choiceFor(w){
+    if(!w||!w.photo)return `none`;
+    if(w.photo===mpWins.WIN_PHOTO_REF){
+      let view=P[w.id];
+      if(view&&view.kind===`blob`&&view.choice)return view.choice;
+      return ``;
+    }
+    return mpWins.winPhotoChoiceForPath(w.photo)||`none`;
+  }
+  function imagePending(w){
+    return !!(w&&w.photo===mpWins.WIN_PHOTO_REF&&!(P[w.id]&&(P[w.id].kind===`blob`||P[w.id].kind===`missing`)));
+  }
+  function sampleLegend(text, day){
+    let words=typeof text===`string`?text.replace(/\s+/g,` `).trim():``;
+    if(words.length>80)words=`${words.slice(0,77).trimEnd()}...`;
+    let when=typeof day===`string`?day.replace(/\s+/g,` `).trim():``;
+    let base=words?`Sample image for ${words}`:`Sample image`;
+    return when?`${base}, ${when}`:base;
+  }
+  async function applyImage(id, key, choice, current){
+    if(F.current)return !1;
+    if(!choice||choice===current)return !1;
+    let token=saveSeq.current+1;
+    saveSeq.current=token;
+    F.current=!0;
+    T(!0);
+    try{
+      let when=key?mpWins.civilDateFromKey(key)||new Date():new Date();
+      let u=await mpWins.watchSave((signal,attempt)=>mpWins.changeWinImage(id,choice,void 0,when,void 0,{signal,attempt}),mpWins.winSaveTimeoutLimit());
+      if(saveSeq.current!==token)return !1;
+      if(u&&u.missing){
+        s(mpWins.WIN_IMAGE_WIN_GONE_LABEL);
+        let gone=u.store||mpWins.readWinsStore();
+        r(mpWins.winsForDate(gone));
+        setPast(mpWins.pastWinsPage(gone,new Date(),shown.current));
+        return !1;
+      }
+      if(u&&u.unchanged)return !0;
+      if(!u||u.imageChanged!==!0){
+        let imageStatus=mpWins.WIN_IMAGE_NOT_CHANGED_LABEL;
+        if(u&&u.reason===`unconfirmed`)imageStatus=mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL;
+        if(u&&u.reason===`uncertain`)imageStatus=mpWins.WIN_IMAGE_MAY_HAVE_CHANGED_LABEL;
+        s(imageStatus);
+        if(u&&(u.reason===`unconfirmed`||u.reason===`uncertain`)){
+          if(u.reason===`uncertain`){
+            let cache=photoCache.current;
+            if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+            if(cache[id])delete cache[id];
+            E({...cache});
+          }
+          let fresh=u.store||mpWins.readWinsStore();
+          r(mpWins.winsForDate(fresh));
+          setPast(mpWins.pastWinsPage(fresh,new Date(),shown.current));
+        }
+        return !1;
+      }
+      let cache=photoCache.current;
+      if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+      if(cache[id])delete cache[id];
+      E({...cache});
+      let store=u.store||mpWins.readWinsStore();
+      r(mpWins.winsForDate(store));
+      setPast(mpWins.pastWinsPage(store,new Date(),shown.current));
+      s(choice===`none`?mpWins.WIN_IMAGE_REMOVED_LABEL:mpWins.WIN_IMAGE_UPDATED_LABEL);
+      try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
+      return !0;
+    }catch{if(saveSeq.current===token)s(mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);return !1}
+    finally{if(saveSeq.current===token){F.current=!1;T(!1);focusSample.current={id,choice}}}
+  }
+  async function applySaved(id, key, choice, current){
+    let ok=await applyImage(id, key, choice, current);
+    if(!ok)return;
+    setPicks(prev=>{
+      if(!prev||prev[id]!==choice)return prev;
+      let next={...prev};
+      delete next[id];
+      return next;
+    });
+  }
+  function samplePicker(name, value, onPick, legend, add, lock){
+    return (0,A.jsxs)(`fieldset`,{className:add?`mp-win-samples mp-win-sample-add`:`mp-win-samples mp-win-sample-change`,disabled:!!(add&&(S||lock)),children:[
+      (0,A.jsx)(`legend`,{children:legend}),
+      mpWins.WIN_SAMPLE_CHOICES.map(choice=>(0,A.jsxs)(`label`,{children:[
+        (0,A.jsx)(`input`,{type:`radio`,name,value:choice.id,checked:value===choice.id,onChange:()=>{if(add&&(S||lock))return;onPick(choice.id)}}),
+        choice.thumb?(0,A.jsx)(`img`,{className:`mp-win-sample-thumb`,src:choice.thumb,alt:``,"aria-hidden":!0}):null,
+        (0,A.jsx)(`span`,{children:choice.label})
+      ]},choice.id))
+    ]});
+  }
+  function savedSample(name, w, key, dayLabel){
+    let current=choiceFor(w);
+    let selected=picks&&Object.prototype.hasOwnProperty.call(picks,w.id)?picks[w.id]:current;
+    let legend=sampleLegend(w.text, dayLabel);
+    let pending=imagePending(w);
+    return (0,A.jsxs)(A.Fragment,{children:[
+      samplePicker(name, selected, choice=>setPicks(prev=>({...(prev||{}),[w.id]:choice})), legend, !1, !1),
+      (0,A.jsx)(`button`,{className:`secondary mp-win-sample-apply`,type:`button`,disabled:!!(S||pending||!selected||selected===current),onClick:()=>applySaved(w.id,key,selected,current),"aria-label":`Apply sample image, ${legend}`,children:`Apply sample image`})
+    ]});
+  }
   function photoBlock(w){
     if(e!==`winOfDay`||!w)return null;
-    if(w.photo!==mpWins.WIN_PHOTO_REF&&w.photo!==mpWins.WIN_PLACEHOLDER_PHOTO)return null;
+    let pathChoice=w.photo===mpWins.WIN_PHOTO_REF?``:mpWins.winPhotoChoiceForPath(w.photo);
+    if(w.photo!==mpWins.WIN_PHOTO_REF&&!pathChoice)return null;
     let view=P[w.id];
-    let caption=w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind===`blob`?mpWins.WIN_PHOTO_ON_DEVICE_LABEL:view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):mpWins.WIN_PHOTO_PROTOTYPE_LABEL;
-    let src=view&&view.url?view.url:mpWins.WIN_PLACEHOLDER_PHOTO;
-    return (0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:`placeholder`,children:[
+    let onDevice=w.photo===mpWins.WIN_PHOTO_REF&&view&&view.kind===`blob`;
+    let sampleChoice=onDevice&&view.choice&&view.choice!==`placeholder`;
+    let caption=w.photo===mpWins.WIN_PHOTO_REF?(onDevice?(sampleChoice?mpWins.WIN_SAMPLE_ON_DEVICE_LABEL:mpWins.WIN_PHOTO_ON_DEVICE_LABEL):view&&view.kind===`missing`?mpWins.WIN_PHOTO_MISSING_LABEL:mpWins.WIN_PHOTO_CHECKING_LABEL):(pathChoice===`placeholder`?mpWins.WIN_PHOTO_PROTOTYPE_LABEL:mpWins.WIN_SAMPLE_PROTOTYPE_LABEL);
+    let src=onDevice&&view.url?view.url:w.photo===mpWins.WIN_PHOTO_REF?mpWins.WIN_PLACEHOLDER_PHOTO:w.photo;
+    return (0,A.jsxs)(`figure`,{className:`mp-win-photo`,"data-mp-photo":w.photo===mpWins.WIN_PHOTO_REF?(view&&view.kind)||`checking`:pathChoice||`placeholder`,children:[
       (0,A.jsx)(`img`,{src,alt:caption,width:72,height:72}),
       (0,A.jsx)(`figcaption`,{children:caption})
     ]});
@@ -21510,15 +22140,18 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     n.length?(0,A.jsx)(`ul`,{className:`mp-wins-list`,children:n.map(w=>(0,A.jsxs)(`li`,{children:[
       photoBlock(w),
       (0,A.jsx)(`span`,{children:w.text}),
-      winWhen(w)
+      winWhen(w),
+      e===`winOfDay`?savedSample(`mp-win-sample-today-${w.id}`,w,``,`today`):null
     ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
       (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:past.days.length>0&&past.days.every(day=>day.future)&&!past.hasMore?mpWins.PAST_WINS_LATER:mpWins.PAST_WINS_TITLE}),
-      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>(0,A.jsxs)(A.Fragment,{children:[
+      past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>{
+        let dayHeading=mpWins.pastWinDayHeading(past.days);
+        return (0,A.jsxs)(A.Fragment,{children:[
         day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)?(0,A.jsx)(`h3`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
         !day.future&&past.days.some(item=>item.future)&&!past.days.slice(0,dayIndex).some(item=>item&&!item.future)?(0,A.jsx)(`h3`,{className:`mp-past-earlier`,children:mpWins.PAST_WINS_EARLIER}):null,
         (0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
-          (0,A.jsxs)(`h3`,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
+          (0,A.jsxs)(dayHeading,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
           (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map((w,pos)=>{
             let index=focusAt;
             focusAt+=1;
@@ -21532,24 +22165,23 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
               photoBlock(w),
               (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
               winWhen(w),
+              savedSample(`mp-win-sample-${day.key}-${w.id}`,w,day.key,day.label),
               held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
-                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,pos,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
-                (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
-              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,pos})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy||S,"data-mp-past-focus":index,onClick:()=>{if(F.current||dropBusy)return;drop(w.id,day.key,pos,index)},"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+                (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy||S,onClick:()=>{if(dropBusy||S)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
+              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy||S,"data-mp-past-focus":index,onClick:()=>{if(dropBusy||S)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,pos})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
             ]},w.id);
           })})
         ]})
-      ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
+      ]},day.key)})}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
       past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
     ]}):null,
     (0,A.jsx)(`label`,{htmlFor:`mp-win-${e}`,children:`Add a win`}),
     (0,A.jsx)(`input`,{id:`mp-win-${e}`,value:i,maxLength:280,onChange:e=>a(e.target.value),onKeyDown:e=>{e.key===`Enter`&&!F.current&&l()},placeholder:`A kind word, a finished chore, a quiet cup of tea…`}),
     e===`winOfDay`?(0,A.jsxs)(A.Fragment,{children:[
-      (0,A.jsxs)(`label`,{className:`mp-win-photo-opt`,htmlFor:`mp-win-photo-${e}`,children:[
-        (0,A.jsx)(`input`,{id:`mp-win-photo-${e}`,type:`checkbox`,checked:p,onChange:n=>g(!!n.target.checked)}),
-        (0,A.jsx)(`span`,{children:`Attach prototype placeholder image`})
-      ]}),
-      (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL})
+      samplePicker(`mp-win-sample-add`,p,choice=>g(choice),`Sample image`,!0,!1),
+      (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:mpWins.WIN_PHOTO_PROTOTYPE_LABEL}),
+      (0,A.jsx)(`p`,{className:`muted mp-win-photo-note`,children:`Choose a sample image or no image. This is a prototype on this device only.`})
     ]}):null,
     (0,A.jsxs)(`div`,{className:`button-row`,children:[
       (0,A.jsx)(`button`,{className:`primary`,type:`button`,disabled:S,onClick:l,children:`Save this win`}),
@@ -21558,11 +22190,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`winOfDay`&&b?(0,A.jsxs)(`div`,{className:`mp-win-reset`,children:[
       (0,A.jsx)(`p`,{className:`muted mp-win-reset-note`,children:mpWins.WIN_RESET_NOTE}),
       m?(0,A.jsxs)(`div`,{className:`button-row`,children:[
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
-        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!1)},children:mpWins.WIN_RESET_CANCEL})
-      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!0)},children:mpWins.WIN_RESET_LABEL})
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j||S,onClick:d,children:mpWins.WIN_RESET_CONFIRM}),
+        (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j||S,onClick:()=>{if(!j&&!S)x(!1)},children:mpWins.WIN_RESET_CANCEL})
+      ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j||S,onClick:()=>{if(!j&&!S)x(!0)},children:mpWins.WIN_RESET_LABEL})
     ]}):null,
-    o?(0,A.jsx)(`p`,{id:`mp-win-status`,role:`status`,tabIndex:-1,children:o}):null
+    o?(0,A.jsx)(`p`,{id:mpWins.winStatusId(e),role:`status`,tabIndex:-1,children:o}):null
   ]});
 }
 function mpMaddyTeaser({onOpen:e}){
@@ -21816,7 +22448,7 @@ function mpAccountFooter(){
     (0,A.jsx)(mpAccountProfileCard,{}),
     (0,A.jsx)(`button`,{className:`secondary`,type:`button`,onClick:()=>{Ot(),mpNotifySession()},children:`Sign out`}),
     (0,A.jsx)(`p`,{className:`muted`,children:`Sign out returns you to the first-run sign-in page. Your notes and wins stay on this device.`}),
-    (0,A.jsx)(`p`,{className:`muted`,children:`Wins stay on this device. A Win of the day can keep a prototype placeholder image in this browser only. That image is a bundled fake picture and not real private photo storage. Friends and sharing with other people need a future backend. Nothing is uploaded today.`})
+    (0,A.jsx)(`p`,{className:`muted`,children:`Wins stay on this device. A Win of the day can keep a prototype placeholder image or a bundled sample image in this browser only. Those pictures are synthetic and not real private photo storage. Friends and sharing with other people need a future backend. Nothing is uploaded today.`})
   ]});
 }
 function mpDedicatedProblemRoute(id){

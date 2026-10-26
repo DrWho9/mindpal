@@ -298,8 +298,8 @@ describe("past wins timeline", () => {
     const hideAt = resetFn.indexOf("x(!1)");
     assert.ok(awaitAt > 0);
     assert.ok(hideAt > awaitAt);
-    assert.match(panel, /disabled:j,onClick:d/);
-    assert.match(panel, /disabled:j,onClick:\(\)=>\{if\(!j\)x\(!0\)\}/);
+    assert.match(panel, /disabled:j\|\|S,onClick:d/);
+    assert.match(panel, /disabled:j\|\|S,onClick:\(\)=>\{if\(!j&&!S\)x\(!0\)\}/);
     assert.match(panel, /mp-past-wins/);
     assert.match(panel, /mpWins\.PAST_WINS_EMPTY/);
     assert.match(panel, /releaseWinPhotoUrl\(url\)/);
@@ -312,7 +312,7 @@ describe("past wins timeline", () => {
     assert.doesNotMatch(css, /(^|\n)\.mp-past-wins/);
     const photoEffect = panel.slice(panel.indexOf("Past thumbnails load only"), panel.indexOf("async function l()"));
     assert.match(photoEffect, /if\(openPast\)/);
-    assert.match(photoEffect, /if\(cache\[w\.id\]&&cache\[w\.id\]\.kind===`blob`\)continue/);
+    assert.match(photoEffect, /if\(cache\[w\.id\]&&cache\[w\.id\]\.kind===`blob`&&!again\)continue/);
     assert.match(panel, /photoCache\.current=\{\}/);
     const dropFn = panel.slice(panel.indexOf("async function drop("), panel.indexOf("function photoBlock("));
     assert.match(dropFn, /if\(dropGuard\.current\)return/);
@@ -337,10 +337,11 @@ describe("past wins timeline", () => {
     assert.doesNotMatch(panel, /`p`,\{className:`mp-past-later`/);
     assert.match(panel, /className:`mp-past-future`/);
     assert.match(panel, /hold\.id===w\.id&&hold\.key===day\.key&&hold\.pos===pos/);
-    assert.match(panel, /id:`mp-win-status`/);
+    assert.match(panel, /id:mpWins\.winStatusId\(e\)/);
+    assert.doesNotMatch(panel, /id:`mp-win-status`/);
     assert.match(panel, /pastWinHoldAfterRefresh/);
     assert.ok(dropFn.indexOf("if(!check.keep)return") < dropFn.indexOf("mpWins.removeWin"));
-    assert.ok(dropFn.indexOf("focusAfter.current=`#mp-win-status`") < dropFn.indexOf("let nextFocus"));
+    assert.ok(dropFn.indexOf("focusAfter.current=`#${mpWins.winStatusId(`winOfDay`)}`") < dropFn.indexOf("let nextFocus"));
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_CONFIRM/);
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_KEEP/);
     assert.match(panel, /id:`mp-past-summary`/);

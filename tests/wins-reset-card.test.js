@@ -128,7 +128,10 @@ describe("reset wins on this device", { timeout: 90000 }, () => {
 
     await winCard.locator("#mp-win-winOfDay").fill("Walked to the shops");
     await winCard.getByRole("button", { name: "Save this win" }).click();
-    await status.waitFor({ state: "visible" });
+    await page.waitForFunction(
+      (label) => document.querySelector(".mp-win-of-day p[role='status']")?.textContent === label,
+      WIN_SAVED_LABEL,
+    );
     assert.equal((await status.innerText()).trim(), WIN_SAVED_LABEL);
     await reset.waitFor({ state: "hidden" });
     const saved = await page.evaluate(() => localStorage.getItem("mindpal.dailyWins.v2"));

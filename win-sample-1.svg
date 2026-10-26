@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Sample image, green squares">
+  <title>Sample image 1</title>
+  <rect width="160" height="160" rx="18" fill="#e7f0e4"/>
+  <rect x="28" y="32" width="46" height="46" rx="6" fill="#2f5a3d"/>
+  <rect x="86" y="32" width="46" height="46" rx="6" fill="#8aa583"/>
+  <rect x="28" y="88" width="46" height="28" rx="6" fill="#8aa583"/>
+  <rect x="86" y="88" width="46" height="28" rx="6" fill="#2f5a3d"/>
+  <text x="80" y="142" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#2f3b2c">Sample</text>
+</svg>

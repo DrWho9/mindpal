@@ -5,23 +5,35 @@ import {
   WIN_PHOTO_DB,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_SAMPLE_NOT_SAVED_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
   WIN_PHOTO_PENDING_MS,
   WIN_PHOTO_REF,
   WIN_PHOTO_STORE,
   WIN_PHOTO_UNAVAILABLE_LABEL,
+  WIN_SAMPLE_CHOICES,
+  WIN_SAMPLE_NONE,
+  WIN_SAMPLE_ON_DEVICE_LABEL,
+  WIN_SAMPLE_PROTOTYPE_LABEL,
+  WIN_SAMPLES,
   deleteAllWinPhotos,
   deleteUnreferencedWinPhotos,
   deleteWinPhotos,
   handleWinPhotoMessage,
-  isPlaceholderPhotoBlob,
   placeholderPhotoBlob,
   postWinPhotoChange,
+  WIN_SAMPLE_PLACEHOLDER,
   putWinPhoto,
   readWinPhoto,
+  readWinPhotoRecord,
   releaseWinPhotoUrl,
+  winPhotoAllowlistId,
+  winPhotoChoiceForPath,
+  winPhotoChoiceFromBlob,
   winPhotoDatabaseReady,
   winPhotoObjectUrl,
+  winSampleBlob,
+  winSamplePath,
 } from "./win-photos.js";
 
 export {
@@ -30,14 +42,24 @@ export {
   WIN_PHOTO_DB,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
+  WIN_SAMPLE_NOT_SAVED_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
   WIN_PHOTO_REF,
   WIN_PHOTO_STORE,
   WIN_PHOTO_UNAVAILABLE_LABEL,
+  WIN_SAMPLE_CHOICES,
+  WIN_SAMPLE_NONE,
+  WIN_SAMPLE_ON_DEVICE_LABEL,
+  WIN_SAMPLE_PROTOTYPE_LABEL,
+  WIN_SAMPLES,
   handleWinPhotoMessage,
   readWinPhoto,
   releaseWinPhotoUrl,
+  winPhotoChoiceForPath,
+  winPhotoChoiceFromBlob,
   winPhotoObjectUrl,
+  winSampleBlob,
+  winSamplePath,
 };
 
 /** Legacy key. Read for migration only. Never overwritten or deleted. */
@@ -60,6 +82,21 @@ export const WIN_SAVED_LABEL = "Saved on this device for today.";
 export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
 /** Removal failed. The win is still in the stored record. */
 export const WIN_NOT_REMOVED_LABEL = "Not removed. This win is still saved on this device.";
+/** A sample change did not stick. The words on the win stay as they were. */
+export const WIN_IMAGE_NOT_CHANGED_LABEL = "Image not changed. The win text is still saved on this device.";
+/** The win was removed before the sample change could be stored. */
+export const WIN_IMAGE_WIN_GONE_LABEL = "Image not changed. That win is no longer on this device.";
+/** The sample write finished, but the blob was not there when the record was about to point at it. */
+export const WIN_IMAGE_NOT_ON_DEVICE_LABEL =
+  "Image not changed. That sample image is not on this device. The win text is still saved on this device.";
+/** The confirming read failed and the previous image could not be put back. */
+export const WIN_IMAGE_MAY_HAVE_CHANGED_LABEL =
+  "The sample image on this device may have changed. The win text is still saved on this device.";
+export const WIN_IMAGE_UPDATED_LABEL = "Sample image updated on this device.";
+export const WIN_IMAGE_REMOVED_LABEL = "Sample image removed on this device.";
+/** IndexedDB could not store a chosen sample, so the record keeps that sample's bundled path. */
+export const WIN_SAMPLE_UNAVAILABLE_LABEL =
+  "Saved on this device for today. Sample image storage is not available on this device, so this win uses the bundled sample.";
 /** Shown on Win of the day only while a save cannot be stored. */
 export const WIN_RESET_LABEL = "Reset wins on this device";
 const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
@@ -258,6 +295,37 @@ export function pastWinHoldAfterRefresh(days, hold) {
   const pos = newer.length ? pastDayItems(neighbor).length - 1 : 0;
   return { keep: false, focus: pastFocusAt(list, neighbor.key, pos) };
 }
+
+/**
+ * Heading level for one day in Past wins.
+ * When Later dates or Earlier days is on the page, that group is an h3 and the day is an h4.
+ * When no group is shown, the day stays an h3 under the card title.
+ */
+export function pastWinDayHeading(days) {
+  const list = Array.isArray(days) ? days : [];
+  return list.some((day) => day && day.future) ? "h4" : "h3";
+}
+
+/**
+ * True when focus is inside the confirm row or Past wins.
+ * A refresh that clears Confirm uses this so it does not pull focus back from the win input.
+ */
+export function pastWinFocusMove(active) {
+  if (!active || typeof active.closest !== "function") return false;
+  try {
+    if (active.closest(".mp-past-remove-row")) return true;
+    if (active.closest(".mp-past-wins")) return true;
+  } catch {
+    return false;
+  }
+  return false;
+}
+
+/** Status paragraph id. One per wins panel, so Today does not repeat the same id. */
+export function winStatusId(variant) {
+  const name = typeof variant === "string" && /^[A-Za-z0-9]+$/.test(variant) ? variant : "win";
+  return `mp-win-status-${name}`;
+}
 /**
  * How long Save waits for a win write. A hung photo database aborts at this point.
  * The words can still be stored. A result that arrives after the watch gives up is ignored.
@@ -299,6 +367,7 @@ export function emptyWinsDay(date = new Date()) {
  */
 function allowedPhoto(raw) {
   if (raw === WIN_PLACEHOLDER_PHOTO || raw === WIN_PHOTO_REF) return raw;
+  if (typeof raw === "string" && WIN_SAMPLES.some((item) => item.path === raw)) return raw;
   return undefined;
 }
 
@@ -1018,20 +1087,30 @@ export function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DA
 /**
  * The line Save shows for a finished watch.
  * An abandoned watch that did not store the win says it was not saved.
- * A stored win whose placeholder image failed says the photo was not saved.
+ * A stored win whose image failed says that image was not saved.
  * An empty string means the words were blank, so the card asks for a few words.
+ * When storage is unavailable, a sample path and a placeholder path use different sentences.
  */
+function imageNotSavedLabel(result, photoRequested) {
+  if ((result && result.photoSample === true) || photoRequested === "sample") return WIN_SAMPLE_NOT_SAVED_LABEL;
+  return WIN_PHOTO_NOT_SAVED_LABEL;
+}
+
 export function winSaveStatusLabel(result, photoRequested = false) {
   if (!result || result.failed === true || result.abandoned === true) {
-    if (result && result.saved === true && (result.photoError === true || photoRequested === true)) {
-      return WIN_PHOTO_NOT_SAVED_LABEL;
+    if (result && result.saved === true && (result.photoError === true || photoRequested === true || photoRequested === "sample")) {
+      return imageNotSavedLabel(result, photoRequested);
     }
     return WIN_NOT_SAVED_LABEL;
   }
   if (!result.item) return "";
   if (result.saved !== true) return WIN_NOT_SAVED_LABEL;
-  if (result.photoError === true) return WIN_PHOTO_NOT_SAVED_LABEL;
-  if (result.photoFallback === true) return WIN_PHOTO_UNAVAILABLE_LABEL;
+  if (result.photoError === true) return imageNotSavedLabel(result, photoRequested);
+  if (result.photoFallback === true) {
+    const choice = winPhotoChoiceForPath(result.item.photo);
+    if (choice && choice !== WIN_SAMPLE_PLACEHOLDER) return WIN_SAMPLE_UNAVAILABLE_LABEL;
+    return WIN_PHOTO_UNAVAILABLE_LABEL;
+  }
   return WIN_SAVED_LABEL;
 }
 
@@ -1149,6 +1228,7 @@ function photoResult(added, flags) {
     photoSaved: flags.photoSaved === true,
     photoFallback: flags.photoFallback === true,
     photoError: flags.photoError === true,
+    photoSample: flags.photoSample === true,
     timedOut: flags.timedOut === true,
   };
 }
@@ -1178,9 +1258,9 @@ function droppedWinResult(storage, date) {
 }
 
 /**
- * Save a win and, when this browser can store it, the placeholder blob.
+ * Save a win and, when this browser can store it, the chosen sample or the placeholder blob.
  * The local record keeps WIN_PHOTO_REF, not the bytes.
- * IndexedDB unavailable: the record keeps the placeholder path and photoFallback is set.
+ * IndexedDB unavailable: the record keeps that image's bundled path and photoFallback is set.
  * Quota or a rejected blob: the text win still saves when it can, with no photo reference.
  * If the text cannot be saved, a blob that was just written is deleted.
  */
@@ -1198,20 +1278,21 @@ export async function addWinPhoto(
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
   const id = newWinId(now);
   const body = blob === undefined ? placeholderPhotoBlob() : blob;
-  const placeholder = await isPlaceholderPhotoBlob(body);
+  const allowedId = await winPhotoAllowlistId(body);
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
-  if (!placeholder) {
+  if (!allowedId) {
     if (winSaveAborted(signal)) return droppedWinResult(storage, date);
     return photoResult(addWin(text, storage, date, now, undefined, id), { photoError: true });
   }
+  const sampleChoice = allowedId !== WIN_SAMPLE_PLACEHOLDER;
   const ready = winSaveAborted(signal) ? false : await winPhotoDatabaseReady(signal);
   if (winSaveDropped(options)) return droppedWinResult(storage, date);
   if (winSaveAborted(signal)) {
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: true });
+    return photoResult(added, { photoError: added.saved === true, timedOut: true, photoSample: sampleChoice });
   }
   if (!ready) {
-    const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+    const added = addWin(text, storage, date, now, winSamplePath(allowedId), id);
     return photoResult(added, { photoFallback: added.saved === true });
   }
   const stamp = now instanceof Date ? now.getTime() : Date.now();
@@ -1228,11 +1309,11 @@ export async function addWinPhoto(
   }
   if (!put.ok) {
     if (put.reason === "unavailable") {
-      const added = addWin(text, storage, date, now, WIN_PLACEHOLDER_PHOTO, id);
+      const added = addWin(text, storage, date, now, winSamplePath(allowedId), id);
       return photoResult(added, { photoFallback: added.saved === true });
     }
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: put.reason === "timeout" });
+    return photoResult(added, { photoError: added.saved === true, timedOut: put.reason === "timeout", photoSample: sampleChoice });
   }
   if (winSaveAborted(signal) || winSaveDropped(options)) {
     try {
@@ -1242,12 +1323,12 @@ export async function addWinPhoto(
     }
     if (winSaveDropped(options)) return droppedWinResult(storage, date);
     const added = addWin(text, storage, date, now, undefined, id);
-    return photoResult(added, { photoError: added.saved === true, timedOut: true });
+    return photoResult(added, { photoError: added.saved === true, timedOut: true, photoSample: sampleChoice });
   }
   const added = addWin(text, storage, date, now, WIN_PHOTO_REF, id);
   if (!added.saved || !added.item || added.item.id !== id || added.item.photo !== WIN_PHOTO_REF) {
     await deleteWinPhotos([id], { notify: false });
-    return photoResult(added, { photoError: true });
+    return photoResult(added, { photoError: true, photoSample: sampleChoice });
   }
   postWinPhotoChange("put", id);
   return photoResult(added, { photoSaved: true });
@@ -1274,5 +1355,247 @@ export function removeWin(id, storage = globalThis.localStorage, date = new Date
     items: winsForDate(written.store, date),
     saved: true,
     photoCleanup: written.photoCleanup,
+  };
+}
+
+function imageKept(storage, item, extra = {}) {
+  return {
+    saved: false,
+    imageChanged: false,
+    kept: true,
+    item: item || null,
+    store: readWinsStore(storage),
+    ...extra,
+  };
+}
+
+function imageGone(storage) {
+  return {
+    saved: false,
+    imageChanged: false,
+    missing: true,
+    kept: false,
+    item: null,
+    store: readWinsStore(storage),
+  };
+}
+
+/**
+ * Reload the wins record and change only this win's photo field.
+ * A win added, removed, or edited while the image write was in flight stays as it is now.
+ * Missing means that id is no longer stored. Nothing is written in that case.
+ */
+function commitWinPhoto(storage, id, photo, preferredKey, stampNow) {
+  const fresh = loadWinsStore(storage);
+  const days = fresh.days || {};
+  const order = [];
+  if (preferredKey && Array.isArray(days[preferredKey])) order.push(preferredKey);
+  for (const dayKey of Object.keys(days)) {
+    if (dayKey !== preferredKey) order.push(dayKey);
+  }
+  for (const dayKey of order) {
+    const list = days[dayKey];
+    if (!Array.isArray(list)) continue;
+    const index = list.findIndex((item) => item && item.id === id);
+    if (index < 0) continue;
+    const next = { ...list[index] };
+    if (photo) next.photo = photo;
+    else delete next.photo;
+    days[dayKey] = list.map((item, itemIndex) => (itemIndex === index ? next : item));
+    const written = persistWins(fresh, storage, stampNow);
+    const when = civilDateFromKey(dayKey) || stampNow;
+    return {
+      missing: false,
+      item: next,
+      items: winsForDate(written.store, when),
+      written,
+    };
+  }
+  return { missing: true, item: null, items: [], written: null };
+}
+
+/**
+ * Change or remove the sample image on one stored win.
+ * Writes or deletes the blob in mindpal-photos / winPhotos.
+ * The win text is left as it is. A failed write does not change the record.
+ * choice "none" removes the image. Any other id must be the placeholder or a bundled sample.
+ * Does not run on load.
+ */
+export async function changeWinImage(
+  id,
+  choice,
+  storage = globalThis.localStorage,
+  date = new Date(),
+  now = new Date(),
+  options = {},
+) {
+  const signal = options && typeof options === "object" ? options.signal : undefined;
+  if (typeof id !== "string" || !id) return imageGone(storage);
+  if (winSaveDropped(options)) return imageKept(storage, null, { timedOut: true });
+  if (winsSaveBlockedQuiet(storage)) return imageKept(storage, null);
+  const store = loadWinsStore(storage);
+  const key = civilDateKey(date);
+  const listed = winsForDate(store, date);
+  const index = listed.findIndex((item) => item.id === id);
+  if (index < 0) return imageGone(storage);
+  const current = listed[index];
+  const wanted = choice === WIN_SAMPLE_NONE || choice == null || choice === "" ? WIN_SAMPLE_NONE : choice;
+  const stampNow = now instanceof Date ? now : new Date();
+  if (wanted === WIN_SAMPLE_NONE) {
+    if (!current.photo) {
+      return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+    }
+    const committed = commitWinPhoto(storage, id, "", key, stampNow);
+    if (committed.missing) return imageGone(storage);
+    if (!committed.written.saved) return imageKept(storage, current);
+    return {
+      saved: true,
+      imageChanged: true,
+      removed: true,
+      item: committed.item,
+      items: committed.items,
+      store: committed.written.store,
+      photoCleanup: committed.written.photoCleanup,
+    };
+  }
+  const blob = winSampleBlob(wanted);
+  const allowedId = blob ? await winPhotoAllowlistId(blob) : "";
+  if (!blob || allowedId !== wanted) return imageKept(storage, current, { reason: "blob", store });
+  if (current.photo && current.photo !== WIN_PHOTO_REF && current.photo === winSamplePath(wanted)) {
+    return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+  }
+  let previous = null;
+  if (current.photo === WIN_PHOTO_REF) {
+    const record = await readWinPhotoRecord(id);
+    if (record.status === "error") return imageKept(storage, current, { reason: "read", store });
+    previous = record.status === "ok" ? record.blob : null;
+    const previousId = previous ? await winPhotoAllowlistId(previous) : "";
+    if (previousId === wanted) {
+      return { saved: true, imageChanged: false, unchanged: true, kept: true, item: current, store };
+    }
+  }
+  if (winSaveDropped(options) || winSaveAborted(signal)) return imageKept(storage, current, { timedOut: true, store });
+  const ready = await winPhotoDatabaseReady(signal);
+  if (winSaveDropped(options)) return imageKept(storage, current, { timedOut: true, store });
+  if (winSaveAborted(signal)) return imageKept(storage, current, { timedOut: true, store });
+  if (!ready) {
+    const committed = commitWinPhoto(storage, id, winSamplePath(wanted), key, stampNow);
+    if (committed.missing) return imageGone(storage);
+    if (!committed.written.saved) return imageKept(storage, current);
+    return {
+      saved: true,
+      imageChanged: true,
+      photoFallback: true,
+      item: committed.item,
+      items: committed.items,
+      store: committed.written.store,
+      photoCleanup: committed.written.photoCleanup,
+    };
+  }
+  const put = await putWinPhoto(id, blob, stampNow.getTime(), {
+    signal,
+    previousBlob: previous || undefined,
+  });
+  if (winSaveDropped(options)) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    fix.catch(() => {});
+    return imageKept(storage, current, { timedOut: true });
+  }
+  if (!put.ok) {
+    return imageKept(storage, current, { reason: put.reason, timedOut: put.reason === "timeout", store });
+  }
+  if (winSaveAborted(signal) || winSaveDropped(options)) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    fix.catch(() => {});
+    return imageKept(storage, current, { timedOut: true });
+  }
+  /*
+   * Confirm the blob is still the chosen sample before the record points at it.
+   * A missing blob, or a blob that is not that sample, is left as it is so another
+   * tab's delete is not undone.
+   * A read that errors (the get throws, or the photo database cannot be opened)
+   * puts the previous blob back, or deletes the new blob when this win had none.
+   * That restore can overwrite a newer image another tab stored after this write.
+   * The timeout path has the same blind restore.
+   * Say the image was not changed only when that restore or delete succeeds.
+   * If it does not, point the record at the blob still stored and say the sample
+   * image may have changed.
+   * The confirming read and the record write are not one transaction. Reading the
+   * blob is its own task, and the allowlist check decodes it again. The gap
+   * includes waiting for that read. Another tab can remove the blob before the
+   * synchronous commit, and the record can still point at it. That gap is not
+   * the 300 ms write window.
+   */
+  let seen = await readWinPhotoRecord(id);
+  let seenId = "";
+  if (seen && seen.status === "ok") {
+    try {
+      seenId = await winPhotoAllowlistId(seen.blob);
+    } catch {
+      seen = { status: "error", blob: null };
+    }
+  }
+  const readFailed = !seen || (seen.status !== "ok" && seen.status !== "missing");
+  if (readFailed) {
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    let restored = false;
+    try {
+      const result = await fix;
+      restored = previous
+        ? Boolean(result && result.ok)
+        : Boolean(result && Array.isArray(result.deleted) && result.deleted.includes(id));
+    } catch {
+      restored = false;
+    }
+    if (restored) return imageKept(storage, current, { reason: "read" });
+    const pointed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+    if (pointed.missing) return imageGone(storage);
+    const store = pointed.written && pointed.written.store ? pointed.written.store : readWinsStore(storage);
+    return imageKept(storage, pointed.item || current, {
+      reason: "uncertain",
+      saved: Boolean(pointed.written && pointed.written.saved),
+      store,
+    });
+  }
+  if (seen.status !== "ok" || seenId !== wanted) {
+    return imageKept(storage, current, { reason: "unconfirmed" });
+  }
+  const committed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+  if (committed.missing || !committed.written || !committed.written.saved || winSaveDropped(options)) {
+    if (committed.missing) {
+      try {
+        await deleteWinPhotos([id], { notify: false });
+      } catch {
+        /* the new blob is cleaned up when the photo database can */
+      }
+      return imageGone(storage);
+    }
+    const fix = previous
+      ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
+      : deleteWinPhotos([id], { notify: false });
+    if (winSaveDropped(options)) fix.catch(() => {});
+    else {
+      try {
+        await fix;
+      } catch {
+        /* the wins record was not updated */
+      }
+    }
+    return imageKept(storage, current, { timedOut: winSaveDropped(options) });
+  }
+  postWinPhotoChange("put", id);
+  return {
+    saved: true,
+    imageChanged: true,
+    item: committed.item,
+    items: committed.items,
+    store: committed.written.store,
+    photoCleanup: committed.written.photoCleanup,
   };
 }
