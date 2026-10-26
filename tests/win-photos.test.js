@@ -312,6 +312,75 @@ describe("win photo blobs", () => {
     assert.equal((await readWinPhoto("fresh")).type, "image/svg+xml");
   });
 
+  it("deletes a placeholder that commits after its write times out", async () => {
+    const rows = new Map();
+    setWinPhotoRequestMs(15);
+    setWinPhotoDatabaseFactory({
+      open() {
+        const request = {};
+        queueMicrotask(() => {
+          const db = {
+            objectStoreNames: { contains: () => true },
+            close() {},
+            transaction() {
+              const tx = {
+                abort() {
+                  queueMicrotask(() => {
+                    if (typeof tx.pendingPut === "function") tx.pendingPut();
+                    if (typeof tx.oncomplete === "function") tx.oncomplete();
+                  });
+                },
+                objectStore() {
+                  return {
+                    put: (value, key) => {
+                      const req = {};
+                      tx.pendingPut = () => rows.set(key, value);
+                      queueMicrotask(() => {
+                        if (typeof req.onsuccess === "function") req.onsuccess();
+                      });
+                      return req;
+                    },
+                    get: (key) => {
+                      const req = {};
+                      queueMicrotask(() => {
+                        req.result = rows.get(key);
+                        if (typeof req.onsuccess === "function") req.onsuccess();
+                        queueMicrotask(() => {
+                          if (typeof tx.oncomplete === "function") tx.oncomplete();
+                        });
+                      });
+                      return req;
+                    },
+                    delete: (key) => {
+                      const req = {};
+                      queueMicrotask(() => {
+                        rows.delete(key);
+                        if (typeof req.onsuccess === "function") req.onsuccess();
+                        queueMicrotask(() => {
+                          if (typeof tx.oncomplete === "function") tx.oncomplete();
+                        });
+                      });
+                      return req;
+                    },
+                  };
+                },
+              };
+              return tx;
+            },
+          };
+          request.result = db;
+          if (typeof request.onsuccess === "function") request.onsuccess();
+        });
+        return request;
+      },
+    });
+    const result = await putWinPhoto("late-commit", placeholderPhotoBlob(), Date.now());
+    assert.equal(result.ok, false);
+    assert.equal(result.reason, "timeout");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    assert.equal(rows.has("late-commit"), false);
+  });
+
   it("keeps a placeholder image another tab just stored when reset or an unreadable save would otherwise delete it", async () => {
     const swept = memoryStorage({ [WINS_STORAGE_KEY]: "{\"version\":2,\"days\":" });
     assert.equal((await putWinPhoto("pending-blob", placeholderPhotoBlob())).ok, true);

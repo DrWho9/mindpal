@@ -424,7 +424,23 @@ export async function putWinPhoto(id, blob, createdAt = Date.now(), options = {}
     } catch {
       /* the write already failed */
     }
-    if (winPhotoGaveUp(error) || (signal && signal.aborted)) return { ok: false, reason: "timeout" };
+    if (winPhotoGaveUp(error) || (signal && signal.aborted)) {
+      /*
+       * Abort and commit can overlap. A blob that lands after the timeout
+       * would be an orphan while the card says the image was not saved.
+       * Delete it now, and again if a late complete arrives after that.
+       */
+      const cleanup = () => {
+        deleteWinPhotos([id], { notify: false }).catch(() => {});
+      };
+      if (tx) tx.oncomplete = cleanup;
+      try {
+        await deleteWinPhotos([id], { notify: false });
+      } catch {
+        /* the late complete handler still tries */
+      }
+      return { ok: false, reason: "timeout" };
+    }
     return { ok: false, reason: "put" };
   }
 }

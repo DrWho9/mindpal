@@ -199,34 +199,64 @@ function mpSignInPage({onSignedIn:e}){
   ]});
 }
 function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
-  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
+  let[n,r]=(0,_.useState)(()=>mpWins.winsForDate(mpWins.loadWinsStore())),[i,a]=(0,_.useState)(``),[o,s]=(0,_.useState)(``),[p,g]=(0,_.useState)(!1),[b,h]=(0,_.useState)(()=>e===`winOfDay`&&mpWins.winsSaveBlocked()),[m,x]=(0,_.useState)(!1),[P,E]=(0,_.useState)({}),F=(0,_.useRef)(!1),[S,T]=(0,_.useState)(!1),[j,q]=(0,_.useState)(!1),G=(0,_.useRef)(!1),saveSeq=(0,_.useRef)(0),shown=(0,_.useRef)(mpWins.PAST_WINS_PAGE_DAYS),dropGuard=(0,_.useRef)(!1),photoCache=(0,_.useRef)({}),focusAfter=(0,_.useRef)(null),[hold,setHold]=(0,_.useState)(null),[dropBusy,setDropBusy]=(0,_.useState)(!1),[past,setPast]=(0,_.useState)(()=>e===`winOfDay`?mpWins.pastWinsPage(mpWins.readWinsStore()):mpWins.emptyPastWins()),[openPast,setOpenPast]=(0,_.useState)(!1);
   function c(){let store=mpWins.loadWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlocked());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   // Other tabs only read. k() does not save, reset, or probe. The listener forgets a stale probe answer.
   function k(){let store=mpWins.readWinsStore();r(mpWins.winsForDate(store));if(e!==`winOfDay`)return;h(mpWins.winsSaveBlockedQuiet());setPast(mpWins.pastWinsPage(store,new Date(),shown.current))}
   (0,_.useEffect)(()=>mpWins.listenForWinsChanges(window,c,k),[]);
+  (0,_.useEffect)(()=>()=>{
+    let cache=photoCache.current;
+    for(let id of Object.keys(cache)) if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+    photoCache.current={};
+  },[]);
+  // Past thumbnails load only while the list is open. A cached id is not read again.
+  // Object URLs are revoked when that win leaves the store, or when the card unmounts.
   (0,_.useEffect)(()=>{
     if(e!==`winOfDay`)return;
     let cancelled=!1;
-    let urls=[];
     let rows=n.slice();
-    let days=past&&Array.isArray(past.days)?past.days:[];
-    for(let day of days) if(day&&Array.isArray(day.items)) rows.push(...day.items);
+    if(openPast){
+      let days=past&&Array.isArray(past.days)?past.days:[];
+      for(let day of days) if(day&&Array.isArray(day.items)) rows.push(...day.items);
+    }
+    let known=new Set();
+    for(let w of n) if(w&&w.id) known.add(w.id);
+    let allDays=past&&Array.isArray(past.days)?past.days:[];
+    for(let day of allDays) if(day&&Array.isArray(day.items)) for(let w of day.items) if(w&&w.id) known.add(w.id);
     (async()=>{
-      let next={};
+      let cache=photoCache.current;
+      let changed=!1;
+      for(let id of Object.keys(cache)){
+        if(known.has(id))continue;
+        if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+        delete cache[id];
+        changed=!0;
+      }
       for(let w of rows){
         if(!w||w.photo!==mpWins.WIN_PHOTO_REF)continue;
+        if(cache[w.id])continue;
         let blob=await mpWins.readWinPhoto(w.id);
         if(cancelled)return;
-        if(!blob){next[w.id]={kind:`missing`};continue}
+        if(!blob){cache[w.id]={kind:`missing`};changed=!0;continue}
         let url=mpWins.winPhotoObjectUrl(blob);
-        if(cancelled){mpWins.releaseWinPhotoUrl(url);return}
-        if(url)urls.push(url);
-        next[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+        if(cancelled){if(url)mpWins.releaseWinPhotoUrl(url);return}
+        cache[w.id]=url?{kind:`blob`,url}:{kind:`missing`};
+        changed=!0;
       }
-      if(!cancelled)E(next);
+      if(!cancelled&&(changed||rows.length))E({...cache});
     })();
-    return()=>{cancelled=!0;for(let url of urls)mpWins.releaseWinPhotoUrl(url)};
-  },[n,past,e]);
+    return()=>{cancelled=!0};
+  },[n,past,e,openPast]);
+  // Focus only after dropBusy clears. A disabled Remove button cannot take focus.
+  (0,_.useEffect)(()=>{
+    if(dropBusy)return;
+    let target=focusAfter.current;
+    if(!target)return;
+    focusAfter.current=null;
+    let node=null;
+    try{node=document.querySelector(target)}catch{node=null}
+    if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
+  },[past,dropBusy]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
@@ -266,18 +296,34 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     }finally{G.current=!1;q(!1);x(!1)}
   }
   function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
+  // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
   async function drop(id,key){
     if(dropGuard.current)return;
     dropGuard.current=!0;
+    setDropBusy(!0);
     try{
       let when=mpWins.civilDateFromKey(key)||new Date();
       let u=mpWins.removeWin(id,void 0,when);
+      if(!u.saved){
+        let kept=mpWins.readWinsStore();
+        r(mpWins.winsForDate(kept));
+        setPast(mpWins.pastWinsPage(kept,new Date(),shown.current));
+        s(mpWins.WIN_NOT_REMOVED_LABEL);
+        return;
+      }
+      let nextFocus=mpWins.pastWinFocusAfter(past.days,id);
+      let safe=nextFocus.kind===`win`&&typeof CSS<`u`&&CSS.escape?CSS.escape(nextFocus.id):nextFocus.id;
+      focusAfter.current=nextFocus.kind===`win`?`[data-mp-past-focus="${safe}"]`:`#mp-past-summary`;
+      let cache=photoCache.current;
+      if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+      if(cache[id])delete cache[id];
+      E({...cache});
       r(mpWins.winsForDate(u.store));
       setPast(mpWins.pastWinsPage(u.store,new Date(),shown.current));
-      if(!u.saved)s(mpWins.WIN_NOT_SAVED_LABEL);
+      setHold(null);
       try{if(u.photoCleanup)await u.photoCleanup}catch{}
       try{window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT))}catch{}
-    }finally{dropGuard.current=!1}
+    }finally{dropGuard.current=!1;setDropBusy(!1)}
   }
   function photoBlock(w){
     if(e!==`winOfDay`||!w)return null;
@@ -321,15 +367,23 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       winWhen(w)
     ]},w.id))}):(0,A.jsx)(`p`,{className:`muted`,children:e===`evening`?`No wins saved yet today. You can still write a short wind-down note.`:e===`winOfDay`?mpWins.WIN_OF_THE_DAY_EMPTY:`Nothing saved yet today.`}),
     e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
-      (0,A.jsx)(`summary`,{children:mpWins.PAST_WINS_TITLE}),
+      (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:mpWins.PAST_WINS_TITLE}),
       past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map(day=>(0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
         (0,A.jsx)(`h3`,{children:day.label}),
-        (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>(0,A.jsxs)(`li`,{children:[
-          photoBlock(w),
-          (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
-          winWhen(w),
-          (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,onClick:()=>drop(w.id,day.key),"aria-label":mpWins.PAST_WINS_REMOVE,children:mpWins.PAST_WINS_REMOVE})
-        ]},w.id))})
+        (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
+          let held=hold&&hold.id===w.id&&hold.key===day.key;
+          let removeName=mpWins.pastWinRemoveLabel(w.text);
+          let confirmName=mpWins.pastWinConfirmLabel(w.text);
+          return (0,A.jsxs)(`li`,{children:[
+            photoBlock(w),
+            (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
+            winWhen(w),
+            held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
+              (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>drop(w.id,day.key),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+              (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(!dropBusy)setHold(null)},children:mpWins.PAST_WINS_REMOVE_KEEP})
+            ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":w.id,onClick:()=>{if(!dropBusy)setHold({id:w.id,key:day.key})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+          ]},w.id);
+        })})
       ]},day.key))}):(0,A.jsx)(`p`,{className:`muted mp-past-empty`,children:mpWins.PAST_WINS_EMPTY}),
       past.hasMore?(0,A.jsx)(`button`,{className:`secondary mp-past-more`,type:`button`,onClick:more,children:mpWins.PAST_WINS_SHOW_MORE}):null
     ]}):null,

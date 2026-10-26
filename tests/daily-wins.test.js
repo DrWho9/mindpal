@@ -174,7 +174,7 @@ describe("daily wins", () => {
     assert.doesNotMatch(inject, /e\.id===`morning`\?\(0,A\.jsx\)\(mpWinsPanel/);
     assert.match(css, /\.mp-win-of-day\{[^}]*width:100%/);
     assert.match(css, /\.mp-win-of-day input\{[^}]*min-height:44px/);
-    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,emptyPastWins,pastWinsPage/);
+    assert.match(build, /WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,pastWinRemoveLabel,pastWinConfirmLabel,pastWinFocusAfter,emptyPastWins,pastWinsPage/);
   });
 
   it("keeps a v2 win model and accepts only the bundled placeholder photo", () => {
@@ -452,7 +452,7 @@ describe("daily wins", () => {
       winsForDate(loadWinsStore(blocked), morning).map((item) => item.text),
       ["Tea", "Again", "Later"],
     );
-    assert.match(build, /WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,MAX_CORRUPT_BACKUPS/);
+    assert.match(build, /WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS/);
   });
 
   it("does not pile up backups when the fresh v2 write fails", () => {
@@ -681,6 +681,7 @@ describe("daily wins", () => {
     assert.match(build, /MINDPAL_PHOTO_TEST\)\{mpWins\.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory/);
     assert.match(build, /mpWins\.setWinSaveTimeoutMs=setWinSaveTimeoutMs/);
     assert.match(build, /mpWins\.setWinPhotoRequestMs=setWinPhotoRequestMs/);
+    assert.match(build, /mpWins\.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs/);
     assert.match(build, /MINDPAL_PHOTO_TEST\)globalThis\.mpWins=mpWins/);
     assert.doesNotMatch(build, /typeof globalThis<\\`u\\`\)globalThis\.mpWins=mpWins/);
   });

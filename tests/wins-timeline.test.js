@@ -18,8 +18,11 @@ import {
   PAST_WINS_EMPTY,
   PAST_WINS_PAGE_DAYS,
   PAST_WINS_REMOVE,
+  PAST_WINS_REMOVE_CONFIRM,
+  PAST_WINS_REMOVE_KEEP,
   PAST_WINS_SHOW_MORE,
   PAST_WINS_TITLE,
+  WIN_NOT_REMOVED_LABEL,
   WIN_NOT_SAVED_LABEL,
   WIN_PHOTO_NOT_SAVED_LABEL,
   WIN_PHOTO_REF,
@@ -38,6 +41,9 @@ import {
   emptyPastWins,
   formatWinDayLabel,
   loadWinsStore,
+  pastWinConfirmLabel,
+  pastWinFocusAfter,
+  pastWinRemoveLabel,
   pastWinsPage,
   readWinsStore,
   removeWin,
@@ -189,12 +195,14 @@ describe("past wins timeline", () => {
     store.days["2026-09-21"] = [{ id: "future", text: "Not yet", at: "2026-09-21T09:00:00.000Z" }];
     store.days["2026-09-10"] = [];
     const page = pastWinsPage(store, today, PAST_WINS_PAGE_DAYS);
-    assert.equal(page.totalDays, 2);
+    assert.equal(page.totalDays, 3);
     assert.equal(page.hasMore, false);
-    assert.deepEqual(page.days.map((day) => day.key), ["2026-09-19", "2026-09-18"]);
-    assert.deepEqual(page.days[1].items.map((item) => item.id), ["older-am", "older-pm"]);
+    assert.deepEqual(page.days.map((day) => day.key), ["2026-09-21", "2026-09-19", "2026-09-18"]);
+    assert.equal(page.days[0].items[0].id, "future");
+    assert.equal(page.days[0].items[0].text, "Not yet");
+    assert.match(page.days[0].label, /21/);
+    assert.deepEqual(page.days[2].items.map((item) => item.id), ["older-am", "older-pm"]);
     assert.equal(page.days.some((day) => day.items.some((item) => item.id === "today")), false);
-    assert.equal(page.days.some((day) => day.key === "2026-09-21"), false);
     assert.equal(storage.getItem(WINS_STORAGE_KEY) !== before, true);
     const serial = storage.getItem(WINS_STORAGE_KEY);
     assert.equal(pastWinsPage(readWinsStore(storage), today).days.length, 2);
@@ -287,9 +295,67 @@ describe("past wins timeline", () => {
     assert.equal(panel.split("className:`mp-past-wins`").length - 1, 1);
     assert.doesNotMatch(panel.slice(panel.indexOf("function more()"), panel.indexOf("async function drop(")), /setItem|addWin|loadWinsStore/);
     const css = readFileSync(join(root, "../src/patches/styles.css"), "utf8");
-    assert.match(css, /\.mp-past-wins summary\{[^}]*min-height:44px/);
-    assert.match(css, /\.mp-past-wins \.mp-past-remove,\.mp-past-wins \.mp-past-more\{[^}]*min-height:44px/);
+    assert.match(css, /\.mp-win-of-day \.mp-past-wins summary\{[^}]*min-height:44px/);
+    assert.match(css, /\.mp-win-of-day \.mp-past-wins \.mp-past-remove,\.mp-win-of-day \.mp-past-wins \.mp-past-more\{[^}]*min-height:44px/);
     assert.match(css, /@media \(width<=480px\)/);
+    assert.doesNotMatch(css, /(^|\n)\.mp-past-wins/);
+    const photoEffect = panel.slice(panel.indexOf("Past thumbnails load only"), panel.indexOf("async function l()"));
+    assert.match(photoEffect, /if\(openPast\)/);
+    assert.match(photoEffect, /if\(cache\[w\.id\]\)continue/);
+    assert.match(panel, /photoCache\.current=\{\}/);
+    const dropFn = panel.slice(panel.indexOf("async function drop("), panel.indexOf("function photoBlock("));
+    assert.match(dropFn, /if\(dropGuard\.current\)return/);
+    assert.match(dropFn, /setDropBusy\(!0\)/);
+    assert.match(dropFn, /mpWins\.WIN_NOT_REMOVED_LABEL/);
+    assert.match(dropFn, /mpWins\.readWinsStore\(\)/);
+    assert.match(dropFn, /mpWins\.pastWinFocusAfter\(past\.days,id\)/);
+    assert.doesNotMatch(dropFn.slice(dropFn.indexOf("if(!u.saved)"), dropFn.indexOf("let nextFocus")), /u\.store/);
+    assert.match(panel, /disabled:dropBusy/);
+    assert.match(panel.slice(panel.indexOf("Focus only after dropBusy"), panel.indexOf("async function l()")), /if\(dropBusy\)return/);
+    assert.match(panel, /"aria-label":removeName/);
+    assert.match(panel, /"aria-label":confirmName/);
+    assert.match(panel, /mpWins\.PAST_WINS_REMOVE_CONFIRM/);
+    assert.match(panel, /mpWins\.PAST_WINS_REMOVE_KEEP/);
+    assert.match(panel, /id:`mp-past-summary`/);
+  });
+
+  it("keeps a win on screen when the removal cannot be stored", () => {
+    const storage = memoryStorage();
+    addWin("Stay put", storage, onDay(1), onDay(1), WIN_PLACEHOLDER_PHOTO, "stay");
+    const saved = storage.getItem(WINS_STORAGE_KEY);
+    storage.setItem = () => {
+      throw new Error("quota");
+    };
+    const removed = removeWin("stay", storage, onDay(1));
+    assert.equal(removed.saved, false);
+    assert.equal(storage.getItem(WINS_STORAGE_KEY), saved);
+    const kept = loadWinsStore(storage);
+    assert.equal(kept.days["2026-09-19"].some((item) => item.id === "stay"), true);
+    assert.equal(WIN_NOT_REMOVED_LABEL, "Not removed. This win is still saved on this device.");
+    assert.doesNotMatch(WIN_NOT_REMOVED_LABEL, /Not saved/);
+    assert.doesNotMatch(WIN_NOT_REMOVED_LABEL, /—|–/);
+  });
+
+  it("names the remove control and chooses the next focus target", () => {
+    assert.equal(pastWinRemoveLabel("Synthetic win yesterday"), "Remove win: Synthetic win yesterday");
+    assert.equal(pastWinConfirmLabel("Synthetic win yesterday"), "Confirm remove win: Synthetic win yesterday");
+    assert.equal(pastWinRemoveLabel("  "), "Remove win");
+    assert.equal(pastWinConfirmLabel(""), "Confirm remove win");
+    assert.equal(PAST_WINS_REMOVE, "Remove");
+    assert.equal(PAST_WINS_REMOVE_CONFIRM, "Confirm remove");
+    assert.equal(PAST_WINS_REMOVE_KEEP, "Keep this win");
+    const long = "word ".repeat(30);
+    assert.match(pastWinRemoveLabel(long), /^Remove win: /);
+    assert.ok(pastWinRemoveLabel(long).length < long.length);
+    assert.doesNotMatch(`${pastWinRemoveLabel("Tea")} ${pastWinConfirmLabel("Tea")} ${PAST_WINS_REMOVE_CONFIRM} ${PAST_WINS_REMOVE_KEEP}`, /—|–/);
+    const days = [
+      { key: "2026-09-19", items: [{ id: "a" }, { id: "b" }] },
+      { key: "2026-09-18", items: [{ id: "c" }] },
+    ];
+    assert.deepEqual(pastWinFocusAfter(days, "a"), { kind: "win", id: "b" });
+    assert.deepEqual(pastWinFocusAfter(days, "b"), { kind: "win", id: "c" });
+    assert.deepEqual(pastWinFocusAfter(days, "c"), { kind: "win", id: "b" });
+    assert.deepEqual(pastWinFocusAfter([{ key: "2026-09-19", items: [{ id: "only" }] }], "only"), { kind: "summary" });
   });
 });
 

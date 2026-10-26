@@ -4,8 +4,11 @@ import { after, before, describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 import {
   PAST_WINS_EMPTY,
+  PAST_WINS_REMOVE_KEEP,
   PAST_WINS_SHOW_MORE,
   PAST_WINS_TITLE,
+  pastWinConfirmLabel,
+  pastWinRemoveLabel,
   WIN_PHOTO_CHECKING_LABEL,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
@@ -167,8 +170,18 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "visible" });
 
     const yesterdayId = await page.evaluate(() => globalThis.__yesterdayId);
-    await past.locator("li", { hasText: "Synthetic win yesterday" }).getByRole("button", { name: "Remove" }).click();
+    const yesterdayName = pastWinRemoveLabel("Synthetic win yesterday");
+    const yesterdayRow = past.locator("li", { hasText: "Synthetic win yesterday" });
+    await yesterdayRow.getByRole("button", { name: yesterdayName, exact: true }).click();
+    await past.getByRole("button", { name: PAST_WINS_REMOVE_KEEP, exact: true }).click();
+    assert.equal(await yesterdayRow.count(), 1);
+    await yesterdayRow.getByRole("button", { name: yesterdayName, exact: true }).click();
+    await yesterdayRow.getByRole("button", { name: pastWinConfirmLabel("Synthetic win yesterday"), exact: true }).click();
     await past.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });
+    await page.waitForFunction(
+      (label) => document.activeElement && document.activeElement.getAttribute("aria-label") === label,
+      pastWinRemoveLabel("Bundled placeholder win"),
+    );
     await past.getByText("Bundled placeholder win").waitFor({ state: "visible" });
     await otherPast.getByText("Synthetic win yesterday").waitFor({ state: "hidden" });
     const left = await page.evaluate(async (id) => {

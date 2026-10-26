@@ -58,6 +58,8 @@ export const MAX_CORRUPT_BACKUPS = 3;
 export const WINS_STORE_VERSION = 2;
 export const WIN_SAVED_LABEL = "Saved on this device for today.";
 export const WIN_NOT_SAVED_LABEL = "Not saved. This win was not stored on this device.";
+/** Removal failed. The win is still in the stored record. */
+export const WIN_NOT_REMOVED_LABEL = "Not removed. This win is still saved on this device.";
 /** Shown on Win of the day only while a save cannot be stored. */
 export const WIN_RESET_LABEL = "Reset wins on this device";
 const WIN_PHOTO_PENDING_SECONDS = Math.round(WIN_PHOTO_PENDING_MS / 1000);
@@ -123,6 +125,42 @@ export const PAST_WINS_EMPTY =
   "No earlier wins saved on this device. This prototype keeps wins on this device only.";
 export const PAST_WINS_SHOW_MORE = "Show more";
 export const PAST_WINS_REMOVE = "Remove";
+export const PAST_WINS_REMOVE_CONFIRM = "Confirm remove";
+export const PAST_WINS_REMOVE_KEEP = "Keep this win";
+
+/** Accessible name for Remove. The visible button stays short. */
+export function pastWinRemoveLabel(text) {
+  const words = typeof text === "string" ? text.replace(/\s+/g, " ").trim() : "";
+  if (!words) return "Remove win";
+  const clipped = words.length > 80 ? `${words.slice(0, 77).trimEnd()}...` : words;
+  return `Remove win: ${clipped}`;
+}
+
+/** Accessible name for the confirm step. */
+export function pastWinConfirmLabel(text) {
+  const name = pastWinRemoveLabel(text);
+  if (name === "Remove win") return "Confirm remove win";
+  return `Confirm ${name.charAt(0).toLowerCase()}${name.slice(1)}`;
+}
+
+/**
+ * Where focus goes after a past win is removed.
+ * The next win in the open list, otherwise the previous one, otherwise the list heading.
+ */
+export function pastWinFocusAfter(days, id) {
+  const flat = [];
+  const list = Array.isArray(days) ? days : [];
+  for (const day of list) {
+    const items = day && Array.isArray(day.items) ? day.items : [];
+    for (const item of items) {
+      if (item && typeof item.id === "string" && item.id) flat.push(item.id);
+    }
+  }
+  const index = flat.indexOf(id);
+  if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1] };
+  if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1] };
+  return { kind: "summary" };
+}
 /**
  * How long Save waits for a win write. A hung photo database aborts at this point.
  * The words can still be stored. A result that arrives after the watch gives up is ignored.
@@ -847,7 +885,8 @@ export function emptyPastWins() {
 }
 
 /**
- * Earlier days than `date`, newest first. Today is not included.
+ * Days other than `date`, newest first. Today is not included.
+ * A future day key is included with its real date, so it is not hidden.
  * Wins inside a day stay in the order they were saved.
  * `shown` is how many days to return. The rest stay behind hasMore.
  * This does not read or write storage.
@@ -858,7 +897,7 @@ export function pastWinsPage(store, date = new Date(), shown = PAST_WINS_PAGE_DA
   const keys = Object.keys(daysIn)
     .filter(
       (key) =>
-        key < today
+        key !== today
         && /^\d{4}-\d{2}-\d{2}$/.test(key)
         && Array.isArray(daysIn[key])
         && daysIn[key].length > 0,
