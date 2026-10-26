@@ -129,6 +129,8 @@ export const PAST_WINS_REMOVE_CONFIRM = "Confirm remove";
 export const PAST_WINS_REMOVE_KEEP = "Keep this win";
 /** Group heading for wins stored under a day after today. */
 export const PAST_WINS_LATER = "Later dates";
+/** Group heading for saved days before today, when later dates are also shown. */
+export const PAST_WINS_EARLIER = "Earlier days";
 /** Small note on a day key that is after today. */
 export const PAST_WINS_FUTURE_NOTE = "Future date";
 
@@ -199,6 +201,62 @@ export function pastWinFocusAfter(days, id, fromIndex) {
   if (index >= 0 && flat[index + 1]) return { kind: "win", id: flat[index + 1], index };
   if (index > 0 && flat[index - 1]) return { kind: "win", id: flat[index - 1], index: index - 1 };
   return { kind: "summary" };
+}
+
+function pastDayItems(day) {
+  return day && Array.isArray(day.items) ? day.items : [];
+}
+
+function pastFlatIndex(days, key, pos) {
+  let index = 0;
+  for (const day of days) {
+    const items = pastDayItems(day);
+    if (day && day.key === key) return pos >= 0 && pos < items.length ? index + pos : -1;
+    index += items.length;
+  }
+  return -1;
+}
+
+function pastFocusAt(days, key, pos) {
+  const day = days.find((item) => item && item.key === key);
+  const item = pastDayItems(day)[pos];
+  const index = pastFlatIndex(days, key, pos);
+  if (!item || typeof item.id !== "string" || !item.id || index < 0) return { kind: "summary" };
+  return { kind: "win", id: item.id, key, pos, index };
+}
+
+/**
+ * Whether Confirm remove still points at the win the person picked.
+ * The id, the day, and the position on that day must all match.
+ * A list shift that puts a different win in that slot clears the confirm step.
+ * focus is where to move when the confirm step cannot stay.
+ */
+export function pastWinHoldAfterRefresh(days, hold) {
+  const list = Array.isArray(days) ? days : [];
+  const summary = { keep: false, focus: { kind: "summary" } };
+  if (!hold || typeof hold.id !== "string" || !hold.id || typeof hold.key !== "string" || !hold.key) return summary;
+  if (!Number.isInteger(hold.pos) || hold.pos < 0) return summary;
+  const day = list.find((item) => item && item.key === hold.key);
+  const items = pastDayItems(day);
+  if (items[hold.pos] && items[hold.pos].id === hold.id) {
+    return { keep: true, focus: pastFocusAt(list, hold.key, hold.pos) };
+  }
+  let closest = -1;
+  items.forEach((item, index) => {
+    if (!item || item.id !== hold.id) return;
+    if (closest < 0 || Math.abs(index - hold.pos) < Math.abs(closest - hold.pos)) closest = index;
+  });
+  if (closest >= 0) return { keep: false, focus: pastFocusAt(list, hold.key, closest) };
+  if (items.length > 0) {
+    const pos = Math.min(hold.pos, items.length - 1);
+    return { keep: false, focus: pastFocusAt(list, hold.key, pos) };
+  }
+  const newer = list.filter((item) => item && typeof item.key === "string" && item.key > hold.key && pastDayItems(item).length);
+  const older = list.filter((item) => item && typeof item.key === "string" && item.key < hold.key && pastDayItems(item).length);
+  const neighbor = newer.length ? newer[newer.length - 1] : older[0];
+  if (!neighbor) return summary;
+  const pos = newer.length ? pastDayItems(neighbor).length - 1 : 0;
+  return { keep: false, focus: pastFocusAt(list, neighbor.key, pos) };
 }
 /**
  * How long Save waits for a win write. A hung photo database aborts at this point.

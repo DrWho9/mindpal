@@ -17,6 +17,7 @@ import {
 import {
   PAST_WINS_EMPTY,
   PAST_WINS_PAGE_DAYS,
+  PAST_WINS_EARLIER,
   PAST_WINS_FUTURE_NOTE,
   PAST_WINS_LATER,
   PAST_WINS_REMOVE,
@@ -45,6 +46,7 @@ import {
   loadWinsStore,
   pastWinConfirmLabel,
   pastWinFocusAfter,
+  pastWinHoldAfterRefresh,
   pastWinKeepLabel,
   pastWinRemoveLabel,
   pastWinTimeLabel,
@@ -227,9 +229,10 @@ describe("past wins timeline", () => {
     assert.equal(PAST_WINS_SHOW_MORE, "Show more");
     assert.equal(PAST_WINS_REMOVE, "Remove");
     assert.equal(PAST_WINS_LATER, "Later dates");
+    assert.equal(PAST_WINS_EARLIER, "Earlier days");
     assert.equal(PAST_WINS_FUTURE_NOTE, "Future date");
     assert.doesNotMatch(
-      `${PAST_WINS_TITLE} ${PAST_WINS_EMPTY} ${PAST_WINS_SHOW_MORE} ${PAST_WINS_REMOVE} ${PAST_WINS_LATER} ${PAST_WINS_FUTURE_NOTE} ${formatWinDayLabel("2026-09-19", "en-AU")}`,
+      `${PAST_WINS_TITLE} ${PAST_WINS_EMPTY} ${PAST_WINS_SHOW_MORE} ${PAST_WINS_REMOVE} ${PAST_WINS_LATER} ${PAST_WINS_EARLIER} ${PAST_WINS_FUTURE_NOTE} ${formatWinDayLabel("2026-09-19", "en-AU")}`,
       /—|–/,
     );
   });
@@ -327,8 +330,17 @@ describe("past wins timeline", () => {
     assert.match(panel, /"aria-label":keepName/);
     assert.match(panel, /mpWins\.pastWinKeepLabel/);
     assert.match(panel, /mpWins\.PAST_WINS_LATER/);
+    assert.match(panel, /mpWins\.PAST_WINS_EARLIER/);
     assert.match(panel, /mpWins\.PAST_WINS_FUTURE_NOTE/);
+    assert.match(panel, /`h3`,\{className:`mp-past-later`/);
+    assert.match(panel, /`h3`,\{className:`mp-past-earlier`/);
+    assert.doesNotMatch(panel, /`p`,\{className:`mp-past-later`/);
     assert.match(panel, /className:`mp-past-future`/);
+    assert.match(panel, /hold\.id===w\.id&&hold\.key===day\.key&&hold\.pos===pos/);
+    assert.match(panel, /id:`mp-win-status`/);
+    assert.match(panel, /pastWinHoldAfterRefresh/);
+    assert.ok(dropFn.indexOf("if(!check.keep)return") < dropFn.indexOf("mpWins.removeWin"));
+    assert.ok(dropFn.indexOf("focusAfter.current=`#mp-win-status`") < dropFn.indexOf("let nextFocus"));
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_CONFIRM/);
     assert.match(panel, /mpWins\.PAST_WINS_REMOVE_KEEP/);
     assert.match(panel, /id:`mp-past-summary`/);
@@ -384,6 +396,49 @@ describe("past wins timeline", () => {
     assert.deepEqual(pastWinFocusAfter(dup, "dup", 0), { kind: "win", id: "dup", index: 0 });
     assert.deepEqual(pastWinFocusAfter(dup, "dup", 1), { kind: "win", id: "tail", index: 1 });
     assert.deepEqual(pastWinFocusAfter(dup, "dup"), { kind: "win", id: "dup", index: 0 });
+  });
+
+  it("keeps confirm on the picked win when midnight or another tab shifts the list", () => {
+    const oct25 = new Date(2026, 9, 25, 9, 0, 0);
+    const oct26 = new Date(2026, 9, 26, 12, 0, 0);
+    const oct24 = new Date(2026, 9, 24, 9, 0, 0);
+    const oct23 = new Date(2026, 9, 23, 9, 0, 0);
+    const storage = memoryStorage();
+    addWin("Was today", storage, oct25, oct25, WIN_PLACEHOLDER_PHOTO, "todayish");
+    addWin("Picked", storage, oct24, oct24, WIN_PLACEHOLDER_PHOTO, "picked");
+    addWin("Decoy", storage, oct23, oct23, WIN_PLACEHOLDER_PHOTO, "decoy");
+    const before = pastWinsPage(loadWinsStore(storage), oct25);
+    assert.deepEqual(before.days.map((day) => day.key), ["2026-10-24", "2026-10-23"]);
+    const hold = { id: "picked", key: "2026-10-24", pos: 0 };
+    assert.equal(pastWinHoldAfterRefresh(before.days, hold).keep, true);
+    const afterMidnight = pastWinsPage(loadWinsStore(storage), oct26);
+    assert.equal(afterMidnight.days[0].items[0].id, "todayish");
+    const midnight = pastWinHoldAfterRefresh(afterMidnight.days, hold);
+    assert.equal(midnight.keep, true);
+    assert.equal(midnight.focus.id, "picked");
+    assert.equal(midnight.focus.key, "2026-10-24");
+    assert.notEqual(midnight.focus.index, 0);
+    assert.notEqual(afterMidnight.days[0].items[0].id, hold.id);
+
+    const store = loadWinsStore(storage);
+    delete store.days["2026-10-24"];
+    const shifted = pastWinsPage(store, oct26);
+    const crossTab = pastWinHoldAfterRefresh(shifted.days, hold);
+    assert.equal(crossTab.keep, false);
+    assert.notEqual(crossTab.focus.id, "picked");
+    assert.equal(shifted.days.some((day) => day.items.some((item) => item.id === "picked")), false);
+
+    const sameDay = [{ key: "2026-10-24", future: false, items: [{ id: "slide" }, { id: "picked" }, { id: "decoy" }] }];
+    const open = { id: "picked", key: "2026-10-24", pos: 1 };
+    assert.equal(pastWinHoldAfterRefresh(sameDay, open).keep, true);
+    const removedEarlier = [{ key: "2026-10-24", future: false, items: [{ id: "picked" }, { id: "decoy" }] }];
+    const moved = pastWinHoldAfterRefresh(removedEarlier, open);
+    assert.equal(moved.keep, false);
+    assert.equal(moved.focus.id, "picked");
+    assert.equal(moved.focus.pos, 0);
+    assert.equal(removedEarlier[0].items[1].id, "decoy");
+    assert.notEqual(moved.focus.id, removedEarlier[0].items[open.pos].id);
+    assert.equal(pastWinHoldAfterRefresh(removedEarlier, { id: "picked", key: "2026-10-24", pos: 0 }).keep, true);
   });
 });
 

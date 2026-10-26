@@ -6,6 +6,7 @@ import {
   PAST_WINS_EMPTY,
   PAST_WINS_SHOW_MORE,
   PAST_WINS_TITLE,
+  WIN_NOT_REMOVED_LABEL,
   WIN_PHOTO_CHECKING_LABEL,
   WIN_PHOTO_MISSING_LABEL,
   WIN_PHOTO_ON_DEVICE_LABEL,
@@ -236,7 +237,151 @@ describe("past wins timeline card", { timeout: 180000 }, () => {
     assert.equal(await past.locator("summary").innerText(), PAST_WINS_TITLE);
   });
 
+  it("does not confirm a different win when an earlier day leaves", { skip: skipCard }, async () => {
+    const past = page.locator(".mp-win-of-day .mp-past-wins");
+    await page.evaluate(() => {
+      localStorage.removeItem(mpWins.WINS_STORAGE_KEY);
+      const day = (offset) => new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - offset, 9, 15, 0);
+      mpWins.addWin("Slide away", undefined, day(1), day(1), mpWins.WIN_PLACEHOLDER_PHOTO, "win-slide");
+      mpWins.addWin("Picked win", undefined, day(2), day(2), mpWins.WIN_PLACEHOLDER_PHOTO, "win-picked");
+      mpWins.addWin("Decoy win", undefined, day(3), day(3), mpWins.WIN_PLACEHOLDER_PHOTO, "win-decoy");
+      window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+    });
+    if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
+    await past.getByText("Picked win").waitFor({ state: "visible" });
+    const names = await page.evaluate(() => {
+      const day = (offset) => new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate() - offset, 9, 15, 0);
+      const keyOf = (when) => `${when.getFullYear()}-${String(when.getMonth() + 1).padStart(2, "0")}-${String(when.getDate()).padStart(2, "0")}`;
+      const named = (text, offset) => {
+        const when = day(offset);
+        const label = mpWins.formatWinDayLabel(keyOf(when));
+        const time = mpWins.pastWinTimeLabel(when.toISOString());
+        return mpWins.pastWinConfirmLabel(text, label, time);
+      };
+      return { picked: named("Picked win", 2), decoy: named("Decoy win", 3) };
+    });
+    const picked = past.locator("li", { hasText: "Picked win" });
+    const decoy = past.locator("li", { hasText: "Decoy win" });
+    await picked.getByRole("button", { name: /^Remove win: Picked win/ }).click();
+    await picked.getByRole("button", { name: names.picked, exact: true }).waitFor({ state: "visible" });
+    await other.evaluate(() => {
+      const day = new Date();
+      day.setDate(day.getDate() - 1);
+      day.setHours(12, 0, 0, 0);
+      mpWins.removeWin("win-slide", undefined, day);
+    });
+    await past.getByText("Slide away").waitFor({ state: "hidden" });
+    await picked.getByRole("button", { name: names.picked, exact: true }).waitFor({ state: "visible" });
+    assert.equal(await decoy.getByRole("button", { name: names.decoy, exact: true }).count(), 0);
+    await picked.getByRole("button", { name: names.picked, exact: true }).click();
+    await past.getByText("Picked win").waitFor({ state: "hidden" });
+    await past.getByText("Decoy win").waitFor({ state: "visible" });
+  });
+
+  it("keeps confirm on the picked win when the day rolls forward", { skip: skipCard }, async () => {
+    const past = page.locator(".mp-win-of-day .mp-past-wins");
+    await page.evaluate(() => {
+      if (globalThis.__RealDate) globalThis.Date = globalThis.__RealDate;
+      localStorage.removeItem(mpWins.WINS_STORAGE_KEY);
+      const today = new Date();
+      const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1, 9, 15, 0);
+      mpWins.addWin("Was today", undefined, today, today, mpWins.WIN_PLACEHOLDER_PHOTO, "win-today");
+      mpWins.addWin("Picked win", undefined, yesterday, yesterday, mpWins.WIN_PLACEHOLDER_PHOTO, "win-picked-midnight");
+      window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+    });
+    if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
+    await past.getByText("Picked win").waitFor({ state: "visible" });
+    const confirm = await page.evaluate(() => {
+      const today = new Date();
+      const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1, 9, 15, 0);
+      const key = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+      return mpWins.pastWinConfirmLabel("Picked win", mpWins.formatWinDayLabel(key), mpWins.pastWinTimeLabel(yesterday.toISOString()));
+    });
+    const picked = past.locator("li", { hasText: "Picked win" });
+    await picked.getByRole("button", { name: /^Remove win: Picked win/ }).click();
+    await picked.getByRole("button", { name: confirm, exact: true }).waitFor({ state: "visible" });
+    try {
+      await page.evaluate(() => {
+        const Original = Date;
+        const now = new Original();
+        const tomorrow = new Original(now.getFullYear(), now.getMonth(), now.getDate() + 1, 12, 0, 0, 0).getTime();
+        function ShiftedDate(...args) {
+          if (!(this instanceof ShiftedDate)) return new Original(...(args.length ? args : [tomorrow])).toString();
+          if (args.length === 0) return new Original(tomorrow);
+          return new Original(...args);
+        }
+        ShiftedDate.now = () => tomorrow;
+        ShiftedDate.parse = Original.parse.bind(Original);
+        ShiftedDate.UTC = Original.UTC.bind(Original);
+        ShiftedDate.prototype = Original.prototype;
+        globalThis.__RealDate = Original;
+        globalThis.Date = ShiftedDate;
+        window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+      });
+      const moved = past.locator("li", { hasText: "Was today" });
+      await moved.waitFor({ state: "visible" });
+      assert.equal(await moved.getByRole("button", { name: confirm, exact: true }).count(), 0);
+      await picked.getByRole("button", { name: confirm, exact: true }).waitFor({ state: "visible" });
+      await picked.getByRole("button", { name: confirm, exact: true }).click();
+      await past.getByText("Picked win").waitFor({ state: "hidden" });
+      await past.getByText("Was today").waitFor({ state: "visible" });
+    } finally {
+      await page.evaluate(() => {
+        if (globalThis.__RealDate) globalThis.Date = globalThis.__RealDate;
+        window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+      });
+    }
+  });
+
+  it("moves focus to the message when a removal cannot be stored", { skip: skipCard }, async () => {
+    const past = page.locator(".mp-win-of-day .mp-past-wins");
+    await page.evaluate(() => {
+      localStorage.removeItem(mpWins.WINS_STORAGE_KEY);
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(9, 15, 0, 0);
+      mpWins.addWin("Stay listed", undefined, yesterday, yesterday, mpWins.WIN_PLACEHOLDER_PHOTO, "win-stay");
+      window.dispatchEvent(new Event(mpWins.WINS_CHANGE_EVENT));
+    });
+    if (!(await past.locator("summary").evaluate((node) => node.parentElement.open))) await past.locator("summary").click();
+    await past.getByText("Stay listed").waitFor({ state: "visible" });
+    const confirm = await page.evaluate(() => {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(9, 15, 0, 0);
+      const key = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+      return mpWins.pastWinConfirmLabel("Stay listed", mpWins.formatWinDayLabel(key), mpWins.pastWinTimeLabel(yesterday.toISOString()));
+    });
+    const row = past.locator("li", { hasText: "Stay listed" });
+    await row.getByRole("button", { name: /^Remove win: Stay listed/ }).click();
+    await row.getByRole("button", { name: confirm, exact: true }).waitFor({ state: "visible" });
+    try {
+      await page.evaluate(() => {
+        const storage = localStorage;
+        const original = storage.setItem.bind(storage);
+        globalThis.__restoreWinSet = () => {
+          storage.setItem = original;
+        };
+        storage.setItem = (key, value) => {
+          if (key === mpWins.WINS_STORAGE_KEY) throw new Error("quota");
+          return original(key, value);
+        };
+      });
+      await row.getByRole("button", { name: confirm, exact: true }).click();
+      await page.waitForFunction(() => document.activeElement && document.activeElement.id === "mp-win-status");
+      assert.equal((await page.locator("#mp-win-status").innerText()).trim(), WIN_NOT_REMOVED_LABEL);
+      assert.notEqual(await page.evaluate(() => document.activeElement.getAttribute("aria-label")), confirm);
+      await past.getByText("Stay listed").waitFor({ state: "visible" });
+    } finally {
+      await page.evaluate(() => {
+        if (typeof globalThis.__restoreWinSet === "function") globalThis.__restoreWinSet();
+      });
+    }
+  });
+
   it("disables reset while cleanup is still running", { skip: skipCard }, async () => {
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await signInLocal(page, host.origin);
     const winCard = page.locator(".mp-win-of-day");
     await page.evaluate(() => {
       localStorage.setItem("mindpal.dailyWins.v2", "corrupt-timeline");

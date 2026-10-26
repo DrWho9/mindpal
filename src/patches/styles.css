@@ -281,7 +281,7 @@ dialog[open]>*{pointer-events:auto}
 .mp-win-of-day .mp-past-wins .mp-win-photo img{width:48px;height:48px}
 .mp-win-of-day .mp-past-wins .mp-past-remove,.mp-win-of-day .mp-past-wins .mp-past-more{min-height:44px}
 .mp-win-of-day .mp-past-wins .mp-past-remove-row{display:flex;flex-wrap:wrap;gap:8px}
-.mp-win-of-day .mp-past-wins .mp-past-later{margin:8px 0 0;font-weight:700}
+.mp-win-of-day .mp-past-wins .mp-past-later,.mp-win-of-day .mp-past-wins .mp-past-earlier{margin:8px 0 0;font-size:1rem;font-weight:700}
 .mp-win-of-day .mp-past-wins .mp-past-future{margin-left:8px;font-size:.85rem;font-weight:650;color:#5c5346}
 .mp-win-of-day .mp-past-wins .mp-past-more{margin:4px 0 0}
 @media (width<=480px){

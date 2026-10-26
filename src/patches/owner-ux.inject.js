@@ -258,6 +258,15 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     try{node=document.querySelector(target)}catch{node=null}
     if(node&&!node.disabled&&typeof node.focus===`function`)node.focus();
   },[past,dropBusy,hold]);
+  // Confirm stays only while id, day, and position still name the picked win.
+  (0,_.useEffect)(()=>{
+    if(e!==`winOfDay`||!hold)return;
+    let check=mpWins.pastWinHoldAfterRefresh(past&&past.days,hold);
+    if(check.keep)return;
+    let next=check.focus||{kind:`summary`};
+    focusAfter.current=next.kind===`win`?`[data-mp-past-focus="${next.index}"]`:`#mp-past-summary`;
+    setHold(null);
+  },[past,hold,e]);
   // F blocks a second Save click or Enter press until this save finishes. S disables the button.
   // watchSave aborts a hung photo write and ignores a late result so it cannot save twice.
   async function l(){
@@ -298,8 +307,11 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
   }
   function more(){shown.current+=mpWins.PAST_WINS_PAGE_DAYS;setPast(mpWins.pastWinsPage(mpWins.readWinsStore(),new Date(),shown.current))}
   // dropBusy disables Remove while this removal is still running. dropGuard blocks a second call.
-  async function drop(id,key,index){
+  async function drop(id,key,pos,index){
     if(dropGuard.current)return;
+    if(!hold||hold.id!==id||hold.key!==key||hold.pos!==pos)return;
+    let check=mpWins.pastWinHoldAfterRefresh(past.days,hold);
+    if(!check.keep)return;
     dropGuard.current=!0;
     setDropBusy(!0);
     try{
@@ -310,6 +322,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         r(mpWins.winsForDate(kept));
         setPast(mpWins.pastWinsPage(kept,new Date(),shown.current));
         s(mpWins.WIN_NOT_REMOVED_LABEL);
+        focusAfter.current=`#mp-win-status`;
         return;
       }
       let nextFocus=mpWins.pastWinFocusAfter(past.days,id,index);
@@ -370,13 +383,14 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
     e===`winOfDay`?(0,A.jsxs)(`details`,{className:`mp-past-wins`,open:openPast,onToggle:ev=>setOpenPast(!!ev.currentTarget.open),children:[
       (0,A.jsx)(`summary`,{id:`mp-past-summary`,children:past.days.length>0&&past.days.every(day=>day.future)&&!past.hasMore?mpWins.PAST_WINS_LATER:mpWins.PAST_WINS_TITLE}),
       past.totalDays?(0,A.jsx)(A.Fragment,{children:past.days.map((day,dayIndex)=>(0,A.jsxs)(A.Fragment,{children:[
-        day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)&&!(past.days.every(item=>item.future)&&!past.hasMore)?(0,A.jsx)(`p`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
+        day.future&&!past.days.slice(0,dayIndex).some(item=>item.future)?(0,A.jsx)(`h3`,{className:`mp-past-later`,children:mpWins.PAST_WINS_LATER}):null,
+        !day.future&&past.days.some(item=>item.future)&&!past.days.slice(0,dayIndex).some(item=>item&&!item.future)?(0,A.jsx)(`h3`,{className:`mp-past-earlier`,children:mpWins.PAST_WINS_EARLIER}):null,
         (0,A.jsxs)(`section`,{"data-mp-win-day":day.key,children:[
           (0,A.jsxs)(`h3`,{children:[day.label,day.future?(0,A.jsx)(`span`,{className:`mp-past-future`,children:mpWins.PAST_WINS_FUTURE_NOTE}):null]}),
-          (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map(w=>{
+          (0,A.jsx)(`ul`,{className:`mp-wins-list`,children:day.items.map((w,pos)=>{
             let index=focusAt;
             focusAt+=1;
-            let held=hold&&hold.index===index;
+            let held=hold&&hold.id===w.id&&hold.key===day.key&&hold.pos===pos;
             let timeLabel=mpWins.pastWinTimeLabel(w.at);
             let removeName=mpWins.pastWinRemoveLabel(w.text,day.label,timeLabel);
             let confirmName=mpWins.pastWinConfirmLabel(w.text,day.label,timeLabel);
@@ -387,9 +401,9 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
               (0,A.jsx)(`span`,{className:`mp-past-win-text`,children:w.text}),
               winWhen(w),
               held?(0,A.jsxs)(`span`,{className:`mp-past-remove-row`,children:[
-                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
+                (0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>drop(w.id,day.key,pos,index),"aria-label":confirmName,children:mpWins.PAST_WINS_REMOVE_CONFIRM}),
                 (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:dropBusy,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold(null)},"aria-label":keepName,children:mpWins.PAST_WINS_REMOVE_KEEP})
-              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,index})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
+              ]}):(0,A.jsx)(`button`,{className:`secondary mp-past-remove`,type:`button`,disabled:dropBusy,"data-mp-past-focus":index,onClick:()=>{if(dropBusy)return;focusAfter.current=aim;setHold({id:w.id,key:day.key,pos})},"aria-label":removeName,children:mpWins.PAST_WINS_REMOVE})
             ]},w.id);
           })})
         ]})
@@ -416,7 +430,7 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
         (0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!1)},children:mpWins.WIN_RESET_CANCEL})
       ]}):(0,A.jsx)(`button`,{className:`secondary`,type:`button`,disabled:j,onClick:()=>{if(!j)x(!0)},children:mpWins.WIN_RESET_LABEL})
     ]}):null,
-    o?(0,A.jsx)(`p`,{role:`status`,children:o}):null
+    o?(0,A.jsx)(`p`,{id:`mp-win-status`,role:`status`,tabIndex:-1,children:o}):null
   ]});
 }
 function mpMaddyTeaser({onOpen:e}){
