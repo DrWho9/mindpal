@@ -13553,6 +13553,9 @@ const WIN_IMAGE_WIN_GONE_LABEL = "Image not changed. That win is no longer on th
 /** The sample write finished, but the blob was not there when the record was about to point at it. */
 const WIN_IMAGE_NOT_ON_DEVICE_LABEL =
   "Image not changed. That sample image is not on this device. The win text is still saved on this device.";
+/** The confirming read failed and the previous image could not be put back. */
+const WIN_IMAGE_MAY_HAVE_CHANGED_LABEL =
+  "The sample image on this device may have changed. The win text is still saved on this device.";
 const WIN_IMAGE_UPDATED_LABEL = "Sample image updated on this device.";
 const WIN_IMAGE_REMOVED_LABEL = "Sample image removed on this device.";
 /** IndexedDB could not store a chosen sample, so the record keeps that sample's bundled path. */
@@ -14979,13 +14982,17 @@ async function changeWinImage(
    * A missing blob, or a blob that is not that sample, is left as it is so another
    * tab's delete is not undone.
    * A read that errors (the get throws, or the photo database cannot be opened)
-   * is not that case. Put the previous blob back, or delete the new blob when
-   * this win had none, the same as a timed out write.
-   * The confirming read and the record write are not one transaction. The read
-   * decodes the blob for the allowlist, then this function decodes it again for
-   * the sample id. Those two decodes are microtasks. Another tab can remove the
-   * blob in that gap, and the synchronous commit can still point the record at
-   * it. That gap is not the 300 ms write window.
+   * puts the previous blob back, or deletes the new blob when this win had none.
+   * That restore can overwrite a newer image another tab stored after this write.
+   * The timeout path has the same blind restore.
+   * Say the image was not changed only when that restore or delete succeeds.
+   * If it does not, point the record at the blob still stored and say the sample
+   * image may have changed.
+   * The confirming read and the record write are not one transaction. Reading the
+   * blob is its own task, and the allowlist check decodes it again. The gap
+   * includes waiting for that read. Another tab can remove the blob before the
+   * synchronous commit, and the record can still point at it. That gap is not
+   * the 300 ms write window.
    */
   let seen = await readWinPhotoRecord(id);
   let seenId = "";
@@ -15001,12 +15008,24 @@ async function changeWinImage(
     const fix = previous
       ? putWinPhoto(id, previous, Date.now(), { leaveOnTimeout: true })
       : deleteWinPhotos([id], { notify: false });
+    let restored = false;
     try {
-      await fix;
+      const result = await fix;
+      restored = previous
+        ? Boolean(result && result.ok)
+        : Boolean(result && Array.isArray(result.deleted) && result.deleted.includes(id));
     } catch {
-      /* the new blob is put back or removed when the photo database can */
+      restored = false;
     }
-    return imageKept(storage, current, { reason: "read" });
+    if (restored) return imageKept(storage, current, { reason: "read" });
+    const pointed = commitWinPhoto(storage, id, WIN_PHOTO_REF, key, stampNow);
+    if (pointed.missing) return imageGone(storage);
+    const store = pointed.written && pointed.written.store ? pointed.written.store : readWinsStore(storage);
+    return imageKept(storage, pointed.item || current, {
+      reason: "uncertain",
+      saved: Boolean(pointed.written && pointed.written.saved),
+      store,
+    });
   }
   if (seen.status !== "ok" || seenId !== wanted) {
     return imageKept(storage, current, { reason: "unconfirmed" });
@@ -17558,7 +17577,7 @@ mpCalendar={civilDateKey,formatCivilDate,partOfDay,isGregorianLeap,gregorianToCo
 mpFaith={COPTIC_PREF_KEY,WELCOME_IMAGE_PREF_KEY,ACCOUNTS_KEY,SESSION_KEY,FAITH_CHANGE_EVENT,FAITH_STANCE_RELIGIOUS,FAITH_STANCE_SECULAR,PRIMARY_TRADITIONS,OTHER_TRADITIONS,ALL_TRADITIONS,TRADITION_LANES,UNIVERSAL_FALLBACK,sessionPreferences,findTradition,traditionIdFromPrefs,traditionLabel,isChristianTradition,hasFaithPreference,isSecularPrefs,shouldShowFaithModules,shouldShowMorningPrayer,prefsFromChoice,faithSummary,updateSessionPreferences,setSessionFaithPrefs,lanesForTradition,verseEyebrow,pickMorningVerse,isCopticDateEnabled,setCopticDateEnabled,isWelcomeImageEnabled,setWelcomeImageEnabled};
 mpProfile={AGE_BANDS,GENDERS,FACTS_DISCLAIMER,normalizeAgeBand,normalizeGender,isYouthBand,ageBandLabel,genderLabel,hasProfileDemographics,profileSummary,prefsFromProfileChoice,factsForProfile,factsAreYouthSafe,setSessionProfilePrefs,sessionProfilePreferences,PROFILE_STORAGE_KEY,PROFILE_CHANGE_EVENT,PROFILE_ROUTE,LIKE_LABEL_MAX,BOOK_TITLE_MAX,BOOK_AUTHOR_MAX,GOAL_TITLE_MAX,GOAL_NOTE_MAX,AVATAR_COLORS,AVATAR_SHAPES,AVATAR_EMOJIS,STARTER_LIKES,GOAL_TIMEFRAMES,SIGNED_COACHES,PROFILE_SECTIONS,emptyAvatar,emptyProfile,profileInitials,findAvatarColor,findAvatarShape,normalizeAvatar,avatarStyle,avatarFace,normalizeLikeLabel,normalizeCustomLike,listLikeOptions,likeLabel,normalizeBook,timeframeLabel,normalizeGoal,listProfileSpeakers,speakerIdsAllowed,normalizeProfile,parseProfileJson,loadProfile,saveProfile,notifyProfileChange,persistProfile,setAvatar,toggleLike,addCustomLike,toggleSpeaker,addBook,removeBook,addGoal,setGoalDone,removeGoal,sectionSummary};
 mpTodaySteps={STEPS_STORAGE_KEY,STEP_IDS,STEP_META,HUB_FLOW_LINE,BANDS,emptyDay,normalizeDay,parseDayJson,loadDay,saveDay,markStep,nextStepId,stepStatus,stepRowLabel,hubStepCaption,bandForStep};
-mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_EARLIER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,pastWinHoldAfterRefresh,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage,WIN_IMAGE_NOT_CHANGED_LABEL,WIN_IMAGE_NOT_ON_DEVICE_LABEL,WIN_IMAGE_WIN_GONE_LABEL,WIN_IMAGE_UPDATED_LABEL,WIN_IMAGE_REMOVED_LABEL,WIN_SAMPLE_NOT_SAVED_LABEL,WIN_SAMPLE_CHOICES,WIN_SAMPLE_ON_DEVICE_LABEL,WIN_SAMPLE_PROTOTYPE_LABEL,WIN_SAMPLE_PLACEHOLDER,WIN_SAMPLE_NONE,pastWinDayHeading,pastWinFocusMove,winStatusId,winSampleBlob,winPhotoChoiceForPath,winPhotoChoiceFromBlob,changeWinImage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
+mpWins={WINS_STORAGE_KEY,WINS_STORAGE_KEY_V1,WINS_STORE_VERSION,WINS_STORAGE_KEY_V2_BACKUP,WIN_SAVED_LABEL,WIN_NOT_SAVED_LABEL,WIN_NOT_REMOVED_LABEL,MAX_CORRUPT_BACKUPS,WIN_RESET_LABEL,WIN_RESET_NOTE,WIN_RESET_CONFIRM,WIN_RESET_CANCEL,WIN_RESET_DONE,WIN_RESET_IMAGES_LEFT,WIN_RESET_UNNEEDED,WIN_RESET_FAILED,winResetDoneLabel,WIN_UNKNOWN_TIME,WIN_UNKNOWN_TIME_LABEL,WIN_TEXT_MAX,WIN_PLACEHOLDER_PHOTO,WIN_PHOTO_PROTOTYPE_LABEL,WIN_OF_THE_DAY_TITLE,WIN_OF_THE_DAY_EYEBROW,WIN_OF_THE_DAY_LEDE,WIN_OF_THE_DAY_EMPTY,PAST_WINS_PAGE_DAYS,PAST_WINS_TITLE,PAST_WINS_EMPTY,PAST_WINS_SHOW_MORE,PAST_WINS_REMOVE,PAST_WINS_REMOVE_CONFIRM,PAST_WINS_REMOVE_KEEP,PAST_WINS_LATER,PAST_WINS_EARLIER,PAST_WINS_FUTURE_NOTE,pastWinRemoveLabel,pastWinConfirmLabel,pastWinKeepLabel,pastWinTimeLabel,pastWinFocusAfter,pastWinHoldAfterRefresh,emptyPastWins,pastWinsPage,formatWinDayLabel,civilDateFromKey,WIN_SAVE_TIMEOUT_MS,winSaveTimeoutLimit,watchSave,winSaveStatusLabel,emptyWinsDay,normalizeWin,emptyWinsStore,normalizeWinsStore,parseWinsJson,migrateV1WinsJson,exportV1,stableWinId,loadWinsStore,saveWinsStore,winsSaveBlocked,resetBlockedWins,winsForDate,addWin,removeWin,readWinsStore,winsSaveBlockedQuiet,clearWinsProbeCache,handleWinsStorageEvent,listenForWinsChanges,WINS_CHANGE_EVENT,addWinPhoto,WIN_PHOTO_DB,WIN_PHOTO_STORE,WIN_PHOTO_REF,WIN_PHOTO_CHANNEL,WIN_PHOTO_NOT_SAVED_LABEL,WIN_PHOTO_MISSING_LABEL,WIN_PHOTO_UNAVAILABLE_LABEL,WIN_PHOTO_ON_DEVICE_LABEL,WIN_PHOTO_CHECKING_LABEL,readWinPhoto,winPhotoObjectUrl,releaseWinPhotoUrl,handleWinPhotoMessage,WIN_IMAGE_NOT_CHANGED_LABEL,WIN_IMAGE_NOT_ON_DEVICE_LABEL,WIN_IMAGE_MAY_HAVE_CHANGED_LABEL,WIN_IMAGE_WIN_GONE_LABEL,WIN_IMAGE_UPDATED_LABEL,WIN_IMAGE_REMOVED_LABEL,WIN_SAMPLE_NOT_SAVED_LABEL,WIN_SAMPLE_CHOICES,WIN_SAMPLE_ON_DEVICE_LABEL,WIN_SAMPLE_PROTOTYPE_LABEL,WIN_SAMPLE_PLACEHOLDER,WIN_SAMPLE_NONE,pastWinDayHeading,pastWinFocusMove,winStatusId,winSampleBlob,winPhotoChoiceForPath,winPhotoChoiceFromBlob,changeWinImage};if(typeof globalThis<`u`&&globalThis.MINDPAL_PHOTO_TEST){mpWins.setWinPhotoDatabaseFactory=setWinPhotoDatabaseFactory;mpWins.resetWinPhotoDatabase=resetWinPhotoDatabase;mpWins.setWinPhotoRequestMs=setWinPhotoRequestMs;mpWins.setWinSaveTimeoutMs=setWinSaveTimeoutMs;mpWins.setWinSaveAbortGraceMs=setWinSaveAbortGraceMs;}
 mpProblems={PROBLEM_TAG_IDS,THEME_LABEL_TO_TAGS,MOTHER_SUPPORT_TAGS,AOD_SUPPORT_TAGS,MENS_SUPPORT_TAGS,GROWTH_THEME_TAGS,PROBLEM_GROUPS,normalizeProblemTags,feelingTagsToProblemTags,readingProblemTags,listProblems,listProblemGroups,problemGroupId,isGrowthProblem,findProblem,readingsForProblem,motherSupportTags,aodSupportTags,mensSupportTags,growthThemeTags,videoTagForProblem,PROBLEM_VIDEO_TAGS,videoProblemTags,videosForProblem,maddyForProblem,takeCompanionPrompt,saveCompanionPrompt,selectedProblemId,selectProblem,COMPANION_PROMPT_KEY,SELECTED_PROBLEM_KEY,MOTHERS_PROBLEM_ID,MOTHERS_DISPLAY,MOTHERS_ROUTE,HELD_GROWTH_LABELS,isHeldGrowthLabel,resolveHashAlias,MOTHERS_READING_LIMIT,MOTHERS_MADDY_IDS,MOTHERS_MEDITATION_IDS,isMothersProblem,AOD_PROBLEM_ID,AOD_ROUTE,AOD_READING_LIMIT,AOD_MADDY_IDS,AOD_MEDITATION_IDS,isAodProblem,MENS_HEALTH_PROBLEM_ID,MENS_HEALTH_ROUTE,MENS_HEALTH_READING_LIMIT,MENS_HEALTH_MADDY_IDS,isMensHealthProblem,dedicatedProblemRoute,mensHealthStats,mensHealthYoutube,mensHealthHelplines,mensHealthQueuedVideos,featuredMensHelpline,isMensHealthYoutubeUrl,AOD_FEATURED_READING_ID,isOwnerReading,featuredOwnerReadings,ownerCompanionOpener,listOwnerReadings,HUB_ACCORDION_ORDER,EVIDENCE_GUIDANCE_DISCLAIMER,EVIDENCE_GUIDANCE_TEMPLATE,TRUSTED_EVIDENCE_HOSTS,emptyEvidenceGuidance,evidenceCatalog,evidenceDisclaimer,evidenceGuidanceFor,listEvidenceNotes,listGuidanceBooks,isTrustedEvidenceUrl,guidanceCountsOk,evidenceNoteSourcesTrusted,APPOINTMENT_COMPANION_PROMPT,appointmentCompanionPrompt};
 mpNav={HOME_ROUTE,HOME_EVENT,homeHash,goHome};
 mpTeamRitual={TEAM_RITUAL_STORAGE_KEY,TEAM_RITUAL_CHANGE_EVENT,TEAM_RITUAL_TITLE,TEAM_RITUAL_SHORT,TEAM_RITUAL_EYEBROW,TEAM_RITUAL_OPEN,TEAM_RITUAL_LEDE,TEAM_RITUAL_HINT,TEAM_RITUAL_BREATH_HERO,TEAM_RITUAL_FLOW,TEAM_RITUAL_VERSE_HERO,TEAM_RITUAL_CHAPTER_SUMMARY,TEAM_RITUAL_BREATH_ID,TEAM_RITUAL_BREATH_SRC,RITUAL_STEP_IDS,RITUAL_STEPS,PEACEFUL_THEME_LABELS,HEAVY_RITUAL_TAGS,SECULAR_VERSE_LANES,SECULAR_TRADITIONS,TRADITION_TO_LANE,BREATH_DURATION_SEC,BREATH_COUNT_SEC,BREATH_INHALE_COUNTS,BREATH_HOLD_COUNTS,BREATH_EXHALE_COUNTS,BREATH_SETTLE_SEC,BREATH_CYCLE_SEC,stableIndex,peacefulReadings,pickPeacefulReading,verseLaneForTradition,verseEntriesForLane,pickRitualVerse,ritualTradition,ritualChapterTarget,breathClip,breathClipSrc,formatBreathClock,breathCueAt,emptyRitual,normalizeRitual,parseRitualJson,loadRitual,saveRitual,ritualStepStatus,canOpenVerse,canOpenReading,canOpenRitualStep,markRitual,nextRitualStep,ritualReading,notifyRitualChange};
@@ -22018,8 +22037,17 @@ function mpWinsPanel({variant:e=`hub`,onOpenJournal:t}){
       }
       if(u&&u.unchanged)return !0;
       if(!u||u.imageChanged!==!0){
-        s(u&&u.reason===`unconfirmed`?mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL:mpWins.WIN_IMAGE_NOT_CHANGED_LABEL);
-        if(u&&u.reason===`unconfirmed`){
+        let imageStatus=mpWins.WIN_IMAGE_NOT_CHANGED_LABEL;
+        if(u&&u.reason===`unconfirmed`)imageStatus=mpWins.WIN_IMAGE_NOT_ON_DEVICE_LABEL;
+        if(u&&u.reason===`uncertain`)imageStatus=mpWins.WIN_IMAGE_MAY_HAVE_CHANGED_LABEL;
+        s(imageStatus);
+        if(u&&(u.reason===`unconfirmed`||u.reason===`uncertain`)){
+          if(u.reason===`uncertain`){
+            let cache=photoCache.current;
+            if(cache[id]&&cache[id].url) mpWins.releaseWinPhotoUrl(cache[id].url);
+            if(cache[id])delete cache[id];
+            E({...cache});
+          }
           let fresh=u.store||mpWins.readWinsStore();
           r(mpWins.winsForDate(fresh));
           setPast(mpWins.pastWinsPage(fresh,new Date(),shown.current));
